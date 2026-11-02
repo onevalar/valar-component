@@ -26,17 +26,17 @@ pnpm --filter @valar/svelte-cli start add button --cwd /absolute/path/to/your-ap
 
 When initializing, you can pass `--no-deps-install` to write the config first. The `@valar/svelte-cli/tailwind.css` file that the CLI injects also comes from this repository. Until the package is published, run `pnpm --filter @valar/svelte-cli pack` to build a local tarball and install that file in your project. Do not download a package of the same name from npm.
 
-## 严格检查第三方类型
+## Dependency patches and strict types
 
-需要设置 `skipLibCheck: false` 的 pnpm 消费者，请一并使用仓库的类型兼容配置。当前验收组合为 Svelte 5.57.2、TypeScript 5.9.3、Bits UI 2.20.0 和 svelte-toolbelt 0.10.6：
+For pnpm consumers, copy the repository's dependency patches as well as the component source. The Bits UI patch fixes Avatar image source changes at runtime, so it is needed even when `skipLibCheck` is enabled. The validated combination is Svelte 5.57.2, TypeScript 5.9.3, Bits UI 2.20.0 and svelte-toolbelt 0.10.6:
 
-1. 将仓库 `patches/bits-ui@2.20.0.patch` 和 `patches/svelte-toolbelt@0.10.6.patch` 复制到目标项目的同名路径。
-2. 将 `docs/e2e/fixtures/pnpm-workspace.yaml` 中的 `overrides`、`patchedDependencies` 和 `packageExtensions` 合并到目标项目的 `pnpm-workspace.yaml`。不要覆盖项目已有的其他配置。
-3. 声明 `bits-ui: "2.20.0"` 依赖并安装 `@types/node`；在 tsconfig 的 `compilerOptions` 中设置 `strict: true`、`skipLibCheck: false`、`types: ["node"]`，然后执行 `pnpm install` 和项目的 check／build。
+1. Copy `patches/bits-ui@2.20.0.patch` and `patches/svelte-toolbelt@0.10.6.patch` from this repository into the same paths in your project.
+2. Merge `overrides`, `patchedDependencies` and `packageExtensions` from `docs/e2e/fixtures/pnpm-workspace.yaml` into your project's `pnpm-workspace.yaml`. Preserve its existing configuration.
+3. Declare `bits-ui: "2.20.0"`, then run `pnpm install` and your project's check/build. For strict third-party type checking, also install `@types/node` and set `strict: true`, `skipLibCheck: false` and `types: ["node"]` in your tsconfig's `compilerOptions`.
 
-补丁只修复两处生成声明的类型复杂度问题，以及一个遗漏的类型导入；没有修改运行时、移除属性或放宽类型。`packageExtensions` 补齐声明引用但原包没有声明的 csstype 3.1.3。CLI 不会自动改写消费者的包管理器配置，这些文件需要显式带入；`test:consumer` 会从工作区外验证这一完整路径。
+The patches fix two generated declaration complexity errors, a missing type import, and Avatar retaining `loaded` after its image source changes. They do not remove props or widen public types. `packageExtensions` supplies the undeclared `csstype` 3.1.3 type dependency. The CLI does not rewrite package-manager configuration or apply these patches automatically: `init`/`add` alone is not enough. `test:consumer` verifies the full local-tarball installation path outside the workspace, including Avatar source failure/recovery without remounting Root or Image.
 
-升级上述第三方包后应重新验证并移除已由上游修复的补丁，不应把补丁套用到未验证的版本。这里不代表所有第三方依赖、所有版本和整个文档工具链都已通过 `skipLibCheck: false`。
+Existing consumers must also update their copied patch files and run `pnpm install` to refresh the lockfile. Revalidate the patches when upgrading dependencies and remove fixes incorporated upstream; do not apply them to unverified versions. This does not certify all dependencies, versions or the entire docs toolchain with `skipLibCheck: false`.
 
 ## Registry
 

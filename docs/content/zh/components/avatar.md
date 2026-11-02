@@ -41,7 +41,7 @@ links:
 
 </Step>
 
-<PMInstall command="bits-ui -D" />
+<PMInstall command="bits-ui@2.20.0 -D" />
 
 <Step>
 
@@ -55,6 +55,8 @@ links:
 </Steps>
 {/snippet}
 </InstallTabs>
+
+使用 Bits UI 2.20.0 时，独立消费者还需按[依赖补丁说明](/docs/installation#依赖补丁与严格类型检查)应用补丁。没有运行时补丁时，成功图片切换到坏源后仍保留 `loaded`，Fallback 不会出现；仅更新组件源码或 CLI 不会自动应用补丁。
 
 ## 用法
 

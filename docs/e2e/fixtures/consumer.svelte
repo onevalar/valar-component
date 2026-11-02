@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Accordion from "$lib/components/ui/accordion/index.js";
+	import * as Avatar from "$lib/components/ui/avatar/index.js";
 	import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
@@ -13,7 +14,18 @@
 		{ id: "last", title: "Last" },
 	];
 	let result = $state("");
+	let avatarSrc = $state("/avatar-01.png");
 </script>
+
+<section role="group" aria-label="Avatar source changes">
+	<Avatar.Root>
+		<Avatar.Image src={avatarSrc} alt="Lin" />
+		<Avatar.Fallback>LN</Avatar.Fallback>
+	</Avatar.Root>
+	<button onclick={() => (avatarSrc = "data:image/png;base64,broken")}>Break avatar</button>
+	<button onclick={() => (avatarSrc = "/avatar-02.png")}>Restore avatar</button>
+	<button onclick={() => (avatarSrc = "")}>Clear avatar</button>
+</section>
 
 <form
 	onsubmit={(event) => {

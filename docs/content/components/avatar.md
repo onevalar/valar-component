@@ -41,7 +41,7 @@ Install `bits-ui`:
 
 </Step>
 
-<PMInstall command="bits-ui -D" />
+<PMInstall command="bits-ui@2.20.0 -D" />
 
 <Step>
 
@@ -55,6 +55,8 @@ Copy and paste the following code into your project.
 </Steps>
 {/snippet}
 </InstallTabs>
+
+For Bits UI 2.20.0, apply the [dependency patches](/docs/installation#dependency-patches-and-strict-types) in your consumer project as well. Without the runtime patch, changing a successfully loaded image to a broken source leaves it `loaded` and hides the fallback. Updating only the component source or CLI does not apply the patch.
 
 ## Usage
 

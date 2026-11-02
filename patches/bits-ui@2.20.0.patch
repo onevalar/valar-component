@@ -1,3 +1,16 @@
+diff --git a/dist/bits/avatar/avatar.svelte.js b/dist/bits/avatar/avatar.svelte.js
+index f6e8cb60be9908d2d7f2c81eb61616e16237c549..645a9c34eabbd9c3859fbc657dd348bdad823984 100644
+--- a/dist/bits/avatar/avatar.svelte.js
++++ b/dist/bits/avatar/avatar.svelte.js
+@@ -20,8 +20,6 @@ export class AvatarRootState {
+         this.attachment = attachRef(this.opts.ref);
+     }
+     loadImage(src, crossorigin, referrerPolicy) {
+-        if (this.opts.loadingStatus.current === "loaded")
+-            return;
+         let imageTimerId;
+         const image = new Image();
+         image.src = src;
 diff --git a/dist/bits/button/components/button.svelte.d.ts b/dist/bits/button/components/button.svelte.d.ts
 index 4cd35080daa1dd9be92fc29c2a94578870cfcd40..92a1ebdd411179343684dda0338ac9d2f8ba3552 100644
 --- a/dist/bits/button/components/button.svelte.d.ts

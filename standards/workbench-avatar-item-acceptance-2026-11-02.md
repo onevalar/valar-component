@@ -85,7 +85,7 @@ pnpm --filter docs exec playwright test e2e/workbench.spec.ts \
 
 ## 已知边界与后续
 
-现有Bits Avatar在成功加载后直接更换坏src，会因 `loadImage` 的loaded提前返回而不显示Fallback；已用真实坏src和DOM状态验证，另给出修复建议，**本批未修改该底层行为**。演示用key重新创建实例，因此证明的是实际成功／失败加载与恢复，不是底层动态换源缺陷已修复。
+E9验收时，Bits Avatar在成功加载后直接更换坏src，会因 `loadImage` 的loaded提前返回而不显示Fallback；已用真实坏src和DOM状态验证，另给出修复建议，**E9本批未修改该底层行为**。演示用key重新创建实例，因此证明的是实际成功／失败加载与恢复，不是底层动态换源缺陷已修复。后续独立修复见本文末节。
 
 下一候选Number Field → Slider Field，先建立最小样式入口，保留数值与本地化行为，不复制子组件旋钮；未获本批之后的自动实施授权。路线图同步到[WORKBENCH](WORKBENCH.md)。
 
@@ -95,3 +95,31 @@ pnpm --filter docs exec playwright test e2e/workbench.spec.ts \
 - 对本地生产preview执行完整Playwright：**47 passed (2.3m)，1 skipped**；跳过的是需显式开启的开发站写回测试，已单独执行并通过，见上文。
 - 本批保留两项浏览器交互合同及一项显式开发站写回回归；完整回归同时覆盖独立tarball安装、严格检查／构建和已安装组件的样式合同。
 - 默认Valar CSS及生成registry已恢复，无默认外观改动。代码与本记录按用户授权统一提交推送；最终提交链接、GitHub CI状态及可审媒体见所链工作线程。
+
+## 独立修复：Avatar 同实例图片换源（2026-11-02）
+
+范围：修复现有 Bits UI 2.20.0 加载状态，不是组件转换或交互库替换。仅在 `patches/bits-ui@2.20.0.patch` 移除 `loadImage` 的 loaded 提前返回，并通过 pnpm 更新锁文件补丁哈希；不修改 Avatar 包装层、公共 API、默认样式或 E9 编辑器的 key 重建方案。
+
+- 修改前先复现：同一 Root／Image 从 `/avatars/01.png` 成功加载后切到 `data:image/png;base64,broken`，真实 Chromium 中 `complete=true`、`naturalWidth=0`，但 `data-status=loaded`、Fallback `display:none`。新增单元回归在该次换源处失败（预期 loading，实际 loaded）。
+- 核对安装源码与 npm 2.20.0 包：解绑旧 Image 回调、清除延迟计时器和 watcher 返回清理函数的逻辑已在包内，本次不重复补丁或覆盖它们。
+- 永久回归：`docs/tests/avatar.test.ts` 与 `docs/tests/fixtures/avatar.svelte`，无 key；断言 Root／Image 节点身份不变、loading／error／loaded、公开状态回调、Image／Fallback 可见性、失败恢复及清空恢复。另覆盖过期 load／error、80ms 延迟的79／80ms边界、换源取消延迟和卸载后迟到事件。jsdom 用可控图片事件验证状态，不能替代真实图片加载验收。
+- `pnpm --filter docs exec vitest run tests/avatar.test.ts`：2通过；`pnpm test`：全仓634通过（docs 90）；`pnpm --filter docs check`：0 errors／0 warnings。定向 ESLint、oxfmt、`git diff --check` 均通过；`pnpm install --frozen-lockfile --ignore-scripts` 通过；patch-commit 的 postinstall 完成 CLI 构建及 registry／content sync。
+- `NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm build`：生产构建成功。对该构建的 preview 执行 `pnpm --filter docs exec playwright test e2e/workbench.spec.ts --grep 'Avatar editor links' --workers 1`：1通过（7.6s），验证既有编辑器行为未受影响。开发站首次执行同一用例曾失败于编辑器消失；服务日志同刻记录 `dependency optimized: dialkit/svelte` 和 `optimized dependencies changed. reloading`，同代码热缓存重跑1通过（19.9s），已单独登记冷启动问题；这些编辑器结果不计为 primitive 换源回归证据。
+- 真实浏览器复验：Chromium 156.0.8078.73、960×600、DPR2，临时挂载与永久 fixture 相同的组件；成功→坏源后 `error`、Image `display:none`、Fallback `display:flex`；坏源→正常、正常→空源→正常均通过，Root／Image始终相同。依赖补丁后重启开发服务，避免旧 Vite 模块缓存；临时验收源码已删除。
+- 本独立线程媒体：`.amp/in/artifacts/avatar-source-loaded.png`、`avatar-source-error.png`、`avatar-source-switch.mp4`／`.loop.webp`。已检查成功／失败截图及录像5fps联系表；录像展示真实指针经过邻近按钮、换坏源、恢复图片。执行记录见[修复线程](https://ampcode.com/threads/T-01a19ced-b9fe-70dc-9b65-cd889386d15f)。
+- 分发边界：本修复由本仓库 `patchedDependencies` 应用，不宣称 npm 未打补丁的 Bits UI 或独立 registry 消费者已修复；独立消费者若只安装原版 `bits-ui@2.20.0`，仍需应用同等补丁。未发布包或部署站点；本节不将 E9 的 key 重建验收计为 primitive 换源证据。
+
+## 独立消费者补丁交付验收（2026-11-02）
+
+沿用现有显式补丁安装合同：消费者复制当前 `patches/bits-ui@2.20.0.patch` 与 toolbelt 补丁，并合并 `docs/e2e/fixtures/pnpm-workspace.yaml` 的配置后执行 `pnpm install`。未增加 CLI 自动改写包管理器配置的机制，不替换 Avatar 包装层，不升级 Bits UI，不将原版 npm 包描述为已修复。上述分发边界现已通过独立工程验证；不应用补丁的工程仍不在修复保证内。
+
+- 永久回归扩展 `docs/scripts/check-consumer.ts` 和 `docs/e2e/fixtures/consumer.svelte`：在工作区外的临时 SvelteKit 工程安装本地 CLI tarball，经真实 registry `add avatar` 获取组件；两张本地图片随测试复制进消费者，不从文档站或外部头像服务加载图片。消费者自身执行 `strict: true`、`skipLibCheck: false` 的检查及生产构建，再用 Chromium 打开消费者的生产 preview。
+- 浏览器依次检查初始成功→坏源→另一张正常图片→空源→恢复；Root／Image／Fallback 的 `data-status`、Image 与 Fallback 的可见性、正常图片 `naturalWidth>0`／坏源 `naturalWidth=0` 均有断言，且每步确认 Root 和 Image 节点身份不变。测试中没有 key 重建、手动改加载状态或注入仓库组件别名。
+- 负对照：临时脚本仅从消费者所复制的 Bits 补丁中移除 Avatar 运行时 hunk，保留既有类型补丁，其他流程和断言相同。Node 24.22.2／pnpm 12.14.0 下安装、严格检查与生产构建均成功，切坏源后断言失败：Expected `error`、Received `loaded`。这证明新回归能检出消费者遗漏运行时补丁，而非只验证编译成功。临时脚本及消费者工程已清理。
+- 正对照与最终脚本：同一工具链下执行 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=<orb Chromium> pnpm --filter docs test:consumer`，完成真实安装、消费者检查0 errors／0 warnings、生产构建及全部浏览器合同；决定性输出为 `PASS independent tarball install, strict check/build, same-instance Avatar source changes, reset/tag/Slider contracts and installed workbench CSS/Dialog/Accordion/Tooltip defaults`。临时DPR2截图采集代码已移除，最终无截图插桩版本再次完整通过。
+- 文档：中英文 Installation 不再声称补丁仅改类型，明确 Avatar 运行时补丁不受 `skipLibCheck` 开关影响；已有消费者需更新补丁并重新安装以更新锁文件。Avatar 安装页链接该说明，手动安装命令固定到已验证的 `bits-ui@2.20.0`。已检查中英文渲染和中文跨页锚点实际导航，未扩大其他依赖版本或包管理器的支持承诺。
+- `pnpm test`：全仓634通过；`pnpm --filter docs check`：0 errors／0 warnings；中英文结构检查124文档通过；定向 ESLint、oxfmt、`git diff --check` 通过。消费者既有表单、Slider、工作台CSS及 Dialog／Accordion／Tooltip 合同未删除且全部通过。
+- 本线程截图：`.amp/in/artifacts/avatar-consumer-loaded.png`／`avatar-consumer-error.png` 为真实独立消费者的成功／坏源状态；`avatar-consumer-installation-en.png`／`avatar-consumer-installation-zh.png` 为安装说明。均已检查。截图仅辅助展示，行为结论以执行过的断言为准。
+- 工具链备注：本轮发现 orb 普通与登录 shell 默认意外选中 Node 26；正式正反消费者验收及检查已显式加载 nvm 并选择仓库指定 Node 24.22.2。setup／resume 的 PATH 优先级缺口已另行建议修复，不在此改动生命周期脚本。
+
+交付状态：消费者补丁安装路径及实际运行验收完成，按用户后续授权随 Avatar 修复统一提交推送；实际提交链接与远端 CI 状态见本修复线程。未发布包或部署站点。

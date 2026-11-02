@@ -12,7 +12,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
-import { chromium } from "@playwright/test";
+import { chromium, expect } from "@playwright/test";
 import { DEFAULT_PRESET_CONFIG, encodePreset } from "@valar/svelte-cli/preset";
 import { defaultPreset } from "../src/lib/features/workbench/model.js";
 
@@ -64,6 +64,12 @@ try {
 	for (const patch of ["bits-ui@2.20.0.patch", "svelte-toolbelt@0.10.6.patch"]) {
 		copyFileSync(path.join(root, "patches", patch), path.join(app, "patches", patch));
 	}
+	for (const id of ["01", "02"]) {
+		copyFileSync(
+			path.join(docs, `static/avatars/${id}.png`),
+			path.join(app, `static/avatar-${id}.png`)
+		);
+	}
 	writeFileSync(path.join(app, "src/app.css"), '@import "tailwindcss";\n');
 	writeFileSync(
 		path.join(app, "src/routes/+layout.svelte"),
@@ -98,7 +104,7 @@ try {
 		"--reinstall",
 		"--no-deps-install",
 	]);
-	run(cli, ["add", "number-field", "tags-input", "stepper", "slider", "--yes"]);
+	run(cli, ["add", "avatar", "number-field", "tags-input", "stepper", "slider", "--yes"]);
 	const workbenchPreset = structuredClone(defaultPreset);
 	Object.assign(workbenchPreset.values, {
 		"button.height": 58,
@@ -203,6 +209,43 @@ try {
 	try {
 		const page = await browser.newPage();
 		await page.goto("http://127.0.0.1:5199", { waitUntil: "networkidle" });
+		const avatarGroup = page.getByRole("group", { name: "Avatar source changes", exact: true });
+		const avatar = avatarGroup.locator('[data-slot="avatar"]');
+		const image = avatar.locator('[data-slot="avatar-image"]');
+		const fallback = avatar.locator('[data-slot="avatar-fallback"]');
+		const originalRoot = await avatar.elementHandle();
+		const originalImage = await image.elementHandle();
+		for (const [button, status] of [
+			[null, "loaded"],
+			["Break avatar", "error"],
+			["Restore avatar", "loaded"],
+			["Clear avatar", "error"],
+			["Restore avatar", "loaded"],
+		] as const) {
+			if (button) await avatarGroup.getByRole("button", { name: button, exact: true }).click();
+			await expect(avatar).toHaveAttribute("data-status", status);
+			await expect(image).toHaveAttribute("data-status", status);
+			await expect(fallback).toHaveAttribute("data-status", status);
+			if (status === "loaded") {
+				await expect(image).toBeVisible();
+				await expect
+					.poll(() => image.evaluate((node: HTMLImageElement) => node.naturalWidth))
+					.toBeGreaterThan(0);
+				await expect(fallback).toBeHidden();
+			} else {
+				await expect(image).toBeHidden();
+				await expect(image).toHaveJSProperty("naturalWidth", 0);
+				await expect(fallback).toBeVisible();
+			}
+			assert.equal(
+				await avatar.evaluate((node, original) => node === original, originalRoot),
+				true
+			);
+			assert.equal(
+				await image.evaluate((node, original) => node === original, originalImage),
+				true
+			);
+		}
 		const amount = page.getByRole("spinbutton", { name: "Amount", exact: true });
 		await amount.fill("1.2");
 		await page.getByRole("button", { name: "Reset", exact: true }).click();
@@ -284,7 +327,7 @@ try {
 			await tooltip.getAttribute("id")
 		);
 		console.log(
-			"PASS independent tarball install, strict check/build, reset/tag/Slider contracts and installed workbench CSS/Dialog/Accordion/Tooltip defaults"
+			"PASS independent tarball install, strict check/build, same-instance Avatar source changes, reset/tag/Slider contracts and installed workbench CSS/Dialog/Accordion/Tooltip defaults"
 		);
 	} finally {
 		await browser.close();
