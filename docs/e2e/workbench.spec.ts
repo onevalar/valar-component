@@ -1,4 +1,8 @@
+import { execFileSync } from "node:child_process";
+import { readFileSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { test, expect, devices, type Page } from "@playwright/test";
+import { applyStyleOverrides } from "../src/lib/features/workbench/style-overrides.js";
 
 async function setNumber(page: Page, label: string, value: number) {
 	const control = page.getByRole("slider", { name: label, exact: true });
@@ -8,6 +12,191 @@ async function setNumber(page: Page, label: string, value: number) {
 	await input.fill(String(value));
 	await input.press("Enter");
 }
+
+// Opt-in because this contract writes local development sources. Run alone with --workers 1.
+test("Avatar editor dev writeback refreshes the registry baseline and subsequent important badge drafts", async ({
+	page,
+}) => {
+	test.skip(
+		process.env.E2E_WRITEBACK !== "1",
+		"Requires a development server and explicit source-write opt-in"
+	);
+	test.setTimeout(120_000);
+	const file = resolve("src/lib/registry/styles/valar/style-nova.css");
+	const original = readFileSync(file, "utf8");
+	const written = applyStyleOverrides(original, {
+		style: "nova",
+		classes: {
+			"cn-avatar": "data-[size=sm]:size-7 size-11",
+			"cn-avatar-group-count":
+				"group-has-data-[size=sm]/avatar-group:size-7 group-has-data-[size=sm]/avatar-group:[&>svg]:size-3.5 size-11 [&>svg]:size-5.5",
+			"cn-avatar-badge":
+				"group-data-[size=sm]/avatar:size-2.25! group-data-[size=default]/avatar:size-3.25!",
+		},
+	});
+	try {
+		await page.goto("/docs/components/avatar", { waitUntil: "networkidle" });
+		await page.getByRole("button", { name: "微调 Avatar", exact: true }).click();
+		await setNumber(page, "小 · 尺寸（px）", 28);
+		await setNumber(page, "默认 · 尺寸（px）", 44);
+		await page.getByRole("button", { name: "写回组件库…", exact: true }).click();
+		const response = page.waitForResponse(
+			(r) => r.url().endsWith("/__valar/style-overrides") && r.request().method() === "POST"
+		);
+		await page.getByRole("button", { name: "确认写回", exact: true }).click();
+		const result = await response;
+		expect(result.status()).toBe(200);
+		expect(readFileSync(file, "utf8")).toBe(written);
+		await expect(page.getByRole("button", { name: "微调 Avatar", exact: true })).toBeEnabled({
+			timeout: 30_000,
+		});
+		await expect(page.locator('.sample [data-slot="avatar"]').first()).toHaveCSS("width", "44px");
+		await page.getByRole("button", { name: "微调 Avatar", exact: true }).click();
+		await expect(
+			page.getByRole("slider", { name: "默认 · 尺寸（px）", exact: true })
+		).toHaveAttribute("aria-valuenow", "44");
+		const badge = page
+			.getByRole("dialog", { name: "Avatar · 组件参数", exact: true })
+			.locator('[data-tuning-current] [data-size="sm"] [data-slot="avatar-badge"]')
+			.first();
+		await expect(badge).toHaveCSS("width", "9px");
+		await setNumber(page, "小 · 尺寸（px）", 64);
+		await expect(badge).toHaveCSS("width", "18px");
+	} finally {
+		expect([original, written], "Concurrent style edits detected; refusing to overwrite").toContain(
+			readFileSync(file, "utf8")
+		);
+		writeFileSync(file, original);
+		execFileSync("pnpm", ["build:registry"], { cwd: process.cwd(), stdio: "pipe" });
+	}
+});
+
+test("Avatar editor links asymmetric sizes to badges and mixed group counts and preserves image recovery", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/avatar", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Avatar", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Avatar · 组件参数" });
+	await expect(editor.getByTestId("avatar-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const root = current.locator('[data-slot="avatar"][data-size="sm"]').first();
+	const badge = current
+		.locator('[data-slot="avatar"][data-size="sm"] [data-slot="avatar-badge"]')
+		.first();
+	const mixed = current.locator(
+		'[data-slot="avatar-group"][aria-label="混合尺寸协作成员"] [data-slot="avatar-group-count"]'
+	);
+	await expect(root.locator('[data-slot="avatar-image"]')).toBeVisible();
+	await setNumber(page, "小 · 尺寸（px）", 64);
+	await setNumber(page, "默认 · 尺寸（px）", 20);
+	await setNumber(page, "大 · 尺寸（px）", 36);
+	await expect(root).toHaveCSS("width", "64px");
+	await expect(badge).toHaveCSS("width", "18px");
+	await expect(badge.locator("svg")).toBeHidden();
+	await expect(mixed).toHaveCSS("width", "64px");
+	await expect(mixed.locator("svg")).toHaveCSS("width", "32px");
+	await editor.getByRole("button", { name: /^圆角档位/ }).click();
+	await page.getByRole("option", { name: "none · 直角", exact: true }).click();
+	await expect(root).toHaveCSS("border-radius", "0px");
+	await expect(root.locator('[data-slot="avatar-image"]')).toHaveCSS("border-radius", "0px");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.locator('[data-slot="avatar"][data-size="sm"]').first()).toHaveCSS(
+		"width",
+		"24px"
+	);
+	const members = current.locator('[data-slot="item-group"]');
+	await current.getByRole("button", { name: "模拟成员图片失败", exact: true }).press("Enter");
+	for (let index = 0; index < 3; index++) {
+		await expect(members.locator('[data-slot="avatar-fallback"]').nth(index)).toBeVisible();
+		await expect(members.locator('[data-slot="avatar-image"]').nth(index)).toBeHidden();
+	}
+	await expect(before.getByRole("status")).toContainText("使用本地成员图片");
+	await current.getByRole("button", { name: "恢复成员图片", exact: true }).press("Space");
+	for (let index = 0; index < 3; index++) {
+		await expect(members.locator('[data-slot="avatar-image"]').nth(index)).toBeVisible();
+		await expect(members.locator('[data-slot="avatar-fallback"]').nth(index)).toBeHidden();
+	}
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await setNumber(page, "默认 · 尺寸（px）", 64);
+	await setNumber(page, "大 · 尺寸（px）", 64);
+	expect(await current.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor.getByRole("textbox", { name: "Avatar 版本名称", exact: true }).fill("头像联动");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	await expect(page.locator('.sample [data-slot="avatar"]').first()).toHaveCSS("width", "64px");
+	await opener.click();
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	await editor.getByRole("combobox", { name: "Avatar 对比版本", exact: true }).selectOption("");
+	await expect(editor.locator('[data-tuning-before] [data-slot="avatar"]').first()).toHaveCSS(
+		"width",
+		"24px"
+	);
+});
+
+test("Item editor keeps independent size density and native list actions while comparing and saving", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/item", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Item", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Item · 组件参数" });
+	await expect(editor.getByTestId("item-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const normal = current.locator('[data-item-sample="default-default"]');
+	const small = current.locator('[data-item-sample="sm-outline"]');
+	const tiny = current.locator('[data-item-sample="xs-muted"]');
+	await expect(normal).not.toHaveAttribute("data-size");
+	await expect(current.getByRole("list")).toHaveCount(3);
+	await expect(current.getByRole("listitem")).toHaveCount(9);
+	await setNumber(page, "默认 · 横向留白（px）", 30);
+	await setNumber(page, "默认 · 纵向留白（px）", 2);
+	await setNumber(page, "小 · 媒体／内容间距（px）", 22);
+	await setNumber(page, "特小 · 横向留白（px）", 4);
+	await expect(normal).toHaveCSS("padding-left", "30px");
+	await expect(normal).toHaveCSS("padding-top", "2px");
+	await expect(small).toHaveCSS("padding-left", "12px");
+	await expect(small).toHaveCSS("gap", "22px");
+	await expect(tiny).toHaveCSS("padding-left", "4px");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.locator('[data-item-sample="default-default"]')).toHaveCSS(
+		"padding-left",
+		"12px"
+	);
+	const action = normal.getByRole("button");
+	const height = await action.evaluate((el) => el.getBoundingClientRect().height);
+	await action.focus();
+	await page.keyboard.press("Space");
+	await expect(action).toHaveAttribute("aria-pressed", "true");
+	await expect(before.getByRole("status")).toContainText("已标记 0 行");
+	await current.getByRole("link", { name: "查看本画布的列表说明", exact: true }).click();
+	await expect(page).toHaveURL(/#.*-current-help$/);
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	for (const size of ["默认", "小", "特小"]) {
+		await setNumber(page, `${size} · 横向留白（px）`, 32);
+		await setNumber(page, `${size} · 纵向留白（px）`, 24);
+		await setNumber(page, `${size} · 媒体／内容间距（px）`, 24);
+	}
+	expect(await current.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	expect(await action.evaluate((el) => el.getBoundingClientRect().height)).toBe(height);
+	await editor.getByRole("textbox", { name: "Item 版本名称", exact: true }).fill("列表密度");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	await expect(page.locator('.sample [data-slot="item"]').first()).toHaveCSS(
+		"padding-left",
+		"32px"
+	);
+});
 
 test("Accordion editor keeps single and multiple keyboard behavior while aligning tuned content", async ({
 	page,

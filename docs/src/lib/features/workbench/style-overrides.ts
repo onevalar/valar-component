@@ -150,6 +150,23 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-context-menu-separator": DROPDOWN_MENU_SEPARATOR_UTILITY,
 	"cn-tooltip-content": TOOLTIP_CONTENT_UTILITY,
 	"cn-tooltip-provider": TOOLTIP_PROVIDER_UTILITY,
+	"cn-avatar": new RegExp(
+		`^(?:(?:data-\\[size=(?:sm|lg)\\]:)?size-(?:[5-9]|1[0-6])|(?:after:)?rounded-${RADIUS})$`
+	),
+	"cn-avatar-image": new RegExp(`^rounded-${RADIUS}$`),
+	"cn-avatar-fallback": new RegExp(`^rounded-${RADIUS}$`),
+	"cn-avatar-group-count": new RegExp(
+		`^(?:(?:group-has-data-\\[size=(?:sm|lg)\\]/avatar-group:)?(?:size-(?:[5-9]|1[0-6])|\\[&>svg\\]:size-(?:2\\.5|[3-7](?:\\.5)?|8))|rounded-${RADIUS})$`
+	),
+	"cn-avatar-badge":
+		/^group-data-\[size=(?:sm|default|lg)\]\/avatar:size-(?:1\.75|[23](?:\.(?:25|5|75))?|4(?:\.(?:25|5))?)!$/,
+	"cn-item": new RegExp(`^rounded-${RADIUS}$`),
+	...Object.fromEntries(
+		["default", "sm", "xs"].map((size) => [
+			`cn-item-size-${size}`,
+			/^(?:px-(?:[0-7](?:\.5)?|8)|(?:py|gap)-(?:[0-5](?:\.5)?|6))$/,
+		])
+	),
 	"cn-alert": new RegExp(
 		`^(?:px-(?:[0-7](?:\\.5)?|8)|py-(?:[0-5](?:\\.5)?|6)|gap-y-(?:[0-3](?:\\.5)?|4)|rounded-${RADIUS})$`
 	),

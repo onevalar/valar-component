@@ -2,6 +2,7 @@
 	import AccordionTuner from "$lib/features/workbench/accordion-tuner.svelte";
 	import AlertDialogTuner from "$lib/features/workbench/alert-dialog-tuner.svelte";
 	import AlertTuner from "$lib/features/workbench/alert-tuner.svelte";
+	import AvatarTuner from "$lib/features/workbench/avatar-tuner.svelte";
 	import BadgeTuner from "$lib/features/workbench/badge-tuner.svelte";
 	import ButtonTuner from "$lib/features/workbench/button-tuner.svelte";
 	import CardTuner from "$lib/features/workbench/card-tuner.svelte";
@@ -15,6 +16,7 @@
 	import InputGroupTuner from "$lib/features/workbench/input-group-tuner.svelte";
 	import InputOtpTuner from "$lib/features/workbench/input-otp-tuner.svelte";
 	import InputTuner from "$lib/features/workbench/input-tuner.svelte";
+	import ItemTuner from "$lib/features/workbench/item-tuner.svelte";
 	import NativeSelectTuner from "$lib/features/workbench/native-select-tuner.svelte";
 	import PopoverTuner from "$lib/features/workbench/popover-tuner.svelte";
 	import RadioGroupTuner from "$lib/features/workbench/radio-group-tuner.svelte";
@@ -103,6 +105,8 @@
 						"accordion-demo",
 						"alert-dialog-demo",
 						"alert-demo",
+						"avatar-demo",
+						"item-demo",
 						"empty-demo",
 						"badge-demo",
 						"table-demo",
@@ -141,6 +145,10 @@
 				<AlertDialogTuner>{@render PreviewExample()}</AlertDialogTuner>
 			{:else if name === "alert-demo"}
 				<AlertTuner>{@render PreviewExample()}</AlertTuner>
+			{:else if name === "avatar-demo"}
+				<AvatarTuner>{@render PreviewExample()}</AvatarTuner>
+			{:else if name === "item-demo"}
+				<ItemTuner>{@render PreviewExample()}</ItemTuner>
 			{:else if name === "empty-demo"}
 				<EmptyTuner>{@render PreviewExample()}</EmptyTuner>
 			{:else if name === "badge-demo"}

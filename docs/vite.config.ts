@@ -69,6 +69,10 @@ function flattenedRegistry(): Plugin {
 	const QUERY = "flattened";
 	const rawUiDir = path.join(__dirname, "src/lib/registry/ui");
 	const stylesDir = path.join(__dirname, "src/lib/registry/styles");
+	const registryDirs = [
+		path.join(__dirname, "src/__registry__"),
+		path.join(__dirname, "static/registry"),
+	];
 	const flattenedImporters = [
 		path.join(__dirname, "src/lib/registry/examples"),
 		path.join(__dirname, "src/lib/registry/blocks"),
@@ -234,7 +238,9 @@ function flattenedRegistry(): Plugin {
 								for (const mod of env.moduleGraph.idToModuleMap.values())
 									if (
 										mod.id &&
-										(isFlattened(mod.id) || mod.file === path.join(__dirname, "src/app.css"))
+										(isFlattened(mod.id) ||
+											mod.file === path.join(__dirname, "src/app.css") ||
+											(mod.file && within(mod.file, registryDirs)))
 									)
 										env.moduleGraph.invalidateModule(mod);
 							reply(200, {
@@ -273,6 +279,8 @@ function flattenedRegistry(): Plugin {
 		},
 		hotUpdate({ file }) {
 			const normalized = path.normalize(file);
+			// Generated files are replaced in batches; the write endpoint reloads once all are ready.
+			if (writing && within(normalized, registryDirs)) return [];
 			if (!normalized.startsWith(stylesDir + path.sep) || !normalized.endsWith(".css")) return;
 			styleMaps.clear();
 			// During a write-back the page reloads itself once the registry rebuild is done.

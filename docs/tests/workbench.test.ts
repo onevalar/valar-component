@@ -28,6 +28,11 @@ import {
 	parseAlertSource,
 } from "../src/lib/features/workbench/alert-tuning.js";
 import {
+	AVATAR_SPEC,
+	avatarOverrideClasses,
+	parseAvatarSource,
+} from "../src/lib/features/workbench/avatar-tuning.js";
+import {
 	BADGE_SPEC,
 	badgeOverrideClasses,
 	parseBadgeSource,
@@ -76,6 +81,11 @@ import {
 	parseInputOtpSource,
 } from "../src/lib/features/workbench/input-otp-tuning.js";
 import { inputOverrideClasses } from "../src/lib/features/workbench/input-tuning.js";
+import {
+	ITEM_SPEC,
+	itemOverrideClasses,
+	parseItemSource,
+} from "../src/lib/features/workbench/item-tuning.js";
 import { parseMenuSource, type MenuOverrides } from "../src/lib/features/workbench/menu-tuning.js";
 import {
 	COMPONENTS,
@@ -1017,6 +1027,139 @@ const registryFiles = (component: string, style: string) =>
 		.files as { target: string; content: string }[];
 const emptyOverrides = (style: string) =>
 	readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
+
+describe("Avatar editor installation contract", () => {
+	it("roundtrips asymmetric sizes with matching count, badge and radius without accumulating offsets", () => {
+		for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"]) {
+			const original = registryFiles("avatar", style);
+			expect(parseAvatarSource(original).values).toEqual({
+				"sm.size": 24,
+				"default.size": 32,
+				"lg.size": 40,
+				radius: "full",
+			});
+			let css = emptyOverrides(style);
+			for (const values of [
+				{ "sm.size": 64, "default.size": 20, "lg.size": 36, radius: "none" },
+				{ "sm.size": 28, "default.size": 60, "lg.size": 20, radius: "md" },
+			] as const) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({ style, classes: avatarOverrideClasses(values) })
+				);
+				const files = original
+					.filter((f) => f.target.endsWith(".svelte"))
+					.map((f) => ({
+						target: f.target,
+						content: installed("avatar", style, css, f.target.split("/").at(-1)!),
+					}));
+				expect(parseAvatarSource(files).values).toEqual(values);
+				for (const file of files)
+					expect(() => compile(file.content, { filename: file.target })).not.toThrow();
+				expect(installed("avatar", style, css, "avatar-group.svelte")).toBe(
+					installed("avatar", style, emptyOverrides(style), "avatar-group.svelte")
+				);
+			}
+		}
+		for (const size of Array.from({ length: 12 }, (_, i) => 20 + i * 4))
+			expect(
+				styleOverridePayloadSchema.safeParse({
+					style: "nova",
+					classes: avatarOverrideClasses({
+						"sm.size": size,
+						"default.size": size,
+						"lg.size": size,
+					}),
+				}).success
+			).toBe(true);
+		for (const values of [
+			{ "sm.size": 22 },
+			{ "lg.size": 68 },
+			{ "default.size": 16 },
+			{ overlap: 4 },
+		])
+			expect(() => AVATAR_SPEC.overrideClasses(values as never, null)).toThrow();
+		for (const classes of [
+			{ "cn-avatar": "size-17" },
+			{ "cn-avatar-badge": "group-data-[size=sm]/avatar:size-2" },
+			{ "cn-avatar-badge": "bg-primary" },
+			{ "cn-avatar-group-count": "text-xl" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+		expect(avatarOverrideClasses({ radius: "style" })).toEqual({});
+		expect(() => parseAvatarSource([])).toThrow();
+	});
+});
+
+describe("Item editor installation contract", () => {
+	it("preserves independent size density, dropdown padding and all child component styles", () => {
+		for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"]) {
+			const original = registryFiles("item", style);
+			const baseline = parseItemSource(original).values;
+			expect(baseline["default.paddingX"]).toBe(["nova", "lyra", "mira"].includes(style) ? 12 : 16);
+			let css = emptyOverrides(style);
+			for (const values of [
+				{
+					"default.paddingX": 30,
+					"default.paddingY": 0,
+					"default.gap": 22,
+					"sm.paddingX": 6,
+					"sm.paddingY": 14,
+					"sm.gap": 2,
+					"xs.paddingX": 18,
+					"xs.paddingY": 24,
+					"xs.gap": 0,
+					radius: "full",
+				},
+				{
+					"default.paddingX": 0,
+					"default.paddingY": 22,
+					"default.gap": 4,
+					"sm.paddingX": 32,
+					"sm.paddingY": 2,
+					"sm.gap": 24,
+					"xs.paddingX": 4,
+					"xs.paddingY": 0,
+					"xs.gap": 18,
+					radius: "none",
+				},
+			] as const) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({ style, classes: itemOverrideClasses(values) })
+				);
+				const content = installed("item", style, css, "item.svelte");
+				expect(parseItemSource([{ target: "item.svelte", content }]).values).toEqual(values);
+				expect(content).toContain("in-data-[slot=dropdown-menu-content]:p-0");
+				expect(() => compile(content, { filename: "item.svelte" })).not.toThrow();
+				for (const file of original.filter(
+					(f) => f.target.endsWith(".svelte") && !f.target.endsWith("/item.svelte")
+				)) {
+					const name = file.target.split("/").at(-1)!;
+					expect(installed("item", style, css, name)).toBe(
+						installed("item", style, emptyOverrides(style), name)
+					);
+				}
+			}
+		}
+		for (const values of [
+			{ "sm.gap": 3 },
+			{ "xs.paddingY": 26 },
+			{ "default.paddingX": -2 },
+			{ fontSize: 14 },
+		])
+			expect(() => ITEM_SPEC.overrideClasses(values as never, null)).toThrow();
+		for (const classes of [
+			{ "cn-item": "bg-primary" },
+			{ "cn-item-size-sm": "px-8.5" },
+			{ "cn-item-size-xs": "py-6.5" },
+			{ "cn-item-content": "gap-2" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+		expect(itemOverrideClasses({ radius: "style" })).toEqual({});
+		expect(() => parseItemSource([])).toThrow();
+	});
+});
 
 describe("Accordion editor installation contract", () => {
 	it("keeps title and animated content aligned across all styles and successive asymmetric changes", () => {
