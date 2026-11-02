@@ -83,7 +83,7 @@ test("full-text search loads on demand, retries failures and shares an in-flight
 	await expect(volume).toHaveAttribute("aria-valuenow", "76");
 	expect(requests).toBe(0);
 	const open = page.getByRole("button", { name: "Search documentation", exact: true });
-	const query = page.getByRole("combobox");
+	const query = page.getByRole("dialog").getByRole("combobox");
 	await open.click();
 	await query.fill("upstream-source-manifest");
 	await expect(page.getByRole("status")).toContainText("Full-text search unavailable");

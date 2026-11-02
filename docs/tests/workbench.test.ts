@@ -65,6 +65,10 @@ import {
 	sheetOverrideClasses,
 } from "../src/lib/features/workbench/sheet-tuning.js";
 import {
+	parseSliderSource,
+	sliderOverrideClasses,
+} from "../src/lib/features/workbench/slider-tuning.js";
+import {
 	applyStyleOverrides,
 	styleOverridePayloadSchema,
 } from "../src/lib/features/workbench/style-overrides.js";
@@ -80,6 +84,14 @@ import {
 	tabsOverrideClasses,
 } from "../src/lib/features/workbench/tabs-tuning.js";
 import { textareaOverrideClasses } from "../src/lib/features/workbench/textarea-tuning.js";
+import {
+	parseToggleGroupSource,
+	toggleGroupOverrideClasses,
+} from "../src/lib/features/workbench/toggle-group-tuning.js";
+import {
+	parseToggleSource,
+	toggleOverrideClasses,
+} from "../src/lib/features/workbench/toggle-tuning.js";
 import {
 	parseTooltipSource,
 	tooltipOverrideClasses,
@@ -960,6 +972,185 @@ const registryFiles = (component: string, style: string) =>
 		.files as { target: string; content: string }[];
 const emptyOverrides = (style: string) =>
 	readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
+
+describe("Toggle, Toggle Group and Slider editors preserve shared and directional geometry", () => {
+	it("roundtrips joined Group contours without owning shared Toggle sizes or icon insets", () => {
+		for (const [style, padding, radius] of [
+			["nova", 8, "style"],
+			["vega", 8, "md"],
+			["lyra", 8, "none"],
+			["maia", 12, "style"],
+			["mira", 8, "style"],
+			["luma", 12, "3xl"],
+			["rhea", 8, "2xl"],
+			["sera", 24, "none"],
+		] as const) {
+			expect(parseToggleGroupSource(registryFiles("toggle-group", style)).values).toEqual({
+				joinedPaddingX: padding,
+				joinedRadius: radius,
+			});
+			expect(toggleGroupOverrideClasses({ joinedRadius: "style" })).toEqual({});
+			let css = emptyOverrides(style);
+			for (const joinedPaddingX of [46, 2]) {
+				const changes = { joinedPaddingX, joinedRadius: "xl" } as const;
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({
+						style,
+						classes: toggleGroupOverrideClasses(changes),
+					})
+				);
+				const files = ["toggle-group", "toggle-group-item"].map((name) => ({
+					target: `${name}.svelte`,
+					content: installed("toggle-group", style, css, `${name}.svelte`),
+				}));
+				expect(parseToggleGroupSource(files).values).toEqual(changes);
+				expect(files[1].content).toContain(
+					"group-data-vertical/toggle-group:data-[spacing=0]:last:rounded-b-xl"
+				);
+				expect(files[1].content).toContain("has-data-[icon=inline-start]:pl-");
+				expect(
+					parseToggleSource([
+						{ target: "toggle.svelte", content: installed("toggle", style, css, "toggle.svelte") },
+					]).values
+				).toEqual(parseToggleSource(registryFiles("toggle", style)).values);
+			}
+		}
+	});
+
+	it("reads all Toggle sizes and writes shared geometry without removing icon insets", () => {
+		for (const [style, heights, padding, radius] of [
+			["nova", [28, 32, 36], [10, 10, 10], "style"],
+			["vega", [32, 36, 40], [10, 10, 10], "md"],
+			["lyra", [28, 32, 36], [10, 10, 10], "none"],
+			["maia", [32, 36, 40], [12, 12, 16], "4xl"],
+			["mira", [24, 28, 32], [8, 8, 10], "style"],
+			["luma", [32, 36, 40], [12, 12, 16], "3xl"],
+			["rhea", [28, 32, 36], [10, 10, 10], "2xl"],
+			["sera", [36, 40, 44], [16, 24, 32], "none"],
+		] as const) {
+			const baseline = parseToggleSource(registryFiles("toggle", style)).values;
+			for (const [i, size] of ["sm", "default", "lg"].entries()) {
+				expect(baseline[`${size}.height` as keyof typeof baseline]).toBe(heights[i]);
+				expect(baseline[`${size}.paddingX` as keyof typeof baseline]).toBe(padding[i]);
+			}
+			expect(baseline.radius).toBe(radius);
+			expect(baseline.gap).toBe(style === "sera" ? 6 : 4);
+			expect(toggleOverrideClasses({ radius: "style" })).toEqual({});
+			const changes = {
+				"sm.height": 22,
+				"default.height": 46,
+				"lg.paddingX": 18,
+				gap: 10,
+				radius: "xl",
+			} as const;
+			const css = applyStyleOverrides(
+				emptyOverrides(style),
+				styleOverridePayloadSchema.parse({
+					style,
+					classes: toggleOverrideClasses(changes),
+				})
+			);
+			const content = installed("toggle", style, css, "toggle.svelte");
+			expect(parseToggleSource([{ target: "toggle.svelte", content }]).values).toEqual({
+				...baseline,
+				...changes,
+			});
+			expect(content).toContain("min-w-5.5");
+			expect(content).toContain("min-w-11.5");
+			expect(content).toContain(
+				`has-data-[icon=inline-start]:pl-${style === "sera" ? 5 : style === "maia" || style === "luma" ? 3 : 2}`
+			);
+			expect(content).toContain("data-size={size}");
+			// A shared Toggle write must not replace Group's joined treatment.
+			expect(installed("toggle-group", style, css, "toggle-group-item.svelte")).toContain(
+				"group-data-[spacing=0]/toggle-group:rounded-none"
+			);
+			const second = applyStyleOverrides(
+				css,
+				styleOverridePayloadSchema.parse({
+					style,
+					classes: toggleOverrideClasses({ "default.height": 24 }),
+				})
+			);
+			expect(
+				parseToggleSource([
+					{ target: "toggle.svelte", content: installed("toggle", style, second, "toggle.svelte") },
+				]).values
+			).toEqual({ ...baseline, ...changes, "default.height": 24 });
+		}
+	});
+
+	it("roundtrips Slider extremes and Luma's long side in both orientations without accumulating offsets", () => {
+		for (const [style, thickness, thumb, radius] of [
+			["nova", 4, 12, "full"],
+			["vega", 6, 16, "full"],
+			["lyra", 4, 12, "none"],
+			["maia", 12, 16, "4xl"],
+			["mira", 4, 12, "md"],
+			["luma", 8, 16, "full"],
+			["rhea", 4, 16, "2xl"],
+			["sera", 2, 12, "style"],
+		] as const) {
+			let baseline = parseSliderSource(registryFiles("slider", style));
+			expect(baseline.values).toEqual({
+				trackThickness: thickness,
+				thumbSize: thumb,
+				trackRadius: radius,
+				thumbRadius: radius,
+			});
+			expect(baseline.context.thumbSizeDelta).toBe(style === "luma" ? 8 : 0);
+			let css = emptyOverrides(style);
+			for (const [size, track] of [
+				[32, 14],
+				[12, 2],
+			]) {
+				const changes = {
+					thumbSize: size,
+					trackThickness: track,
+					trackRadius: "md",
+					thumbRadius: "none",
+				} as const;
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({
+						style,
+						classes: sliderOverrideClasses(changes, baseline.context),
+					})
+				);
+				const content = installed("slider", style, css, "slider.svelte");
+				baseline = parseSliderSource([{ target: "slider.svelte", content }]);
+				expect(baseline.values).toEqual(changes);
+				expect(baseline.context).toEqual({ thumbSizeDelta: style === "luma" ? 8 : 0 });
+				if (style === "luma") {
+					expect(content).toContain(`data-vertical:w-${size / 4}`);
+					expect(content).toContain(`data-vertical:h-${(size + 8) / 4}`);
+				} else expect(content).toContain(`size-${size / 4}`);
+				expect(content).toContain(`data-horizontal:h-${track / 4}`);
+				expect(content).toContain(`data-vertical:w-${track / 4}`);
+				expect(content).toContain("bg-primary");
+				expect(content).toContain("focus-visible:");
+			}
+		}
+	});
+
+	it("rejects unrelated state, business and arbitrary utilities", () => {
+		for (const classes of [
+			{ "cn-toggle": "bg-red-500" },
+			{ "cn-toggle-size-sm": "h-999" },
+			{ "cn-toggle-size-default": "px-[7px]" },
+			{ "cn-toggle": "data-[state=on]:bg-primary" },
+			{ "cn-toggle-group": "gap-4" },
+			{ "cn-toggle-group-item": "group-data-[spacing=0]/toggle-group:px-[7px]" },
+			{ "cn-toggle-group-item": "h-12" },
+			{ "cn-slider": "min-h-80" },
+			{ "cn-slider-range": "bg-muted" },
+			{ "cn-slider-track": "h-2" },
+			{ "cn-slider-thumb": "translate-x-3" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+	});
+});
 
 describe("Selection control write-back preserves state styling and linked geometry", () => {
 	it("resizes Checkbox and its check/minus icons without replacing style-owned radii", () => {

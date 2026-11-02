@@ -9,6 +9,232 @@ async function setNumber(page: Page, label: string, value: number) {
 	await input.press("Enter");
 }
 
+test("Toggle Group editor preserves joined endpoints, selection and shared Toggle ownership", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/toggle-group", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Toggle Group", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Toggle Group · 组件参数" });
+	await expect(editor.getByTestId("toggle-group-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const horizontal = current.getByRole("group", {
+		name: "单选 · 横向 · spacing=0 · default · default",
+		exact: true,
+	});
+	const first = horizontal.getByRole("radio", { name: "概览", exact: true });
+	await first.focus();
+	await page.keyboard.press("ArrowRight");
+	await expect(horizontal.getByRole("radio", { name: "列表", exact: true })).toBeFocused();
+	await page.keyboard.press("Space");
+	await expect(horizontal.getByRole("radio", { name: "列表", exact: true })).toHaveAttribute(
+		"aria-checked",
+		"true"
+	);
+	await setNumber(page, "拼接项文字侧内边距（px）", 30);
+	await editor.getByRole("button", { name: /^拼接圆角档位 / }).click();
+	await page.getByRole("option", { name: "md · 0.8 × 基数", exact: true }).click();
+	await expect(first).toHaveCSS("padding-left", "6px");
+	await expect(first).toHaveCSS("padding-right", "30px");
+	await expect(first).toHaveCSS("border-top-left-radius", "8px");
+	await expect(first).toHaveCSS("border-top-right-radius", "0px");
+	await expect(horizontal.getByRole("radio", { name: "列表", exact: true })).toHaveCSS(
+		"border-radius",
+		"0px"
+	);
+	const vertical = current.getByRole("group", {
+		name: "单选 · 纵向 · spacing=0 · lg · outline",
+		exact: true,
+	});
+	await expect(vertical.getByRole("radio").last()).toHaveCSS("border-bottom-left-radius", "8px");
+	await expect(vertical.getByRole("radio").last()).toHaveCSS("border-top-left-radius", "0px");
+	const multiple = current.getByRole("group", {
+		name: "多选 · 横向 · spacing=0 · sm · outline",
+		exact: true,
+	});
+	await multiple.getByRole("button", { name: "列表", exact: true }).click();
+	await expect(multiple.getByRole("button", { name: "概览", exact: true })).toHaveAttribute(
+		"aria-pressed",
+		"true"
+	);
+	await expect(multiple.getByRole("button", { name: "列表", exact: true })).toHaveAttribute(
+		"aria-pressed",
+		"true"
+	);
+	await expect(multiple.getByRole("button", { name: "禁用", exact: true })).toBeDisabled();
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(
+		before
+			.getByRole("group", { name: "多选 · 横向 · spacing=0 · sm · outline", exact: true })
+			.getByRole("button", { name: "列表", exact: true })
+	).toHaveAttribute("aria-pressed", "false");
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	for (const pane of [before, current])
+		expect(await pane.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor
+		.getByRole("textbox", { name: "Toggle Group 版本名称", exact: true })
+		.fill("拼接工具栏");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「拼接工具栏」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+});
+
+test("Toggle editor shares geometry with Group while preserving joined and icon insets", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	const errors: string[] = [];
+	page.on("pageerror", (error) => errors.push(error.message));
+	await page.goto("/docs/components/toggle", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Toggle", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Toggle · 组件参数" });
+	await expect(editor.getByTestId("toggle-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const row = current.locator('[data-toggle-sample="default-outline"]');
+	const text = row.getByRole("button", { name: "文字", exact: true });
+	await text.focus();
+	await page.keyboard.press("Space");
+	await expect(text).toHaveAttribute("aria-pressed", "true");
+	await expect(text).not.toHaveCSS("box-shadow", "none");
+	await page.keyboard.press("Enter");
+	await expect(text).toHaveAttribute("aria-pressed", "false");
+	await setNumber(page, "默认 · 高度（px）", 46);
+	await setNumber(page, "默认 · 横向内边距（px）", 22);
+	await setNumber(page, "图文间距（px）", 10);
+	await editor.getByRole("button", { name: /^圆角档位 / }).click();
+	await page.getByRole("option", { name: "md · 0.8 × 基数", exact: true }).click();
+	await expect(text).toHaveCSS("height", "46px");
+	await expect(text).toHaveCSS("min-width", "46px");
+	await expect(text).toHaveCSS("padding-left", "22px");
+	await expect(text).toHaveCSS("border-radius", "8px");
+	await expect(row.getByRole("button", { name: "加粗", exact: true })).toHaveCSS(
+		"padding-left",
+		"8px"
+	);
+	const joined = current
+		.getByRole("group", { name: "拼接对齐", exact: true })
+		.getByRole("radio")
+		.first();
+	const spaced = current
+		.getByRole("group", { name: "分离对齐", exact: true })
+		.getByRole("radio")
+		.first();
+	await expect(joined).toHaveCSS("height", "46px");
+	await expect(joined).toHaveCSS("padding-left", "8px");
+	await expect(spaced).toHaveCSS("padding-left", "22px");
+	await expect(spaced).toHaveCSS("gap", "10px");
+	await expect(current.getByRole("button", { name: "禁用已按下", exact: true })).toBeDisabled();
+	await row.getByRole("button", { name: "加粗", exact: true }).click();
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(
+		before
+			.locator('[data-toggle-sample="default-outline"]')
+			.getByRole("button", { name: "加粗", exact: true })
+	).toHaveAttribute("aria-pressed", "true");
+	await expect(
+		before.locator('[data-toggle-sample="default-outline"]').getByRole("button").first()
+	).toHaveCSS("height", "32px");
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await expect(page.locator("html")).not.toHaveClass(/dark/);
+	await page.setViewportSize({ width: 390, height: 1000 });
+	for (const pane of [before, current])
+		expect(await pane.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor.getByRole("textbox", { name: "Toggle 版本名称", exact: true }).fill("大号工具按钮");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「大号工具按钮」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	expect(errors).toEqual([]);
+});
+
+test("Slider editor preserves real directional ranges and keeps comparison values independent", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	const errors: string[] = [];
+	page.on("pageerror", (error) => errors.push(error.message));
+	await page.goto("/docs/components/slider", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Slider", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Slider · 组件参数" });
+	await expect(editor.getByTestId("slider-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const volume = current.getByRole("slider", { name: "音量 · 单值", exact: true });
+	const gain = current.getByRole("slider", { name: "增益 · 单值", exact: true });
+	await volume.focus();
+	await page.keyboard.press("ArrowRight");
+	await expect(volume).toHaveAttribute("aria-valuenow", "38");
+	await page.keyboard.press("End");
+	await expect(volume).toHaveAttribute("aria-valuenow", "100");
+	await page.keyboard.press("Home");
+	await expect(volume).toHaveAttribute("aria-valuenow", "0");
+	await gain.focus();
+	await page.keyboard.press("ArrowUp");
+	await expect(gain).toHaveAttribute("aria-valuenow", "64");
+	const upper = current.getByRole("slider", { name: "亮度上限", exact: true });
+	await upper.focus();
+	await page.keyboard.press("ArrowLeft");
+	await expect(upper).toHaveAttribute("aria-valuenow", "70");
+	await expect(current.getByRole("slider", { name: "亮度下限", exact: true })).toHaveAttribute(
+		"aria-valuenow",
+		"23"
+	);
+	await setNumber(page, "轨道粗细（px）", 14);
+	await setNumber(page, "把手短边（px）", 32);
+	await expect(volume).toHaveCSS("width", "32px");
+	await expect(volume).toHaveCSS("height", "32px");
+	const track = current
+		.locator('[data-slot="slider-track"][data-orientation="horizontal"]')
+		.first();
+	await expect(track).toHaveCSS("height", "14px");
+	await expect(
+		current.locator('[data-slot="slider-track"][data-orientation="vertical"]').first()
+	).toHaveCSS("width", "14px");
+	await track.scrollIntoViewIfNeeded();
+	const box = (await track.boundingBox())!;
+	await page.mouse.move(box.x + 1, box.y + box.height / 2);
+	await page.mouse.down();
+	await page.mouse.move(box.x + box.width * 0.63, box.y + box.height / 2, { steps: 15 });
+	await page.mouse.up();
+	const dragged = Number(await volume.getAttribute("aria-valuenow"));
+	expect(dragged).toBeGreaterThan(55);
+	expect(dragged).toBeLessThan(70);
+	await expect(current.getByRole("slider", { name: "禁用区间下限", exact: true })).toHaveAttribute(
+		"tabindex",
+		"-1"
+	);
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.getByRole("slider", { name: "音量 · 单值", exact: true })).toHaveAttribute(
+		"aria-valuenow",
+		"37"
+	);
+	await expect(before.getByRole("slider", { name: "音量 · 单值", exact: true })).toHaveCSS(
+		"width",
+		"12px"
+	);
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await expect(page.locator("html")).not.toHaveClass(/dark/);
+	await page.setViewportSize({ width: 390, height: 1000 });
+	for (const pane of [before, current])
+		expect(await pane.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor.getByRole("textbox", { name: "Slider 版本名称", exact: true }).fill("粗轨道滑块");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「粗轨道滑块」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	expect(errors).toEqual([]);
+});
+
 test("Checkbox editor preserves mixed state, labels, keyboard focus and comparison isolation", async ({
 	page,
 }) => {

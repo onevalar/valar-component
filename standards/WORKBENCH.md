@@ -32,7 +32,7 @@
 
 **当前进度**（2026-11-01）：第 1–12 步、后续任务 A1–A3、B1–B3 和收尾 D1–D4 均已完成并推送。AI 可做的下一步见“候选任务”，开始前先向用户确认；C1–C3 等用户。`skills/valar-svelte/guides/` 的组合、文案、动效内容由用户编写，AI 不要动。
 
-**组件编辑器推广**（2026-11-02）：Hover Card、Context Menu、Drawer 已完成，见[弹层编辑器验收记录](workbench-acceptance-2026-11-02.md)；Tabs、Card 已完成，见[Tabs／Card 验收记录](workbench-tabs-card-acceptance-2026-11-02.md)。这两批已提交推送至 `main`（[2633f5f](https://github.com/onevalar/valar-svelte/commit/2633f5fd8c96cd7e6ae41a9f6d7b62fcbc257819)），GitHub CI 全部通过。本批 Checkbox、Radio Group、Switch 也已接入并完成本地验收，见[选择控件验收记录](workbench-selection-controls-acceptance-2026-11-02.md)，覆盖增至 **17／68 个**。2026-11-02 用户授权本批提交推送至 `main`；提交及远端CI结果见验收记录所链工作线程的交付回执，不发布包或部署站点。最终本地回归：`pnpm test` 613 项通过、`pnpm check` 通过、生产构建成功、Playwright 33 项通过；真实写回试验值已恢复。其余组件应按实际样式与交互合同逐批接入；后续可考虑 Toggle、Toggle Group、Slider，尚未开始，不扩大旧 Studio 的覆盖范围。
+**组件编辑器推广**（2026-11-02）：Hover Card、Context Menu、Drawer 已完成，见[弹层编辑器验收记录](workbench-acceptance-2026-11-02.md)；Tabs、Card 已完成，见[Tabs／Card 验收记录](workbench-tabs-card-acceptance-2026-11-02.md)。这两批已推送至 `main`（[2633f5f](https://github.com/onevalar/valar-svelte/commit/2633f5fd8c96cd7e6ae41a9f6d7b62fcbc257819)），GitHub CI 全部通过。Checkbox、Radio Group、Switch 已完成并推送（[c57b2fc](https://github.com/onevalar/valar-svelte/commit/c57b2fcaee32645ae7e9cf0968ff5fd6f21bb5ac)），GitHub CI 全部通过，见[选择控件验收记录](workbench-selection-controls-acceptance-2026-11-02.md)。本批 E4 已接入 Toggle、Toggle Group、Slider，覆盖增至 **20／68 个**；真实交互、明暗／窄屏／对比与开发站写回已验证，最终构建回归及交付状态见[本批验收记录](workbench-toggle-slider-acceptance-2026-11-02.md)和所链工作线程。用户已授权本批完成后一起提交推送，不发布包或部署站点。其余组件见下面“剩余 48 个组件的优先级”；E5 尚未开始，不扩大旧 Studio 的覆盖范围。
 
 ### 后续任务（按顺序；完成一项就在此更新状态）
 
@@ -44,12 +44,65 @@
 | E1   | 接入 Hover Card、Context Menu、Drawer | 完成（验收通过） | 共用全屏外壳；八套样式读写、真实交互与窄屏通过，见[验收记录](workbench-acceptance-2026-11-02.md)                              |
 | E2   | 接入 Tabs、Card                      | 完成（验收通过） | 八套样式读写、真实交互、明暗与窄屏通过；保留 Tabs 方向／变体差异、Card 双尺寸共享留白联动，见[验收记录](workbench-tabs-card-acceptance-2026-11-02.md) |
 | E3   | 接入 Checkbox、Radio Group、Switch  | 完成（验收通过） | 八套样式读写、键盘／标签交互、明暗／窄屏／对比通过；保留图标差值、深色圆点及滑块端点，见[验收记录](workbench-selection-controls-acceptance-2026-11-02.md) |
+| E4   | 接入 Toggle、Toggle Group、Slider  | 完成（验收通过） | Toggle 统一共享尺寸，Group 只调拼接几何；Slider 保留 Luma 横纵长边差；617项测试、check、生产构建与36项E2E通过，见[验收记录](workbench-toggle-slider-acceptance-2026-11-02.md) |
 | B1   | 给弹层与表单组件补说明卡 `meta.json` | 完成 | 68 个组件全部有卡（新增 48 个，含 code-block 补卡），`REQUIRED_CARDS` 覆盖全部组件，`missingCards` 为空                       |
 | B2   | 给弹层与表单组件补 `RULES.md`        | 完成 | 2026-11-01：弹层 12 个、表单 18 个；新增 lint 规则见安装文档“AI 与设计规范”                                                   |
 | B3   | 其余组件补说明卡和 `RULES.md`        | 完成 | 2026-11-01：说明卡随 B1 完成；68 个组件全部有 `RULES.md`                                                                      |
 | C1   | 用户编写 `guides/` 三份方法          | 用户 | 页面组合、文案、动效；AI 不代写                                                                                               |
 | C2   | 线上版 MCP（HTTP）                   | 用户 | 等用户准备好服务器并授权部署后再做                                                                                            |
 | C3   | 决定 `/workbench` Studio 去留        | 用户 | 已知问题：Studio 的 `global.motionDuration`（默认 180ms）会覆盖全局动效 token；保留则需改为跟随 token，撤掉则删入口与回归测试 |
+
+### 剩余 48 个组件的优先级（2026-11-02）
+
+**口径与价值**：68 个是[组件清单](../docs/src/lib/features/workbench/coverage.ts)中的组件数；20 个已在[组件文档预览入口](../docs/src/lib/components/component-preview-tabs.svelte)接入全屏编辑器，其余 48 个缺的是编辑器，不代表组件缺失或不能使用。`coverage.ts` 的 `coverage.ready` 仍描述旧 Studio，不能用它统计新编辑器。接入后新增受限实时调参、对比、浏览器版本保存及开发站写回；不自动改变默认外观、增强业务交互或更新消费者已安装的源码。
+
+下表按各组件 `ui/<组件>/meta.json`、`RULES.md`、源码及样式写回路径作工程判断，不是用户使用频率统计，也不承诺效率提升比例或工期。优先考虑可重复使用、参数边界清楚的视觉调整；成本包含八套样式、交互、窄屏和写回的长期回归。**下列 48 个均未接入组件页编辑器；优先级不代表后续批次已获开发授权，不追求 68／68。**
+
+#### P1：优先推进，剩余 5 个
+
+| 组件 | 预期收益与候选参数 | 相对成本／必须守住的边界 |
+| ---- | ------------------ | ------------------------ |
+| `native-select` | 原生表单控件与 Button／Input 的高度档位、圆角和留白对齐 | 低至中；只调闭合控件，系统原生选项面板不承诺可改外观 |
+| `input-group` | 搜索框、带单位／操作的输入框统一尺寸和附加内容留白 | 中至高；已有 Input／Textarea／Button 组合，须覆盖四种 Addon 位置及多行输入，不给内部控件再建一套冲突尺寸 |
+| `input-otp` | 格子尺寸、分组间距、圆角，帮助控制窄屏总宽度 | 中；保留整串粘贴、删除、自动填入和错误状态，不把验证码位数或校验规则写成样式 |
+| `badge` | 简短状态标签的内边距、图标间距和圆角，参数少且容易比较 | 低；保留六种变体的语义配色，不把徽标改成操作按钮 |
+| `table` | 表头／数据格留白与密度，直接影响同屏信息量 | 中；仅基础语义表格，不扩展为 TanStack Data Table 编辑器，不把列定义、排序或分页业务参数化；保留窄屏横向滚动 |
+
+#### P2：按页面需要补齐，19 个
+
+| 组件 | 何时值得做／依赖与限制 |
+| ---- | ---------------------- |
+| `number-field`、`slider-field`、`tags-input` | 精确数值或多值表单出现反复调参需求时优先；先 Number Field，再 Slider Field。当前几何多直接写在源码中，缺少可直接沿用的 `cn-*` 样式写回入口，须先明确最小样式接入方案；Slider Field 复用 Slider＋Number Field，只为自己的布局增加必要参数，不复制子控件旋钮。Tags Input 须覆盖输入法、长标签换行、删除和校验 |
+| `accordion`、`collapsible` | FAQ、设置或折叠详情需要统一标题留白和展开动效时；不改展开规则，折叠内容没有独立视觉参数时可仅做组合验收；旧 Studio 的 Accordion 不算新编辑器完成 |
+| `alert`、`alert-dialog` | 页面提示／确认流程需要统一间距时；Alert Dialog 可复用 Dialog 的参数工具，但保留其确认语义、焦点及取消／确认行为 |
+| `avatar`、`item`、`empty` | 用户列表、内容行、空状态在真实页面中出现密度不一致时；只调自身尺寸／留白，内部按钮等沿用已有组件 |
+| `button-group`、`breadcrumb`、`pagination` | 操作组、路径与列表页需要统一密度时；先复用 Button 尺寸和现有组合规则，不另造高度体系或把路由／页数写成样式 |
+| `menubar`、`navigation-menu` | 有真实桌面工具栏／站点导航页面时再做；菜单参数可复用已有工具，但菜单间方向键、悬停切换、浮层碰撞及移动替代布局仍须独立验收 |
+| `progress`、`skeleton`、`spinner` | 加载反馈需要统一轨道、圆角或图标尺寸时；Skeleton 的宽高应匹配使用处的最终内容，Spinner 不把全局动效数值复制成局部 token |
+| `kbd` | 多个工具页面确有快捷键标记密度不一致时；收益主要是小幅几何调整，不因实现简单而抢占高价值工作 |
+
+#### P3：先有真实场景，再定编辑范围，15 个
+
+| 组件 | 启动条件与成本来源 |
+| ---- | ------------------ |
+| `calendar`、`range-calendar` | 有日期／日期范围页面后成对设计，复用已有 `--cell-size`；多月、范围端点、月份年份选择、禁用日期和键盘使回归范围较大，不先做两套孤立参数 |
+| `command` | 有命令面板或搜索选择页面后再定搜索框／结果项参数；依赖 Input Group 和 Dialog／Popover，并覆盖过滤、空结果和焦点，不把搜索逻辑参数化 |
+| `sidebar` | 有应用壳页面后再定宽度／菜单密度；展开、图标折叠、移动 Sheet 和快捷键是同一验收范围，不只是展示一个静态侧栏 |
+| `chart`、`carousel` | 分别以实际数据图表、内容轮播为输入；先界定图表容器／提示框与数据配置、轮播留白与 Embla 行为的边界，不做无边界的“所有选项编辑器” |
+| `color-picker`、`sonner` | 分别有取色布局、通知系统的调整需求时；Color Picker 需区分原生色盘与自有 UI，Sonner 需遵守第三方 Toast 生命周期、播报和暂停行为；颜色值／通知内容不是组件样式参数 |
+| `attachment`、`bubble`、`message`、`code-block`、`trace` | 有完整消息／Agent 对话页后统一密度与层次；结合附件多状态、消息分组、代码长行／流式输出、轨迹嵌套验收，避免五个独立画布调好后组合仍不协调 |
+| `questionnaire`、`stepper` | 有实际问卷／分步流程后确定布局参数；先复用现有控件，保留校验门禁、异步取消、跳题和焦点行为，不将流程配置伪装成视觉调参 |
+
+#### P4：默认不建独立编辑器，9 个
+
+| 组件 | 默认处理方式／重新评估条件 |
+| ---- | -------------------------- |
+| `field`、`form`、`label` | 优先在真实表单组合里统一标签／说明／错误与字段间距，延用全局字号体系；若多个表单反复需要同一套密度调整，再设计一个共享合同，而非三个重复面板 |
+| `aspect-ratio`、`separator` | 宽高比、方向属于调用处语义或布局，分隔线通常跟随全局边框／颜色；没有额外独立样式需求时不为覆盖率添加旋钮 |
+| `resizable`、`scroll-area` | 在分栏／滚动页面验收；只有把手或滚动条几何确有跨页面定制需求时再升级，面板比例、容器尺寸、滚动行为仍由使用处负责 |
+| `message-scroller`、`marker` | 在完整消息页处理滚动容器、跳转按钮和系统标记的一致性；滚动锚定／跟随不属于视觉参数。Marker 有自己的变体样式，但先随消息组合评估，不因名称简单就认定没有样式 |
+
+**推荐执行顺序（后续均未开始，开始前确认）**：E4＝Toggle、Toggle Group、Slider 已接入；下一批 E5＝Native Select、Input Group、Input OTP；再按页面需要选 E6＝Badge、基础 Table。每批沿用下方完整验收清单，不因参数少而跳过真实写回和交互验证。E5 后，在已有页面组合中试用已完成编辑器，确认是否确有重复调参需求，再决定继续扩展；可以调整或停止，不默认承诺把 P1 全做完。后续有明确业务页面时，可直接提升 P2／P3 中对应组件的优先级。
 
 ### 收尾（2026-11-01，均已完成）
 
@@ -63,7 +116,7 @@
 ### 候选任务（AI 可做，开始前向用户确认）
 
 - 新增“成功／警告”语义色 token，替换示例中借用的 `chart-2`。
-- 其余组件接入编辑器（后续候选 Toggle、Toggle Group、Slider 等），按下面的清单逐个做。
+- 其余组件接入编辑器（下一批候选 Native Select、Input Group、Input OTP），按上面的优先级及下面的清单逐个做。
 - Input Group、Input OTP、Native Select、Combobox 的高度接入 Button 尺寸档位；Textarea 最小高度（写死在组件源码，需要改源码或换写回方式）。
 - date-picker 等示例自己写了 `DateFormatter("en-US")`，与已改为中文的日历不一致。
 
@@ -112,6 +165,7 @@
 - **Hover Card、Context Menu、Drawer（E1，2026-11-02）**：均复用 `ComponentTuner`，当前值读取各样式安装出去的 registry 源码。Hover Card：统一内边距、圆角、动效档位、缩放与滑入距离；宽度、偏移和悬停延迟仍是调用属性。文档首例提供入口，重复的 Basic 示例通过 `tunable={false}` 避免重复编辑器。Context Menu：沿用 Dropdown 的面板／菜单项参数，两者共用 `menu-tuning.ts`，不通过字符串替换适配；保留各样式的缩进、选项高度差和贴边分隔线，兼顾 GroupHeading 的独立 slot。默认固定展开，支持真实右键、Shift+F10／菜单键与键盘子菜单；窄画布的子菜单向下展开，避免最大宽度面板把它挤出画布。Drawer：页眉／页脚内边距、页脚间距、圆角与遮罩；区分边缘圆角和 `::before` 内缩表面，方向仅为预览。**不提供 CSS 时长／滑入旋钮**：Vaul 的拖拽释放与清理依赖同一套固定 500ms 时序，不用不一致的 CSS 覆盖伪装为可调。
 - **Tabs、Card（E2，2026-11-02）**：读取八套样式的安装源码，不改组件 primitive/API。Tabs：水平列表高度、内容间距、列表内边距／默认变体圆角、标签横纵内边距／圆角；方向或图标侧有差异时显示“样式自带”，显式统一档位同时覆盖相关变体，列表圆角不改变线型下划线。画布包含默认／线型 × 横向／纵向、图标、禁用项和真实键盘切换。Card：默认／小尺寸留白、标题区间距、圆角；通过已有 `--card-spacing` 联动分区 gap、内缩、分隔线与贴边负边距，不把这些拆成互相冲突的 padding。白名单仅对 `cn-card` 放行 `[--card-spacing:--spacing(N)]` 及小尺寸前缀，N 对应 0–48px、步长2px；其他属性、单位和值仍拒绝。圆角同步头部、页脚和首尾图片，rhea 的封顶圆角与 sera 的自带值保留为“样式自带”。
 - **Checkbox、Radio Group、Switch（E3，2026-11-02）**：三者均从八套安装源码读取基线，使用真实 Bits UI 控件、Field 标签与独立对比状态。Checkbox 调尺寸／圆角，SVG 保留原方框与图标的2px差（Sera为4px），真实半选、禁用、错误状态均保留；字面圆角显示“样式自带”。Radio Group 调尺寸／组内间距，指示器同步尺寸，圆点按原半尺寸差值联动；保留 Luma／Rhea 深色圆点额外2px、Sera普通圆点偏移−1px，不增加圆角或颜色旋钮。Switch 调默认／小尺寸滑块高度、共同圆角／动效档位：滑块高度变化Δ时，轨道高度＋Δ、轨道宽度＋2Δ、滑块宽度＋Δ，保留原有平移规则、垂直内缩、Luma宽滑块和端点留白。Tailwind 不接受 `h-5.6`，因此非整数轨道高度使用 `h-[Npx]`，白名单仅允许12.4／12.6至26.4／26.6、整数部分步长2的16个值。全局 token 只读；不改 primitive/API。验收与交付状态见[选择控件记录](workbench-selection-controls-acceptance-2026-11-02.md)。
+- **Toggle、Toggle Group、Slider（E4，2026-11-02）**：三者从八套安装源码读取基线。Toggle 的小／默认／大高度和文字侧内边距、共同图文间距／圆角同时服务 `toggleVariants` 的 Group Item；保留图标侧留白及拼接组自身端点，不复制共享参数。Toggle Root 补 `data-size`／`data-variant`，不改公开属性或 Bits 行为。Group 只调 `spacing=0` 拼接项文字侧留白与根／横纵首尾圆角，spacing、方向、单多选仍是调用属性。Slider 调横纵轨道粗细、把手短边、轨道／把手圆角；Luma 的长边始终比短边多8px，Sera无圆角类时显示“样式自带”，不把 min／max／step 变成样式旋钮。白名单仅开放有限尺寸／方向圆角类；全局 token 只读，详见[本批记录](workbench-toggle-slider-acceptance-2026-11-02.md)。
 - 测试补充（E1）：`workbench.test.ts` 覆盖三组件八套样式的读取、写回安装源码、回读与白名单；`workbench.spec.ts` 覆盖四方向、真实悬停、拖拽、右键／键盘子菜单、390px 最大菜单宽度、比较隔离、保存与 Esc 焦点归还。真实写回及视觉证据见[本批验收记录](workbench-acceptance-2026-11-02.md)。
 
 第 6 步的做法（2026-11-01 完成）：

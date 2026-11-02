@@ -143,6 +143,27 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-switch-thumb": new RegExp(
 		`^(?:group-data-\\[size=(?:default|sm)\\]/switch:(?:h|w)-${N}|rounded-${RADIUS}|duration-${TIER})$`
 	),
+	"cn-toggle": new RegExp(`^(?:gap-(?:[0-3](?:\\.5)?|4)|rounded-${RADIUS})$`),
+	...Object.fromEntries(
+		["sm", "default", "lg"].map((size) => [
+			`cn-toggle-size-${size}`,
+			new RegExp(
+				`^(?:(?:h|min-w)-(?:[5-9](?:\\.5)?|1[0-5](?:\\.5)?|16)|px-(?:[0-9](?:\\.5)?|1[01](?:\\.5)?|12)|rounded-${RADIUS})$`
+			),
+		])
+	),
+	"cn-toggle-group": new RegExp(
+		`^(?:data-\\[size=sm\\]:|data-\\[spacing=0\\]:data-\\[variant=outline\\]:)?rounded-${RADIUS}$`
+	),
+	"cn-toggle-group-item": new RegExp(
+		`^(?:group-data-\\[spacing=0\\]/toggle-group:(?:px-(?:[0-9](?:\\.5)?|1[01](?:\\.5)?|12)|rounded-none)|(?:group-data-horizontal/toggle-group:data-\\[spacing=0\\]:(?:first:rounded-l|last:rounded-r)|group-data-vertical/toggle-group:data-\\[spacing=0\\]:(?:first:rounded-t|last:rounded-b))-${RADIUS})$`
+	),
+	"cn-slider-track": new RegExp(
+		`^(?:(?:data-horizontal:h|data-vertical:w)-(?:0\\.5|[1-3](?:\\.5)?|4)|rounded-${RADIUS})$`
+	),
+	"cn-slider-thumb": new RegExp(
+		`^(?:(?:size|h|data-vertical:w)-(?:[3-7](?:\\.5)?|8)|(?:w|data-vertical:h)-(?:[5-9](?:\\.5)?|10)|rounded-${RADIUS})$`
+	),
 };
 
 export const styleOverridePayloadSchema = z

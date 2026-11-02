@@ -12,9 +12,12 @@
 	import RadioGroupTuner from "$lib/features/workbench/radio-group-tuner.svelte";
 	import SelectTuner from "$lib/features/workbench/select-tuner.svelte";
 	import SheetTuner from "$lib/features/workbench/sheet-tuner.svelte";
+	import SliderTuner from "$lib/features/workbench/slider-tuner.svelte";
 	import SwitchTuner from "$lib/features/workbench/switch-tuner.svelte";
 	import TabsTuner from "$lib/features/workbench/tabs-tuner.svelte";
 	import TextareaTuner from "$lib/features/workbench/textarea-tuner.svelte";
+	import ToggleGroupTuner from "$lib/features/workbench/toggle-group-tuner.svelte";
+	import ToggleTuner from "$lib/features/workbench/toggle-tuner.svelte";
 	import TooltipTuner from "$lib/features/workbench/tooltip-tuner.svelte";
 	import { t } from "$lib/i18n/index.js";
 	import { Button } from "$lib/registry/ui/button/index.js";
@@ -93,6 +96,9 @@
 						"checkbox-demo",
 						"radio-group-demo",
 						"switch-demo",
+						"toggle-demo",
+						"toggle-group-demo",
+						"slider-demo",
 						"tabs-demo",
 						"dialog-demo",
 						"drawer-demo",
@@ -121,6 +127,12 @@
 				<RadioGroupTuner>{@render PreviewExample()}</RadioGroupTuner>
 			{:else if name === "switch-demo"}
 				<SwitchTuner>{@render PreviewExample()}</SwitchTuner>
+			{:else if name === "toggle-demo"}
+				<ToggleTuner>{@render PreviewExample()}</ToggleTuner>
+			{:else if name === "toggle-group-demo"}
+				<ToggleGroupTuner>{@render PreviewExample()}</ToggleGroupTuner>
+			{:else if name === "slider-demo"}
+				<SliderTuner>{@render PreviewExample()}</SliderTuner>
 			{:else if name === "tabs-demo"}
 				<TabsTuner>{@render PreviewExample()}</TabsTuner>
 			{:else if name === "dialog-demo"}
