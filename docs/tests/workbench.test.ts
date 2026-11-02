@@ -13,6 +13,11 @@ import { compile } from "svelte/compiler";
 import { compile as compileTailwind } from "tailwindcss";
 import { describe, expect, it } from "vitest";
 import {
+	ALERT_SPEC,
+	alertOverrideClasses,
+	parseAlertSource,
+} from "../src/lib/features/workbench/alert-tuning.js";
+import {
 	BADGE_SPEC,
 	badgeOverrideClasses,
 	parseBadgeSource,
@@ -40,6 +45,11 @@ import {
 	parseDrawerSource,
 } from "../src/lib/features/workbench/drawer-tuning.js";
 import { DROPDOWN_MENU_SPEC } from "../src/lib/features/workbench/dropdown-menu-tuning.js";
+import {
+	EMPTY_SPEC,
+	emptyOverrideClasses,
+	parseEmptySource,
+} from "../src/lib/features/workbench/empty-tuning.js";
 import { buildWorkbenchRegistry } from "../src/lib/features/workbench/export.js";
 import {
 	hoverCardOverrideClasses,
@@ -997,6 +1007,130 @@ const registryFiles = (component: string, style: string) =>
 		.files as { target: string; content: string }[];
 const emptyOverrides = (style: string) =>
 	readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
+
+describe("Alert and Empty editor installation contracts", () => {
+	const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+	it("replaces Alert row geometry without changing icon columns, action reserves or alert semantics", () => {
+		const x = [10, 16, 10, 16, 8, 16, 16, 16];
+		const y = [8, 12, 8, 12, 6, 12, 12, 12];
+		const radii = ["lg", "lg", "none", "lg", "lg", "2xl", "2xl", "style"];
+		for (const [index, style] of styles.entries()) {
+			expect(parseAlertSource(registryFiles("alert", style)).values).toEqual({
+				paddingX: x[index],
+				paddingY: y[index],
+				rowGap: style === "sera" ? 4 : 2,
+				radius: radii[index],
+			});
+			const original = installed("alert", style, emptyOverrides(style), "alert.svelte");
+			const untouched = (source: string) =>
+				source
+					.match(/base:\s*"([^"]*)"/)![1]
+					.split(/\s+/)
+					.filter((word) => !/^(?:px|py|gap-y|rounded)-/.test(word));
+			let css = emptyOverrides(style);
+			for (const change of [
+				{ paddingX: 32, paddingY: 0, rowGap: 16, radius: "xl" },
+				{ paddingX: 0, paddingY: 24, rowGap: 0, radius: "none" },
+			] as const) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({
+						style,
+						classes: alertOverrideClasses(change),
+					})
+				);
+				const source = installed("alert", style, css, "alert.svelte");
+				expect(parseAlertSource([{ target: "alert.svelte", content: source }]).values).toEqual(
+					change
+				);
+				expect(untouched(source)).toEqual(untouched(original));
+				expect(source.slice(source.indexOf("variants:"))).toBe(
+					original.slice(original.indexOf("variants:"))
+				);
+				expect(source).toContain('role="alert"');
+				expect(source).toContain("has-data-[slot=alert-action]:pr-18");
+				expect(installed("alert", style, css, "alert-action.svelte")).toBe(
+					installed("alert", style, emptyOverrides(style), "alert-action.svelte")
+				);
+				expect(() => compile(source, { filename: "alert.svelte" })).not.toThrow();
+			}
+		}
+		expect(alertOverrideClasses({ radius: "style" })).toEqual({});
+	});
+
+	it("roundtrips Empty root spacing while preserving media, content widths and inner hierarchy", () => {
+		const radii = ["xl", "lg", "none", "lg", "xl", "2xl", "3xl", "style"];
+		for (const [index, style] of styles.entries()) {
+			expect(parseEmptySource(registryFiles("empty", style)).values).toEqual({
+				padding: ["nova", "lyra", "mira"].includes(style) ? 24 : 48,
+				gap: 16,
+				radius: radii[index],
+			});
+			let css = emptyOverrides(style);
+			for (const change of [
+				{ padding: 64, gap: 0, radius: "xl" },
+				{ padding: 8, gap: 32, radius: "none" },
+			] as const) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({
+						style,
+						classes: emptyOverrideClasses(change),
+					})
+				);
+				const source = installed("empty", style, css, "empty.svelte");
+				expect(parseEmptySource([{ target: "empty.svelte", content: source }]).values).toEqual(
+					change
+				);
+				for (const file of [
+					"empty-header.svelte",
+					"empty-content.svelte",
+					"empty-media.svelte",
+					"empty-title.svelte",
+					"empty-description.svelte",
+				])
+					expect(installed("empty", style, css, file)).toBe(
+						installed("empty", style, emptyOverrides(style), file)
+					);
+				expect(() => compile(source, { filename: "empty.svelte" })).not.toThrow();
+			}
+		}
+		expect(emptyOverrideClasses({ radius: "style" })).toEqual({});
+	});
+
+	it("rejects non-contract geometry and keeps colors, action layout and child controls out of writeback", () => {
+		for (const classes of [
+			{ "cn-alert": "px-8.5" },
+			{ "cn-alert": "py-6.5" },
+			{ "cn-alert": "gap-y-4.5" },
+			{ "cn-alert": "gap-4" },
+			{ "cn-alert": "gap-x-2" },
+			{ "cn-alert": "pr-0" },
+			{ "cn-alert": "bg-primary" },
+			{ "cn-alert-action": "right-0" },
+			{ "cn-empty": "p-1.5" },
+			{ "cn-empty": "p-16.5" },
+			{ "cn-empty": "gap-8.5" },
+			{ "cn-empty": "max-w-md" },
+			{ "cn-empty": "p-[18px]" },
+			{ "cn-empty-media-icon": "size-8" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+		for (const [spec, invalid] of [
+			[ALERT_SPEC, { paddingX: 3 }],
+			[ALERT_SPEC, { rowGap: 18 }],
+			[ALERT_SPEC, { variant: "warning" }],
+			[EMPTY_SPEC, { padding: 6 }],
+			[EMPTY_SPEC, { gap: 33 }],
+			[EMPTY_SPEC, { buttonHeight: 40 }],
+		] as const)
+			expect(() => spec.overrideClasses(invalid as never, null)).toThrow();
+		expect(alertOverrideClasses({})).toEqual({});
+		expect(emptyOverrideClasses({})).toEqual({});
+		expect(() => parseAlertSource([])).toThrow();
+		expect(() => parseEmptySource([])).toThrow();
+	});
+});
 
 describe("Badge and basic Table editor installation contracts", () => {
 	const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];

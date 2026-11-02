@@ -9,6 +9,117 @@ async function setNumber(page: Page, label: string, value: number) {
 	await input.press("Enter");
 }
 
+test("Alert editor preserves icon columns and action reserves without replaying static alerts", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/alert", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Alert", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Alert · 组件参数" });
+	await expect(editor.getByTestId("alert-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const plain = current.locator('[data-slot="alert"]').first();
+	const action = current.locator("[data-alert-action-sample]");
+	await expect(current.getByRole("region")).toHaveCount(4);
+	await expect(current.getByRole("alert")).toHaveCount(0);
+	await setNumber(page, "横向留白（px）", 30);
+	await setNumber(page, "纵向留白（px）", 6);
+	await setNumber(page, "标题说明间距（px）", 14);
+	await expect(plain).toHaveCSS("padding-left", "30px");
+	await expect(plain).toHaveCSS("padding-right", "30px");
+	await expect(plain).toHaveCSS("padding-top", "6px");
+	await expect(plain).toHaveCSS("row-gap", "14px");
+	await expect(action).toHaveCSS("column-gap", "8px");
+	await expect(action).toHaveCSS("padding-right", "72px");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.locator('[data-slot="alert"]').first()).toHaveCSS("padding-left", "10px");
+	const undo = current.getByRole("button", { name: "撤销", exact: true });
+	await undo.focus();
+	await undo.press("Enter");
+	await expect(current.getByRole("region", { name: "已撤销示例操作", exact: true })).toBeVisible();
+	await expect(before.getByRole("region", { name: "示例项目已归档", exact: true })).toBeVisible();
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await setNumber(page, "横向留白（px）", 32);
+	await setNumber(page, "纵向留白（px）", 24);
+	await setNumber(page, "标题说明间距（px）", 16);
+	expect(await current.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	const noOverlap = await action.evaluate((el) => {
+		const text = el.querySelector('[data-slot="alert-title"]')!.getBoundingClientRect();
+		const button = el.querySelector("button")!.getBoundingClientRect();
+		return text.right <= button.left && button.right <= el.getBoundingClientRect().right;
+	});
+	expect(noOverlap).toBe(true);
+	await editor.getByRole("textbox", { name: "Alert 版本名称", exact: true }).fill("提示区留白");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「提示区留白」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	await expect(page.locator('.sample [data-slot="alert"]').first()).toHaveCSS(
+		"padding-left",
+		"32px"
+	);
+});
+
+test("Empty editor tunes only the root while keeping media, buttons and demo actions independent", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/empty", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Empty", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Empty · 组件参数" });
+	await expect(editor.getByTestId("empty-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const root = current.locator('[data-slot="empty"]').first();
+	await expect(current.locator('[data-slot="empty"]')).toHaveCount(3);
+	await setNumber(page, "外层留白（px）", 54);
+	await setNumber(page, "主区间距（px）", 30);
+	await editor.getByRole("button", { name: /^圆角档位/ }).click();
+	await page.getByRole("option", { name: "none · 直角", exact: true }).click();
+	await expect(root).toHaveCSS("padding-top", "54px");
+	await expect(root).toHaveCSS("gap", "30px");
+	await expect(root).toHaveCSS("border-radius", "0px");
+	await expect(root.locator('[data-slot="empty-header"]')).toHaveCSS("gap", "8px");
+	await expect(root.locator('[data-slot="empty-content"]')).toHaveCSS("gap", "10px");
+	await expect(current.locator('[data-slot="avatar"]')).toHaveCSS("width", "32px");
+	const clear = current.getByRole("button", { name: "清除筛选", exact: true });
+	await expect(clear).toHaveCSS("height", "32px");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.locator('[data-slot="empty"]').first()).toHaveCSS("padding-top", "24px");
+	await clear.focus();
+	await clear.press("Space");
+	await expect(current.getByRole("status").first()).toHaveText(
+		"已清除本画布的演示筛选，未查询任何数据。"
+	);
+	await expect(before.getByRole("status").first()).toBeEmpty();
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await setNumber(page, "外层留白（px）", 64);
+	await setNumber(page, "主区间距（px）", 32);
+	expect(await current.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await expect(current.getByRole("button", { name: "恢复筛选", exact: true })).toHaveCSS(
+		"height",
+		"32px"
+	);
+	await editor.getByRole("textbox", { name: "Empty 版本名称", exact: true }).fill("空状态留白");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(
+		editor.getByRole("status").filter({ hasText: "已保存「空状态留白」" })
+	).toBeVisible();
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	await expect(page.locator('.sample [data-slot="empty"]').first()).toHaveCSS(
+		"padding-top",
+		"64px"
+	);
+});
+
 test("Badge editor preserves icon insets and native links while saving isolated geometry", async ({
 	page,
 }) => {

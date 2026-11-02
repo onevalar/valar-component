@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AlertTuner from "$lib/features/workbench/alert-tuner.svelte";
 	import BadgeTuner from "$lib/features/workbench/badge-tuner.svelte";
 	import ButtonTuner from "$lib/features/workbench/button-tuner.svelte";
 	import CardTuner from "$lib/features/workbench/card-tuner.svelte";
@@ -7,6 +8,7 @@
 	import DialogTuner from "$lib/features/workbench/dialog-tuner.svelte";
 	import DrawerTuner from "$lib/features/workbench/drawer-tuner.svelte";
 	import DropdownMenuTuner from "$lib/features/workbench/dropdown-menu-tuner.svelte";
+	import EmptyTuner from "$lib/features/workbench/empty-tuner.svelte";
 	import HoverCardTuner from "$lib/features/workbench/hover-card-tuner.svelte";
 	import InputGroupTuner from "$lib/features/workbench/input-group-tuner.svelte";
 	import InputOtpTuner from "$lib/features/workbench/input-otp-tuner.svelte";
@@ -96,6 +98,8 @@
 				previewClassName,
 				tunable &&
 					[
+						"alert-demo",
+						"empty-demo",
 						"badge-demo",
 						"table-demo",
 						"button-demo",
@@ -127,6 +131,10 @@
 		>
 			{#if !tunable}
 				{@render PreviewExample()}
+			{:else if name === "alert-demo"}
+				<AlertTuner>{@render PreviewExample()}</AlertTuner>
+			{:else if name === "empty-demo"}
+				<EmptyTuner>{@render PreviewExample()}</EmptyTuner>
 			{:else if name === "badge-demo"}
 				<BadgeTuner>{@render PreviewExample()}</BadgeTuner>
 			{:else if name === "table-demo"}

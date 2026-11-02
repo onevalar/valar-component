@@ -140,6 +140,12 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-context-menu-separator": DROPDOWN_MENU_SEPARATOR_UTILITY,
 	"cn-tooltip-content": TOOLTIP_CONTENT_UTILITY,
 	"cn-tooltip-provider": TOOLTIP_PROVIDER_UTILITY,
+	"cn-alert": new RegExp(
+		`^(?:px-(?:[0-7](?:\\.5)?|8)|py-(?:[0-5](?:\\.5)?|6)|gap-y-(?:[0-3](?:\\.5)?|4)|rounded-${RADIUS})$`
+	),
+	"cn-empty": new RegExp(
+		`^(?:p-(?:[2-9](?:\\.5)?|1[0-5](?:\\.5)?|16)|gap-(?:[0-7](?:\\.5)?|8)|rounded-${RADIUS})$`
+	),
 	"cn-badge": new RegExp(
 		`^(?:px-(?:[0-5](?:\\.5)?|6)|gap-(?:[0-3](?:\\.5)?|4)|rounded-${RADIUS})$`
 	),
