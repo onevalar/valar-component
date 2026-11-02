@@ -9,6 +9,121 @@ async function setNumber(page: Page, label: string, value: number) {
 	await input.press("Enter");
 }
 
+test("Badge editor preserves icon insets and native links while saving isolated geometry", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/badge", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Badge", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Badge · 组件参数" });
+	await expect(editor.getByTestId("badge-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const plain = current.locator('span[data-slot="badge"]').first();
+	await expect(current.locator('[data-slot="badge"]')).toHaveCount(24);
+	await expect(current.getByRole("link")).toHaveCount(6);
+	await setNumber(page, "文字侧水平留白（px）", 22);
+	await setNumber(page, "图文间距（px）", 10);
+	await editor.getByRole("button", { name: /^圆角档位/ }).click();
+	await page.getByRole("option", { name: "none · 直角", exact: true }).click();
+	await expect(plain).toHaveCSS("padding-left", "22px");
+	await expect(plain).toHaveCSS("height", "20px");
+	await expect(plain).toHaveCSS("gap", "10px");
+	await expect(plain).toHaveCSS("border-radius", "0px");
+	await expect(
+		current.locator('[data-slot="badge"]:has([data-icon="inline-start"])').first()
+	).toHaveCSS("padding-left", "6px");
+	await expect(
+		current.locator('[data-slot="badge"]:has([data-icon="inline-end"])').first()
+	).toHaveCSS("padding-right", "6px");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	await expect(editor.locator('[data-tuning-before] [data-slot="badge"]').first()).toHaveCSS(
+		"padding-left",
+		"8px"
+	);
+	const link = current.getByRole("link", { name: "查看说明", exact: true }).first();
+	await link.focus();
+	await link.press("Enter");
+	await expect.poll(() => new URL(page.url()).hash).toBe(await link.getAttribute("href"));
+	await expect(current.locator('p[id$="-details"]')).toBeFocused();
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await setNumber(page, "文字侧水平留白（px）", 24);
+	await setNumber(page, "图文间距（px）", 16);
+	expect(await current.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor.getByRole("textbox", { name: "Badge 版本名称", exact: true }).fill("状态标记留白");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「状态标记留白」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+});
+
+test("Table editor retains semantic tables, embedded controls and local narrow scrolling", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/table", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Table", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Table · 组件参数" });
+	await expect(editor.getByTestId("table-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const invoices = current.locator("[data-table-invoices]");
+	await expect(current.getByRole("table")).toHaveCount(3);
+	await expect(invoices.getByRole("columnheader")).toHaveCount(4);
+	await expect(invoices.locator("tfoot td").last()).toHaveText("¥1,375.70");
+	await expect(current.getByText("暂无账单", { exact: true })).toBeVisible();
+	await setNumber(page, "表头高度下限（px）", 54);
+	await setNumber(page, "表头横向留白（px）", 18);
+	await setNumber(page, "数据格横向留白（px）", 14);
+	await setNumber(page, "数据格纵向留白（px）", 6);
+	await expect(invoices.getByRole("columnheader").first()).toHaveCSS("height", "54px");
+	await expect(invoices.getByRole("columnheader").first()).toHaveCSS("padding-left", "18px");
+	await expect(invoices.locator("tbody td").first()).toHaveCSS("padding-left", "14px");
+	await expect(invoices.locator("tfoot td").first()).toHaveCSS("padding-bottom", "6px");
+	await expect(current.locator('th:has([role="checkbox"])')).toHaveCSS("padding-right", "0px");
+	await expect(current.locator('td:has([role="checkbox"])').first()).toHaveCSS(
+		"padding-left",
+		"14px"
+	);
+	await expect(current.locator('td:has([role="checkbox"])').first()).toHaveCSS(
+		"padding-right",
+		"0px"
+	);
+	const checkbox = current.getByRole("checkbox", { name: "核对第一项", exact: true });
+	await checkbox.focus();
+	await checkbox.press("Space");
+	await expect(checkbox).not.toBeChecked();
+	await expect(current.getByRole("checkbox", { name: "不可核对项", exact: true })).toBeDisabled();
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.getByRole("checkbox", { name: "核对第一项", exact: true })).toBeChecked();
+	await expect(before.locator("[data-table-invoices] tbody td").first()).toHaveCSS(
+		"padding-left",
+		"8px"
+	);
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await setNumber(page, "数据格横向留白（px）", 32);
+	await setNumber(page, "数据格纵向留白（px）", 24);
+	expect(await current.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	const scroll = invoices.locator("..");
+	expect(await scroll.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true);
+	await invoices.getByRole("columnheader").first().scrollIntoViewIfNeeded();
+	await scroll.evaluate((el) => {
+		el.scrollLeft = el.scrollWidth;
+	});
+	expect(await scroll.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0);
+	await expect(invoices.getByRole("columnheader", { name: "金额", exact: true })).toBeInViewport();
+	await editor.getByRole("textbox", { name: "Table 版本名称", exact: true }).fill("表格舒适密度");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「表格舒适密度」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+});
+
 test("Native Select editor preserves native selection, size alignment and isolated versions", async ({
 	page,
 }) => {

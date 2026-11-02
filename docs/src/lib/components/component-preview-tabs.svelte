@@ -1,4 +1,5 @@
 <script lang="ts">
+	import BadgeTuner from "$lib/features/workbench/badge-tuner.svelte";
 	import ButtonTuner from "$lib/features/workbench/button-tuner.svelte";
 	import CardTuner from "$lib/features/workbench/card-tuner.svelte";
 	import CheckboxTuner from "$lib/features/workbench/checkbox-tuner.svelte";
@@ -17,6 +18,7 @@
 	import SheetTuner from "$lib/features/workbench/sheet-tuner.svelte";
 	import SliderTuner from "$lib/features/workbench/slider-tuner.svelte";
 	import SwitchTuner from "$lib/features/workbench/switch-tuner.svelte";
+	import TableTuner from "$lib/features/workbench/table-tuner.svelte";
 	import TabsTuner from "$lib/features/workbench/tabs-tuner.svelte";
 	import TextareaTuner from "$lib/features/workbench/textarea-tuner.svelte";
 	import ToggleGroupTuner from "$lib/features/workbench/toggle-group-tuner.svelte";
@@ -94,6 +96,8 @@
 				previewClassName,
 				tunable &&
 					[
+						"badge-demo",
+						"table-demo",
 						"button-demo",
 						"card-demo",
 						"checkbox-demo",
@@ -123,6 +127,10 @@
 		>
 			{#if !tunable}
 				{@render PreviewExample()}
+			{:else if name === "badge-demo"}
+				<BadgeTuner>{@render PreviewExample()}</BadgeTuner>
+			{:else if name === "table-demo"}
+				<TableTuner>{@render PreviewExample()}</TableTuner>
 			{:else if name === "button-demo"}
 				<ButtonTuner>{@render PreviewExample()}</ButtonTuner>
 			{:else if name === "card-demo"}

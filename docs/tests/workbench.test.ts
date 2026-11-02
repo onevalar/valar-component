@@ -12,6 +12,11 @@ import {
 import { compile } from "svelte/compiler";
 import { compile as compileTailwind } from "tailwindcss";
 import { describe, expect, it } from "vitest";
+import {
+	BADGE_SPEC,
+	badgeOverrideClasses,
+	parseBadgeSource,
+} from "../src/lib/features/workbench/badge-tuning.js";
 import { buttonOverrideClasses } from "../src/lib/features/workbench/button-tuning.js";
 import {
 	CARD_SPEC,
@@ -93,6 +98,11 @@ import {
 	parseSwitchSource,
 	switchOverrideClasses,
 } from "../src/lib/features/workbench/switch-tuning.js";
+import {
+	TABLE_SPEC,
+	parseTableSource,
+	tableOverrideClasses,
+} from "../src/lib/features/workbench/table-tuning.js";
 import {
 	TABS_SPEC,
 	parseTabsSource,
@@ -987,6 +997,121 @@ const registryFiles = (component: string, style: string) =>
 		.files as { target: string; content: string }[];
 const emptyOverrides = (style: string) =>
 	readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
+
+describe("Badge and basic Table editor installation contracts", () => {
+	const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+	it("roundtrips Badge geometry without changing native height, icon insets, typography or variants", () => {
+		const radii = ["4xl", "4xl", "none", "4xl", "full", "3xl", "2xl", "none"];
+		for (const [index, style] of styles.entries()) {
+			expect(parseBadgeSource(registryFiles("badge", style)).values).toEqual({
+				paddingX: style === "sera" ? 0 : 8,
+				gap: style === "sera" ? 6 : 4,
+				radius: radii[index],
+			});
+			const original = installed("badge", style, emptyOverrides(style), "badge.svelte");
+			const untouched = (source: string) =>
+				source
+					.match(/base:\s*"([^"]*)"/)![1]
+					.split(/\s+/)
+					.filter((word) => !/^(?:px|gap|rounded)-/.test(word));
+			let css = emptyOverrides(style);
+			for (const change of [
+				{ paddingX: 24, gap: 0, radius: "xl" },
+				{ paddingX: 0, gap: 16, radius: "none" },
+			] as const) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({ style, classes: badgeOverrideClasses(change) })
+				);
+				const source = installed("badge", style, css, "badge.svelte");
+				expect(parseBadgeSource([{ target: "badge.svelte", content: source }]).values).toEqual(
+					change
+				);
+				expect(untouched(source)).toEqual(untouched(original));
+				expect(source.slice(source.indexOf("variants:"))).toBe(
+					original.slice(original.indexOf("variants:"))
+				);
+				expect(() => compile(source, { filename: "badge.svelte" })).not.toThrow();
+			}
+		}
+		expect(badgeOverrideClasses({ radius: "style" })).toEqual({});
+	});
+
+	it("keeps table semantics and checkbox insets while replacing asymmetric cell spacing repeatedly", () => {
+		for (const style of styles) {
+			const spacious = ["maia", "luma", "sera"].includes(style);
+			expect(parseTableSource(registryFiles("table", style)).values).toEqual({
+				headHeight: spacious ? 48 : 40,
+				headPaddingX: spacious ? 12 : 8,
+				cellPaddingX: spacious ? 12 : 8,
+				cellPaddingY: spacious ? 12 : 8,
+			});
+			let css = emptyOverrides(style);
+			for (const change of [
+				{ headHeight: 64, headPaddingX: 0, cellPaddingX: 32, cellPaddingY: 2 },
+				{ headHeight: 24, headPaddingX: 30, cellPaddingX: 0, cellPaddingY: 24 },
+			] as const) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({ style, classes: tableOverrideClasses(change) })
+				);
+				const files = ["table-head.svelte", "table-cell.svelte"].map((file) => ({
+					target: file,
+					content: installed("table", style, css, file),
+				}));
+				expect(parseTableSource(files).values).toEqual(change);
+				for (const file of files) {
+					const untouched = (source: string) =>
+						classList(source).filter((word) => !/^(?:h|p|px|py)-/.test(word));
+					expect(untouched(file.content)).toEqual(
+						untouched(installed("table", style, emptyOverrides(style), file.target))
+					);
+					expect(file.content).toContain("[&:has([role=checkbox])]:pr-0");
+					expect(() => compile(file.content, { filename: file.target })).not.toThrow();
+				}
+				for (const file of [
+					"table.svelte",
+					"table-row.svelte",
+					"table-caption.svelte",
+					"table-footer.svelte",
+				])
+					expect(installed("table", style, css, file)).toBe(
+						installed("table", style, emptyOverrides(style), file)
+					);
+			}
+		}
+		expect(tableOverrideClasses({})).toEqual({});
+	});
+
+	it("rejects out-of-contract geometry, business behavior, colors and arbitrary CSS", () => {
+		for (const classes of [
+			{ "cn-badge": "px-6.5" },
+			{ "cn-badge": "gap-4.5" },
+			{ "cn-badge": "h-6" },
+			{ "cn-badge": "has-data-[icon=inline-start]:pl-2" },
+			{ "cn-badge": "bg-primary" },
+			{ "cn-table-head": "h-5.5" },
+			{ "cn-table-head": "h-16.5" },
+			{ "cn-table-head": "px-8.5" },
+			{ "cn-table-head": "text-right" },
+			{ "cn-table-cell": "py-6.5" },
+			{ "cn-table-cell": "p-4" },
+			{ "cn-table-cell": "px-[13px]" },
+			{ "cn-table": "table-fixed" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+		for (const [spec, invalid] of [
+			[BADGE_SPEC, { paddingX: 3 }],
+			[BADGE_SPEC, { gap: 18 }],
+			[TABLE_SPEC, { headHeight: 22 }],
+			[TABLE_SPEC, { cellPaddingY: 25 }],
+			[TABLE_SPEC, { sortable: true }],
+		] as const)
+			expect(() => spec.overrideClasses(invalid as never, null)).toThrow();
+		expect(() => parseBadgeSource([])).toThrow();
+		expect(() => parseTableSource([])).toThrow();
+	});
+});
 
 describe("Native Select, Input Group and Input OTP editor installation contracts", () => {
 	const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
