@@ -5,7 +5,7 @@ import { z } from "zod";
  * Component-level write-back into `src/lib/registry/styles/valar/style-<style>.css`.
  * Each component editor may write only its own `cn-*` classes, and each class only the kinds
  * of utilities its parameters produce (sizes, spacing, radius level, motion tier, …). Colors,
- * arbitrary values and other components are rejected; global tokens (colors, `--radius`, type
+ * free-form values and other components are rejected; global tokens (colors, `--radius`, type
  * scale, motion values) belong to the `/themes` page.
  */
 const N = String.raw`\d+(?:\.(?:25|5|75))?`;
@@ -71,6 +71,9 @@ const TABS_LIST_UTILITY = new RegExp(
 const TABS_TRIGGER_UTILITY = new RegExp(
 	`^(?:(?:group-data-vertical/tabs:)?(?:px-(?:1|1\\.5|2|2\\.5|3|3\\.5|4)|py-(?:0|0\\.5|1|1\\.5|2)|rounded-${RADIUS})|has-data-\\[icon=inline-start\\]:pl-(?:1|1\\.5|2|2\\.5|3|3\\.5|4)|has-data-\\[icon=inline-end\\]:pr-(?:1|1\\.5|2|2\\.5|3|3\\.5|4))$`
 );
+// Nova/Mira track insets require fractional pixels: Tailwind rejects spacing like h-4.6.
+// Only the 16 literal heights produced by the 10–24px thumb scale are accepted.
+const SWITCH_HEIGHT = String.raw`\[(?:1[2468]|2[0246])\.[46]px\]`;
 
 export const OVERRIDE_RULES: Record<string, RegExp> = {
 	...Object.fromEntries(
@@ -128,6 +131,18 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-tabs": new RegExp(`^gap-${N}$`),
 	"cn-tabs-list": TABS_LIST_UTILITY,
 	"cn-tabs-trigger": TABS_TRIGGER_UTILITY,
+	"cn-checkbox": new RegExp(`^(?:size-${N}|rounded-${RADIUS})$`),
+	"cn-checkbox-indicator": new RegExp(`^\\[&>svg\\]:size-${N}$`),
+	"cn-radio-group": new RegExp(`^gap-${N}$`),
+	"cn-radio-group-item": new RegExp(`^size-${N}$`),
+	"cn-radio-group-indicator": new RegExp(`^size-${N}$`),
+	"cn-radio-group-indicator-icon": new RegExp(`^(?:dark:)?size-${N}$`),
+	"cn-switch": new RegExp(
+		`^(?:data-\\[size=(?:default|sm)\\]:(?:(?:h|w)-${N}|h-${SWITCH_HEIGHT})|rounded-${RADIUS}|duration-${TIER})$`
+	),
+	"cn-switch-thumb": new RegExp(
+		`^(?:group-data-\\[size=(?:default|sm)\\]/switch:(?:h|w)-${N}|rounded-${RADIUS}|duration-${TIER})$`
+	),
 };
 
 export const styleOverridePayloadSchema = z

@@ -10,6 +10,7 @@ import {
 	parseStyleCss,
 } from "@valar/svelte-parity/inject-style-classes";
 import { compile } from "svelte/compiler";
+import { compile as compileTailwind } from "tailwindcss";
 import { describe, expect, it } from "vitest";
 import { buttonOverrideClasses } from "../src/lib/features/workbench/button-tuning.js";
 import {
@@ -17,6 +18,11 @@ import {
 	cardOverrideClasses,
 	parseCardSource,
 } from "../src/lib/features/workbench/card-tuning.js";
+import {
+	CHECKBOX_SPEC,
+	checkboxOverrideClasses,
+	parseCheckboxSource,
+} from "../src/lib/features/workbench/checkbox-tuning.js";
 import { CONTEXT_MENU_SPEC } from "../src/lib/features/workbench/context-menu-tuning.js";
 import { heightTier } from "../src/lib/features/workbench/control-tiers.js";
 import { COMPONENT_INVENTORY } from "../src/lib/features/workbench/coverage.js";
@@ -48,6 +54,11 @@ import {
 	parsePopoverSource,
 	popoverOverrideClasses,
 } from "../src/lib/features/workbench/popover-tuning.js";
+import {
+	RADIO_GROUP_SPEC,
+	parseRadioGroupSource,
+	radioGroupOverrideClasses,
+} from "../src/lib/features/workbench/radio-group-tuning.js";
 import { selectOverrideClasses } from "../src/lib/features/workbench/select-tuning.js";
 import {
 	parseSheetSource,
@@ -58,6 +69,11 @@ import {
 	styleOverridePayloadSchema,
 } from "../src/lib/features/workbench/style-overrides.js";
 import { createWorkbenchCss } from "../src/lib/features/workbench/styles.js";
+import {
+	SWITCH_SPEC,
+	parseSwitchSource,
+	switchOverrideClasses,
+} from "../src/lib/features/workbench/switch-tuning.js";
 import {
 	TABS_SPEC,
 	parseTabsSource,
@@ -944,6 +960,226 @@ const registryFiles = (component: string, style: string) =>
 		.files as { target: string; content: string }[];
 const emptyOverrides = (style: string) =>
 	readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
+
+describe("Selection control write-back preserves state styling and linked geometry", () => {
+	it("resizes Checkbox and its check/minus icons without replacing style-owned radii", () => {
+		for (const style of ["nova", "vega", "maia", "mira", "lyra", "luma", "rhea", "sera"]) {
+			const baseline = parseCheckboxSource(registryFiles("checkbox", style));
+			expect(baseline.values).toEqual({
+				size: style === "sera" ? 18 : 16,
+				radius: ["lyra", "sera"].includes(style) ? "none" : "style",
+			});
+			const delta = style === "sera" ? 4 : 2;
+			expect(baseline.context).toEqual({ iconSizeDelta: delta });
+			const write = (css: string, size: number) =>
+				applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({
+						style,
+						classes: checkboxOverrideClasses({ size, radius: "md" }, baseline.context),
+					})
+				);
+			let css = emptyOverrides(style);
+			for (const size of [22, 12]) {
+				css = write(css, size);
+				const content = installed("checkbox", style, css, "checkbox.svelte");
+				expect(parseCheckboxSource([{ target: "ui/checkbox.svelte", content }])).toEqual({
+					values: { size, radius: "md" },
+					context: { iconSizeDelta: delta },
+				});
+				expect(content).toContain(`[&>svg]:size-${(size - delta) / 4}`);
+				for (const utility of [
+					"data-checked:bg-primary",
+					"aria-invalid:border-destructive",
+					"disabled:opacity-50",
+				])
+					expect(content).toContain(utility);
+				expect(compile(content, { generate: "client" }).warnings).toEqual([]);
+			}
+			expect(checkboxOverrideClasses({ radius: "style" }, baseline.context)).toEqual({});
+		}
+	});
+
+	it("resizes Radio Group dots in both themes and keeps repeated writes stable", () => {
+		for (const style of ["nova", "vega", "maia", "mira", "lyra", "luma", "rhea", "sera"]) {
+			const baseline = parseRadioGroupSource(registryFiles("radio-group", style));
+			expect(baseline.values).toEqual({
+				size: style === "sera" ? 18 : 16,
+				gap: ["nova", "lyra"].includes(style) ? 8 : 12,
+			});
+			const context = {
+				dotOffset: style === "sera" ? -1 : 0,
+				darkDotOffset: ["luma", "rhea"].includes(style) ? 2 : null,
+			};
+			expect(baseline.context).toEqual(context);
+			let css = emptyOverrides(style);
+			for (const size of [22, 12]) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({
+						style,
+						classes: radioGroupOverrideClasses({ size, gap: 18 }, context),
+					})
+				);
+				const files = ["radio-group", "radio-group-item"].map((name) => ({
+					target: `ui/${name}.svelte`,
+					content: installed("radio-group", style, css, `${name}.svelte`),
+				}));
+				expect(parseRadioGroupSource(files)).toEqual({ values: { size, gap: 18 }, context });
+				expect(files[1].content).toContain(`size-${(size / 2 + context.dotOffset) / 4}`);
+				if (context.darkDotOffset !== null)
+					expect(files[1].content).toContain(`dark:size-${(size / 2 + 2) / 4}`);
+				for (const utility of [
+					"rounded-full",
+					"aria-invalid:border-destructive",
+					"disabled:opacity-50",
+				])
+					expect(files[1].content).toContain(utility);
+				for (const file of files)
+					expect(compile(file.content, { generate: "client" }).warnings).toEqual([]);
+			}
+		}
+	});
+
+	it("keeps Switch geometry aligned and write-back utilities compilable after repeated writes", async () => {
+		for (const [
+			style,
+			height,
+			width,
+			thumbHeight,
+			thumbWidth,
+			smallHeight,
+			smallWidth,
+			smallThumbHeight,
+			smallThumbWidth,
+			radius,
+			nextHeight,
+			nextWidth,
+		] of [
+			["nova", 18.4, 32, 16, 16, 14, 24, 12, 12, "full", 22.4, 40],
+			["vega", 18.4, 32, 16, 16, 14, 24, 12, 12, "full", 22.4, 40],
+			["maia", 18.4, 32, 16, 16, 14, 24, 12, 12, "full", 22.4, 40],
+			["mira", 16.6, 28, 14, 14, 14, 24, 12, 12, "full", 22.6, 40],
+			["lyra", 18.4, 32, 16, 16, 14, 24, 12, 12, "full", 22.4, 40],
+			["luma", 20, 44, 16, 24, 16, 28, 12, 16, "full", 24, 52],
+			["rhea", 20, 32, 16, 16, 16, 24, 12, 12, "2xl", 24, 40],
+			["sera", 18, 33, 14, 14, 14, 25, 10, 10, "style", 24, 45],
+		] as const) {
+			const baseline = parseSwitchSource(registryFiles("switch", style));
+			expect(baseline).toEqual({
+				values: { thumbHeight, smallThumbHeight, radius, duration: "style" },
+				context: {
+					default: { height, width, thumbHeight, thumbWidth },
+					sm: {
+						height: smallHeight,
+						width: smallWidth,
+						thumbHeight: smallThumbHeight,
+						thumbWidth: smallThumbWidth,
+					},
+				},
+			});
+			const css = applyStyleOverrides(
+				emptyOverrides(style),
+				styleOverridePayloadSchema.parse({
+					style,
+					classes: switchOverrideClasses(
+						{ thumbHeight: 20, smallThumbHeight: 10, radius: "md", duration: "slow" },
+						baseline.context
+					),
+				})
+			);
+			const content = installed("switch", style, css, "switch.svelte");
+			const after = parseSwitchSource([{ target: "ui/switch.svelte", content }]);
+			expect(after.values).toEqual({
+				thumbHeight: 20,
+				smallThumbHeight: 10,
+				radius: "md",
+				duration: "slow",
+			});
+			expect(after.context.default).toEqual({
+				height: nextHeight,
+				width: nextWidth,
+				thumbHeight: 20,
+				thumbWidth: style === "luma" ? 28 : 20,
+			});
+			// An edit to default must never change the small variant's independent dimensions.
+			const next = applyStyleOverrides(
+				css,
+				styleOverridePayloadSchema.parse({
+					style,
+					classes: switchOverrideClasses({ thumbHeight: 12 }, after.context),
+				})
+			);
+			const nextSource = installed("switch", style, next, "switch.svelte");
+			const twice = parseSwitchSource([{ target: "ui/switch.svelte", content: nextSource }]);
+			expect(twice.values).toEqual({ ...after.values, thumbHeight: 12 });
+			expect(twice.context.sm).toEqual(after.context.sm);
+			expect(twice.context.default.width - 2 * twice.context.default.thumbWidth).toBe(
+				width - 2 * thumbWidth
+			);
+			for (const utility of [
+				"data-checked:bg-primary",
+				"data-unchecked:translate-x-",
+				"focus-visible:ring-",
+				"after:-inset-x-3",
+			])
+				expect(nextSource).toContain(utility);
+			expect(compile(nextSource, { generate: "client" }).warnings).toEqual([]);
+			expect(
+				switchOverrideClasses({ radius: "style", duration: "style" }, baseline.context)
+			).toEqual({});
+			for (let size = 10; size <= 24; size += 2) {
+				const classes = switchOverrideClasses(
+					{ thumbHeight: size, smallThumbHeight: size },
+					baseline.context
+				);
+				styleOverridePayloadSchema.parse({ style, classes });
+				// Test the actual @apply contract: preview pixels alone cannot catch invalid utilities.
+				await compileTailwind(
+					`@theme { --spacing: 0.25rem; } ${Object.values(classes)
+						.map((utilities, i) => `.control-${i} { @apply ${utilities}; }`)
+						.join("\n")}`
+				);
+			}
+		}
+	});
+
+	it("rejects invalid sizes, colors and free-form control CSS", () => {
+		for (const [spec, valid, invalid] of [
+			[
+				CHECKBOX_SPEC,
+				{ size: 16, radius: "style" },
+				[{ size: 11 }, { size: 30 }, { size: 15 }, { radius: "4px" }],
+			],
+			[
+				RADIO_GROUP_SPEC,
+				{ size: 16, gap: 8 },
+				[{ size: 10 }, { gap: 25 }, { gap: 3 }, { radius: "md" }],
+			],
+			[
+				SWITCH_SPEC,
+				{ thumbHeight: 16, smallThumbHeight: 12, radius: "full", duration: "style" },
+				[{ thumbHeight: 9 }, { smallThumbHeight: 26 }, { thumbHeight: 15 }, { duration: "200ms" }],
+			],
+		] as const)
+			for (const bad of invalid)
+				expect(spec.valuesSchema.safeParse({ ...valid, ...bad }).success).toBe(false);
+		for (const classes of [
+			{ "cn-checkbox": "bg-red-500" },
+			{ "cn-checkbox-indicator": "[&>svg]:size-[20px]" },
+			{ "cn-radio-group-item": "rounded-none" },
+			{ "cn-radio-group-indicator-icon": "dark:bg-white" },
+			{ "cn-switch": "data-[size=default]:h-5.6" },
+			{ "cn-switch": "data-[size=default]:h-[22.3px]" },
+			{ "cn-switch": "data-[size=default]:h-[28.4px]" },
+			{ "cn-switch": "data-[size=default]:w-[22.4px]" },
+			{ "cn-switch": "data-[size=lg]:h-6" },
+			{ "cn-switch-thumb": "translate-x-4" },
+			{ "cn-switch-thumb": "group-data-[size=default]/switch:w-5!" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+	});
+});
 
 describe("Card write-back preserves shared spacing and part radii", () => {
 	it("reads all styles and replaces both size variables without flattening conditional layouts", () => {

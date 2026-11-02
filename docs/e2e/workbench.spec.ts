@@ -9,6 +9,191 @@ async function setNumber(page: Page, label: string, value: number) {
 	await input.press("Enter");
 }
 
+test("Checkbox editor preserves mixed state, labels, keyboard focus and comparison isolation", async ({
+	page,
+}) => {
+	const errors: string[] = [];
+	page.on("pageerror", (error) => errors.push(error.message));
+	await page.goto("/docs/components/checkbox", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Checkbox", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Checkbox · 组件参数" });
+	const current = editor.locator("[data-tuning-current]");
+	const unchecked = current.getByRole("checkbox", {
+		name: "接收项目更新（初始未选中）",
+		exact: true,
+	});
+	const mixed = current.getByRole("checkbox", { name: "部分选中示例", exact: true });
+	await expect(mixed).toHaveAttribute("aria-checked", "mixed");
+	await mixed.focus();
+	await page.keyboard.press("Space");
+	await expect(mixed).toHaveAttribute("aria-checked", "true");
+	await unchecked.focus();
+	await page.keyboard.press("Space");
+	await expect(unchecked).toBeChecked();
+	await expect(unchecked).not.toHaveCSS("box-shadow", "none");
+	await current.locator("label").filter({ hasText: "接收项目更新（初始未选中）" }).click();
+	await expect(unchecked).not.toBeChecked();
+	await expect(
+		current.getByRole("checkbox", { name: "禁用 · 已选中", exact: true })
+	).toBeDisabled();
+	await setNumber(page, "方框尺寸（px）", 28);
+	await editor.getByRole("button", { name: /^圆角档位 / }).click();
+	await editor.getByRole("option", { name: "md · 0.8 × 基数", exact: true }).click();
+	await expect(unchecked).toHaveCSS("width", "28px");
+	await expect(unchecked).toHaveCSS("border-radius", "8px");
+	await expect(mixed.locator("svg")).toHaveCSS("width", "26px");
+	await expect(
+		current.getByRole("checkbox", { name: "同意项目使用规范", exact: true })
+	).toHaveAttribute("aria-invalid", "true");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.getByRole("checkbox", { name: "部分选中示例", exact: true })).toHaveAttribute(
+		"aria-checked",
+		"mixed"
+	);
+	await expect(before.getByRole("checkbox").first()).toHaveCSS("width", "16px");
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await expect(current).toHaveCSS("color", "oklch(0.985 0 0)");
+	await expect(page.locator("html")).not.toHaveClass(/dark/);
+	await page.setViewportSize({ width: 390, height: 844 });
+	for (const pane of [before, current])
+		expect(await pane.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor.getByRole("textbox", { name: "Checkbox 版本名称", exact: true }).fill("大号复选框");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「大号复选框」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	expect(errors).toEqual([]);
+});
+
+test("Radio Group editor keeps roving keyboard focus and dark dots with independent panes", async ({
+	page,
+}) => {
+	const errors: string[] = [];
+	page.on("pageerror", (error) => errors.push(error.message));
+	await page.goto("/docs/components/radio-group", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Radio Group", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Radio Group · 组件参数" });
+	const current = editor.locator("[data-tuning-current]");
+	for (const [orientation, arrow] of [
+		["纵向", "ArrowDown"],
+		["横向", "ArrowRight"],
+	]) {
+		const group = current.getByRole("radiogroup", {
+			name: `通知频率 · ${orientation}`,
+			exact: true,
+		});
+		await group.getByRole("radio", { name: "每天汇总", exact: true }).focus();
+		await page.keyboard.press(arrow);
+		const weekly = group.getByRole("radio", { name: "每周汇总", exact: true });
+		await expect(weekly).toBeFocused();
+		await expect(weekly).toBeChecked();
+		await expect(weekly).not.toHaveCSS("box-shadow", "none");
+		await expect(
+			group.getByRole("radio", { name: "即时通知（暂不可用）", exact: true })
+		).toBeDisabled();
+	}
+	const disabled = current.getByRole("radiogroup", { name: "通知频率 · 整组禁用", exact: true });
+	for (const radio of await disabled.getByRole("radio").all()) await expect(radio).toBeDisabled();
+	await setNumber(page, "单选框尺寸（px）", 22);
+	await setNumber(page, "组内选项间距（px）", 18);
+	const vertical = current.getByRole("radiogroup", { name: "通知频率 · 纵向", exact: true });
+	await expect(vertical).toHaveCSS("gap", "18px");
+	await expect(vertical.getByRole("radio").first()).toHaveCSS("width", "22px");
+	await expect(vertical.locator("svg")).toHaveCSS("width", "11px");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(
+		before
+			.getByRole("radiogroup", { name: "通知频率 · 纵向", exact: true })
+			.getByRole("radio", { name: "每天汇总", exact: true })
+	).toBeChecked();
+	await expect(before.getByRole("radio").first()).toHaveCSS("width", "16px");
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await expect(current).toHaveCSS("color", "oklch(0.985 0 0)");
+	await expect(vertical.locator("svg")).toHaveCSS("width", "11px");
+	await page.setViewportSize({ width: 390, height: 844 });
+	for (const pane of [current, before])
+		expect(await pane.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor
+		.getByRole("textbox", { name: "Radio Group 版本名称", exact: true })
+		.fill("宽松单选组");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「宽松单选组」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	expect(errors).toEqual([]);
+});
+
+test("Switch editor links track and thumb dimensions while preserving small size and endpoints", async ({
+	page,
+}) => {
+	const errors: string[] = [];
+	page.on("pageerror", (error) => errors.push(error.message));
+	await page.goto("/docs/components/switch", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Switch", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Switch · 组件参数" });
+	const current = editor.locator("[data-tuning-current]");
+	const normal = current.getByRole("group", { name: "默认尺寸", exact: true });
+	const small = current.getByRole("group", { name: "小尺寸", exact: true });
+	const control = normal.getByRole("switch", { name: "邮件通知", exact: true });
+	await control.focus();
+	await page.keyboard.press("Space");
+	await expect(control).toBeChecked();
+	await expect(control).not.toHaveCSS("box-shadow", "none");
+	await normal.locator("label").filter({ hasText: "邮件通知" }).click();
+	await expect(control).not.toBeChecked();
+	await setNumber(page, "默认尺寸滑块高度（px）", 20);
+	await expect(control).toHaveCSS("width", "40px");
+	await expect(control.locator('[data-slot="switch-thumb"]')).toHaveCSS("height", "20px");
+	await expect(small.getByRole("switch").first()).toHaveCSS("width", "24px");
+	await setNumber(page, "小尺寸滑块高度（px）", 10);
+	await expect(small.getByRole("switch").first()).toHaveCSS("width", "20px");
+	await editor.getByRole("button", { name: /^切换动效档位 / }).click();
+	await editor.getByRole("option", { name: "慢（全局 token）", exact: true }).click();
+	await expect(control).toHaveCSS("transition-duration", "0.3s");
+	await expect(control.locator('[data-slot="switch-thumb"]')).toHaveCSS(
+		"transition-duration",
+		"0.3s"
+	);
+	await control.click();
+	await expect(control).toBeChecked();
+	await expect
+		.poll(async () => {
+			const track = await control.boundingBox();
+			const thumb = await control.locator('[data-slot="switch-thumb"]').boundingBox();
+			return Math.round((track!.x + track!.width - thumb!.x - thumb!.width) * 10) / 10;
+		})
+		.toBe(1);
+	await expect(
+		normal.getByRole("switch", { name: "安全提醒（禁用）", exact: true })
+	).toBeDisabled();
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(
+		before.getByRole("switch", { name: "邮件通知", exact: true }).first()
+	).not.toBeChecked();
+	await expect(before.getByRole("switch").first()).toHaveCSS("width", "32px");
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await expect(current).toHaveCSS("color", "oklch(0.985 0 0)");
+	await page.setViewportSize({ width: 390, height: 844 });
+	await setNumber(page, "默认尺寸滑块高度（px）", 24);
+	for (const pane of [before, current])
+		expect(await pane.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor.getByRole("textbox", { name: "Switch 版本名称", exact: true }).fill("宽松开关");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「宽松开关」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	expect(errors).toEqual([]);
+});
+
 test("Tabs editor tunes both orientations and variants without changing keyboard semantics", async ({
 	page,
 }) => {

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ButtonTuner from "$lib/features/workbench/button-tuner.svelte";
 	import CardTuner from "$lib/features/workbench/card-tuner.svelte";
+	import CheckboxTuner from "$lib/features/workbench/checkbox-tuner.svelte";
 	import ContextMenuTuner from "$lib/features/workbench/context-menu-tuner.svelte";
 	import DialogTuner from "$lib/features/workbench/dialog-tuner.svelte";
 	import DrawerTuner from "$lib/features/workbench/drawer-tuner.svelte";
@@ -8,8 +9,10 @@
 	import HoverCardTuner from "$lib/features/workbench/hover-card-tuner.svelte";
 	import InputTuner from "$lib/features/workbench/input-tuner.svelte";
 	import PopoverTuner from "$lib/features/workbench/popover-tuner.svelte";
+	import RadioGroupTuner from "$lib/features/workbench/radio-group-tuner.svelte";
 	import SelectTuner from "$lib/features/workbench/select-tuner.svelte";
 	import SheetTuner from "$lib/features/workbench/sheet-tuner.svelte";
+	import SwitchTuner from "$lib/features/workbench/switch-tuner.svelte";
 	import TabsTuner from "$lib/features/workbench/tabs-tuner.svelte";
 	import TextareaTuner from "$lib/features/workbench/textarea-tuner.svelte";
 	import TooltipTuner from "$lib/features/workbench/tooltip-tuner.svelte";
@@ -87,6 +90,9 @@
 					[
 						"button-demo",
 						"card-demo",
+						"checkbox-demo",
+						"radio-group-demo",
+						"switch-demo",
 						"tabs-demo",
 						"dialog-demo",
 						"drawer-demo",
@@ -109,6 +115,12 @@
 				<ButtonTuner>{@render PreviewExample()}</ButtonTuner>
 			{:else if name === "card-demo"}
 				<CardTuner>{@render PreviewExample()}</CardTuner>
+			{:else if name === "checkbox-demo"}
+				<CheckboxTuner>{@render PreviewExample()}</CheckboxTuner>
+			{:else if name === "radio-group-demo"}
+				<RadioGroupTuner>{@render PreviewExample()}</RadioGroupTuner>
+			{:else if name === "switch-demo"}
+				<SwitchTuner>{@render PreviewExample()}</SwitchTuner>
 			{:else if name === "tabs-demo"}
 				<TabsTuner>{@render PreviewExample()}</TabsTuner>
 			{:else if name === "dialog-demo"}
