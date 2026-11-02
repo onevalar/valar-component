@@ -9,6 +9,194 @@ async function setNumber(page: Page, label: string, value: number) {
 	await input.press("Enter");
 }
 
+test("Native Select editor preserves native selection, size alignment and isolated versions", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/native-select", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Native Select", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Native Select · 组件参数" });
+	await expect(editor.getByTestId("native-select-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const control = current.getByRole("combobox", { name: "默认尺寸 · 未选择", exact: true });
+	await current.getByText("默认尺寸 · 未选择", { exact: true }).click();
+	await expect(control).toBeFocused();
+	await control.press("Home");
+	await control.press("ArrowDown");
+	await expect(control).toHaveValue("apple");
+	await control.press("End");
+	await expect(control).toHaveValue("grapes"); // Skip the disabled final option.
+	await expect(
+		current.getByRole("combobox", { name: "默认尺寸 · 禁用", exact: true })
+	).toBeDisabled();
+	await expect(control).toHaveCSS("height", "32px");
+	await editor.getByRole("button", { name: /^默认尺寸高度 / }).click();
+	await page.getByRole("option", { name: "同 Button 大", exact: true }).click();
+	await editor.getByRole("button", { name: /^小尺寸高度 / }).click();
+	await page.getByRole("option", { name: "同 Button 特小", exact: true }).click();
+	await setNumber(page, "文字侧内边距（px）", 22);
+	await expect(control).toHaveCSS("height", "36px");
+	await expect(control).toHaveCSS("padding-left", "22px");
+	await expect(current.getByRole("combobox", { name: "小尺寸 · 未选择", exact: true })).toHaveCSS(
+		"height",
+		"24px"
+	);
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(
+		before.getByRole("combobox", { name: "默认尺寸 · 未选择", exact: true })
+	).toHaveValue("");
+	await expect(before.getByRole("combobox", { name: "默认尺寸 · 未选择", exact: true })).toHaveCSS(
+		"padding-left",
+		"10px"
+	);
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await setNumber(page, "文字侧内边距（px）", 48);
+	for (const pane of [before, current])
+		expect(await pane.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor
+		.getByRole("textbox", { name: "Native Select 版本名称", exact: true })
+		.fill("原生紧凑选择");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「原生紧凑选择」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+});
+
+test("Input Group editor changes inline geometry without compressing block addons or textarea", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/input-group", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Input Group", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Input Group · 组件参数" });
+	await expect(editor.getByTestId("input-group-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const row = current.locator("[data-input-group-row]");
+	const control = current.getByRole("textbox", { name: "搜索组件 · 行内两侧", exact: true });
+	await current.getByText("查找", { exact: true }).click();
+	await expect(control).toBeFocused();
+	await control.fill("独立草稿");
+	await current.getByRole("button", { name: "清空", exact: true }).click();
+	await expect(control).toHaveValue("");
+	await expect(current.getByRole("button", { name: "清空", exact: true })).toBeFocused();
+	const blocks = current.locator("[data-input-group-block]");
+	const blockHeights = await blocks.evaluateAll((els) =>
+		els.map((el) => el.getBoundingClientRect().height)
+	);
+	await editor.getByRole("button", { name: /^单行高度档位 / }).click();
+	await page.getByRole("option", { name: "同 Button 大", exact: true }).click();
+	await setNumber(page, "行内附加内容外侧留白（px）", 22);
+	await setNumber(page, "块状附加内容横向留白（px）", 18);
+	await setNumber(page, "附加内容间距（px）", 12);
+	await editor.getByRole("button", { name: /^组合圆角档位 / }).click();
+	await page.getByRole("option", { name: "md · 0.8 × 基数", exact: true }).click();
+	await expect(row.locator('[data-slot="input-group"]')).toHaveCSS("height", "36px");
+	await expect(control).toHaveCSS("height", "34px");
+	expect(
+		await blocks.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))
+	).toEqual(blockHeights);
+	await expect(blocks.first().locator('[data-align="block-start"]')).toHaveCSS(
+		"padding-left",
+		"18px"
+	);
+	const multiline = current.locator("[data-input-group-multiline]");
+	await expect(multiline).toHaveCSS("border-top-left-radius", "8px");
+	const textarea = current.getByRole("textbox", { name: "多行消息 · 顶部与底部", exact: true });
+	const initialHeight = (await textarea.boundingBox())!.height;
+	await textarea.fill("一\n二\n三\n四\n五\n六\n七\n八\n九");
+	expect((await textarea.boundingBox())!.height).toBeGreaterThan(initialHeight);
+	await expect(current.getByRole("textbox", { name: "禁用输入", exact: true })).toBeDisabled();
+	await expect(
+		current.getByRole("textbox", { name: "错误状态", exact: true })
+	).toHaveAccessibleDescription("请输入完整链接。这是固定错误状态示例。");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(
+		before.getByRole("textbox", { name: "搜索组件 · 行内两侧", exact: true })
+	).toHaveValue("组件");
+	await expect(
+		before.getByRole("textbox", { name: "多行消息 · 顶部与底部", exact: true })
+	).toHaveValue("");
+	await expect(before.locator('[data-input-group-row] [data-slot="input-group"]')).toHaveCSS(
+		"height",
+		"32px"
+	);
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await setNumber(page, "行内附加内容外侧留白（px）", 48);
+	await setNumber(page, "块状附加内容横向留白（px）", 48);
+	await setNumber(page, "附加内容间距（px）", 24);
+	for (const pane of [before, current])
+		expect(await pane.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor.getByRole("textbox", { name: "Input Group 版本名称", exact: true }).fill("组合输入");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「组合输入」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+});
+
+test("Input OTP editor retains actual paste, deletion, grouped endpoints and isolated state", async ({
+	page,
+	context,
+}) => {
+	test.setTimeout(60_000);
+	await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+	await page.goto("/docs/components/input-otp", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Input OTP", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Input OTP · 组件参数" });
+	await expect(editor.getByTestId("input-otp-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const control = current.getByRole("textbox", { name: "连续六位", exact: true });
+	await current.getByText("连续六位", { exact: true }).click();
+	await expect(control).toBeFocused();
+	await page.evaluate(() => navigator.clipboard.writeText("583027"));
+	await control.press("Control+V");
+	await expect(control).toHaveValue("583027");
+	await control.press("End");
+	await control.press("Backspace");
+	await expect(control).toHaveValue("58302");
+	await control.press("Home");
+	await control.press("Delete");
+	await expect(control).toHaveValue("8302");
+	await expect(current.getByRole("textbox", { name: "禁用验证码", exact: true })).toBeDisabled();
+	await editor.getByRole("button", { name: /^方形槽尺寸档位 / }).click();
+	await page.getByRole("option", { name: "同 Button 大", exact: true }).click();
+	await setNumber(page, "组间距（px）", 22);
+	await editor.getByRole("button", { name: /^分组圆角档位 / }).click();
+	await page.getByRole("option", { name: "xl · 1.4 × 基数", exact: true }).click();
+	const group = current.locator('[data-slot="input-otp-group"]').first();
+	const slots = group.locator('[data-slot="input-otp-slot"]');
+	await expect(slots.first()).toHaveCSS("width", "36px");
+	await expect(slots.first()).toHaveCSS("height", "36px");
+	await expect(slots.first()).toHaveCSS("border-top-left-radius", "14px");
+	await expect(slots.first()).toHaveCSS("border-top-right-radius", "0px");
+	await expect(slots.nth(2)).toHaveCSS("border-radius", "0px");
+	await expect(slots.last()).toHaveCSS("border-top-right-radius", "14px");
+	await expect(current.locator("[data-pin-input-root]").nth(1)).toHaveCSS("gap", "22px");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.getByRole("textbox", { name: "连续六位", exact: true })).toHaveValue("");
+	await expect(before.locator('[data-slot="input-otp-slot"]').first()).toHaveCSS("width", "32px");
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await setNumber(page, "组间距（px）", 24);
+	for (const pane of [before, current])
+		expect(await pane.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor.getByRole("textbox", { name: "Input OTP 版本名称", exact: true }).fill("分组验证码");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「分组验证码」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+});
+
 test("Toggle Group editor preserves joined endpoints, selection and shared Toggle ownership", async ({
 	page,
 }) => {

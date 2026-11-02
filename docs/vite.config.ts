@@ -229,9 +229,14 @@ function flattenedRegistry(): Plugin {
 								throw error;
 							}
 							styleMaps.clear();
+							// The write suppresses HMR; reload must rebuild the CSS entry as well as source.
 							for (const env of [server.environments.client, server.environments.ssr])
 								for (const mod of env.moduleGraph.idToModuleMap.values())
-									if (mod.id && isFlattened(mod.id)) env.moduleGraph.invalidateModule(mod);
+									if (
+										mod.id &&
+										(isFlattened(mod.id) || mod.file === path.join(__dirname, "src/app.css"))
+									)
+										env.moduleGraph.invalidateModule(mod);
 							reply(200, {
 								file: `docs/${path.relative(__dirname, result.target)}`,
 								content: result.next,

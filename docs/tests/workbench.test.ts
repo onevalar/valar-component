@@ -40,6 +40,16 @@ import {
 	hoverCardOverrideClasses,
 	parseHoverCardSource,
 } from "../src/lib/features/workbench/hover-card-tuning.js";
+import {
+	INPUT_GROUP_SPEC,
+	inputGroupOverrideClasses,
+	parseInputGroupSource,
+} from "../src/lib/features/workbench/input-group-tuning.js";
+import {
+	INPUT_OTP_SPEC,
+	inputOtpOverrideClasses,
+	parseInputOtpSource,
+} from "../src/lib/features/workbench/input-otp-tuning.js";
 import { inputOverrideClasses } from "../src/lib/features/workbench/input-tuning.js";
 import { parseMenuSource, type MenuOverrides } from "../src/lib/features/workbench/menu-tuning.js";
 import {
@@ -50,6 +60,11 @@ import {
 	parseWorkbenchPreset,
 	presetSchema,
 } from "../src/lib/features/workbench/model.js";
+import {
+	NATIVE_SELECT_SPEC,
+	nativeSelectOverrideClasses,
+	parseNativeSelectSource,
+} from "../src/lib/features/workbench/native-select-tuning.js";
 import {
 	parsePopoverSource,
 	popoverOverrideClasses,
@@ -972,6 +987,178 @@ const registryFiles = (component: string, style: string) =>
 		.files as { target: string; content: string }[];
 const emptyOverrides = (style: string) =>
 	readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
+
+describe("Native Select, Input Group and Input OTP editor installation contracts", () => {
+	const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+	const contextFor = (style: string) => {
+		const map = parseStyleCss(
+			readFileSync(resolve(`src/lib/registry/styles/style-${style}.css`), "utf8")
+		);
+		return {
+			buttonHeights: Object.fromEntries(
+				["xs", "sm", "default", "lg"].map((size) => [
+					size,
+					Number(/(?:^|\s)h-(\d+(?:\.\d+)?)/.exec(map[`cn-button-size-${size}`])![1]) * 4,
+				])
+			) as { xs: number; sm: number; default: number; lg: number },
+		};
+	};
+	const custom = { buttonHeights: { xs: 17, sm: 27, default: 45, lg: 61 } };
+	const write = (style: string, classes: Record<string, string>, css = emptyOverrides(style)) =>
+		applyStyleOverrides(css, styleOverridePayloadSchema.parse({ style, classes }));
+	const filesAfter = (component: string, style: string, css: string) =>
+		registryFiles(component, style)
+			.filter((file) => file.target.endsWith(".svelte"))
+			.map((file) => ({
+				target: file.target,
+				content: installed(component, style, css, file.target.split("/").at(-1)!),
+			}));
+
+	it("keeps native sizes, small-radius differences and the untouched arrow inset", () => {
+		const radii = ["style", "md", "none", "4xl", "md", "3xl", "2xl", "none"];
+		for (const [index, style] of styles.entries()) {
+			const baseline = parseNativeSelectSource(
+				registryFiles("native-select", style),
+				contextFor(style)
+			);
+			expect(baseline.values).toEqual({
+				"default.height": "default",
+				"sm.height": "sm",
+				radius: radii[index],
+				paddingStart: [10, 10, 10, 12, 8, 12, 10, 0][index],
+			});
+			expect(
+				parseNativeSelectSource(registryFiles("native-select", style), custom).values[
+					"default.height"
+				]
+			).toBe("style");
+			const original = registryFiles("native-select", style).find((file) =>
+				file.target.endsWith("/native-select.svelte")
+			)!.content;
+			let css = emptyOverrides(style);
+			for (const paddingStart of [46, 2]) {
+				const change = {
+					"default.height": "default",
+					"sm.height": "sm",
+					radius: "xl",
+					paddingStart,
+				} as const;
+				css = write(style, nativeSelectOverrideClasses(change, custom), css);
+				const files = filesAfter("native-select", style, css);
+				expect(parseNativeSelectSource(files, custom).values).toEqual(change);
+				const source = files.find((file) => file.target.endsWith("/native-select.svelte"))!.content;
+				expect(source).toContain("data-[size=default]:h-11.25");
+				expect(source).toContain("data-[size=sm]:h-6.75");
+				expect(source.match(/(?<![\w:-])pr-[\w.]+/g)).toEqual(
+					original.match(/(?<![\w:-])pr-[\w.]+/g)
+				);
+				expect(source).toContain("data-[size=sm]:rounded-xl");
+			}
+		}
+		expect(nativeSelectOverrideClasses({ radius: "style", "sm.height": "style" }, custom)).toEqual(
+			{}
+		);
+	});
+
+	it("roundtrips all addon positions without taking over nested input, textarea or button geometry", () => {
+		for (const [index, style] of styles.entries()) {
+			const context = contextFor(style);
+			expect(parseInputGroupSource(registryFiles("input-group", style), context).values).toEqual({
+				height: "default",
+				radius: ["lg", "md", "none", "style", "md", "style", "2xl", "none"][index],
+				inlinePadding: [8, 8, 8, 12, 8, 12, 8, 0][index],
+				blockPaddingX: [10, 10, 10, 12, 8, 12, 10, 0][index],
+				addonGap: style === "mira" ? 4 : 8,
+			});
+			let css = emptyOverrides(style);
+			for (const [inlinePadding, blockPaddingX] of [
+				[46, 2],
+				[2, 38],
+			]) {
+				const change = {
+					height: "lg",
+					radius: "md",
+					inlinePadding,
+					blockPaddingX,
+					addonGap: 14,
+				} as const;
+				css = write(style, inputGroupOverrideClasses(change, custom), css);
+				const files = filesAfter("input-group", style, css);
+				expect(parseInputGroupSource(files, custom).values).toEqual(change);
+				const root = files.find((file) => file.target.endsWith("/input-group.svelte"))!.content;
+				expect(root).toContain("h-15.25");
+				expect(root).toContain("has-[>textarea]:h-auto");
+				expect(root).toContain("has-[>[data-align=block-end]]:h-auto");
+				expect(root).toContain("has-[textarea]:rounded-md");
+				for (const name of [
+					"input-group-input.svelte",
+					"input-group-textarea.svelte",
+					"input-group-button.svelte",
+				])
+					expect(files.find((file) => file.target.endsWith(`/${name}`))!.content).toBe(
+						installed("input-group", style, emptyOverrides(style), name)
+					);
+			}
+		}
+		expect(inputGroupOverrideClasses({ height: "style", radius: "style" }, custom)).toEqual({});
+	});
+
+	it("installs OTP root gap and square slots while preserving per-style slot spacing and endpoint rules", () => {
+		for (const [index, style] of styles.entries()) {
+			expect(
+				parseInputOtpSource(registryFiles("input-otp", style), contextFor(style)).values
+			).toEqual({
+				slotSize: "default",
+				groupGap: 8,
+				radius: ["lg", "md", "none", "4xl", "md", "3xl", "2xl", "none"][index],
+			});
+			let css = emptyOverrides(style);
+			for (const groupGap of [22, 2]) {
+				const change = { slotSize: "default", groupGap, radius: "xl" } as const;
+				css = write(style, inputOtpOverrideClasses(change, custom), css);
+				const files = filesAfter("input-otp", style, css);
+				expect(parseInputOtpSource(files, custom).values).toEqual(change);
+				expect(files.find((file) => file.target.endsWith("/input-otp.svelte"))!.content).toContain(
+					`gap-${groupGap / 4}`
+				);
+				const slots = files.find((file) => file.target.endsWith("/input-otp-slot.svelte"))!.content;
+				expect(slots).toContain("size-11.25");
+				expect(slots).toContain("first:rounded-l-xl");
+				expect(slots).toContain("last:rounded-r-xl");
+				expect(slots).toContain("first:last:rounded-xl");
+				const group = files.find((file) =>
+					file.target.endsWith("/input-otp-group.svelte")
+				)!.content;
+				expect(group.includes("gap-1")).toBe(style === "sera");
+			}
+		}
+		expect(inputOtpOverrideClasses({ slotSize: "style", radius: "style" }, custom)).toEqual({});
+	});
+
+	it("rejects non-visual or cross-component writes and invalid parameter values", () => {
+		for (const classes of [
+			{ "cn-native-select": "pr-4" },
+			{ "cn-native-select": "h-9" },
+			{ "cn-native-select": "bg-red-500" },
+			{ "cn-input-group": "[&>textarea]:h-full" },
+			{ "cn-input-group-addon": "py-4" },
+			{ "cn-input-group-addon-align-inline-start": "px-4" },
+			{ "cn-input-group-addon-align-block-end": "px-12.5" },
+			{ "cn-input-otp": "gap-[13px]" },
+			{ "cn-input-otp-group": "gap-4" },
+			{ "cn-input-otp-slot": "h-9" },
+			{ "cn-input-otp-slot": "data-[active=true]:bg-primary" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+		for (const [spec, invalid] of [
+			[NATIVE_SELECT_SPEC, { paddingStart: 3 }],
+			[INPUT_GROUP_SPEC, { inlinePadding: 49 }],
+			[INPUT_GROUP_SPEC, { blockPaddingX: 3 }],
+			[INPUT_OTP_SPEC, { groupGap: 25 }],
+		] as const)
+			expect(() => spec.overrideClasses(invalid as never, custom)).toThrow();
+	});
+});
 
 describe("Toggle, Toggle Group and Slider editors preserve shared and directional geometry", () => {
 	it("roundtrips joined Group contours without owning shared Toggle sizes or icon insets", () => {

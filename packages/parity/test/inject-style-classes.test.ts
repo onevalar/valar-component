@@ -159,9 +159,11 @@ describe("injectStyleClasses", () => {
 		expect(injectStyleClasses(input, { "cn-toast": "rounded-2xl" })).toBe(input);
 	});
 
-	it("leaves cn-input-otp so it matches upstream containerClassName", () => {
+	it("inlines Input OTP root spacing into its current Bits UI class property", () => {
 		const input = `class={cn("cn-input-otp flex items-center", className)}`;
-		expect(injectStyleClasses(input, { "cn-input-otp": "gap-2" })).toBe(input);
+		expect(injectStyleClasses(input, { "cn-input-otp": "gap-2" })).toBe(
+			`class={cn("gap-2 flex items-center", className)}`
+		);
 	});
 
 	it("strips cn-*-logical tokens instead of inlining them", () => {

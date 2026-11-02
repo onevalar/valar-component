@@ -74,7 +74,7 @@
 			"target": "input-otp/input-otp-slot.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { PinInput as InputOTPPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tvalue = $bindable(\"\"),\n\t\t...restProps\n\t}: InputOTPPrimitive.RootProps = $props();\n</script>\n\n<InputOTPPrimitive.Root\n\tbind:ref\n\tbind:value\n\tdata-slot=\"input-otp\"\n\tspellcheck={false}\n\tclass={cn(\n\t\t\"cn-input-otp flex items-center has-disabled:opacity-50\",\n\t\t\"disabled:cursor-not-allowed\",\n\t\tclassName\n\t)}\n\t{...restProps}\n/>\n",
+			"content": "<script lang=\"ts\">\n\timport { PinInput as InputOTPPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tvalue = $bindable(\"\"),\n\t\t...restProps\n\t}: InputOTPPrimitive.RootProps = $props();\n</script>\n\n<InputOTPPrimitive.Root\n\tbind:ref\n\tbind:value\n\tdata-slot=\"input-otp\"\n\tspellcheck={false}\n\tclass={cn(\n\t\t\"gap-2 flex items-center has-disabled:opacity-50\",\n\t\t\"disabled:cursor-not-allowed\",\n\t\tclassName\n\t)}\n\t{...restProps}\n/>\n",
 			"type": "registry:file",
 			"target": "input-otp/input-otp.svelte"
 		}

@@ -8,10 +8,8 @@ const SKIP_CN_CLASSES = new Set([
 	"cn-rtl-flip",
 	"cn-font-heading",
 	// Upstream only inlines cn-* on className / cva / mergeProps.
-	// These tokens live on other properties (toastOptions.classes.toast,
-	// InputOTP containerClassName) so published JSON keeps the token.
+	// Toast's token lives on toastOptions.classes.toast, not a class property.
 	"cn-toast",
-	"cn-input-otp",
 ]);
 
 /**

@@ -48,6 +48,7 @@
 	type Draft = Partial<TunerValues>;
 	let probe = $state<HTMLDivElement>();
 	let openButton = $state<HTMLButtonElement>();
+	let mounted = $state(false);
 	let editing = $state(false);
 	let loading = $state(false);
 	let mode = $state<"light" | "dark">("light");
@@ -103,6 +104,7 @@
 	}
 
 	onMount(() => {
+		mounted = true;
 		message = sessionStorage.getItem(FLASH_KEY) ?? "";
 		sessionStorage.removeItem(FLASH_KEY);
 		try {
@@ -304,8 +306,11 @@
 					>{/each}
 			</select>
 		</label>
-		<button class="action primary" bind:this={openButton} onclick={begin} disabled={loading}
-			>{loading ? "加载中…" : `微调 ${title}`}</button
+		<button
+			class="action primary"
+			bind:this={openButton}
+			onclick={begin}
+			disabled={!mounted || loading}>{loading ? "加载中…" : `微调 ${title}`}</button
 		>
 	</div>
 	{#if !editing}{@render status()}{/if}

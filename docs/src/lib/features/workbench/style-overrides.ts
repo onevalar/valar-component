@@ -71,6 +71,9 @@ const TABS_LIST_UTILITY = new RegExp(
 const TABS_TRIGGER_UTILITY = new RegExp(
 	`^(?:(?:group-data-vertical/tabs:)?(?:px-(?:1|1\\.5|2|2\\.5|3|3\\.5|4)|py-(?:0|0\\.5|1|1\\.5|2)|rounded-${RADIUS})|has-data-\\[icon=inline-start\\]:pl-(?:1|1\\.5|2|2\\.5|3|3\\.5|4)|has-data-\\[icon=inline-end\\]:pr-(?:1|1\\.5|2|2\\.5|3|3\\.5|4))$`
 );
+const INPUT_GROUP_UTILITY = new RegExp(
+	`^(?:h-${N}|(?:has-data-\\[align=block-(?:start|end)\\]:|has-\\[textarea\\]:)?rounded-${RADIUS}|not-has-\\[>\\[data-align=block-start\\]\\]:not-has-\\[>\\[data-align=block-end\\]\\]:\\[&>input\\]:h-full)$`
+);
 // Nova/Mira track insets require fractional pixels: Tailwind rejects spacing like h-4.6.
 // Only the 16 literal heights produced by the 10–24px thumb scale are accepted.
 const SWITCH_HEIGHT = String.raw`\[(?:1[2468]|2[0246])\.[46]px\]`;
@@ -107,6 +110,18 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-input": INPUT_UTILITY,
 	"cn-textarea": TEXTAREA_UTILITY,
 	"cn-select-trigger": SELECT_TRIGGER_UTILITY,
+	"cn-native-select": SELECT_TRIGGER_UTILITY,
+	"cn-input-group": INPUT_GROUP_UTILITY,
+	"cn-input-group-addon": /^(?:gap)-(?:[0-5](?:\.5)?|6)$/,
+	"cn-input-group-addon-align-inline-start": new RegExp(`^pl-${CARD_SPACING}$`),
+	"cn-input-group-addon-align-inline-end": new RegExp(`^pr-${CARD_SPACING}$`),
+	"cn-input-group-addon-align-block-start": new RegExp(`^px-${CARD_SPACING}$`),
+	"cn-input-group-addon-align-block-end": new RegExp(`^px-${CARD_SPACING}$`),
+	"cn-input-otp": /^gap-(?:[0-5](?:\.5)?|6)$/,
+	"cn-input-otp-group": new RegExp(`^rounded-${RADIUS}$`),
+	"cn-input-otp-slot": new RegExp(
+		`^(?:size-${N}|(?:first:|last:)?rounded-none|first:rounded-l-${RADIUS}|last:rounded-r-${RADIUS}|first:last:rounded-${RADIUS})$`
+	),
 	"cn-dropdown-menu-content": DROPDOWN_MENU_CONTENT_UTILITY,
 	"cn-dropdown-menu-sub-content": DROPDOWN_MENU_SUB_CONTENT_UTILITY,
 	"cn-dropdown-menu-item": DROPDOWN_MENU_ITEM_UTILITY,

@@ -7,7 +7,10 @@
 	import DrawerTuner from "$lib/features/workbench/drawer-tuner.svelte";
 	import DropdownMenuTuner from "$lib/features/workbench/dropdown-menu-tuner.svelte";
 	import HoverCardTuner from "$lib/features/workbench/hover-card-tuner.svelte";
+	import InputGroupTuner from "$lib/features/workbench/input-group-tuner.svelte";
+	import InputOtpTuner from "$lib/features/workbench/input-otp-tuner.svelte";
 	import InputTuner from "$lib/features/workbench/input-tuner.svelte";
+	import NativeSelectTuner from "$lib/features/workbench/native-select-tuner.svelte";
 	import PopoverTuner from "$lib/features/workbench/popover-tuner.svelte";
 	import RadioGroupTuner from "$lib/features/workbench/radio-group-tuner.svelte";
 	import SelectTuner from "$lib/features/workbench/select-tuner.svelte";
@@ -107,6 +110,9 @@
 						"popover-demo",
 						"sheet-demo",
 						"input-demo",
+						"input-group-demo",
+						"input-otp-demo",
+						"native-select-demo",
 						"select-demo",
 						"textarea-demo",
 						"dropdown-menu-demo",
@@ -149,6 +155,12 @@
 				<SheetTuner>{@render PreviewExample()}</SheetTuner>
 			{:else if name === "input-demo"}
 				<InputTuner>{@render PreviewExample()}</InputTuner>
+			{:else if name === "input-group-demo"}
+				<InputGroupTuner>{@render PreviewExample()}</InputGroupTuner>
+			{:else if name === "input-otp-demo"}
+				<InputOtpTuner>{@render PreviewExample()}</InputOtpTuner>
+			{:else if name === "native-select-demo"}
+				<NativeSelectTuner>{@render PreviewExample()}</NativeSelectTuner>
 			{:else if name === "select-demo"}
 				<SelectTuner>{@render PreviewExample()}</SelectTuner>
 			{:else if name === "textarea-demo"}
