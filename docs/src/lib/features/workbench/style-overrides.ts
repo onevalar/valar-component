@@ -32,6 +32,11 @@ const SHEET_OVERLAY_UTILITY = new RegExp(
 	`^(?:bg-black/(?:0|10|20|30|40|50|60|70|80)|duration-${TIER}!)$`
 );
 const SHEET_PADDING_UTILITY = new RegExp(`^p-${N}$`);
+const DRAWER_CONTENT_UTILITY = new RegExp(
+	`^(?:before:rounded-${RADIUS}|data-\\[vaul-drawer-direction=(?:bottom|top)\\]:rounded-(?:t|b)-${RADIUS}|data-\\[vaul-drawer-direction=(?:left|right)\\]:rounded-(?:l|r)-${RADIUS})$`
+);
+const DRAWER_FOOTER_UTILITY = new RegExp(`^(?:p|gap)-${N}$`);
+const DRAWER_OVERLAY_UTILITY = /^bg-black\/(?:0|10|20|30|40|50|60|70|80)$/;
 const INPUT_UTILITY = new RegExp(`^(?:(?:h|px)-${N}|rounded-${RADIUS})$`);
 const TEXTAREA_UTILITY = new RegExp(`^(?:(?:px|py)-${N}|rounded-${RADIUS})$`);
 const SELECT_TRIGGER_UTILITY = new RegExp(
@@ -54,6 +59,18 @@ const TOOLTIP_CONTENT_UTILITY = new RegExp(
 );
 // Show delay in ms, read by `tooltip-provider.svelte` after flattening.
 const TOOLTIP_PROVIDER_UTILITY = /^delay-(?:0|[1-9]\d{0,3})$/;
+// Card's existing variable is shared by section gaps, insets and edge-to-edge content.
+// Only this property and the finite 0–48px / 2px scale are accepted, not arbitrary CSS.
+const CARD_SPACING = String.raw`(?:0|[1-9]|1[0-2]|[0-9]\.5|1[01]\.5)`;
+const CARD_UTILITY = new RegExp(
+	`^(?:(?:data-\\[size=sm\\]:)?\\[--card-spacing:--spacing\\(${CARD_SPACING}\\)\\]|rounded-${RADIUS}|\\*:\\[img:first-child\\]:rounded-t-${RADIUS}|\\*:\\[img:last-child\\]:rounded-b-${RADIUS})$`
+);
+const TABS_LIST_UTILITY = new RegExp(
+	`^(?:group-data-horizontal/tabs:h-(?:8|9|10)|(?:group-data-vertical/tabs:)?p-(?:0\\.75|1)|(?:group-data-vertical/tabs:)?data-\\[variant=default\\]:rounded-${RADIUS})$`
+);
+const TABS_TRIGGER_UTILITY = new RegExp(
+	`^(?:(?:group-data-vertical/tabs:)?(?:px-(?:1|1\\.5|2|2\\.5|3|3\\.5|4)|py-(?:0|0\\.5|1|1\\.5|2)|rounded-${RADIUS})|has-data-\\[icon=inline-start\\]:pl-(?:1|1\\.5|2|2\\.5|3|3\\.5|4)|has-data-\\[icon=inline-end\\]:pr-(?:1|1\\.5|2|2\\.5|3|3\\.5|4))$`
+);
 
 export const OVERRIDE_RULES: Record<string, RegExp> = {
 	...Object.fromEntries(
@@ -73,6 +90,13 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-dialog-overlay": DIALOG_OVERLAY_UTILITY,
 	"cn-dialog-footer": DIALOG_FOOTER_UTILITY,
 	"cn-popover-content": POPOVER_CONTENT_UTILITY,
+	"cn-hover-card-content": new RegExp(
+		`^(?:p-${N}|rounded-${RADIUS}|duration-${TIER}|data-open:zoom-in-${ZOOM}|data-closed:zoom-out-${ZOOM}|data-\\[side=${SIDE}\\]:slide-in-from-${SIDE}-[0-4])$`
+	),
+	"cn-drawer-content": DRAWER_CONTENT_UTILITY,
+	"cn-drawer-overlay": DRAWER_OVERLAY_UTILITY,
+	"cn-drawer-header": SHEET_PADDING_UTILITY,
+	"cn-drawer-footer": DRAWER_FOOTER_UTILITY,
 	"cn-sheet-content": SHEET_CONTENT_UTILITY,
 	"cn-sheet-overlay": SHEET_OVERLAY_UTILITY,
 	"cn-sheet-header": SHEET_PADDING_UTILITY,
@@ -88,8 +112,22 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-dropdown-menu-radio-item": DROPDOWN_MENU_CHOICE_UTILITY,
 	"cn-dropdown-menu-label": DROPDOWN_MENU_LABEL_UTILITY,
 	"cn-dropdown-menu-separator": DROPDOWN_MENU_SEPARATOR_UTILITY,
+	"cn-context-menu-content": DROPDOWN_MENU_CONTENT_UTILITY,
+	"cn-context-menu-sub-content": DROPDOWN_MENU_SUB_CONTENT_UTILITY,
+	"cn-context-menu-item": DROPDOWN_MENU_ITEM_UTILITY,
+	"cn-context-menu-sub-trigger": DROPDOWN_MENU_ITEM_UTILITY,
+	"cn-context-menu-checkbox-item": DROPDOWN_MENU_CHOICE_UTILITY,
+	"cn-context-menu-radio-item": DROPDOWN_MENU_CHOICE_UTILITY,
+	"cn-context-menu-label": DROPDOWN_MENU_LABEL_UTILITY,
+	"cn-context-menu-separator": DROPDOWN_MENU_SEPARATOR_UTILITY,
 	"cn-tooltip-content": TOOLTIP_CONTENT_UTILITY,
 	"cn-tooltip-provider": TOOLTIP_PROVIDER_UTILITY,
+	"cn-card": CARD_UTILITY,
+	"cn-card-header": new RegExp(`^(?:gap-${N}|rounded-t-${RADIUS})$`),
+	"cn-card-footer": new RegExp(`^rounded-b-${RADIUS}$`),
+	"cn-tabs": new RegExp(`^gap-${N}$`),
+	"cn-tabs-list": TABS_LIST_UTILITY,
+	"cn-tabs-trigger": TABS_TRIGGER_UTILITY,
 };
 
 export const styleOverridePayloadSchema = z

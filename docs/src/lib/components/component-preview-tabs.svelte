@@ -1,15 +1,20 @@
 <script lang="ts">
 	import ButtonTuner from "$lib/features/workbench/button-tuner.svelte";
+	import CardTuner from "$lib/features/workbench/card-tuner.svelte";
+	import ContextMenuTuner from "$lib/features/workbench/context-menu-tuner.svelte";
 	import DialogTuner from "$lib/features/workbench/dialog-tuner.svelte";
+	import DrawerTuner from "$lib/features/workbench/drawer-tuner.svelte";
 	import DropdownMenuTuner from "$lib/features/workbench/dropdown-menu-tuner.svelte";
+	import HoverCardTuner from "$lib/features/workbench/hover-card-tuner.svelte";
 	import InputTuner from "$lib/features/workbench/input-tuner.svelte";
 	import PopoverTuner from "$lib/features/workbench/popover-tuner.svelte";
 	import SelectTuner from "$lib/features/workbench/select-tuner.svelte";
 	import SheetTuner from "$lib/features/workbench/sheet-tuner.svelte";
+	import TabsTuner from "$lib/features/workbench/tabs-tuner.svelte";
 	import TextareaTuner from "$lib/features/workbench/textarea-tuner.svelte";
 	import TooltipTuner from "$lib/features/workbench/tooltip-tuner.svelte";
-	import { Button } from "$lib/registry/ui/button/index.js";
 	import { t } from "$lib/i18n/index.js";
+	import { Button } from "$lib/registry/ui/button/index.js";
 	import { cn } from "$lib/utils.js";
 	import type { PresetConfig } from "@valar/svelte-cli/preset";
 	import type { Component, Snippet } from "svelte";
@@ -24,6 +29,7 @@
 		children,
 		name,
 		hideCode = false,
+		tunable = true,
 		chromeLessOnMobile = false,
 		previewStyle,
 		...restProps
@@ -31,6 +37,7 @@
 		previewClassName?: string;
 		align?: "center" | "start" | "end";
 		hideCode?: boolean;
+		tunable?: boolean;
 		chromeLessOnMobile?: boolean;
 		previewStyle?: PresetConfig["style"];
 		example?: Snippet;
@@ -76,16 +83,42 @@
 				"preview relative flex min-h-72 w-full min-w-0 justify-center overflow-x-auto p-4 data-[align=center]:items-center data-[align=end]:items-start data-[align=start]:items-start data-[chromeless=true]:h-auto data-[chromeless=true]:p-0 sm:p-10 sm:data-[align=end]:items-end",
 				previewStyle && `style-${previewStyle}`,
 				previewClassName,
-				["input-demo", "select-demo", "textarea-demo"].includes(name) && "p-0 sm:p-0",
-				(name === "button-demo" || name === "dialog-demo") && "p-0 sm:p-0",
-				(name === "popover-demo" || name === "sheet-demo") && "p-0 sm:p-0",
-				(name === "dropdown-menu-demo" || name === "tooltip-demo") && "p-0 sm:p-0"
+				tunable &&
+					[
+						"button-demo",
+						"card-demo",
+						"tabs-demo",
+						"dialog-demo",
+						"drawer-demo",
+						"hover-card-demo",
+						"context-menu-demo",
+						"popover-demo",
+						"sheet-demo",
+						"input-demo",
+						"select-demo",
+						"textarea-demo",
+						"dropdown-menu-demo",
+						"tooltip-demo",
+					].includes(name) &&
+					"p-0 sm:p-0"
 			)}
 		>
-			{#if name === "button-demo"}
+			{#if !tunable}
+				{@render PreviewExample()}
+			{:else if name === "button-demo"}
 				<ButtonTuner>{@render PreviewExample()}</ButtonTuner>
+			{:else if name === "card-demo"}
+				<CardTuner>{@render PreviewExample()}</CardTuner>
+			{:else if name === "tabs-demo"}
+				<TabsTuner>{@render PreviewExample()}</TabsTuner>
 			{:else if name === "dialog-demo"}
 				<DialogTuner>{@render PreviewExample()}</DialogTuner>
+			{:else if name === "drawer-demo"}
+				<DrawerTuner>{@render PreviewExample()}</DrawerTuner>
+			{:else if name === "hover-card-demo"}
+				<HoverCardTuner>{@render PreviewExample()}</HoverCardTuner>
+			{:else if name === "context-menu-demo"}
+				<ContextMenuTuner>{@render PreviewExample()}</ContextMenuTuner>
 			{:else if name === "popover-demo"}
 				<PopoverTuner>{@render PreviewExample()}</PopoverTuner>
 			{:else if name === "sheet-demo"}

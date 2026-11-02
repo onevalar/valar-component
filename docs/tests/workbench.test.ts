@@ -12,6 +12,12 @@ import {
 import { compile } from "svelte/compiler";
 import { describe, expect, it } from "vitest";
 import { buttonOverrideClasses } from "../src/lib/features/workbench/button-tuning.js";
+import {
+	CARD_SPEC,
+	cardOverrideClasses,
+	parseCardSource,
+} from "../src/lib/features/workbench/card-tuning.js";
+import { CONTEXT_MENU_SPEC } from "../src/lib/features/workbench/context-menu-tuning.js";
 import { heightTier } from "../src/lib/features/workbench/control-tiers.js";
 import { COMPONENT_INVENTORY } from "../src/lib/features/workbench/coverage.js";
 import {
@@ -19,11 +25,17 @@ import {
 	parseDialogSource,
 } from "../src/lib/features/workbench/dialog-tuning.js";
 import {
-	dropdownMenuOverrideClasses,
-	parseDropdownMenuSource,
-} from "../src/lib/features/workbench/dropdown-menu-tuning.js";
+	drawerOverrideClasses,
+	parseDrawerSource,
+} from "../src/lib/features/workbench/drawer-tuning.js";
+import { DROPDOWN_MENU_SPEC } from "../src/lib/features/workbench/dropdown-menu-tuning.js";
 import { buildWorkbenchRegistry } from "../src/lib/features/workbench/export.js";
+import {
+	hoverCardOverrideClasses,
+	parseHoverCardSource,
+} from "../src/lib/features/workbench/hover-card-tuning.js";
 import { inputOverrideClasses } from "../src/lib/features/workbench/input-tuning.js";
+import { parseMenuSource, type MenuOverrides } from "../src/lib/features/workbench/menu-tuning.js";
 import {
 	COMPONENTS,
 	PARAMETERS,
@@ -46,6 +58,11 @@ import {
 	styleOverridePayloadSchema,
 } from "../src/lib/features/workbench/style-overrides.js";
 import { createWorkbenchCss } from "../src/lib/features/workbench/styles.js";
+import {
+	TABS_SPEC,
+	parseTabsSource,
+	tabsOverrideClasses,
+} from "../src/lib/features/workbench/tabs-tuning.js";
 import { textareaOverrideClasses } from "../src/lib/features/workbench/textarea-tuning.js";
 import {
 	parseTooltipSource,
@@ -928,14 +945,216 @@ const registryFiles = (component: string, style: string) =>
 const emptyOverrides = (style: string) =>
 	readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
 
+describe("Card write-back preserves shared spacing and part radii", () => {
+	it("reads all styles and replaces both size variables without flattening conditional layouts", () => {
+		for (const [style, spacing, smallSpacing, headerGap, radius] of [
+			["nova", 16, 12, 4, "xl"],
+			["vega", 24, 16, 4, "xl"],
+			["maia", 24, 16, 8, "2xl"],
+			["mira", 16, 12, 4, "lg"],
+			["lyra", 16, 12, 4, "none"],
+			["luma", 24, 16, 6, "4xl"],
+			["rhea", 20, 16, 6, "style"],
+			["sera", 32, 20, 6, "style"],
+		] as const) {
+			expect(parseCardSource(registryFiles("card", style)).values).toEqual({
+				spacing,
+				smallSpacing,
+				headerGap,
+				radius,
+			});
+			const write = (css: string, overrides: Parameters<typeof cardOverrideClasses>[0]) =>
+				applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({ style, classes: cardOverrideClasses(overrides) })
+				);
+			const css = write(emptyOverrides(style), {
+				spacing: 22,
+				smallSpacing: 10,
+				headerGap: 12,
+				radius: "md",
+			});
+			const files = ["card", "card-header", "card-footer"].map((part) => ({
+				target: `${part}.svelte`,
+				content: installed("card", style, css, `${part}.svelte`),
+			}));
+			expect(parseCardSource(files).values).toEqual({
+				spacing: 22,
+				smallSpacing: 10,
+				headerGap: 12,
+				radius: "md",
+			});
+			const root = classList(files[0].content);
+			expect(root).not.toContain(`[--card-spacing:--spacing(${spacing / 4})]`);
+			expect(root).not.toContain(`data-[size=sm]:[--card-spacing:--spacing(${smallSpacing / 4})]`);
+			for (const utility of [
+				"gap-(--card-spacing)",
+				"py-(--card-spacing)",
+				"has-[>img:first-child]:pt-0",
+				"*:[img:first-child]:rounded-t-md",
+				"*:[img:last-child]:rounded-b-md",
+			])
+				expect(root).toContain(utility);
+			expect(classList(files[1].content)).toContain("rounded-t-md");
+			expect(classList(files[1].content)).toContain("[.border-b]:pb-(--card-spacing)");
+			expect(classList(files[2].content)).toContain("rounded-b-md");
+			const second = write(css, { spacing: 30 });
+			const updated = installed("card", style, second, "card.svelte");
+			expect(classList(updated)).not.toContain("[--card-spacing:--spacing(5.5)]");
+			expect(parseCardSource([{ target: "card.svelte", content: updated }]).values).toMatchObject({
+				spacing: 30,
+				smallSpacing: 10,
+				radius: "md",
+			});
+		}
+	});
+
+	it("allows only the bounded Card variable and rejects arbitrary properties or colors", () => {
+		expect(cardOverrideClasses({ radius: "style" })).toEqual({});
+		for (const spacing of [0, 48])
+			expect(
+				styleOverridePayloadSchema.safeParse({
+					style: "nova",
+					classes: cardOverrideClasses({ spacing, smallSpacing: spacing }),
+				}).success
+			).toBe(true);
+		for (const value of [
+			"[--card-spacing:22px]",
+			"[--card-spacing:--spacing(12.5)]",
+			"[--card-spacing:--spacing(-1)]",
+			"[--radius:--spacing(4)]",
+			"bg-red-500",
+			"p-4",
+			"rounded-[12px]",
+			"data-[size=lg]:[--card-spacing:--spacing(4)]",
+		])
+			expect(
+				styleOverridePayloadSchema.safeParse({ style: "nova", classes: { "cn-card": value } })
+					.success
+			).toBe(false);
+		for (const values of [
+			{ spacing: -2 },
+			{ smallSpacing: 50 },
+			{ headerGap: 3 },
+			{ radius: "12px" },
+		])
+			expect(
+				CARD_SPEC.valuesSchema.safeParse({
+					spacing: 16,
+					smallSpacing: 12,
+					headerGap: 4,
+					radius: "xl",
+					...values,
+				}).success
+			).toBe(false);
+	});
+});
+
+describe("Tabs write-back preserves variant and orientation contracts", () => {
+	it("reads mixed geometry as style-owned and roundtrips explicit uniform choices in all styles", () => {
+		for (const [style, height, listPadding, listRadius, paddingY, triggerRadius] of [
+			["nova", "32", "3", "lg", "2", "md"],
+			["vega", "36", "3", "lg", "4", "md"],
+			["maia", "36", "3", "style", "style", "xl"],
+			["mira", "32", "3", "lg", "style", "md"],
+			["lyra", "32", "3", "none", "style", "none"],
+			["luma", "36", "4", "style", "style", "style"],
+			["rhea", "32", "style", "2xl", "2", "2xl"],
+			["sera", "40", "4", "style", "style", "style"],
+		] as const) {
+			expect(parseTabsSource(registryFiles("tabs", style)).values).toEqual({
+				listHeight: height,
+				contentGap: 8,
+				listPadding,
+				listRadius,
+				triggerPaddingX: "style",
+				triggerPaddingY: paddingY,
+				triggerRadius,
+			});
+			const write = (css: string, overrides: Parameters<typeof tabsOverrideClasses>[0]) =>
+				applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({ style, classes: tabsOverrideClasses(overrides) })
+				);
+			const draft = {
+				listHeight: "40",
+				contentGap: 14,
+				listPadding: "4",
+				listRadius: "sm",
+				triggerPaddingX: "14",
+				triggerPaddingY: "6",
+				triggerRadius: "lg",
+			} as const;
+			const css = write(emptyOverrides(style), draft);
+			const files = ["tabs", "tabs-list", "tabs-trigger"].map((part) => ({
+				target: `tabs/${part}.svelte`,
+				content: installed("tabs", style, css, `${part}.svelte`),
+			}));
+			expect(parseTabsSource(files).values).toEqual(draft);
+			const trigger = classList(files[2].content);
+			for (const utility of [
+				"px-3.5",
+				"group-data-vertical/tabs:px-3.5",
+				"has-data-[icon=inline-start]:pl-3.5",
+				"has-data-[icon=inline-end]:pr-3.5",
+				"group-data-vertical/tabs:py-1.5",
+				"group-data-vertical/tabs:rounded-lg",
+				"disabled:pointer-events-none",
+			])
+				expect(trigger).toContain(utility);
+			expect(files[2].content).toContain(
+				"group-data-[variant=line]/tabs-list:data-active:after:opacity-100"
+			);
+			const list = files[1].content;
+			expect(list).toContain("data-[variant=default]:rounded-sm");
+			expect(list).toContain("group-data-vertical/tabs:data-[variant=default]:rounded-sm");
+			if (height !== "40")
+				expect(list).not.toContain(`group-data-horizontal/tabs:h-${Number(height) / 4}`);
+			const second = write(css, { listHeight: "32", triggerPaddingX: "4", triggerRadius: "none" });
+			const output = installed("tabs", style, second, "tabs-trigger.svelte");
+			expect(classList(output)).not.toContain("px-3.5");
+			expect(classList(output)).not.toContain("group-data-vertical/tabs:rounded-lg");
+		}
+	});
+
+	it("rejects unrelated component parts and arbitrary or behavioral overrides", () => {
+		expect(
+			tabsOverrideClasses({
+				listPadding: "style",
+				listRadius: "style",
+				triggerPaddingX: "style",
+				triggerPaddingY: "style",
+				triggerRadius: "style",
+			})
+		).toEqual({});
+		for (const classes of [
+			{ "cn-tabs": "flex-row" },
+			{ "cn-tabs-list": "rounded-xl" },
+			{ "cn-tabs-list": "h-12" },
+			{ "cn-tabs-trigger": "bg-red-500" },
+			{ "cn-tabs-trigger": "px-[12px]" },
+			{ "cn-tabs-content": "gap-4" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+		const baseline = parseTabsSource(registryFiles("tabs", "nova")).values;
+		for (const values of [
+			{ listHeight: "44" },
+			{ contentGap: 3 },
+			{ triggerPaddingX: "18" },
+			{ listPadding: "0" },
+		])
+			expect(TABS_SPEC.valuesSchema.safeParse({ ...baseline, ...values }).success).toBe(false);
+	});
+});
+
 describe("Dropdown Menu write-back into Valar style overrides", () => {
-	const write = (style: string, overrides: Parameters<typeof dropdownMenuOverrideClasses>[0]) => {
-		const { context } = parseDropdownMenuSource(registryFiles("dropdown-menu", style));
+	const write = (style: string, overrides: MenuOverrides) => {
+		const { context } = parseMenuSource("dropdown-menu", registryFiles("dropdown-menu", style));
 		return applyStyleOverrides(
 			emptyOverrides(style),
 			styleOverridePayloadSchema.parse({
 				style,
-				classes: dropdownMenuOverrideClasses(overrides, context),
+				classes: DROPDOWN_MENU_SPEC.overrideClasses(overrides, context),
 			})
 		);
 	};
@@ -943,7 +1162,7 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 		classList(installed("dropdown-menu", style, css, `dropdown-menu-${file}.svelte`));
 
 	it("reads each style's own baseline from the installed source", () => {
-		const nova = parseDropdownMenuSource(registryFiles("dropdown-menu", "nova"));
+		const nova = parseMenuSource("dropdown-menu", registryFiles("dropdown-menu", "nova"));
 		expect(nova.values).toEqual({
 			padding: 4,
 			minWidth: 128,
@@ -957,7 +1176,7 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 			slide: "8",
 		});
 		expect(nova.context).toMatchObject({ inset: 28, choicePaddingY: 4, separatorBleed: true });
-		const vega = parseDropdownMenuSource(registryFiles("dropdown-menu", "vega"));
+		const vega = parseMenuSource("dropdown-menu", registryFiles("dropdown-menu", "vega"));
 		expect(vega.values).toMatchObject({
 			radius: "md",
 			itemPaddingX: 8,
@@ -967,10 +1186,12 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 		});
 		expect(vega.context.inset).toBe(32);
 		// Lyra has no panel padding but its separators still use -mx-1: they do not bleed.
-		const lyra = parseDropdownMenuSource(registryFiles("dropdown-menu", "lyra"));
+		const lyra = parseMenuSource("dropdown-menu", registryFiles("dropdown-menu", "lyra"));
 		expect(lyra.values.padding).toBe(0);
 		expect(lyra.context.separatorBleed).toBe(false);
-		expect(parseDropdownMenuSource(registryFiles("dropdown-menu", "luma")).values).toMatchObject({
+		expect(
+			parseMenuSource("dropdown-menu", registryFiles("dropdown-menu", "luma")).values
+		).toMatchObject({
 			padding: 6,
 			minWidth: 192,
 			radius: "3xl",
@@ -1124,6 +1345,276 @@ describe("Tooltip write-back into Valar style overrides", () => {
 			{ "cn-tooltip-provider": "delay-300 px-2" },
 			{ "cn-tooltip-provider": "delay-99999" },
 			{ "cn-tooltip-arrow": "size-3" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+	});
+});
+
+describe("Drawer write-back preserves directional and inset surfaces", () => {
+	const write = (
+		style: string,
+		overrides: Parameters<typeof drawerOverrideClasses>[0],
+		css = emptyOverrides(style)
+	) =>
+		applyStyleOverrides(
+			css,
+			styleOverridePayloadSchema.parse({
+				style,
+				classes: drawerOverrideClasses(
+					overrides,
+					parseDrawerSource(registryFiles("drawer", style)).context
+				),
+			})
+		);
+	const files = (style: string, css: string) =>
+		["content", "header", "footer", "overlay"].map((part) => ({
+			target: `drawer-${part}.svelte`,
+			content: installed("drawer", style, css, `drawer-${part}.svelte`),
+		}));
+
+	it("reads all styles including pseudo-element surfaces and custom radius", () => {
+		for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "sera", "rhea"]) {
+			const { values, context } = parseDrawerSource(registryFiles("drawer", style));
+			expect(values).toEqual({
+				headerPadding: 16,
+				footerPadding: 16,
+				footerGap: 8,
+				radius: (
+					{
+						nova: "xl",
+						vega: "xl",
+						lyra: "none",
+						maia: "4xl",
+						mira: "xl",
+						luma: "4xl",
+						sera: "none",
+						rhea: "style",
+					} as Record<string, string>
+				)[style],
+				overlay:
+					({ maia: 80, mira: 80, luma: 30, sera: 20, rhea: 30 } as Record<string, number>)[style] ??
+					10,
+			});
+			expect(context.insetSurface).toBe(["maia", "mira", "luma", "rhea"].includes(style));
+		}
+	});
+
+	it("writes and rereads the real surface without flattening its style or changing Vaul motion", () => {
+		for (const style of ["nova", "vega", "lyra", "maia", "rhea"]) {
+			const css = write(style, {
+				headerPadding: 22,
+				footerPadding: 30,
+				footerGap: 14,
+				radius: "lg",
+				overlay: 40,
+			});
+			const output = files(style, css);
+			const part = (name: string) =>
+				classList(output.find((f) => f.target === `drawer-${name}.svelte`)!.content);
+			expect(part("header")).toContain("p-5.5");
+			expect(part("header")).not.toContain("p-4");
+			expect(part("footer")).toEqual(expect.arrayContaining(["p-7.5", "gap-3.5"]));
+			expect(part("footer")).not.toContain("gap-2");
+			expect(part("overlay")).toContain("bg-black/40");
+			const inset = ["maia", "rhea"].includes(style);
+			if (inset) {
+				expect(part("content")).toEqual(
+					expect.arrayContaining(["before:rounded-lg", "bg-transparent", "before:inset-2"])
+				);
+				expect(part("content").filter((c) => c.startsWith("before:rounded-"))).toEqual([
+					"before:rounded-lg",
+				]);
+			} else {
+				for (const [side, edge] of [
+					["bottom", "t"],
+					["top", "b"],
+					["left", "r"],
+					["right", "l"],
+				])
+					expect(part("content")).toContain(
+						`data-[vaul-drawer-direction=${side}]:rounded-${edge}-lg`
+					);
+			}
+			expect(parseDrawerSource(output).values).toEqual({
+				headerPadding: 22,
+				footerPadding: 30,
+				footerGap: 14,
+				radius: "lg",
+				overlay: 40,
+			});
+			expect(part("content").some((c) => /duration-|slide-/.test(c))).toBe(false);
+			const second = files(style, write(style, { radius: "sm", footerGap: 0 }, css));
+			expect(parseDrawerSource(second).values).toMatchObject({
+				radius: "sm",
+				footerGap: 0,
+				headerPadding: 22,
+				overlay: 40,
+			});
+		}
+	});
+
+	it("rejects unsupported motion, arbitrary values and unrelated Drawer parts", () => {
+		for (const classes of [
+			{ "cn-drawer-content": "duration-slow" },
+			{ "cn-drawer-content": "rounded-lg" },
+			{ "cn-drawer-content": "before:rounded-[20px]" },
+			{ "cn-drawer-header": "gap-4" },
+			{ "cn-drawer-footer": "text-sm" },
+			{ "cn-drawer-overlay": "bg-black/45" },
+			{ "cn-drawer-title": "p-4" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+	});
+});
+
+describe("Hover Card write-back", () => {
+	it("reads each style and roundtrips layout and motion through installed source", () => {
+		for (const [style, padding, radius] of [
+			["nova", 10, "lg"],
+			["vega", 16, "lg"],
+			["lyra", 10, "none"],
+		] as const) {
+			expect(parseHoverCardSource(registryFiles("hover-card", style)).values).toMatchObject({
+				padding,
+				radius,
+				slide: "8",
+				duration: "fast",
+			});
+			const write = (css: string, overrides: Parameters<typeof hoverCardOverrideClasses>[0]) =>
+				applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({ style, classes: hoverCardOverrideClasses(overrides) })
+				);
+			const css = write(emptyOverrides(style), {
+				padding: 22,
+				radius: "sm",
+				duration: "slow",
+				zoom: "90",
+				slide: "16",
+			});
+			const content = applyTokenUtilities(
+				installed("hover-card", style, css, "hover-card-content.svelte")
+			);
+			expect(
+				parseHoverCardSource([{ target: "hover-card-content.svelte", content }]).values
+			).toEqual({ padding: 22, radius: "sm", duration: "slow", zoom: "90", slide: "16" });
+			const classes = classList(content);
+			expect(classes).toContain("w-64");
+			for (const stale of [
+				`p-${padding / 4}`,
+				"duration-fast",
+				"data-open:zoom-in-95",
+				"data-[side=right]:slide-in-from-left-2",
+			])
+				expect(classes).not.toContain(stale);
+			const second = applyTokenUtilities(
+				installed("hover-card", style, write(css, { slide: "0" }), "hover-card-content.svelte")
+			);
+			expect(classList(second)).not.toContain("data-[side=right]:slide-in-from-left-4");
+			expect(
+				parseHoverCardSource([{ target: "hover-card-content.svelte", content: second }]).values
+			).toMatchObject({ padding: 22, slide: "0" });
+		}
+	});
+
+	it("rejects caller props, nonexistent gap and invalid motion utilities", () => {
+		for (const value of [
+			"w-80",
+			"gap-4",
+			"p-[13px]",
+			"bg-red-500",
+			"duration-[500ms]",
+			"data-[side=right]:slide-in-from-left-6",
+		]) {
+			expect(
+				styleOverridePayloadSchema.safeParse({
+					style: "nova",
+					classes: { "cn-hover-card-content": value },
+				}).success
+			).toBe(false);
+		}
+	});
+});
+
+describe("Context Menu write-back uses its own source and shared menu contract", () => {
+	it("preserves per-style alignment and roundtrips panel and item values", () => {
+		for (const style of ["nova", "vega", "mira", "lyra"]) {
+			const { values, context } = parseMenuSource(
+				"context-menu",
+				registryFiles("context-menu", style)
+			);
+			expect(values.minWidth).toBe(style === "mira" ? 128 : 144);
+			expect(values.itemPaddingX).toBe(style === "nova" ? 6 : 8);
+			const css = applyStyleOverrides(
+				emptyOverrides(style),
+				styleOverridePayloadSchema.parse({
+					style,
+					classes: CONTEXT_MENU_SPEC.overrideClasses(
+						{
+							padding: 8,
+							minWidth: 208,
+							itemPaddingX: 10,
+							itemPaddingY: 8,
+							itemGap: 8,
+							slide: "16",
+							duration: "slow",
+						},
+						context
+					),
+				})
+			);
+			const files = [
+				"content",
+				"sub-content",
+				"item",
+				"sub-trigger",
+				"checkbox-item",
+				"radio-item",
+				"label",
+				"group-heading",
+				"separator",
+			].map((part) => ({
+				target: `context-menu-${part}.svelte`,
+				content: applyTokenUtilities(
+					installed("context-menu", style, css, `context-menu-${part}.svelte`)
+				),
+			}));
+			expect(parseMenuSource("context-menu", files).values).toMatchObject({
+				padding: 8,
+				minWidth: 208,
+				itemPaddingX: 10,
+				itemPaddingY: 8,
+				itemGap: 8,
+				slide: "16",
+				duration: "slow",
+			});
+			const part = (name: string) =>
+				classList(files.find((f) => f.target === `context-menu-${name}.svelte`)!.content);
+			expect(part("sub-content")).toEqual(
+				expect.arrayContaining(["p-2", "duration-slow", "data-[side=right]:slide-in-from-left-4"])
+			);
+			expect(part("sub-content")).not.toContain("data-[side=right]:slide-in-from-left-2");
+			expect(part("checkbox-item")).toEqual(
+				expect.arrayContaining(["pl-2.5", "pr-8", style === "mira" ? "py-2.5" : "py-2"])
+			);
+			expect(part("group-heading")).toEqual(
+				expect.arrayContaining([
+					"px-2.5",
+					`data-inset:pl-${style === "mira" ? "8" : style === "lyra" ? "7.5" : "8.5"}`,
+				])
+			);
+			expect(part("separator")).toContain(style === "lyra" ? "-mx-1" : "-mx-2");
+		}
+	});
+
+	it("rejects changes outside the Context Menu parameter contract", () => {
+		for (const classes of [
+			{ "cn-context-menu-content": "bg-red-500" },
+			{ "cn-context-menu-content": "min-w-[200px]" },
+			{ "cn-context-menu-sub-content": "min-w-40" },
+			{ "cn-context-menu-checkbox-item": "pr-2" },
+			{ "cn-context-menu-label": "py-2" },
+			{ "cn-context-menu-trigger": "p-4" },
 		])
 			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
 	});

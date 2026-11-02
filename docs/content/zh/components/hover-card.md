@@ -97,7 +97,7 @@ links:
 
 ## 基础用法
 
-<ComponentPreview name="hover-card-demo">
+<ComponentPreview name="hover-card-demo" tunable={false}>
 
 <div></div>
 

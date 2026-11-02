@@ -6,7 +6,7 @@
 `/workbench` 的 Studio 保留现有功能和回归，暂不继续扩展到新组件；它的长期定位另行决定。
 2026-10-31 站点改版后，主导航只保留“组件、设计 token、文档”；Studio、Blocks、Charts、Create 不再出现在导航，但原地址仍可访问，代码未删除。
 
-## 路线图与下一步（2026-11-01 更新，接手前必读）
+## 路线图与下一步（2026-11-02 更新，接手前必读）
 
 已确定的方向：
 
@@ -32,6 +32,8 @@
 
 **当前进度**（2026-11-01）：第 1–12 步、后续任务 A1–A3、B1–B3 和收尾 D1–D4 均已完成并推送。AI 可做的下一步见“候选任务”，开始前先向用户确认；C1–C3 等用户。`skills/valar-svelte/guides/` 的组合、文案、动效内容由用户编写，AI 不要动。
 
+**组件编辑器推广**（2026-11-02）：Hover Card、Context Menu、Drawer 已完成，见[弹层编辑器验收记录](workbench-acceptance-2026-11-02.md)。后续 Tabs、Card 也已完成，见[Tabs／Card 验收记录](workbench-tabs-card-acceptance-2026-11-02.md)，组件页编辑器覆盖 **14／68 个**。两批实现与验收记录随本轮按用户授权提交推送至 `main`，不发布包或部署站点；提交及远端结果见验收记录所链工作线程的最终回执。最终回归为 `pnpm test` 609 项通过、`pnpm check` 通过、生产构建成功、Playwright 30 项通过；真实写回试验值已恢复。其余组件并非都需要相同的参数面板，应按实际样式与交互合同逐批接入；下一批候选为 Checkbox、Radio Group、Switch，尚未开始，不扩大旧 Studio 的覆盖范围。
+
 ### 后续任务（按顺序；完成一项就在此更新状态）
 
 | 编号 | 任务                                 | 状态 | 说明                                                                                                                          |
@@ -39,6 +41,8 @@
 | A1   | 组件编辑器接入 Popover、Sheet        | 完成 | 与 Dialog 同类（遮罩、动效档位、出现时缩放／滑入距离），照 `dialog-tuning.ts` 做；Sheet 的滑入距离属于组件参数                |
 | A2   | 接入 Dropdown Menu、Tooltip          | 完成 | 弹层类收尾；Tooltip 的显示延迟属于组件参数                                                                                    |
 | A3   | 接入 Input、Select、Textarea         | 完成 | 高度、圆角档位应与 Button 同一套档位，避免组件之间割裂；当前值量取方式参照 Button                                             |
+| E1   | 接入 Hover Card、Context Menu、Drawer | 完成（验收通过） | 共用全屏外壳；八套样式读写、真实交互与窄屏通过，见[验收记录](workbench-acceptance-2026-11-02.md)                              |
+| E2   | 接入 Tabs、Card                      | 完成（验收通过） | 八套样式读写、真实交互、明暗与窄屏通过；保留 Tabs 方向／变体差异、Card 双尺寸共享留白联动，见[验收记录](workbench-tabs-card-acceptance-2026-11-02.md) |
 | B1   | 给弹层与表单组件补说明卡 `meta.json` | 完成 | 68 个组件全部有卡（新增 48 个，含 code-block 补卡），`REQUIRED_CARDS` 覆盖全部组件，`missingCards` 为空                       |
 | B2   | 给弹层与表单组件补 `RULES.md`        | 完成 | 2026-11-01：弹层 12 个、表单 18 个；新增 lint 规则见安装文档“AI 与设计规范”                                                   |
 | B3   | 其余组件补说明卡和 `RULES.md`        | 完成 | 2026-11-01：说明卡随 B1 完成；68 个组件全部有 `RULES.md`                                                                      |
@@ -58,7 +62,7 @@
 ### 候选任务（AI 可做，开始前向用户确认）
 
 - 新增“成功／警告”语义色 token，替换示例中借用的 `chart-2`。
-- 其余组件接入编辑器（如 Hover Card、Context Menu、Drawer、Tabs、Card 等），按下面的清单逐个做。
+- 其余组件接入编辑器（下一批优先 Checkbox、Radio Group、Switch 等），按下面的清单逐个做。
 - Input Group、Input OTP、Native Select、Combobox 的高度接入 Button 尺寸档位；Textarea 最小高度（写死在组件源码，需要改源码或换写回方式）。
 - date-picker 等示例自己写了 `DateFormatter("en-US")`，与已改为中文的日历不一致。
 
@@ -67,7 +71,7 @@
 1. `docs/src/lib/features/workbench/<组件>-tuning.ts`：导出 `TunerSpec`（类型见 `tuner.ts`）——参数、取值校验、`readBaseline`（读当前值；Dialog 读 registry 源码，Button 量取页面元素）、`previewCss`（实时预览）、`overrideClasses`（写回的工具类）、只读 token 列表、独立的 `storageKey`。全局 token 只能选档位，不能在此修改数值。
 2. `<组件>-tuner.svelte`：只写画布，外壳用 `<ComponentTuner spec={…}>`；参照 `dialog-tuner.svelte`。
 3. `docs/src/lib/components/component-preview-tabs.svelte`：让该组件文档页的首个示例套上编辑器。
-4. `style-overrides.ts` 的 `OVERRIDE_RULES`：为该组件每个 `cn-*` 类登记允许的工具类（颜色和任意值不允许）。改完必须重启开发服务 `amp orb service restart docs`。
+4. `style-overrides.ts` 的 `OVERRIDE_RULES`：为该组件每个 `cn-*` 类登记允许的工具类（颜色和任意输入的 CSS 值不允许）。Card 仅为已有 `--card-spacing` 放行固定模板与有限数值，见 E2，不开放通用自定义属性。改完必须重启开发服务 `amp orb service restart docs`。
 5. 测试：`docs/tests/workbench.test.ts` 加当前值读取（至少两套样式，如 nova、vega）、写回后的安装源码、白名单拒绝用例；`docs/e2e/workbench.spec.ts` 加编辑器用例（打开、调参生效、并排对比、保存版本、Esc 归还焦点）。
 6. 实测：开发站真实写回一次并检查 `static/registry/styles/<样式>/<组件>.json`，之后用 `git checkout` 恢复 `styles/valar/style-*.css` 与 registry 文件；截图检查 1440、390 宽度和深色。
 7. 全量检查：`pnpm test`、`pnpm check`、`NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm build`、docs 目录下 `CI=true pnpm exec playwright test`。
@@ -91,7 +95,7 @@
 - **共用外壳**：`docs/src/lib/features/workbench/component-tuner.svelte` 负责全屏编辑器的一切共用部分（顶栏、仅草稿／并排对比、浅深色、DialKit 面板、已修改参数、只读全局 token、命名版本与备份、写回确认）。各组件只提供一份参数说明 `TunerSpec`（类型在 `tuner.ts`）和画布：Button 是 `button-tuning.ts`＋`button-tuner.svelte`（变体矩阵），Dialog 是 `dialog-tuning.ts`＋`dialog-tuner.svelte`（内联渲染真实 Dialog，带“重播进入与退出”）。`parameter-dials.svelte` 按参数说明生成 DialKit 面板；`component-preview-tabs.svelte` 决定哪个示例套上编辑器。各组件共用的档位与解析函数（动效档位、缩放、滑入距离、“样式自带”、`tierVar`、`sourceWord`）放在 `tuner.ts`，新组件直接引用，不要再复制一份。
 - **当前值从哪来**：Button 量取页面上真实按钮的尺寸；Dialog 读取当前样式安装出去的 registry 源码（`parseDialogSource`），所以 8 套样式各自显示自己的默认值。
 - **Dialog 参数**：宽度档、内边距、内容间距、圆角档位（含“样式自带”）、遮罩不透明度、动效档位（快／中／慢，只选全局 token 的档位）、出现时缩放（组件自己的动效参数）。改内边距时，带“出血”页脚的样式（如 nova）同步调整页脚负边距，页脚仍贴边。
-- **写回白名单**：`style-overrides.ts` 的 `OVERRIDE_RULES` 按每个 `cn-*` 类规定允许的工具类；颜色、任意值、未登记的类一律拒绝。合并用 `packages/parity` 的 `mergeClasses`，补足 tailwind-merge 识别不了的 `zoom-in-*`、`duration-*`、`ease-*`。
+- **写回白名单**：`style-overrides.ts` 的 `OVERRIDE_RULES` 按每个 `cn-*` 类规定允许的工具类；颜色、任意输入的 CSS 值、未登记的类一律拒绝。Card 的 `--card-spacing` 仅接受固定模板和有限数值（见 E2），不是通用任意值入口。合并用 `packages/parity` 的 `mergeClasses`，补足 tailwind-merge 识别不了的 `zoom-in-*`、`duration-*`、`ease-*`。
 - **注意**：开发站的写回校验规则在 vite 配置中加载，改了 `style-overrides.ts` 后要重启开发服务（`amp orb service restart docs`），否则新组件写回会提示“参数无效”。
 - 测试：`docs/tests/workbench.test.ts`（Dialog 当前值读取、写回后的安装源码、白名单）、`docs/e2e/workbench.spec.ts`（Dialog 编辑器）、`packages/parity/test/inject-style-classes.test.ts`（`mergeClasses`）。
 - **A1：Popover、Sheet（2026-11-01）**：`popover-tuning.ts`＋`popover-tuner.svelte`、`sheet-tuning.ts`＋`sheet-tuner.svelte`，当前值同 Dialog 读 registry 源码（`parsePopoverSource`、`parseSheetSource`）。画布内联渲染真实组件，可切换弹出／滑出方向（仅预览，不是参数）并“重播进入与退出”。
@@ -101,9 +105,12 @@
   - 测试：`workbench.test.ts`“Popover and Sheet write-back”（当前值读取 nova／vega／lyra／luma／sera、写回后安装源码与回读、连续写回替换、白名单拒绝）、`workbench.spec.ts` 的 Popover／Sheet 编辑器用例、`inject-style-classes.test.ts` 的 slide 分组。
 - **Input、Select、Textarea（A3，2026-11-01）**：`input-tuning.ts`、`select-tuning.ts`、`textarea-tuning.ts`＋同名 `-tuner.svelte`，共用的档位在 `control-tiers.ts`。高度只能选 **Button 的尺寸档位**（特小／小／默认／大）：编辑器在探针里渲染四个尺寸的真实 Button 量取高度，控件当前高度等于哪一档就显示哪一档（同高时优先同名尺寸），都不等则显示“样式自带”且不写回；写回时把所选档位换算成当时 Button 的像素高度（`h-*`），Button 以后再改高度时需重新选择。圆角使用 Button 的 `RADIUS_LEVELS`，量取方式与 Button 相同（`readRadiusLevel`），不在档位中的显示“样式自带”。Input：高度档位、圆角档位、横向内边距（`cn-input`）。Select：默认／小两个尺寸的高度档位（默认对应 Button 同名尺寸）、一个圆角档位同时作用于两个尺寸（替换 nova 等小尺寸自带的圆角）、文字侧内边距 `pl-*`（下拉箭头一侧保留上游）（`cn-select-trigger`）。Textarea：圆角档位、横向／纵向内边距（`cn-textarea`）；高度随内容增长，`min-h-16` 写在组件源码中、样式类覆盖不了，所以不提供高度参数。Input、Textarea 文档首个示例的 `max-w-xs` 改为只约束示例本身（`[&_[data-tuning-current]>*]`），否则会把编辑器外壳压窄。
 - 测试（A3）：`docs/tests/workbench.test.ts`（nova、vega 的高度档位读取与 Button 写回后的“样式自带”、三个组件写回后的安装源码、白名单拒绝）、`docs/e2e/workbench.spec.ts`（Input 编辑器；Select 与 Textarea 编辑器）。
-- **Dropdown Menu**（A2，2026-11-01）：`dropdown-menu-tuning.ts`＋`dropdown-menu-tuner.svelte`（内联渲染真实菜单，含勾选项、缩进项、子菜单）。参数：面板内边距、最小宽度、面板圆角档位、菜单项横向／纵向内边距、图文间距、菜单项圆角档位、动效档位、出现时缩放、出现时滑入距离（0–16px，与 Popover 同一套）；面板参数同时作用于子菜单。当前值读 registry 源码（`parseDropdownMenuSource`）。联动：缩进项 `data-inset:pl-*`、勾选／单选项的 `pl-*` 与纵向内边距按样式原有差值随之移动；分隔线在“贴边”样式（`-mx` 等于面板内边距，如 nova）中跟随面板内边距，lyra 等不贴边的样式不动。
+- **Dropdown Menu**（A2，2026-11-01）：`dropdown-menu-tuning.ts`＋`dropdown-menu-tuner.svelte`（内联渲染真实菜单，含勾选项、缩进项、子菜单）。参数：面板内边距、最小宽度、面板圆角档位、菜单项横向／纵向内边距、图文间距、菜单项圆角档位、动效档位、出现时缩放、出现时滑入距离（0–16px，与 Popover 同一套）；面板参数同时作用于子菜单。当前值读 registry 源码（现共用 `parseMenuSource("dropdown-menu", files)`）。联动：缩进项 `data-inset:pl-*`、勾选／单选项的 `pl-*` 与纵向内边距按样式原有差值随之移动；分隔线在“贴边”样式（`-mx` 等于面板内边距，如 nova）中跟随面板内边距，lyra 等不贴边的样式不动。
 - **Tooltip**（A2，2026-11-01）：`tooltip-tuning.ts`＋`tooltip-tuner.svelte`（一个固定展开的提示看样式，一个“悬停试试”看真实延迟，各用独立 Provider）。参数：横向／纵向内边距、圆角档位、显示延迟（ms）、动效档位（含“样式自带 150ms”，上游未设时长）、出现时缩放。**显示延迟**是 Provider 属性而非样式：写回为 `.cn-tooltip-provider { @apply delay-<ms>; }`，`tooltip-provider.svelte` 中的 `"cn-tooltip-provider"` 字符串在安装展开后变成 `"delay-<ms>"` 并作为 `delayDuration` 默认值；未写回时为空串、默认 0（与上游一致），调用方显式传值仍优先。文档页“使用版本”只预览样式，不改页面上提示的延迟。Studio 导出（`export.ts`）的替换锚点相应改为 `delayDuration = styleDelay`。
 - 测试补充：`workbench.test.ts` 的 Dropdown Menu／Tooltip 当前值读取（nova、vega、lyra、luma、maia、mira）、写回后的安装源码（含延迟默认值与调用方覆盖）、白名单拒绝；`workbench.spec.ts` 的两个编辑器用例（打开、调参生效、真实延迟、并排对比、保存版本、Esc 归还焦点）。
+- **Hover Card、Context Menu、Drawer（E1，2026-11-02）**：均复用 `ComponentTuner`，当前值读取各样式安装出去的 registry 源码。Hover Card：统一内边距、圆角、动效档位、缩放与滑入距离；宽度、偏移和悬停延迟仍是调用属性。文档首例提供入口，重复的 Basic 示例通过 `tunable={false}` 避免重复编辑器。Context Menu：沿用 Dropdown 的面板／菜单项参数，两者共用 `menu-tuning.ts`，不通过字符串替换适配；保留各样式的缩进、选项高度差和贴边分隔线，兼顾 GroupHeading 的独立 slot。默认固定展开，支持真实右键、Shift+F10／菜单键与键盘子菜单；窄画布的子菜单向下展开，避免最大宽度面板把它挤出画布。Drawer：页眉／页脚内边距、页脚间距、圆角与遮罩；区分边缘圆角和 `::before` 内缩表面，方向仅为预览。**不提供 CSS 时长／滑入旋钮**：Vaul 的拖拽释放与清理依赖同一套固定 500ms 时序，不用不一致的 CSS 覆盖伪装为可调。
+- **Tabs、Card（E2，2026-11-02）**：读取八套样式的安装源码，不改组件 primitive/API。Tabs：水平列表高度、内容间距、列表内边距／默认变体圆角、标签横纵内边距／圆角；方向或图标侧有差异时显示“样式自带”，显式统一档位同时覆盖相关变体，列表圆角不改变线型下划线。画布包含默认／线型 × 横向／纵向、图标、禁用项和真实键盘切换。Card：默认／小尺寸留白、标题区间距、圆角；通过已有 `--card-spacing` 联动分区 gap、内缩、分隔线与贴边负边距，不把这些拆成互相冲突的 padding。白名单仅对 `cn-card` 放行 `[--card-spacing:--spacing(N)]` 及小尺寸前缀，N 对应 0–48px、步长2px；其他属性、单位和值仍拒绝。圆角同步头部、页脚和首尾图片，rhea 的封顶圆角与 sera 的自带值保留为“样式自带”。
+- 测试补充（E1）：`workbench.test.ts` 覆盖三组件八套样式的读取、写回安装源码、回读与白名单；`workbench.spec.ts` 覆盖四方向、真实悬停、拖拽、右键／键盘子菜单、390px 最大菜单宽度、比较隔离、保存与 Esc 焦点归还。真实写回及视觉证据见[本批验收记录](workbench-acceptance-2026-11-02.md)。
 
 第 6 步的做法（2026-11-01 完成）：
 

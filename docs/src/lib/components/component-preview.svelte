@@ -18,6 +18,7 @@
 		align?: "center" | "start" | "end";
 		description?: string;
 		hideCode?: boolean;
+		tunable?: boolean;
 		previewClassName?: string;
 		previewStyle?: PresetConfig["style"];
 		type?: "block" | "component" | "example";

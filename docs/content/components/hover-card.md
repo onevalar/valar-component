@@ -97,7 +97,7 @@ Use the `side` and `align` props on `HoverCard.Content` to control placement.
 
 ## Basic
 
-<ComponentPreview name="hover-card-demo">
+<ComponentPreview name="hover-card-demo" tunable={false}>
 
 <div></div>
 

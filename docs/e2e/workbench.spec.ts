@@ -9,6 +9,144 @@ async function setNumber(page: Page, label: string, value: number) {
 	await input.press("Enter");
 }
 
+test("Tabs editor tunes both orientations and variants without changing keyboard semantics", async ({
+	page,
+}) => {
+	const errors: string[] = [];
+	page.on("pageerror", (error) => errors.push(error.message));
+	await page.goto("/docs/components/tabs", { waitUntil: "networkidle" });
+	const openButton = page.getByRole("button", { name: "微调 Tabs", exact: true });
+	await openButton.click();
+	const editor = page.getByRole("dialog", { name: "Tabs · 组件参数" });
+	await expect(editor).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const unselected = current.getByRole("tab", { name: "设置", exact: true }).first();
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await expect(unselected).toHaveCSS("color", "oklch(0.708 0 0)");
+	await expect(page.locator("html")).not.toHaveClass(/dark/);
+	await editor.getByRole("radio", { name: "浅色", exact: true }).click();
+	await expect(unselected).toHaveCSS("color", "oklab(0 0 0 / 0.6)");
+	await editor.getByRole("button", { name: /^水平列表高度 / }).click();
+	await editor.getByRole("option", { name: "40px", exact: true }).click();
+	await setNumber(page, "列表与内容间距（px）", 14);
+	await editor.getByRole("button", { name: /^标签横向内边距 / }).click();
+	await editor.getByRole("option", { name: "14px · 统一", exact: true }).click();
+	await editor.getByRole("button", { name: /^默认列表圆角 / }).click();
+	await editor.getByRole("option", { name: "sm · 0.6 × 基数", exact: true }).click();
+	for (const orientation of ["horizontal", "vertical"]) {
+		for (const variant of ["default", "line"]) {
+			const sample = current.getByRole("region", {
+				name: `${orientation} ${variant}`,
+				exact: true,
+			});
+			const list = sample.getByRole("tablist");
+			if (orientation === "horizontal") await expect(list).toHaveCSS("height", "40px");
+			await expect(sample.locator('[data-slot="tabs"]')).toHaveCSS("gap", "14px");
+			await expect(list).toHaveCSS("border-top-left-radius", variant === "default" ? "6px" : "0px");
+			for (const tab of await sample.getByRole("tab").all()) {
+				await expect(tab).toHaveCSS("padding-left", "14px");
+				await expect(tab).toHaveCSS("padding-right", "14px");
+			}
+			const overview = sample.getByRole("tab", { name: "概览", exact: true });
+			const settings = sample.getByRole("tab", { name: "设置", exact: true });
+			await overview.focus();
+			const next = orientation === "horizontal" ? "ArrowRight" : "ArrowDown";
+			await page.keyboard.press(next);
+			await expect(settings).toBeFocused();
+			await expect(settings).toHaveAttribute("aria-selected", "true");
+			await expect(sample.getByRole("tabpanel")).toContainText("管理通知与显示偏好");
+			await page.keyboard.press(next);
+			await expect(overview).toBeFocused();
+			if (variant === "line")
+				await expect
+					.poll(() => overview.evaluate((el) => getComputedStyle(el, "::after").opacity))
+					.toBe("1");
+		}
+	}
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.getByRole("tablist").first()).toHaveCSS("height", "32px");
+	await current.getByRole("tab", { name: "设置", exact: true }).first().click();
+	await expect(before.getByRole("tab", { name: "概览", exact: true }).first()).toHaveAttribute(
+		"aria-selected",
+		"true"
+	);
+	await page.setViewportSize({ width: 390, height: 844 });
+	await editor.getByRole("button", { name: /^标签横向内边距 / }).click();
+	await editor.getByRole("option", { name: "16px · 统一", exact: true }).click();
+	for (const pane of [current, before])
+		expect(await pane.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor.getByRole("textbox", { name: "Tabs 版本名称", exact: true }).fill("宽松标签");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「宽松标签」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(openButton).toBeFocused();
+	expect(errors).toEqual([]);
+});
+
+test("Card editor keeps both sizes, shared spacing, edge content and versions aligned", async ({
+	page,
+}) => {
+	const errors: string[] = [];
+	page.on("pageerror", (error) => errors.push(error.message));
+	await page.goto("/docs/components/card", { waitUntil: "networkidle" });
+	const openButton = page.getByRole("button", { name: "微调 Card", exact: true });
+	await openButton.click();
+	const editor = page.getByRole("dialog", { name: "Card · 组件参数" });
+	await expect(editor).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const normal = current.locator('[data-slot="card"][data-size="default"]').first();
+	const small = current.locator('[data-slot="card"][data-size="sm"]');
+	const projectName = normal.getByRole("textbox", { name: "项目名称", exact: true });
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await expect(projectName).toHaveCSS("color", "oklch(0.985 0 0)");
+	await expect(page.locator("html")).not.toHaveClass(/dark/);
+	await editor.getByRole("radio", { name: "浅色", exact: true }).click();
+	await expect(projectName).toHaveCSS("color", "oklch(0 0 0)");
+	await expect(normal).toHaveCSS("row-gap", "16px");
+	await expect(small).toHaveCSS("row-gap", "12px");
+	await setNumber(page, "默认尺寸留白（px）", 22);
+	await expect(normal).toHaveCSS("padding-top", "22px");
+	// Changing only default spacing must not silently override the small-size variable.
+	await expect(small).toHaveCSS("row-gap", "12px");
+	await setNumber(page, "小尺寸留白（px）", 10);
+	await setNumber(page, "标题区间距（px）", 12);
+	await expect(small.locator('[data-slot="card-content"]')).toHaveCSS("padding-left", "10px");
+	await expect(normal.locator('[data-slot="card-header"]')).toHaveCSS("row-gap", "12px");
+	await expect(normal.locator('[data-slot="card-footer"]')).toHaveCSS("padding-left", "22px");
+	const edge = current.locator("[data-card-edge]");
+	await expect(edge).toHaveCSS("padding-top", "0px");
+	await expect(edge.locator("[data-card-bleed]")).toHaveCSS("margin-left", "-22px");
+	await expect(edge.locator('[data-slot="card-header"]')).toHaveCSS("padding-bottom", "22px");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.locator('[data-slot="card"]').first()).toHaveCSS("row-gap", "16px");
+	await normal.getByRole("textbox", { name: "项目名称", exact: true }).fill("新项目");
+	await expect(before.getByRole("textbox", { name: "项目名称", exact: true }).first()).toHaveValue(
+		"设计系统"
+	);
+	for (const width of [390, 768]) {
+		await page.setViewportSize({ width, height: 900 });
+		await setNumber(page, "默认尺寸留白（px）", 48);
+		expect(await editor.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+		const bounds = await edge.locator("[data-card-bleed]").boundingBox();
+		const card = await edge.boundingBox();
+		expect(Math.abs(bounds!.x - card!.x)).toBeLessThan(1);
+		expect(Math.abs(bounds!.width - card!.width)).toBeLessThan(1);
+	}
+	await editor.getByRole("textbox", { name: "Card 版本名称", exact: true }).fill("宽松卡片");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status").filter({ hasText: "已保存「宽松卡片」" })).toBeVisible();
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(openButton).toBeFocused();
+	await expect(
+		page.locator('[data-component-tuner] [data-tuning-current] [data-slot="card"]').first()
+	).toHaveCSS("row-gap", "48px");
+	expect(errors).toEqual([]);
+});
+
 test("designer edits, saves, restores, undoes and roundtrips a real installable preset", async ({
 	page,
 }) => {
@@ -675,6 +813,208 @@ test("Tooltip editor previews padding, motion tier and the real show delay", asy
 	await editor.getByRole("textbox", { name: "Tooltip 版本名称" }).fill("慢提示");
 	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
 	await expect(editor.getByRole("status")).toContainText("已保存「慢提示」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(openButton).toBeFocused();
+	expect(errors).toEqual([]);
+});
+
+test("Drawer editor previews real directional surfaces, drag, comparison and saved versions", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	const errors: string[] = [];
+	page.on("pageerror", (error) => errors.push(error.message));
+	await page.goto("/docs/components/drawer", { waitUntil: "networkidle" });
+	const openButton = page.getByRole("button", { name: "微调 Drawer", exact: true });
+	await openButton.click();
+	const editor = page.getByRole("dialog", { name: "Drawer · 组件参数" });
+	await expect(editor.getByTestId("drawer-dials")).toBeVisible();
+	const part = (pane: string, slot: string) =>
+		editor.locator(`[data-tuning-${pane}] [data-slot="drawer-${slot}"]`);
+	await expect(
+		editor.getByRole("slider", { name: "页眉内边距（px）", exact: true })
+	).toHaveAttribute("aria-valuenow", "16");
+	await setNumber(page, "页眉内边距（px）", 22);
+	await setNumber(page, "页脚内边距（px）", 30);
+	await setNumber(page, "页脚按钮间距（px）", 14);
+	await setNumber(page, "遮罩不透明度（%）", 40);
+	await editor.getByRole("button", { name: /^圆角档位/ }).click();
+	await page.getByRole("option", { name: "none · 直角" }).click();
+	await expect(part("current", "header")).toHaveCSS("padding-top", "22px");
+	await expect(part("current", "footer")).toHaveCSS("padding-left", "30px");
+	await expect(part("current", "footer")).toHaveCSS("gap", "14px");
+	await expect(part("current", "overlay")).toHaveCSS("background-color", "rgba(0, 0, 0, 0.4)");
+	await expect(part("current", "content")).toHaveCSS("border-top-left-radius", "0px");
+	// Unlike Sheet, Vaul keeps its real drag and fixed runtime motion contract.
+	await expect(part("current", "content")).toHaveCSS("animation-duration", "0.5s");
+	for (const [label, direction] of [
+		["顶部", "top"],
+		["左侧", "left"],
+		["右侧", "right"],
+		["底部", "bottom"],
+	]) {
+		await editor.getByRole("radio", { name: label, exact: true }).first().click();
+		await expect(part("current", "content")).toHaveAttribute(
+			"data-vaul-drawer-direction",
+			direction
+		);
+	}
+	await expect(part("current", "content")).toHaveCSS("transform", "none");
+	const box = (await part("current", "header").boundingBox())!;
+	await page.mouse.move(box.x + box.width / 2, box.y + 10);
+	await page.mouse.down();
+	await page.mouse.move(box.x + box.width / 2, box.y + 260, { steps: 20 });
+	await page.mouse.up();
+	await expect(part("current", "content")).toHaveCount(0);
+	await editor.getByRole("button", { name: "重播进入与退出" }).click();
+	await expect(part("current", "content")).toBeVisible();
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	await expect(part("before", "header")).toHaveCSS("padding-top", "16px");
+	await expect(part("before", "footer")).toHaveCSS("gap", "8px");
+	await editor.getByRole("textbox", { name: "Drawer 版本名称" }).fill("宽松抽屉");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「宽松抽屉」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(openButton).toBeFocused();
+	expect(errors).toEqual([]);
+});
+
+test("Hover Card editor keeps real hover behavior, previews motion and saves independently", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	const errors: string[] = [];
+	page.on("pageerror", (error) => errors.push(error.message));
+	await page.goto("/docs/components/hover-card", { waitUntil: "networkidle" });
+	const openButton = page.getByRole("button", { name: "微调 Hover Card", exact: true });
+	await openButton.click();
+	const editor = page.getByRole("dialog", { name: "Hover Card · 组件参数" });
+	await expect(editor.getByTestId("hover-card-dials")).toBeVisible();
+	const pinned = (pane: string) =>
+		editor.locator(
+			`[data-tuning-${pane}] [data-hover-card-sample="pinned"] [data-slot="hover-card-content"]`
+		);
+	const hovered = editor.locator(
+		'[data-tuning-current] [data-hover-card-sample="hover"] [data-slot="hover-card-content"]'
+	);
+	await expect(pinned("current")).toHaveCSS("padding-top", "10px");
+	await setNumber(page, "内边距（px）", 22);
+	await editor.getByRole("button", { name: /^动效档位/ }).click();
+	await page.getByRole("option", { name: "慢（全局 token）" }).click();
+	await editor.getByRole("button", { name: /^出现时滑入距离/ }).click();
+	await page.getByRole("option", { name: "16px", exact: true }).click();
+	await expect(pinned("current")).toHaveCSS("padding-top", "22px");
+	await expect(pinned("current")).toHaveCSS("animation-duration", "0.3s");
+	for (const [label, side] of [
+		["上方", "top"],
+		["左侧", "left"],
+		["右侧", "right"],
+		["下方", "bottom"],
+	]) {
+		await editor.getByRole("radio", { name: label, exact: true }).first().click();
+		await expect(pinned("current")).toHaveAttribute("data-side", side);
+	}
+	const trigger = editor
+		.locator("[data-tuning-current]")
+		.getByRole("button", { name: "悬停试试", exact: true });
+	await trigger.hover();
+	await expect(hovered).toBeVisible({ timeout: 2_000 });
+	await expect(hovered).toHaveCSS("padding-top", "22px");
+	// Move out of Bits' safe polygon, rather than teleporting its exit point to (0, 0).
+	await page.mouse.move(0, 0, { steps: 20 });
+	await expect(hovered).toHaveCount(0);
+	await expect(pinned("current")).toBeVisible();
+	await editor.getByRole("button", { name: "重播进入与退出" }).click();
+	await expect(pinned("current")).toBeVisible();
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	await expect(pinned("before")).toHaveCSS("padding-top", "10px");
+	await editor.getByRole("textbox", { name: "Hover Card 版本名称" }).fill("宽松预览卡");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「宽松预览卡」");
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(openButton).toBeFocused();
+	expect(errors).toEqual([]);
+});
+
+test("Context Menu editor supports real right-click, keyboard submenu and isolated comparison", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	const errors: string[] = [];
+	page.on("pageerror", (error) => errors.push(error.message));
+	await page.goto("/docs/components/context-menu", { waitUntil: "networkidle" });
+	const openButton = page.getByRole("button", { name: "微调 Context Menu", exact: true });
+	await openButton.click();
+	const editor = page.getByRole("dialog", { name: "Context Menu · 组件参数" });
+	await expect(editor.getByTestId("context-menu-dials")).toBeVisible();
+	const part = (pane: string, slot: string) =>
+		editor.locator(`[data-tuning-${pane}] [data-slot="context-menu-${slot}"]`);
+	await expect(part("current", "content")).toBeVisible();
+	await setNumber(page, "面板内边距（px）", 8);
+	await setNumber(page, "菜单项横向内边距（px）", 10);
+	await setNumber(page, "图文间距（px）", 8);
+	await editor.getByRole("button", { name: /^动效档位/ }).click();
+	await page.getByRole("option", { name: "慢（全局 token）" }).click();
+	await expect(part("current", "content")).toHaveCSS("padding-top", "8px");
+	await expect(part("current", "content")).toHaveCSS("animation-duration", "0.3s");
+	await expect(part("current", "group-heading").first()).toHaveCSS("padding-left", "10px");
+	await expect(part("current", "item").filter({ hasText: "在新窗口中打开" })).toHaveCSS(
+		"padding-left",
+		"34px"
+	);
+	await expect(part("current", "separator").first()).toHaveCSS("margin-left", "-8px");
+	const target = part("current", "trigger");
+	await target.click({ button: "right", position: { x: 30, y: 20 } });
+	await expect(part("current", "content")).toBeVisible();
+	await target.focus();
+	await target.press("Shift+F10");
+	// Bits focuses the first enabled item when the menu gains keyboard focus.
+	await expect(
+		part("current", "content")
+			.getByRole("menuitem", { name: /^打开/ })
+			.first()
+	).toBeFocused();
+	await page.keyboard.press("ArrowDown");
+	await page.keyboard.press("ArrowDown"); // Skip the disabled row.
+	await expect(part("current", "sub-trigger")).toBeFocused();
+	await page.keyboard.press("ArrowRight");
+	await expect(part("current", "sub-content")).toBeVisible();
+	await expect(part("current", "sub-content")).toHaveCSS("padding-top", "8px");
+	await expect(
+		part("current", "sub-content").getByRole("menuitem", { name: "邮件", exact: true })
+	).toBeFocused();
+	await page.keyboard.press("ArrowLeft");
+	await part("current", "checkbox-item").click();
+	await expect(part("current", "checkbox-item")).toHaveAttribute("aria-checked", "false");
+	await setNumber(page, "最小宽度（px）", 320);
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await target.scrollIntoViewIfNeeded();
+	await target.focus();
+	await target.press("Shift+F10");
+	await expect(part("current", "item").first()).toBeFocused();
+	await page.keyboard.press("ArrowDown");
+	await page.keyboard.press("ArrowDown");
+	await page.keyboard.press("ArrowRight");
+	await expect(part("current", "sub-content")).toBeVisible();
+	await expect(async () => {
+		const bounds = (await editor.locator("[data-context-menu-canvas]").boundingBox())!;
+		for (const slot of ["content", "sub-content"]) {
+			const menu = (await part("current", slot).boundingBox())!;
+			expect(menu.x).toBeGreaterThanOrEqual(bounds.x);
+			expect(menu.x + menu.width).toBeLessThanOrEqual(bounds.x + bounds.width);
+		}
+	}).toPass();
+	await page.keyboard.press("ArrowLeft");
+	await page.setViewportSize({ width: 1280, height: 720 });
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	await expect(part("before", "content")).toHaveCSS("padding-top", "4px");
+	await expect(part("before", "checkbox-item")).toHaveAttribute("aria-checked", "true");
+	await editor.getByRole("textbox", { name: "Context Menu 版本名称" }).fill("宽松右键菜单");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await expect(editor.getByRole("status")).toContainText("已保存「宽松右键菜单」");
 	await page.keyboard.press("Escape");
 	await expect(editor).toHaveCount(0);
 	await expect(openButton).toBeFocused();
