@@ -95,6 +95,16 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-dialog-content": DIALOG_CONTENT_UTILITY,
 	"cn-dialog-overlay": DIALOG_OVERLAY_UTILITY,
 	"cn-dialog-footer": DIALOG_FOOTER_UTILITY,
+	"cn-accordion-trigger": /^(?:px|py)-(?:[0-7](?:\.5)?|8)$/,
+	"cn-accordion-content": /^px-(?:[0-7](?:\.5)?|8)$/,
+	"cn-accordion-content-inner": /^pb-(?:[0-9](?:\.5)?|10)$/,
+	"cn-alert-dialog-content": new RegExp(
+		`^(?:p-(?:[2-9](?:\\.5)?|1[01](?:\\.5)?|12)|gap-(?:[1-9](?:\\.5)?|10)|rounded-${RADIUS}|data-\\[size=default\\]:sm:max-w-(?:sm|md|lg|xl|2xl)|duration-${TIER}|data-open:zoom-in-${ZOOM}|data-closed:zoom-out-${ZOOM})$`
+	),
+	"cn-alert-dialog-overlay": DIALOG_OVERLAY_UTILITY,
+	"cn-alert-dialog-footer": new RegExp(
+		`^(?:(?:-m[xb]|p)-(?:[2-9](?:\\.5)?|1[01](?:\\.5)?|12)|rounded-b-${RADIUS})$`
+	),
 	"cn-popover-content": POPOVER_CONTENT_UTILITY,
 	"cn-hover-card-content": new RegExp(
 		`^(?:p-${N}|rounded-${RADIUS}|duration-${TIER}|data-open:zoom-in-${ZOOM}|data-closed:zoom-out-${ZOOM}|data-\\[side=${SIDE}\\]:slide-in-from-${SIDE}-[0-4])$`

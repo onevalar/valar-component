@@ -13,6 +13,16 @@ import { compile } from "svelte/compiler";
 import { compile as compileTailwind } from "tailwindcss";
 import { describe, expect, it } from "vitest";
 import {
+	ACCORDION_SPEC,
+	accordionOverrideClasses,
+	parseAccordionSource,
+} from "../src/lib/features/workbench/accordion-tuning.js";
+import {
+	ALERT_DIALOG_SPEC,
+	alertDialogOverrideClasses,
+	parseAlertDialogSource,
+} from "../src/lib/features/workbench/alert-dialog-tuning.js";
+import {
 	ALERT_SPEC,
 	alertOverrideClasses,
 	parseAlertSource,
@@ -1007,6 +1017,184 @@ const registryFiles = (component: string, style: string) =>
 		.files as { target: string; content: string }[];
 const emptyOverrides = (style: string) =>
 	readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
+
+describe("Accordion editor installation contract", () => {
+	it("keeps title and animated content aligned across all styles and successive asymmetric changes", () => {
+		const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+		for (const [index, style] of styles.entries()) {
+			expect(parseAccordionSource(registryFiles("accordion", style)).values).toEqual({
+				triggerPaddingY: [10, 16, 10, 16, 8, 16, 16, 16][index],
+				paddingX: [0, 0, 0, 16, 8, 16, 16, 0][index],
+				contentPaddingBottom: [10, 16, 10, 16, 16, 16, 16, 16][index],
+			});
+			let css = emptyOverrides(style);
+			for (const values of [
+				{ triggerPaddingY: 32, paddingX: 0, contentPaddingBottom: 38 },
+				{ triggerPaddingY: 0, paddingX: 30, contentPaddingBottom: 2 },
+			]) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({ style, classes: accordionOverrideClasses(values) })
+				);
+				const files = ["accordion-trigger.svelte", "accordion-content.svelte"].map((target) => ({
+					target,
+					content: installed("accordion", style, css, target),
+				}));
+				expect(parseAccordionSource(files).values).toEqual(values);
+				const trigger = files[0].content;
+				expect(classList(trigger).filter((word) => !/^(?:p|px|py)-/.test(word))).toEqual(
+					classList(
+						installed("accordion", style, emptyOverrides(style), "accordion-trigger.svelte")
+					).filter((word) => !/^(?:p|px|py)-/.test(word))
+				);
+				expect(trigger).toContain("group-aria-expanded/accordion-trigger:hidden");
+				const content = files[1].content;
+				expect(content).toContain(
+					"data-open:animate-accordion-down data-closed:animate-accordion-up"
+				);
+				expect(content).toContain("pt-0");
+				expect(content).toContain("[&_p:not(:last-child)]:mb-4");
+				for (const file of files)
+					expect(() => compile(file.content, { filename: file.target })).not.toThrow();
+				expect(installed("accordion", style, css, "accordion-item.svelte")).toBe(
+					installed("accordion", style, emptyOverrides(style), "accordion-item.svelte")
+				);
+			}
+		}
+		for (const classes of [
+			{ "cn-accordion-trigger": "p-4" },
+			{ "cn-accordion-trigger": "px-8.5" },
+			{ "cn-accordion-content": "duration-fast" },
+			{ "cn-accordion-content-inner": "pt-2" },
+			{ "cn-accordion-content-inner": "pb-10.5" },
+			{ "cn-accordion-item": "bg-primary" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+		for (const values of [
+			{ paddingX: 3 },
+			{ triggerPaddingY: 34 },
+			{ contentPaddingBottom: -2 },
+			{ duration: "fast" },
+		])
+			expect(() => ACCORDION_SPEC.overrideClasses(values as never, null)).toThrow();
+		expect(accordionOverrideClasses({})).toEqual({});
+		expect(() => parseAccordionSource([])).toThrow();
+	});
+});
+
+describe("Alert Dialog editor installation contracts", () => {
+	it("roundtrips both sizes without changing confirmation semantics, media or footer layout", () => {
+		const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+		const widths = ["sm", "lg", "sm", "md", "sm", "md", "md", "md"];
+		const radii = ["xl", "xl", "none", "4xl", "xl", "4xl", "style", "none"];
+		for (const [index, style] of styles.entries()) {
+			const baseline = parseAlertDialogSource(registryFiles("alert-dialog", style));
+			expect(baseline.values).toEqual({
+				width: widths[index],
+				padding: ["nova", "lyra", "mira"].includes(style) ? 16 : 24,
+				gap: style === "mira" ? 12 : ["nova", "lyra"].includes(style) ? 16 : 24,
+				radius: radii[index],
+				overlay: [10, 10, 10, 80, 80, 30, 30, 20][index],
+				duration: "fast",
+				zoom: "95",
+			});
+			expect(baseline.context).toEqual({
+				footerBleed: style === "nova",
+				footerRounded: style === "nova",
+			});
+			let css = emptyOverrides(style);
+			for (const change of [
+				{
+					width: "2xl",
+					padding: 46,
+					gap: 6,
+					radius: "none",
+					duration: "slow",
+					overlay: 40,
+					zoom: "90",
+				},
+				{
+					width: "sm",
+					padding: 10,
+					gap: 38,
+					radius: "lg",
+					duration: "normal",
+					overlay: 0,
+					zoom: "100",
+				},
+			] as const) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({
+						style,
+						classes: alertDialogOverrideClasses(change, baseline.context),
+					})
+				);
+				const files = readdirSync(resolve("src/lib/registry/ui/alert-dialog")).map((target) => ({
+					target,
+					content: applyTokenUtilities(installed("alert-dialog", style, css, target)),
+				}));
+				expect(parseAlertDialogSource(files)).toEqual({
+					values: change,
+					context: baseline.context,
+				});
+				const content = files.find((f) => f.target === "alert-dialog-content.svelte")!.content;
+				expect(content).toContain(
+					style === "mira" ? "data-[size=sm]:max-w-64" : "data-[size=sm]:max-w-xs"
+				);
+				for (const file of [
+					"alert-dialog-action.svelte",
+					"alert-dialog-cancel.svelte",
+					"alert-dialog-header.svelte",
+					"alert-dialog-media.svelte",
+					"alert-dialog-description.svelte",
+					"alert-dialog-title.svelte",
+				])
+					expect(installed("alert-dialog", style, css, file)).toBe(
+						installed("alert-dialog", style, emptyOverrides(style), file)
+					);
+				const footer = files.find((f) => f.target === "alert-dialog-footer.svelte")!.content;
+				if (style === "nova")
+					expect(classList(footer)).toEqual(
+						expect.arrayContaining([
+							`-mx-${change.padding / 4}`,
+							`-mb-${change.padding / 4}`,
+							`p-${change.padding / 4}`,
+							`rounded-b-${change.radius}`,
+						])
+					);
+				else expect(footer).not.toContain("-mx-");
+				expect(footer).toContain("flex-col-reverse");
+				expect(footer).toContain("group-data-[size=sm]/alert-dialog-content:grid-cols-2");
+				expect(() => compile(content, { filename: "alert-dialog-content.svelte" })).not.toThrow();
+			}
+		}
+	});
+	it("rejects other sizes, colors, button styles and free-form motion", () => {
+		for (const classes of [
+			{ "cn-alert-dialog-content": "sm:max-w-lg" },
+			{ "cn-alert-dialog-content": "data-[size=sm]:max-w-lg" },
+			{ "cn-alert-dialog-content": "p-12.5" },
+			{ "cn-alert-dialog-content": "gap-10.5" },
+			{ "cn-alert-dialog-content": "bg-red-500" },
+			{ "cn-alert-dialog-overlay": "bg-black/45" },
+			{ "cn-alert-dialog-action": "h-10" },
+			{ "cn-alert-dialog-header": "gap-4" },
+			{ "cn-alert-dialog-content": "duration-[600ms]" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+		for (const input of [{ padding: 9 }, { gap: 42 }, { overlay: 35 }, { size: "sm" }])
+			expect(() =>
+				ALERT_DIALOG_SPEC.overrideClasses(input as never, {
+					footerBleed: false,
+					footerRounded: false,
+				})
+			).toThrow();
+		expect(alertDialogOverrideClasses({}, undefined)).toEqual({});
+		expect(alertDialogOverrideClasses({ radius: "style" }, undefined)).toEqual({});
+		expect(() => parseAlertDialogSource([])).toThrow();
+	});
+});
 
 describe("Alert and Empty editor installation contracts", () => {
 	const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import AccordionTuner from "$lib/features/workbench/accordion-tuner.svelte";
+	import AlertDialogTuner from "$lib/features/workbench/alert-dialog-tuner.svelte";
 	import AlertTuner from "$lib/features/workbench/alert-tuner.svelte";
 	import BadgeTuner from "$lib/features/workbench/badge-tuner.svelte";
 	import ButtonTuner from "$lib/features/workbench/button-tuner.svelte";
@@ -98,6 +100,8 @@
 				previewClassName,
 				tunable &&
 					[
+						"accordion-demo",
+						"alert-dialog-demo",
 						"alert-demo",
 						"empty-demo",
 						"badge-demo",
@@ -131,6 +135,10 @@
 		>
 			{#if !tunable}
 				{@render PreviewExample()}
+			{:else if name === "accordion-demo"}
+				<AccordionTuner>{@render PreviewExample()}</AccordionTuner>
+			{:else if name === "alert-dialog-demo"}
+				<AlertDialogTuner>{@render PreviewExample()}</AlertDialogTuner>
 			{:else if name === "alert-demo"}
 				<AlertTuner>{@render PreviewExample()}</AlertTuner>
 			{:else if name === "empty-demo"}

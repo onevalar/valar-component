@@ -21,7 +21,7 @@ import {
  * motion character (width, padding, gap, overlay opacity, zoom).
  */
 export const DIALOG_WIDTHS = ["sm", "md", "lg", "xl", "2xl"] as const;
-const WIDTH_REM: Record<(typeof DIALOG_WIDTHS)[number], number> = {
+export const WIDTH_REM: Record<(typeof DIALOG_WIDTHS)[number], number> = {
 	sm: 24,
 	md: 28,
 	lg: 32,

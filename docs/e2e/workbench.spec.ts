@@ -9,6 +9,160 @@ async function setNumber(page: Page, label: string, value: number) {
 	await input.press("Enter");
 }
 
+test("Accordion editor keeps single and multiple keyboard behavior while aligning tuned content", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/accordion", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Accordion", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Accordion · 组件参数" });
+	await expect(editor.getByTestId("accordion-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const triggers = current.locator('[data-slot="accordion-trigger"]');
+	await expect(triggers.nth(0)).toHaveAttribute("aria-expanded", "true");
+	await triggers.nth(0).focus();
+	await page.keyboard.press("ArrowDown");
+	await expect(triggers.nth(1)).toBeFocused();
+	await page.keyboard.press("End");
+	await expect(triggers.nth(1)).toBeFocused();
+	await page.keyboard.press("Home");
+	await expect(triggers.nth(0)).toBeFocused();
+	await page.keyboard.press("ArrowUp");
+	await expect(triggers.nth(1)).toBeFocused();
+	await page.keyboard.press("Enter");
+	await expect(triggers.nth(1)).toHaveAttribute("aria-expanded", "true");
+	await expect(triggers.nth(0)).toHaveAttribute("aria-expanded", "false");
+	await expect(triggers.nth(2)).toBeDisabled();
+	await triggers.nth(3).focus();
+	await page.keyboard.press("Space");
+	await expect(triggers.nth(3)).toHaveAttribute("aria-expanded", "false");
+	await expect(triggers.nth(4)).toHaveAttribute("aria-expanded", "true");
+	await setNumber(page, "标题纵向留白（px）", 30);
+	await setNumber(page, "标题／内容横向留白（px）", 22);
+	await setNumber(page, "内容底部留白（px）", 38);
+	await expect(triggers.nth(1)).toHaveCSS("padding-top", "30px");
+	await expect(triggers.nth(1)).toHaveCSS("padding-left", "22px");
+	await expect(current.locator('[data-slot="accordion-content"]').first()).toHaveCSS(
+		"padding-left",
+		"22px"
+	);
+	await expect(current.locator('[data-slot="accordion-content"] > div').first()).toHaveCSS(
+		"padding-bottom",
+		"38px"
+	);
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.locator('[data-slot="accordion-trigger"]').first()).toHaveCSS(
+		"padding-left",
+		"0px"
+	);
+	await current.getByRole("button", { name: "切换演示标记", exact: true }).first().press("Enter");
+	await expect(current.getByRole("status").first()).toContainText("已标记本组演示");
+	await expect(before.getByRole("status").first()).toContainText("尚未标记本组演示");
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await setNumber(page, "标题／内容横向留白（px）", 32);
+	expect(await current.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor.getByRole("textbox", { name: "Accordion 版本名称", exact: true }).fill("折叠区密度");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	await expect(page.locator('.sample [data-slot="accordion-trigger"]').first()).toHaveCSS(
+		"padding-left",
+		"32px"
+	);
+});
+
+test("Alert Dialog editor preserves size variants and real confirmation focus, cancel and async failure", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/alert-dialog", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Alert Dialog", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Alert Dialog · 组件参数" });
+	await expect(editor.getByTestId("alert-dialog-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const content = current.locator('[data-slot="alert-dialog-content"]');
+	await setNumber(page, "内边距（px）", 30);
+	await setNumber(page, "内容间距（px）", 22);
+	await setNumber(page, "遮罩不透明度（%）", 40);
+	await editor.getByRole("button", { name: /^默认尺寸宽度/ }).click();
+	await page.getByRole("option", { name: "lg · 512px", exact: true }).click();
+	await expect(content).toHaveCSS("padding", "30px");
+	await expect(content).toHaveCSS("max-width", "512px");
+	await expect(content).toHaveCSS("gap", "22px");
+	await expect(current.locator('[data-slot="alert-dialog-footer"]')).toHaveCSS(
+		"margin-left",
+		"-30px"
+	);
+	await current.getByRole("button", { name: "小尺寸", exact: true }).click();
+	await expect(content).toHaveCSS("max-width", "320px");
+	const smallButtons = await current.locator('[data-slot="alert-dialog-footer"]').evaluate((el) =>
+		[...el.querySelectorAll("button")].map((button) => {
+			const rect = button.getBoundingClientRect();
+			return { top: rect.top, left: rect.left, right: rect.right };
+		})
+	);
+	expect(smallButtons[0].top).toBe(smallButtons[1].top);
+	expect(smallButtons[0].right).toBeLessThan(smallButtons[1].left);
+	await current.getByRole("button", { name: "默认尺寸", exact: true }).click();
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.locator('[data-slot="alert-dialog-content"]')).toHaveCSS("padding", "16px");
+	await current.getByRole("button", { name: "真实确认流程", exact: true }).click();
+	await expect(content).toHaveCount(0);
+	const trigger = current.getByRole("button", { name: "打开确认预览", exact: true });
+	await trigger.click();
+	await expect(content).toBeFocused();
+	await page.keyboard.press("Tab");
+	await expect(current.getByRole("button", { name: "取消", exact: true })).toBeFocused();
+	await page.keyboard.press("Shift+Tab");
+	await expect(current.getByRole("button", { name: "删除演示项目", exact: true })).toBeFocused();
+	await current.locator('[data-slot="alert-dialog-overlay"]').click({ position: { x: 8, y: 8 } });
+	await expect(content).toBeVisible();
+	await current.getByRole("button", { name: "取消", exact: true }).click();
+	await expect(content).toHaveCount(0);
+	await expect(trigger).toBeFocused();
+	await trigger.press("Enter");
+	await current.getByRole("button", { name: "删除演示项目", exact: true }).click();
+	await expect(current.locator('[data-slot="alert-dialog-action"]')).toBeDisabled();
+	await expect(current.getByRole("status", { name: "正在模拟确认", exact: true })).toBeVisible();
+	await expect(current.getByRole("button", { name: "取消", exact: true })).toBeDisabled();
+	await expect(current.getByRole("alert")).toContainText("模拟保存失败");
+	await expect(content).toBeVisible();
+	await expect(before.getByRole("alert")).toHaveCount(0);
+	await current.getByRole("button", { name: "重试删除演示", exact: true }).click();
+	await expect(content).toHaveCount(0);
+	await expect(current.getByRole("status")).toContainText("演示确认成功");
+	await expect(trigger).toBeFocused();
+	await trigger.click();
+	await page.keyboard.press("Escape");
+	await expect(content).toHaveCount(0);
+	await expect(editor).toBeVisible();
+	await current.getByRole("button", { name: "返回内联画布", exact: true }).click();
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await setNumber(page, "内边距（px）", 48);
+	await setNumber(page, "内容间距（px）", 40);
+	expect(await current.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor
+		.getByRole("textbox", { name: "Alert Dialog 版本名称", exact: true })
+		.fill("确认区布局");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	await page
+		.getByRole("region", { name: "Alert Dialog 样式微调", exact: true })
+		.getByRole("button", { name: "Show Dialog", exact: true })
+		.click();
+	await expect(page.getByRole("alertdialog")).toHaveCSS("padding", "48px");
+	await page.keyboard.press("Escape");
+});
+
 test("Alert editor preserves icon columns and action reserves without replaying static alerts", async ({
 	page,
 }) => {
