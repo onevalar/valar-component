@@ -101,6 +101,11 @@ import {
 	parseNativeSelectSource,
 } from "../src/lib/features/workbench/native-select-tuning.js";
 import {
+	NUMBER_FIELD_SPEC,
+	numberFieldOverrideClasses,
+	parseNumberFieldSource,
+} from "../src/lib/features/workbench/number-field-tuning.js";
+import {
 	parsePopoverSource,
 	popoverOverrideClasses,
 } from "../src/lib/features/workbench/popover-tuning.js";
@@ -114,6 +119,11 @@ import {
 	parseSheetSource,
 	sheetOverrideClasses,
 } from "../src/lib/features/workbench/sheet-tuning.js";
+import {
+	SLIDER_FIELD_SPEC,
+	parseSliderFieldSource,
+	sliderFieldOverrideClasses,
+} from "../src/lib/features/workbench/slider-field-tuning.js";
 import {
 	parseSliderSource,
 	sliderOverrideClasses,
@@ -1027,6 +1037,90 @@ const registryFiles = (component: string, style: string) =>
 		.files as { target: string; content: string }[];
 const emptyOverrides = (style: string) =>
 	readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
+
+describe("Number Field and Slider Field editor installation contracts", () => {
+	it("roundtrips outer Button heights and linked internal geometry without changing numeric behavior", () => {
+		const context = { buttonHeights: { xs: 24, sm: 28, default: 32, lg: 36 }, borderY: 2 };
+		for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"]) {
+			const baseline = installed(
+				"number-field",
+				style,
+				emptyOverrides(style),
+				"number-field.svelte"
+			);
+			expect(
+				parseNumberFieldSource([{ target: "number-field.svelte", content: baseline }], context)
+					.values
+			).toEqual({ height: "style", radius: "md", paddingX: 8 });
+			let css = emptyOverrides(style);
+			for (const values of [
+				{ height: "lg", radius: "none", paddingX: 0 },
+				{ height: "xs", radius: "full", paddingX: 14 },
+			] as const) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({
+						style,
+						classes: numberFieldOverrideClasses(values, context),
+					})
+				);
+				const content = installed("number-field", style, css, "number-field.svelte");
+				expect(
+					parseNumberFieldSource([{ target: "number-field.svelte", content }], context).values
+				).toEqual(values);
+				expect(() => compile(content, { filename: "number-field.svelte" })).not.toThrow();
+			}
+		}
+		expect(numberFieldOverrideClasses({ height: "style", radius: "style" }, undefined)).toEqual({});
+		expect(NUMBER_FIELD_SPEC.pageCss!({}, undefined as never)).toBe("");
+		for (const values of [{ paddingX: 3 }, { height: "42" }, { step: 2 }])
+			expect(() => NUMBER_FIELD_SPEC.overrideClasses(values as never, context)).toThrow();
+		for (const classes of [
+			{ "cn-number-field": "bg-red-500" },
+			{ "cn-number-field-input": "px-4.5" },
+			{ "cn-number-field-increment": "size-[40px]" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+	});
+
+	it("roundtrips layout alone across all styles while preserving both child controls", () => {
+		for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"]) {
+			let css = emptyOverrides(style);
+			const source = installed("slider-field", style, css, "slider-field.svelte");
+			expect(
+				parseSliderFieldSource([{ target: "slider-field.svelte", content: source }]).values
+			).toEqual({ columnGap: 12, rowGap: 8, valueWidth: 128 });
+			for (const values of [
+				{ columnGap: 0, rowGap: 22, valueWidth: 192 },
+				{ columnGap: 30, rowGap: 0, valueWidth: 104 },
+			] as const) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({ style, classes: sliderFieldOverrideClasses(values) })
+				);
+				const content = installed("slider-field", style, css, "slider-field.svelte");
+				expect(parseSliderFieldSource([{ target: "slider-field.svelte", content }]).values).toEqual(
+					values
+				);
+				expect(() => compile(content, { filename: "slider-field.svelte" })).not.toThrow();
+				for (const child of ["number-field", "slider"])
+					expect(installed(child, style, css, `${child}.svelte`)).toBe(
+						installed(child, style, emptyOverrides(style), `${child}.svelte`)
+					);
+			}
+		}
+		for (const values of [{ valueWidth: 100 }, { columnGap: 33 }, { min: 5 }])
+			expect(() => SLIDER_FIELD_SPEC.overrideClasses(values as never, null)).toThrow();
+		expect(sliderFieldOverrideClasses({})).toEqual({});
+		expect(() => parseSliderFieldSource([])).toThrow();
+		for (const classes of [
+			{ "cn-slider-field": "gap-4" },
+			{ "cn-slider-field-value": "h-8" },
+			{ "cn-slider-field-value": "w-[128px]" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+	});
+});
 
 describe("Avatar editor installation contract", () => {
 	it("roundtrips asymmetric sizes with matching count, badge and radius without accumulating offsets", () => {

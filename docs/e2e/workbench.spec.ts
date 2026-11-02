@@ -71,6 +71,135 @@ test("Avatar editor dev writeback refreshes the registry baseline and subsequent
 	}
 });
 
+test("Number Field editor links outer height and buttons while preserving localized numeric forms", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/number-field", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Number Field", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Number Field · 组件参数", exact: true });
+	await expect(editor.getByTestId("number-field-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const quantity = current.getByRole("spinbutton", { name: "数量", exact: true });
+	const root = current.locator('[data-slot="number-field"]').first();
+	await expect(root).toHaveCSS("height", "42px");
+	await editor.getByRole("button", { name: /^外框高度档位/ }).click();
+	await page.getByRole("option", { name: "同 Button 默认", exact: true }).click();
+	await expect(root).toHaveCSS("height", "32px");
+	await expect(quantity).toHaveCSS("height", "30px");
+	const increment = current.getByRole("button", { name: "增大数量", exact: true });
+	await expect(increment).toHaveCSS("height", "30px");
+	await expect(increment).toHaveCSS("width", "30px");
+	await setNumber(page, "数字区横向留白（px）", 14);
+	await expect(quantity).toHaveCSS("padding-left", "14px");
+	await editor.getByRole("button", { name: /^圆角档位/ }).click();
+	await page.getByRole("option", { name: "none · 直角", exact: true }).click();
+	await expect(root).toHaveCSS("border-radius", "0px");
+	await expect(increment).toHaveCSS("border-start-end-radius", "0px");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.locator('[data-slot="number-field"]').first()).toHaveCSS("height", "42px");
+	await quantity.press("Home");
+	await expect(current.getByRole("button", { name: "减小数量", exact: true })).toBeDisabled();
+	await quantity.press("End");
+	await expect(increment).toBeDisabled();
+	await quantity.fill("3");
+	await quantity.press("ArrowUp");
+	await expect(quantity).toHaveValue("4");
+	await expect(before.getByRole("spinbutton", { name: "数量", exact: true })).toHaveValue("3");
+	const decimal = current.getByRole("spinbutton", { name: "小数调整", exact: true });
+	await decimal.fill("-1.26");
+	await decimal.press("Tab");
+	await expect(decimal).toHaveValue("-1.3");
+	await current.getByRole("spinbutton", { name: "欧元金额", exact: true }).fill("1.234,56 €");
+	await current.getByRole("spinbutton", { name: "比例", exact: true }).fill("25%");
+	await current.getByRole("button", { name: "查看数字提交值", exact: true }).click();
+	await expect(current.locator("output")).toContainText('"price":"1234.56"');
+	await expect(current.locator("output")).toContainText('"rate":"0.25"');
+	await expect(current.locator("output")).not.toContainText('"disabled"');
+	await expect(current.getByRole("spinbutton", { name: "只读数量", exact: true })).toHaveAttribute(
+		"readonly"
+	);
+	await expect(current.getByRole("spinbutton", { name: "禁用数量", exact: true })).toBeDisabled();
+	await current.getByRole("button", { name: "重置演示数值", exact: true }).click();
+	await expect(quantity).toHaveValue("3");
+	await expect(decimal).toHaveValue("-1.2");
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await setNumber(page, "数字区横向留白（px）", 16);
+	expect(await current.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor
+		.getByRole("textbox", { name: "Number Field 版本名称", exact: true })
+		.fill("数字密度");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await page.keyboard.press("Escape");
+	await expect(opener).toBeFocused();
+	await expect(page.locator('.sample [data-slot="number-field"]').first()).toHaveCSS(
+		"height",
+		"32px"
+	);
+});
+
+test("Slider Field editor changes layout without changing child geometry or numeric synchronization", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/slider-field", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Slider Field", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Slider Field · 组件参数", exact: true });
+	await expect(editor.getByTestId("slider-field-dials")).toBeVisible();
+	const current = editor.locator("[data-tuning-current]");
+	const field = current.locator('[data-slot="slider-field"]').first();
+	const number = field.getByRole("spinbutton", { name: "宽度", exact: true });
+	const slider = field.getByRole("slider", { name: "宽度", exact: true });
+	await setNumber(page, "滑块／数值列间距（px）", 30);
+	await setNumber(page, "标签／控件行间距（px）", 22);
+	await setNumber(page, "数值框宽度（px）", 184);
+	await expect(field).toHaveCSS("column-gap", "30px");
+	await expect(field).toHaveCSS("row-gap", "22px");
+	await expect(field.locator('[data-slot="number-field"]')).toHaveCSS("width", "184px");
+	await expect(field.locator('[data-slot="number-field"]')).toHaveCSS("height", "42px");
+	await expect(field.locator('[data-slot="slider-track"]')).toHaveCSS("height", "4px");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(before.locator('[data-slot="number-field"]').first()).toHaveCSS("width", "128px");
+	await number.fill("999");
+	await expect(number).toHaveAttribute("aria-invalid", "true");
+	await expect(slider).toHaveAttribute("aria-valuenow", "80");
+	await number.fill("");
+	await expect(slider).toHaveAttribute("aria-valuenow", "80");
+	await slider.press("ArrowRight");
+	await expect(number).toHaveValue("82");
+	await expect(before.getByRole("spinbutton", { name: "宽度", exact: true })).toHaveValue("80");
+	await slider.press("Home");
+	await expect(number).toHaveValue("0");
+	await slider.press("End");
+	await expect(number).toHaveValue("200");
+	await current.getByRole("spinbutton", { name: "偏移", exact: true }).fill("-2.75");
+	await current.getByRole("button", { name: "提交本画布表单", exact: true }).click();
+	await expect(current.getByRole("status")).toContainText('"offset":"-2.75"');
+	await expect(current.getByRole("status")).not.toContainText('"disabled":');
+	await expect(current.getByRole("spinbutton", { name: "禁用宽度", exact: true })).toBeDisabled();
+	await editor.getByRole("radio", { name: "深色", exact: true }).click();
+	await page.setViewportSize({ width: 390, height: 1000 });
+	await setNumber(page, "滑块／数值列间距（px）", 32);
+	await setNumber(page, "标签／控件行间距（px）", 24);
+	await setNumber(page, "数值框宽度（px）", 192);
+	expect(await current.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await editor
+		.getByRole("textbox", { name: "Slider Field 版本名称", exact: true })
+		.fill("组合布局");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await page.keyboard.press("Escape");
+	await expect(opener).toBeFocused();
+	await expect(page.locator('.sample [data-slot="number-field"]').first()).toHaveCSS(
+		"width",
+		"192px"
+	);
+});
+
 test("Avatar editor links asymmetric sizes to badges and mixed group counts and preserves image recovery", async ({
 	page,
 }) => {

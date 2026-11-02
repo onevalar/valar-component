@@ -32,7 +32,7 @@
 
 **当前进度**（2026-11-01）：第 1–12 步、后续任务 A1–A3、B1–B3 和收尾 D1–D4 均已完成并推送。AI 可做的下一步见“候选任务”，开始前先向用户确认；C1–C3 等用户。`skills/valar-svelte/guides/` 的组合、文案、动效内容由用户编写，AI 不要动。
 
-**组件编辑器推广**（2026-11-02）：Hover Card、Context Menu、Drawer 已完成，见[弹层编辑器验收记录](workbench-acceptance-2026-11-02.md)；Tabs、Card 已完成，见[Tabs／Card 验收记录](workbench-tabs-card-acceptance-2026-11-02.md)。这两批已推送至 `main`（[2633f5f](https://github.com/onevalar/valar-svelte/commit/2633f5fd8c96cd7e6ae41a9f6d7b62fcbc257819)），GitHub CI 全部通过。Checkbox、Radio Group、Switch 已完成并推送（[c57b2fc](https://github.com/onevalar/valar-svelte/commit/c57b2fcaee32645ae7e9cf0968ff5fd6f21bb5ac)），GitHub CI 全部通过，见[选择控件验收记录](workbench-selection-controls-acceptance-2026-11-02.md)。Toggle、Toggle Group、Slider（E4）已推送至 `main`（[ad8fde5](https://github.com/onevalar/valar-svelte/commit/ad8fde528a21b668db21774b6eafb2f8d12e6ec4)），GitHub CI 全部通过，见[验收记录](workbench-toggle-slider-acceptance-2026-11-02.md)。Native Select、Input Group、Input OTP（E5）已推送至 `main`（[638bfb4](https://github.com/onevalar/valar-svelte/commit/638bfb4608891b580886dfd344c16e4390404886)），GitHub CI 全部通过，见[验收记录](workbench-input-composites-acceptance-2026-11-02.md)。Badge、基础 Table（E6）已推送至 `main`（[b91209e](https://github.com/onevalar/valar-svelte/commit/b91209e364e2ee825fe2a9f57ae8c820cc5b124c)），GitHub CI 全部通过，见[验收记录](workbench-badge-table-acceptance-2026-11-02.md)。Alert、Empty（E7）已推送至 `main`（[d306978](https://github.com/onevalar/valar-svelte/commit/d3069785c43da9288653d88b1f9fb78385fb24cd)），GitHub CI 全部通过，见[验收记录](workbench-alert-empty-acceptance-2026-11-02.md)。Accordion、Alert Dialog（E8）已推送至 `main`（[493dea9](https://github.com/onevalar/valar-svelte/commit/493dea9985816494a19883eedd49a4ace1bb84a2)），GitHub CI 全部通过，见[验收记录](workbench-accordion-alert-dialog-acceptance-2026-11-02.md)。本批 E9 接入 Avatar、Item，覆盖增至 **31／68 个**；参数、交互、写回与回归证据见[本批验收记录](workbench-avatar-item-acceptance-2026-11-02.md)和所链工作线程。用户已授权本批验收通过后统一提交推送，不发布包或部署站点。其余组件见下面“剩余 37 个组件的优先级”；不扩大旧 Studio 的覆盖范围，不自动启动下一批。
+**组件编辑器推广**（2026-11-02）：Hover Card、Context Menu、Drawer 已完成，见[弹层编辑器验收记录](workbench-acceptance-2026-11-02.md)；Tabs、Card 已完成，见[Tabs／Card 验收记录](workbench-tabs-card-acceptance-2026-11-02.md)。这两批已推送至 `main`（[2633f5f](https://github.com/onevalar/valar-svelte/commit/2633f5fd8c96cd7e6ae41a9f6d7b62fcbc257819)），GitHub CI 全部通过。Checkbox、Radio Group、Switch 已完成并推送（[c57b2fc](https://github.com/onevalar/valar-svelte/commit/c57b2fcaee32645ae7e9cf0968ff5fd6f21bb5ac)），GitHub CI 全部通过，见[选择控件验收记录](workbench-selection-controls-acceptance-2026-11-02.md)。Toggle、Toggle Group、Slider（E4）已推送至 `main`（[ad8fde5](https://github.com/onevalar/valar-svelte/commit/ad8fde528a21b668db21774b6eafb2f8d12e6ec4)），GitHub CI 全部通过，见[验收记录](workbench-toggle-slider-acceptance-2026-11-02.md)。Native Select、Input Group、Input OTP（E5）已推送至 `main`（[638bfb4](https://github.com/onevalar/valar-svelte/commit/638bfb4608891b580886dfd344c16e4390404886)），GitHub CI 全部通过，见[验收记录](workbench-input-composites-acceptance-2026-11-02.md)。Badge、基础 Table（E6）已推送至 `main`（[b91209e](https://github.com/onevalar/valar-svelte/commit/b91209e364e2ee825fe2a9f57ae8c820cc5b124c)），GitHub CI 全部通过，见[验收记录](workbench-badge-table-acceptance-2026-11-02.md)。Alert、Empty（E7）已推送至 `main`（[d306978](https://github.com/onevalar/valar-svelte/commit/d3069785c43da9288653d88b1f9fb78385fb24cd)），GitHub CI 全部通过，见[验收记录](workbench-alert-empty-acceptance-2026-11-02.md)。Accordion、Alert Dialog（E8）已推送至 `main`（[493dea9](https://github.com/onevalar/valar-svelte/commit/493dea9985816494a19883eedd49a4ace1bb84a2)），GitHub CI 全部通过，见[验收记录](workbench-accordion-alert-dialog-acceptance-2026-11-02.md)。Avatar、Item（E9）已推送至 `main`（[23f3a4c](https://github.com/onevalar/valar-svelte/commit/23f3a4c066e10980166aa44cdd68f1c757ef7d2d)），GitHub CI 全部通过，见[验收记录](workbench-avatar-item-acceptance-2026-11-02.md)。本批 E10 接入 Number Field、Slider Field，覆盖增至 **33／68 个**；参数、交互、写回与回归证据见[本批验收记录](workbench-number-slider-field-acceptance-2026-11-02.md)和所链工作线程。用户已授权本批验收通过后统一提交推送，不发布包或部署站点。其余组件见下面“剩余 35 个组件的优先级”；不扩大旧 Studio 的覆盖范围，不自动启动下一批。
 
 ### 后续任务（按顺序；完成一项就在此更新状态）
 
@@ -50,6 +50,7 @@
 | E7   | 接入 Alert、Empty | 完成（验收通过） | Alert只调自身留白／行距／圆角，保留图标列、Action预留与语义配色；Empty只调外层几何，保留内部层次与控件。完整回归和真实写回见[验收记录](workbench-alert-empty-acceptance-2026-11-02.md) |
 | E8   | 接入 Accordion、Alert Dialog | 完成（验收通过） | Accordion只调标题／内容留白，保留展开规则与原动效；Alert Dialog保留小尺寸宽度、确认语义及焦点，Nova页脚随留白／圆角联动。完整回归和真实写回见[验收记录](workbench-accordion-alert-dialog-acceptance-2026-11-02.md) |
 | E9   | 接入 Avatar、Item | 完成 | Avatar联动三尺寸、Badge、GroupCount与圆角；Item分三尺寸调留白／gap，保留子控件和列表／链接语义。真实写回同时修复生成registry缓存失效；632项单元测试、全仓检查、生产构建及生产浏览器47项通过，1项显式写回另行通过 |
+| E10  | 接入 Number Field、Slider Field | 完成（验收通过） | 最小cn入口不改默认几何；Number Field外框高度与内部控件联动，Slider Field只调组合布局。集成远端Avatar修复后636项测试通过，全仓检查、生产构建及生产浏览器49项通过，1项显式写回按配置跳过；本批两次真实写回另行通过，见[记录](workbench-number-slider-field-acceptance-2026-11-02.md) |
 | B1   | 给弹层与表单组件补说明卡 `meta.json` | 完成 | 68 个组件全部有卡（新增 48 个，含 code-block 补卡），`REQUIRED_CARDS` 覆盖全部组件，`missingCards` 为空                       |
 | B2   | 给弹层与表单组件补 `RULES.md`        | 完成 | 2026-11-01：弹层 12 个、表单 18 个；新增 lint 规则见安装文档“AI 与设计规范”                                                   |
 | B3   | 其余组件补说明卡和 `RULES.md`        | 完成 | 2026-11-01：说明卡随 B1 完成；68 个组件全部有 `RULES.md`                                                                      |
@@ -57,35 +58,35 @@
 | C2   | 线上版 MCP（HTTP）                   | 用户 | 等用户准备好服务器并授权部署后再做                                                                                            |
 | C3   | 决定 `/workbench` Studio 去留        | 用户 | 已知问题：Studio 的 `global.motionDuration`（默认 180ms）会覆盖全局动效 token；保留则需改为跟随 token，撤掉则删入口与回归测试 |
 
-### 剩余 37 个组件的优先级（2026-11-02）
+### 剩余 35 个组件的优先级（2026-11-02）
 
-**口径与价值**：68 个是[组件清单](../docs/src/lib/features/workbench/coverage.ts)中的组件数；31 个已在[组件文档预览入口](../docs/src/lib/components/component-preview-tabs.svelte)接入全屏编辑器，其余 37 个缺的是编辑器，不代表组件缺失或不能使用。`coverage.ts` 的 `coverage.ready` 仍描述旧 Studio，不能用它统计新编辑器。接入后新增受限实时调参、对比、浏览器版本保存及开发站写回；不自动改变默认外观、增强业务交互或更新消费者已安装的源码。
+**口径与价值**：68 个是[组件清单](../docs/src/lib/features/workbench/coverage.ts)中的组件数；33 个已在[组件文档预览入口](../docs/src/lib/components/component-preview-tabs.svelte)接入全屏编辑器，其余 35 个缺的是编辑器，不代表组件缺失或不能使用。`coverage.ts` 的 `coverage.ready` 仍描述旧 Studio，不能用它统计新编辑器。接入后新增受限实时调参、对比、浏览器版本保存及开发站写回；不自动改变默认外观、增强业务交互或更新消费者已安装的源码。
 
-下表按各组件 `ui/<组件>/meta.json`、`RULES.md`、源码及样式写回路径作工程判断，不是用户使用频率统计，也不承诺效率提升比例或工期。优先考虑可重复使用、参数边界清楚的视觉调整；成本包含八套样式、交互、窄屏和写回的长期回归。**下列 P2–P4 的 37 个均未接入组件页编辑器；优先级不代表后续批次已获开发授权，不追求 68／68。**
+下表按各组件 `ui/<组件>/meta.json`、`RULES.md`、源码及样式写回路径作工程判断，不是用户使用频率统计，也不承诺效率提升比例或工期。优先考虑可重复使用、参数边界清楚的视觉调整；成本包含八套样式、交互、窄屏和写回的长期回归。**下列 P2–P4 的 35 个均未接入组件页编辑器；优先级不代表后续批次已获开发授权，不追求 68／68。**
 
 **P1 两项已接入 E6**：Badge 调文字侧留白／图文间距／圆角；基础 Table 调表头高度下限／横向留白、数据格横纵留白。未扩展为 Data Table，不自动推进到 P2。
 
-#### P2：按页面需要补齐，剩余13个（Alert、Empty、Accordion、Alert Dialog、Avatar、Item已接入）
+#### P2：按页面需要补齐，剩余11个（E7–E10的8个已接入）
 
 | 组件 | 何时值得做／依赖与限制 |
 | ---- | ---------------------- |
-| `number-field`、`slider-field`、`tags-input` | 精确数值或多值表单出现反复调参需求时优先；先 Number Field，再 Slider Field。当前几何多直接写在源码中，缺少可直接沿用的 `cn-*` 样式写回入口，须先明确最小样式接入方案；Slider Field 复用 Slider＋Number Field，只为自己的布局增加必要参数，不复制子控件旋钮。Tags Input 须覆盖输入法、长标签换行、删除和校验 |
+| `tags-input` | 多值表单出现反复调参需求时优先；当前几何直接写在源码中，须先明确最小样式写回入口，覆盖输入法、长标签换行、删除和校验。Number Field、Slider Field已随E10接入，不再计入剩余项 |
 | `collapsible` | 折叠内容没有独立视觉参数时仅做组合验收；不改展开规则，不为面板制造默认样式。Accordion已随E8接入，不再计入剩余项 |
 | `button-group`、`breadcrumb`、`pagination` | 操作组、路径与列表页需要统一密度时；先复用 Button 尺寸和现有组合规则，不另造高度体系或把路由／页数写成样式 |
 | `menubar`、`navigation-menu` | 有真实桌面工具栏／站点导航页面时再做；菜单参数可复用已有工具，但菜单间方向键、悬停切换、浮层碰撞及移动替代布局仍须独立验收 |
 | `progress`、`skeleton`、`spinner` | 加载反馈需要统一轨道、圆角或图标尺寸时；Skeleton 的宽高应匹配使用处的最终内容，Spinner 不把全局动效数值复制成局部 token |
 | `kbd` | 多个工具页面确有快捷键标记密度不一致时；收益主要是小幅几何调整，不因实现简单而抢占高价值工作 |
 
-##### P2 建议推进顺序（2026-11-02，前三批已接入，其余仅规划）
+##### P2 建议推进顺序（2026-11-02，前四批已接入，其余仅规划）
 
-在尚无指定业务页面的前提下，按“可复用收益／接入和持续验收成本”排序，不按组件数量冲覆盖率。原九组19个组件中，前三组6个已接入，余下六组13个是候选顺序，不是实施承诺；有真实表单或导航需求时，相应组可提前。
+在尚无指定业务页面的前提下，按“可复用收益／接入和持续验收成本”排序，不按组件数量冲覆盖率。原九组19个组件中，前四组8个已接入，余下五组11个是候选顺序，不是实施承诺；有真实表单或导航需求时，相应组可提前。
 
 | 顺序 | 组件（数量） | 推荐理由与启动边界 |
 | ---- | ------------ | ------------------ |
 | 1，已完成 E7 | **Alert、Empty（2）** | 已接入有限留白／间距／圆角，不复制内部 Button 旋钮；八套安装回读、真实写回和运行验收见[记录](workbench-alert-empty-acceptance-2026-11-02.md) |
 | 2，已完成 E8 | Accordion、Alert Dialog（2） | 已接入有限留白与弹层参数；single／multiple、default／sm、确认／取消、遮罩、焦点和异步失败均独立验收，见[记录](workbench-accordion-alert-dialog-acceptance-2026-11-02.md) |
 | 3，已完成 E9 | Avatar、Item（2） | 已接入三档联动头像及三尺寸列表密度，保留子组件与语义；图片失败／恢复、混合头像组、操作／原生链接、写回和回归见[记录](workbench-avatar-item-acceptance-2026-11-02.md) |
-| 4，有表单需求可提前 | Number Field → Slider Field（2） | 先为直接写在源码里的几何建立最小可写回入口，再做组合布局；Slider Field 已实际复用 Number Field 和 Slider，不复制子组件参数。样式接入与编辑器实现分阶段验收，不混改数值／本地化行为 |
+| 4，已接入 E10 | Number Field → Slider Field（2） | 已补最小cn写回入口；Number Field复用Button高度档并联动内部控件，Slider Field只调自身列／行间距和数值框宽，不混改数值／本地化行为，见[记录](workbench-number-slider-field-acceptance-2026-11-02.md) |
 | 5 | Tags Input（1） | 同样先明确自身样式入口；收益来自多值输入的密度与换行，代价是输入法组合、删除、长标签、校验与表单回归，适合独立小批次 |
 | 6 | Button Group、Breadcrumb、Pagination（3） | 优先复用 Button 档位和已有导航语义，只调组合留白／间距；不改路由、分页数据或独立重造按钮高度。没有额外视觉参数的组件可以只做组合验收 |
 | 7，按需求选做 | Progress、Skeleton、Spinner、Kbd（4） | 小几何收益，不因容易实现而抢占前面的工作。Skeleton 宽高随最终内容；Spinner 当前没有同类样式入口，不复制全局动效；Kbd 不新增快捷键执行能力 |
@@ -96,7 +97,9 @@
 
 **E8实际合同**：Accordion标题纵向留白0–32px、标题与内容共同横向留白0–32px、内容底部留白0–40px，步长2，不增加动效旋钮；Alert Dialog默认尺寸宽度档（≥640px）、内边距8–48px、gap4–40px、圆角／样式自带、遮罩0–80%、动效档与90／95／100%缩放，小尺寸宽度不改。
 
-**E9实际合同**：Avatar三尺寸各20–64px、步长4，共同圆角同步Root／after／Image／Fallback／GroupCount；计数SVG为头像一半，Badge为头像四分之一加2px，保留原图标与组重叠。Item三尺寸各横向留白0–32px、纵向留白／gap0–24px，步长2，共同圆角；省略size仍按默认档调整，xs下拉组合的零留白保留。当前31／68，剩余37。下一候选Number Field → Slider Field，先明确最小样式写回入口，不混改数值行为，须用户确认后开始。
+**E9实际合同**：Avatar三尺寸各20–64px、步长4，共同圆角同步Root／after／Image／Fallback／GroupCount；计数SVG为头像一半，Badge为头像四分之一加2px，保留原图标与组重叠。Item三尺寸各横向留白0–32px、纵向留白／gap0–24px，步长2，共同圆角；省略size仍按默认档调整，xs下拉组合的零留白保留。
+
+**E10实际合同**：Number Field外框高度沿用真实Button档位，加减按钮保持外框内正方形，圆角同步逻辑起止侧，数字区横向留白0–16px、步长2；原42px外框不匹配档位时保留样式自带。Slider Field只调列间距0–32px、行间距0–24px（步长2）与数值框宽96–192px（步长8），不复制子控件参数。当前33／68，剩余35；下一候选Tags Input，需用户确认后开始。
 
 #### P3：先有真实场景，再定编辑范围，15 个
 
@@ -119,7 +122,7 @@
 | `resizable`、`scroll-area` | 在分栏／滚动页面验收；只有把手或滚动条几何确有跨页面定制需求时再升级，面板比例、容器尺寸、滚动行为仍由使用处负责 |
 | `message-scroller`、`marker` | 在完整消息页处理滚动容器、跳转按钮和系统标记的一致性；滚动锚定／跟随不属于视觉参数。Marker 有自己的变体样式，但先随消息组合评估，不因名称简单就认定没有样式 |
 
-**后续选择（尚未开始，开始前确认）**：E4–E8 已接入，P1 无剩余项。接下来先在已有页面组合中试用，再从 P2／P3 按真实页面需要选下一批；没有重复调参需求的组件可以停止或不建独立编辑器。每批沿用下方完整验收清单，不因参数少而跳过真实写回和交互验证，不默认承诺覆盖全部组件。
+**后续选择（尚未开始，开始前确认）**：E4–E10 已接入，P1 无剩余项。接下来先在已有页面组合中试用，再从 P2／P3 按真实页面需要选下一批；没有重复调参需求的组件可以停止或不建独立编辑器。每批沿用下方完整验收清单，不因参数少而跳过真实写回和交互验证，不默认承诺覆盖全部组件。
 
 ### 收尾（2026-11-01，均已完成）
 
@@ -187,6 +190,7 @@
 - **Badge、基础 Table（E6，2026-11-02）**：复用全屏外壳，读取八套安装源码。Badge只调文字侧横向留白、图文间距、圆角，不覆盖图标侧条件留白、高度、上下留白、字号或六变体配色；保留span／原生href语义及Sera自动高度。Table只调表头高度下限、表头横向留白、数据格横纵留白，保留含复选框单元格的右侧零留白；高度不是内容截断上限。画布包含语义账单／页脚、独立嵌入控件、固定选中行外观和Empty空状态，不实现行选择、排序、筛选或分页。窄屏依旧由Table自身容器横滚。详见[本批记录](workbench-badge-table-acceptance-2026-11-02.md)。
 - **Alert、Empty（E7，2026-11-02）**：读取八套真实安装源码，保留全局token只读与独立版本。Alert只调横纵留白、行间距和圆角，用 `gap-y-*` 保留图标横向间距，含Action时仍保留72px右侧预留；静态画布使用命名region，组件默认alert语义不变。Empty只调根留白／gap／圆角，内部Header／Content／Media、最大宽度和Button／Avatar不动。两侧演示状态独立且无外部请求；白名单只新增两个根入口的有限几何类，详见[本批记录](workbench-alert-empty-acceptance-2026-11-02.md)。
 - **Accordion、Alert Dialog（E8，2026-11-02）**：两者读取八套真实安装源码。Accordion只调Trigger纵向、Trigger与Content外层共同横向、Content直属inner底部留白，保留内嵌控件、图标与200ms／ease-out原动效。Alert Dialog复用Dialog宽度档位表，但宽度仅作用default；小尺寸宽度、确认语义、Cancel／Action、Header／Media和Footer布局不动，Nova贴边页脚随padding与radius联动。真实确认模式保留焦点圈定、锁滚动、遮罩不关闭、Esc和关闭归焦；本地模拟pending、失败及重试成功，不执行删除或请求。详见[本批记录](workbench-accordion-alert-dialog-acceptance-2026-11-02.md)。
+- **Number Field、Slider Field（E10，2026-11-02）**：在原字面默认类之后用独立cn参数提供最小写回锚点，不改八套默认外观；解析器以同一cn归并所有字符串参数，避免只读到旧字面值。Number Field复用Button外框高度档位，内部按钮随可用高度保持正方形，保留边框、逻辑起止侧圆角及数值／本地化／重置；Slider Field只调组合布局，保留子Slider、Number Field的几何与行为。详见[验收记录](workbench-number-slider-field-acceptance-2026-11-02.md)。
 - 测试补充（E1）：`workbench.test.ts` 覆盖三组件八套样式的读取、写回安装源码、回读与白名单；`workbench.spec.ts` 覆盖四方向、真实悬停、拖拽、右键／键盘子菜单、390px 最大菜单宽度、比较隔离、保存与 Esc 焦点归还。真实写回及视觉证据见[本批验收记录](workbench-acceptance-2026-11-02.md)。
 
 第 6 步的做法（2026-11-01 完成）：

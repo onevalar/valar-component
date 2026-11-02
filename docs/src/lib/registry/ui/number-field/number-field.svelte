@@ -188,6 +188,7 @@
 	data-disabled={disabled || undefined}
 	class={cn(
 		"flex min-h-10 w-full items-center rounded-md border border-input bg-background text-foreground shadow-xs focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30 has-aria-invalid:border-destructive",
+		"cn-number-field",
 		className
 	)}
 >
@@ -196,7 +197,10 @@
 		data-slot="number-field-decrement"
 		aria-label={decrementLabel}
 		disabled={disabled || readonly || (value !== undefined && min !== undefined && value <= min)}
-		class="size-10 shrink-0 rounded-s-md text-lg hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-40"
+		class={cn(
+			"size-10 shrink-0 rounded-s-md text-lg hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-40",
+			"cn-number-field-decrement"
+		)}
 		onpointerdown={(event) => event.preventDefault()}
 		onclick={() => spin(-1)}>−</button
 	>
@@ -207,7 +211,10 @@
 		role="spinbutton"
 		inputmode="decimal"
 		data-slot="number-field-input"
-		class="h-10 w-full min-w-0 bg-transparent px-2 text-center text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50"
+		class={cn(
+			"h-10 w-full min-w-0 bg-transparent px-2 text-center text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50",
+			"cn-number-field-input"
+		)}
 		{form}
 		{disabled}
 		{readonly}
@@ -244,7 +251,10 @@
 		data-slot="number-field-increment"
 		aria-label={incrementLabel}
 		disabled={disabled || readonly || (value !== undefined && max !== undefined && value >= max)}
-		class="size-10 shrink-0 rounded-e-md text-lg hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-40"
+		class={cn(
+			"size-10 shrink-0 rounded-e-md text-lg hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-40",
+			"cn-number-field-increment"
+		)}
 		onpointerdown={(event) => event.preventDefault()}
 		onclick={() => spin(1)}>+</button
 	>

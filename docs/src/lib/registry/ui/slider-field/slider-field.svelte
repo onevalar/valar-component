@@ -52,7 +52,11 @@
 <div
 	data-slot="slider-field"
 	data-disabled={disabled || undefined}
-	class={cn("grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2", className)}
+	class={cn(
+		"grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2",
+		"cn-slider-field",
+		className
+	)}
 	{...restProps}
 >
 	<label for={`${id}-input`} class="col-span-2 text-sm font-medium">{label}</label>
@@ -76,7 +80,7 @@
 			{max}
 			{step}
 			{disabled}
-			class="w-32"
+			class={cn("w-32", "cn-slider-field-value")}
 			decrementLabel={`减小${label}`}
 			incrementLabel={`增大${label}`}
 		/>

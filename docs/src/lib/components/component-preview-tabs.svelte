@@ -18,10 +18,12 @@
 	import InputTuner from "$lib/features/workbench/input-tuner.svelte";
 	import ItemTuner from "$lib/features/workbench/item-tuner.svelte";
 	import NativeSelectTuner from "$lib/features/workbench/native-select-tuner.svelte";
+	import NumberFieldTuner from "$lib/features/workbench/number-field-tuner.svelte";
 	import PopoverTuner from "$lib/features/workbench/popover-tuner.svelte";
 	import RadioGroupTuner from "$lib/features/workbench/radio-group-tuner.svelte";
 	import SelectTuner from "$lib/features/workbench/select-tuner.svelte";
 	import SheetTuner from "$lib/features/workbench/sheet-tuner.svelte";
+	import SliderFieldTuner from "$lib/features/workbench/slider-field-tuner.svelte";
 	import SliderTuner from "$lib/features/workbench/slider-tuner.svelte";
 	import SwitchTuner from "$lib/features/workbench/switch-tuner.svelte";
 	import TableTuner from "$lib/features/workbench/table-tuner.svelte";
@@ -107,6 +109,7 @@
 						"alert-demo",
 						"avatar-demo",
 						"item-demo",
+						"number-field-demo",
 						"empty-demo",
 						"badge-demo",
 						"table-demo",
@@ -117,6 +120,7 @@
 						"switch-demo",
 						"toggle-demo",
 						"toggle-group-demo",
+						"slider-field-demo",
 						"slider-demo",
 						"tabs-demo",
 						"dialog-demo",
@@ -149,6 +153,10 @@
 				<AvatarTuner>{@render PreviewExample()}</AvatarTuner>
 			{:else if name === "item-demo"}
 				<ItemTuner>{@render PreviewExample()}</ItemTuner>
+			{:else if name === "number-field-demo"}
+				<NumberFieldTuner>{@render PreviewExample()}</NumberFieldTuner>
+			{:else if name === "slider-field-demo"}
+				<SliderFieldTuner>{@render PreviewExample()}</SliderFieldTuner>
 			{:else if name === "empty-demo"}
 				<EmptyTuner>{@render PreviewExample()}</EmptyTuner>
 			{:else if name === "badge-demo"}

@@ -150,6 +150,16 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-context-menu-separator": DROPDOWN_MENU_SEPARATOR_UTILITY,
 	"cn-tooltip-content": TOOLTIP_CONTENT_UTILITY,
 	"cn-tooltip-provider": TOOLTIP_PROVIDER_UTILITY,
+	"cn-number-field": new RegExp(`^(?:(?:h|min-h)-\\d+(?:\\.(?:25|5|75))?|rounded-${RADIUS})$`),
+	"cn-number-field-input": /^(?:h-full|px-(?:[0-3](?:\.5)?|4))$/,
+	"cn-number-field-decrement": new RegExp(
+		`^(?:size-full|w-auto|aspect-square|rounded-s-${RADIUS})$`
+	),
+	"cn-number-field-increment": new RegExp(
+		`^(?:size-full|w-auto|aspect-square|rounded-e-${RADIUS})$`
+	),
+	"cn-slider-field": /^(?:gap-x-(?:[0-7](?:\.5)?|8)|gap-y-(?:[0-5](?:\.5)?|6))$/,
+	"cn-slider-field-value": /^w-(?:2[468]|3[02468]|4[02468])$/,
 	"cn-avatar": new RegExp(
 		`^(?:(?:data-\\[size=(?:sm|lg)\\]:)?size-(?:[5-9]|1[0-6])|(?:after:)?rounded-${RADIUS})$`
 	),
