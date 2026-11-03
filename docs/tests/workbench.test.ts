@@ -37,6 +37,14 @@ import {
 	badgeOverrideClasses,
 	parseBadgeSource,
 } from "../src/lib/features/workbench/badge-tuning.js";
+import {
+	parseBreadcrumbSource,
+	breadcrumbOverrideClasses,
+} from "../src/lib/features/workbench/breadcrumb-tuning.js";
+import {
+	parseButtonGroupSource,
+	buttonGroupOverrideClasses,
+} from "../src/lib/features/workbench/button-group-tuning.js";
 import { buttonOverrideClasses } from "../src/lib/features/workbench/button-tuning.js";
 import {
 	CARD_SPEC,
@@ -86,7 +94,12 @@ import {
 	itemOverrideClasses,
 	parseItemSource,
 } from "../src/lib/features/workbench/item-tuning.js";
+import { parseKbdSource, kbdOverrideClasses } from "../src/lib/features/workbench/kbd-tuning.js";
 import { parseMenuSource, type MenuOverrides } from "../src/lib/features/workbench/menu-tuning.js";
+import {
+	parseMenubarSource,
+	menubarOverrideClasses,
+} from "../src/lib/features/workbench/menubar-tuning.js";
 import {
 	COMPONENTS,
 	PARAMETERS,
@@ -101,14 +114,26 @@ import {
 	parseNativeSelectSource,
 } from "../src/lib/features/workbench/native-select-tuning.js";
 import {
+	parseNavigationMenuSource,
+	navigationMenuOverrideClasses,
+} from "../src/lib/features/workbench/navigation-menu-tuning.js";
+import {
 	NUMBER_FIELD_SPEC,
 	numberFieldOverrideClasses,
 	parseNumberFieldSource,
 } from "../src/lib/features/workbench/number-field-tuning.js";
 import {
+	parsePaginationSource,
+	paginationOverrideClasses,
+} from "../src/lib/features/workbench/pagination-tuning.js";
+import {
 	parsePopoverSource,
 	popoverOverrideClasses,
 } from "../src/lib/features/workbench/popover-tuning.js";
+import {
+	parseProgressSource,
+	progressOverrideClasses,
+} from "../src/lib/features/workbench/progress-tuning.js";
 import {
 	RADIO_GROUP_SPEC,
 	parseRadioGroupSource,
@@ -120,6 +145,10 @@ import {
 	sheetOverrideClasses,
 } from "../src/lib/features/workbench/sheet-tuning.js";
 import {
+	parseSkeletonSource,
+	skeletonOverrideClasses,
+} from "../src/lib/features/workbench/skeleton-tuning.js";
+import {
 	SLIDER_FIELD_SPEC,
 	parseSliderFieldSource,
 	sliderFieldOverrideClasses,
@@ -128,6 +157,10 @@ import {
 	parseSliderSource,
 	sliderOverrideClasses,
 } from "../src/lib/features/workbench/slider-tuning.js";
+import {
+	parseSpinnerSource,
+	spinnerOverrideClasses,
+} from "../src/lib/features/workbench/spinner-tuning.js";
 import {
 	applyStyleOverrides,
 	styleOverridePayloadSchema,
@@ -148,6 +181,11 @@ import {
 	parseTabsSource,
 	tabsOverrideClasses,
 } from "../src/lib/features/workbench/tabs-tuning.js";
+import {
+	TAGS_INPUT_SPEC,
+	parseTagsInputSource,
+	tagsInputOverrideClasses,
+} from "../src/lib/features/workbench/tags-input-tuning.js";
 import { textareaOverrideClasses } from "../src/lib/features/workbench/textarea-tuning.js";
 import {
 	parseToggleGroupSource,
@@ -1037,6 +1075,152 @@ const registryFiles = (component: string, style: string) =>
 		.files as { target: string; content: string }[];
 const emptyOverrides = (style: string) =>
 	readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
+
+describe("P2 parallel editor installation contracts", () => {
+	function roundtrip<T extends Record<string, unknown>, C>(
+		component: string,
+		parse: (files: { target: string; content: string }[]) => { values: T; context: C },
+		classes: (values: Partial<T>, context: C) => Record<string, string>,
+		rounds: T[]
+	) {
+		it(`roundtrips ${component} geometry across all eight installed styles`, () => {
+			for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"]) {
+				let css = emptyOverrides(style);
+				const sources = () =>
+					readdirSync(resolve(`src/lib/registry/ui/${component}`))
+						.filter((file) => file.endsWith(".svelte"))
+						.map((file) => ({ target: file, content: installed(component, style, css, file) }));
+				let context = parse(sources()).context;
+				expect(classes({}, context)).toEqual({});
+				for (const values of rounds) {
+					css = applyStyleOverrides(
+						css,
+						styleOverridePayloadSchema.parse({ style, classes: classes(values, context) })
+					);
+					const files = sources();
+					expect(parse(files).values).toEqual(values);
+					context = parse(files).context;
+					for (const file of files)
+						expect(() => compile(file.content, { filename: file.target })).not.toThrow();
+				}
+			}
+			expect(() => parse([])).toThrow();
+		});
+	}
+	roundtrip("button-group", parseButtonGroupSource, buttonGroupOverrideClasses, [
+		{ textPaddingX: 22, textGap: 2, joinedRadius: "none" },
+		{ textPaddingX: 0, textGap: 16, joinedRadius: "full" },
+	]);
+	roundtrip("breadcrumb", parseBreadcrumbSource, breadcrumbOverrideClasses, [
+		{ listGap: 22, wideListGap: 2, itemGap: 14 },
+		{ listGap: 0, wideListGap: 24, itemGap: 0 },
+	]);
+	roundtrip("pagination", parsePaginationSource, paginationOverrideClasses, [
+		{ contentGap: 14, ellipsisSize: 22 },
+		{ contentGap: 0, ellipsisSize: 48 },
+	]);
+	roundtrip("progress", parseProgressSource, progressOverrideClasses, [
+		{ height: 14, radius: "none" },
+		{ height: 2, radius: "full" },
+	]);
+	roundtrip("skeleton", parseSkeletonSource, skeletonOverrideClasses, [
+		{ radius: "none" },
+		{ radius: "full" },
+	]);
+	roundtrip("spinner", parseSpinnerSource, spinnerOverrideClasses, [
+		{ size: "32" },
+		{ size: "12" },
+	]);
+	roundtrip("kbd", parseKbdSource, kbdOverrideClasses, [
+		{ height: 30, paddingX: 2, radius: "none", groupGap: 14 },
+		{ height: 16, paddingX: 12, radius: "full", groupGap: 0 },
+	]);
+	roundtrip("menubar", parseMenubarSource, menubarOverrideClasses, [
+		{
+			padding: 10,
+			minWidth: 304,
+			radius: "none",
+			itemPaddingX: 18,
+			itemPaddingY: 4,
+			itemGap: 14,
+			itemRadius: "none",
+		},
+		{
+			padding: 0,
+			minWidth: 96,
+			radius: "full",
+			itemPaddingX: 4,
+			itemPaddingY: 12,
+			itemGap: 4,
+			itemRadius: "full",
+		},
+	]);
+	roundtrip("navigation-menu", parseNavigationMenuSource, navigationMenuOverrideClasses, [
+		{
+			gap: 22,
+			triggerPaddingX: 30,
+			triggerRadius: "none",
+			contentPadding: 22,
+			panelRadius: "none",
+		},
+		{ gap: 0, triggerPaddingX: 0, triggerRadius: "full", contentPadding: 0, panelRadius: "full" },
+	]);
+	it("rejects out-of-contract P2 utilities", () => {
+		for (const classes of [
+			{ "cn-spinner": "size-7" },
+			{ "cn-progress": "h-5" },
+			{ "cn-kbd": "px-4" },
+			{ "cn-skeleton": "w-32" },
+			{ "cn-breadcrumb-list": "gap-3" },
+			{ "cn-pagination-ellipsis": "size-[24px]" },
+			{ "cn-button-group-text": "h-8" },
+			{ "cn-button-group-orientation-horizontal": "[&>*]:rounded-full!" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+	});
+	it("roundtrips Tags Input outer geometry without changing tags, input or business props", () => {
+		for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"]) {
+			let css = emptyOverrides(style);
+			const baseline = installed("tags-input", style, css, "tags-input.svelte");
+			expect(
+				parseTagsInputSource([{ target: "tags-input.svelte", content: baseline }]).values
+			).toEqual({
+				padding: 6,
+				gap: 6,
+				radius: "md",
+			});
+			for (const values of [
+				{ padding: 14, gap: 2, radius: "none" },
+				{ padding: 0, gap: 16, radius: "full" },
+			] as const) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({ style, classes: tagsInputOverrideClasses(values) })
+				);
+				const content = installed("tags-input", style, css, "tags-input.svelte");
+				expect(parseTagsInputSource([{ target: "tags-input.svelte", content }]).values).toEqual(
+					values
+				);
+				expect(() => compile(content, { filename: "tags-input.svelte" })).not.toThrow();
+				// Everything after the tag list starts is outside the tunable root geometry.
+				expect(content.slice(content.indexOf("\t<ul"))).toBe(
+					baseline.slice(baseline.indexOf("\t<ul"))
+				);
+			}
+		}
+		expect(tagsInputOverrideClasses({ radius: "style" })).toEqual({});
+		expect(TAGS_INPUT_SPEC.pageCss!({}, null)).toBe("");
+		expect(() => parseTagsInputSource([])).toThrow();
+		for (const values of [{ padding: 3 }, { gap: 18 }, { max: 5 }])
+			expect(() => TAGS_INPUT_SPEC.overrideClasses(values as never, null)).toThrow();
+		for (const classes of [
+			{ "cn-tags-input": "h-8" },
+			{ "cn-tags-input": "p-[12px]" },
+			{ "cn-tags-input": "gap-4.5" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+	});
+});
 
 describe("Number Field and Slider Field editor installation contracts", () => {
 	it("roundtrips outer Button heights and linked internal geometry without changing numeric behavior", () => {

@@ -4,6 +4,8 @@
 	import AlertTuner from "$lib/features/workbench/alert-tuner.svelte";
 	import AvatarTuner from "$lib/features/workbench/avatar-tuner.svelte";
 	import BadgeTuner from "$lib/features/workbench/badge-tuner.svelte";
+	import BreadcrumbTuner from "$lib/features/workbench/breadcrumb-tuner.svelte";
+	import ButtonGroupTuner from "$lib/features/workbench/button-group-tuner.svelte";
 	import ButtonTuner from "$lib/features/workbench/button-tuner.svelte";
 	import CardTuner from "$lib/features/workbench/card-tuner.svelte";
 	import CheckboxTuner from "$lib/features/workbench/checkbox-tuner.svelte";
@@ -17,17 +19,25 @@
 	import InputOtpTuner from "$lib/features/workbench/input-otp-tuner.svelte";
 	import InputTuner from "$lib/features/workbench/input-tuner.svelte";
 	import ItemTuner from "$lib/features/workbench/item-tuner.svelte";
+	import KbdTuner from "$lib/features/workbench/kbd-tuner.svelte";
+	import MenubarTuner from "$lib/features/workbench/menubar-tuner.svelte";
 	import NativeSelectTuner from "$lib/features/workbench/native-select-tuner.svelte";
+	import NavigationMenuTuner from "$lib/features/workbench/navigation-menu-tuner.svelte";
 	import NumberFieldTuner from "$lib/features/workbench/number-field-tuner.svelte";
+	import PaginationTuner from "$lib/features/workbench/pagination-tuner.svelte";
 	import PopoverTuner from "$lib/features/workbench/popover-tuner.svelte";
+	import ProgressTuner from "$lib/features/workbench/progress-tuner.svelte";
 	import RadioGroupTuner from "$lib/features/workbench/radio-group-tuner.svelte";
 	import SelectTuner from "$lib/features/workbench/select-tuner.svelte";
 	import SheetTuner from "$lib/features/workbench/sheet-tuner.svelte";
+	import SkeletonTuner from "$lib/features/workbench/skeleton-tuner.svelte";
 	import SliderFieldTuner from "$lib/features/workbench/slider-field-tuner.svelte";
 	import SliderTuner from "$lib/features/workbench/slider-tuner.svelte";
+	import SpinnerTuner from "$lib/features/workbench/spinner-tuner.svelte";
 	import SwitchTuner from "$lib/features/workbench/switch-tuner.svelte";
 	import TableTuner from "$lib/features/workbench/table-tuner.svelte";
 	import TabsTuner from "$lib/features/workbench/tabs-tuner.svelte";
+	import TagsInputTuner from "$lib/features/workbench/tags-input-tuner.svelte";
 	import TextareaTuner from "$lib/features/workbench/textarea-tuner.svelte";
 	import ToggleGroupTuner from "$lib/features/workbench/toggle-group-tuner.svelte";
 	import ToggleTuner from "$lib/features/workbench/toggle-tuner.svelte";
@@ -111,6 +121,16 @@
 						"item-demo",
 						"number-field-demo",
 						"empty-demo",
+						"tags-input-demo",
+						"button-group-demo",
+						"breadcrumb-demo",
+						"pagination-demo",
+						"progress-demo",
+						"skeleton-demo",
+						"spinner-demo",
+						"kbd-demo",
+						"menubar-demo",
+						"navigation-menu-demo",
 						"badge-demo",
 						"table-demo",
 						"button-demo",
@@ -157,6 +177,26 @@
 				<NumberFieldTuner>{@render PreviewExample()}</NumberFieldTuner>
 			{:else if name === "slider-field-demo"}
 				<SliderFieldTuner>{@render PreviewExample()}</SliderFieldTuner>
+			{:else if name === "tags-input-demo"}
+				<TagsInputTuner>{@render PreviewExample()}</TagsInputTuner>
+			{:else if name === "button-group-demo"}
+				<ButtonGroupTuner>{@render PreviewExample()}</ButtonGroupTuner>
+			{:else if name === "breadcrumb-demo"}
+				<BreadcrumbTuner>{@render PreviewExample()}</BreadcrumbTuner>
+			{:else if name === "pagination-demo"}
+				<PaginationTuner>{@render PreviewExample()}</PaginationTuner>
+			{:else if name === "progress-demo"}
+				<ProgressTuner>{@render PreviewExample()}</ProgressTuner>
+			{:else if name === "skeleton-demo"}
+				<SkeletonTuner>{@render PreviewExample()}</SkeletonTuner>
+			{:else if name === "spinner-demo"}
+				<SpinnerTuner>{@render PreviewExample()}</SpinnerTuner>
+			{:else if name === "kbd-demo"}
+				<KbdTuner>{@render PreviewExample()}</KbdTuner>
+			{:else if name === "menubar-demo"}
+				<MenubarTuner>{@render PreviewExample()}</MenubarTuner>
+			{:else if name === "navigation-menu-demo"}
+				<NavigationMenuTuner>{@render PreviewExample()}</NavigationMenuTuner>
 			{:else if name === "empty-demo"}
 				<EmptyTuner>{@render PreviewExample()}</EmptyTuner>
 			{:else if name === "badge-demo"}

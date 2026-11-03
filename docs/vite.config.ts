@@ -78,6 +78,7 @@ function flattenedRegistry(): Plugin {
 		path.join(__dirname, "src/lib/registry/blocks"),
 		path.join(__dirname, "content"),
 	];
+	const tunerDir = path.join(__dirname, "src/lib/features/workbench");
 	const rawImporters = [path.join(__dirname, "src/lib/registry/examples/create")];
 	const TEXT_EXTENSIONS = new Set([".svelte", ".ts", ".js"]);
 
@@ -98,6 +99,10 @@ function flattenedRegistry(): Plugin {
 		const file = splitId(importer).file;
 		if (within(file, rawImporters)) return null;
 		if (within(file, flattenedImporters)) return DEFAULT_STYLE;
+		// Editor canvases must render the installed baseline too: base-layer CSS cannot
+		// override literal utilities in raw components such as Tags Input and Spinner.
+		// Do not include the old multi-style Studio or non-canvas workbench helpers.
+		if (within(file, [tunerDir]) && file.endsWith("-tuner.svelte")) return DEFAULT_STYLE;
 		return null;
 	};
 

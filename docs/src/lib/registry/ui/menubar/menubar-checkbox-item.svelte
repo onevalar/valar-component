@@ -34,6 +34,7 @@
 >
 	{#snippet children({ checked: checked, indeterminate: indeterminate })}
 		<span
+			data-slot="menubar-checkbox-item-indicator"
 			class="cn-menubar-checkbox-item-indicator pointer-events-none absolute flex items-center justify-center"
 		>
 			{#if indeterminate}

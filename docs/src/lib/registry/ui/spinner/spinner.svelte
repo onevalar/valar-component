@@ -15,6 +15,8 @@
 		"aria-label": ariaLabel = "加载中",
 		...restProps
 	}: SVGAttributes<SVGSVGElement> = $props();
+	// Keep caller-owned dimensions out of default-size previews, including size-4 itself.
+	const explicitSize = $derived(/(?:^|\s)(?:\S+:)?!?(?:size|w|h)-/.test(cn(className)));
 </script>
 
 <IconPlaceholder
@@ -23,12 +25,14 @@
 	hugeicons="Loading03Icon"
 	phosphor="SpinnerIcon"
 	remixicon="RiLoaderLine"
+	data-slot="spinner"
 	{role}
 	{...name != null ? { name } : {}}
 	{...color != null ? { color } : {}}
 	{...stroke != null ? { stroke } : {}}
 	{...legacyClassName != null ? { className: legacyClassName } : {}}
 	aria-label={ariaLabel}
-	class={cn("size-4 animate-spin", className)}
+	class={cn("size-4 animate-spin", "cn-spinner", className)}
 	{...restProps}
+	data-spinner-size-explicit={explicitSize ? "" : undefined}
 />

@@ -148,6 +148,37 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-context-menu-radio-item": DROPDOWN_MENU_CHOICE_UTILITY,
 	"cn-context-menu-label": DROPDOWN_MENU_LABEL_UTILITY,
 	"cn-context-menu-separator": DROPDOWN_MENU_SEPARATOR_UTILITY,
+	"cn-menubar-content": new RegExp(
+		`^(?:p-(?:[0-2](?:\\.5)?|3)|rounded-${RADIUS}|min-w-(?:24|28|32|36|40|44|48|52|56|60|64|68|72|76|80))$`
+	),
+	"cn-menubar-sub-content": new RegExp(`^(?:p-(?:[0-2](?:\\.5)?|3)|rounded-${RADIUS})$`),
+	...Object.fromEntries(
+		["item", "sub-trigger"].map((part) => [
+			`cn-menubar-${part}`,
+			new RegExp(
+				`^(?:gap-(?:[1-3](?:\\.5)?|4)|rounded-${RADIUS}|data-inset:pl-(?:[5-9](?:\\.5)?|1[0-2](?:\\.5)?|13)|px-(?:[1-4](?:\\.5)?|5)|py-(?:0\\.5|[12](?:\\.5)?|3))$`
+			),
+		])
+	),
+	...Object.fromEntries(
+		["checkbox-item", "radio-item"].map((part) => [
+			`cn-menubar-${part}`,
+			new RegExp(
+				`^(?:gap-(?:[1-3](?:\\.5)?|4)|rounded-${RADIUS}|(?:data-inset:)?pl-(?:[5-9](?:\\.5)?|1[0-2](?:\\.5)?|13)|py-(?:0\\.5|[1-3](?:\\.5)?))$`
+			),
+		])
+	),
+	"cn-menubar-checkbox-item-indicator": /^left-(?:0\.5|[1-4](?:\.5)?|5)$/,
+	"cn-menubar-radio-item-indicator": /^left-(?:0\.5|[1-4](?:\.5)?|5)$/,
+	"cn-menubar-label":
+		/^(?:px-(?:[1-4](?:\.5)?|5)|data-inset:pl-(?:[5-9](?:\.5)?|1[0-2](?:\.5)?|13))$/,
+	"cn-menubar-separator": /^-mx-(?:[0-2](?:\.5)?|3)$/,
+	"cn-navigation-menu-list": /^gap-(?:[0-5](?:\.5)?|6)$/,
+	"cn-navigation-menu-trigger": new RegExp(`^(?:px-(?:[0-7](?:\\.5)?|8)|rounded-${RADIUS})$`),
+	"cn-navigation-menu-content": new RegExp(
+		`^(?:p-(?:[0-5](?:\\.5)?|6)|pr-[0-6](?:\\.5)?|group-data-\\[viewport=false\\]/navigation-menu:rounded-${RADIUS})$`
+	),
+	"cn-navigation-menu-viewport": new RegExp(`^rounded-${RADIUS}$`),
 	"cn-tooltip-content": TOOLTIP_CONTENT_UTILITY,
 	"cn-tooltip-provider": TOOLTIP_PROVIDER_UTILITY,
 	"cn-number-field": new RegExp(`^(?:(?:h|min-h)-\\d+(?:\\.(?:25|5|75))?|rounded-${RADIUS})$`),
@@ -160,6 +191,31 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	),
 	"cn-slider-field": /^(?:gap-x-(?:[0-7](?:\.5)?|8)|gap-y-(?:[0-5](?:\.5)?|6))$/,
 	"cn-slider-field-value": /^w-(?:2[468]|3[02468]|4[02468])$/,
+	"cn-tags-input": new RegExp(`^(?:(?:p|gap)-(?:[0-3](?:\\.5)?|4)|rounded-${RADIUS})$`),
+	"cn-button-group-text": new RegExp(
+		`^(?:px-(?:[0-5](?:\\.5)?|6)|gap-(?:[0-3](?:\\.5)?|4)|rounded-${RADIUS})$`
+	),
+	...Object.fromEntries(
+		[
+			["horizontal", "l", "r"],
+			["vertical", "t", "b"],
+		].map(([orientation, start, end]) => [
+			`cn-button-group-orientation-${orientation}`,
+			new RegExp(
+				String.raw`^(?:\[&>\[data-slot\]:first-child\]:rounded-${start}-${RADIUS}!|\[&>\[data-slot\]:not\(:has\(~\[data-slot\]\)\)\]:rounded-(?:${RADIUS}|${end}-${RADIUS})!|\[&>\[data-slot\]:not\(:has\(~\[data-slot\]\)\):not\(:first-child\)\]:rounded-${start}-none!)$`
+			),
+		])
+	),
+	"cn-breadcrumb-list": /^(?:max-sm|sm):gap-(?:[0-5](?:\.5)?|6)$/,
+	"cn-breadcrumb-item": /^gap-(?:[0-3](?:\.5)?|4)$/,
+	"cn-pagination-content": /^gap-(?:[0-3](?:\.5)?|4)$/,
+	"cn-pagination-ellipsis": /^size-(?:[5-9](?:\.5)?|1[01](?:\.5)?|12)$/,
+	"cn-progress": new RegExp(`^(?:h-(?:0\\.5|[1-3](?:\\.5)?|4)|rounded-${RADIUS})$`),
+	"cn-progress-indicator": new RegExp(`^rounded-${RADIUS}$`),
+	"cn-skeleton": new RegExp(`^rounded-${RADIUS}$`),
+	"cn-spinner": /^size-(?:3|4|5|6|8)$/,
+	"cn-kbd": new RegExp(`^(?:h-(?:[4-7](?:\\.5)?|8)|px-(?:[0-2](?:\\.5)?|3)|rounded-${RADIUS})$`),
+	"cn-kbd-group": /^gap-(?:[0-3](?:\.5)?|4)$/,
 	"cn-avatar": new RegExp(
 		`^(?:(?:data-\\[size=(?:sm|lg)\\]:)?size-(?:[5-9]|1[0-6])|(?:after:)?rounded-${RADIUS})$`
 	),

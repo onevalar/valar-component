@@ -246,6 +246,7 @@
 	data-disabled={disabled || undefined}
 	class={cn(
 		"flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background p-1.5 text-foreground shadow-xs focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30 has-aria-invalid:border-destructive",
+		"cn-tags-input",
 		className
 	)}
 >

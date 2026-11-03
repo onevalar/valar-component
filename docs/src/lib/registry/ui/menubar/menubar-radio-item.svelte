@@ -28,6 +28,7 @@
 >
 	{#snippet children({ checked })}
 		<span
+			data-slot="menubar-radio-item-indicator"
 			class="cn-menubar-radio-item-indicator pointer-events-none absolute flex items-center justify-center"
 		>
 			{#if checked}

@@ -43,7 +43,7 @@ const valuesSchema = z
 	.strict();
 export type MenuValues = z.infer<typeof valuesSchema>;
 export type MenuOverrides = Partial<MenuValues>;
-type MenuComponent = "dropdown-menu" | "context-menu";
+type MenuComponent = "dropdown-menu" | "context-menu" | "menubar";
 
 /**
  * Style facts the write-back keeps consistent: the inset item indent, the checkbox/radio
@@ -57,6 +57,9 @@ export type MenuContext = {
 	inset: number;
 	choicePaddingY: number;
 	separatorBleed: boolean;
+	/** Menubar choices reserve their absolute indicator column when item density changes. */
+	choiceUsesInset?: boolean;
+	choiceIndicatorLeft?: number;
 };
 
 const N = String.raw`(\d+(?:\.\d+)?)`;
@@ -72,12 +75,34 @@ export function parseMenuSource(
 	const classes = (name: string) => {
 		const content =
 			files.find((f) => f.target.endsWith(`${component}-${name}.svelte`))?.content ?? "";
-		return /cn\(\s*"([^"]*)"/.exec(content)?.[1] ?? "";
+		const result = /cn\(\s*"([^"]*)"/.exec(content)?.[1];
+		if (component === "menubar" && result === undefined)
+			throw new Error(`Menubar registry 缺少 ${name} 几何入口`);
+		return result ?? "";
 	};
 	const content = classes("content");
 	const item = classes("item");
 	const choice = classes("checkbox-item");
 	const separator = classes("separator");
+	const indicator =
+		component === "menubar"
+			? (/class="([^"]*)"/.exec(
+					files.find((file) => file.target.endsWith("menubar-checkbox-item.svelte"))?.content ?? ""
+				)?.[1] ?? "")
+			: "";
+	if (component === "menubar") {
+		for (const [pattern, source] of [
+			[`min-w-${N}`, content],
+			[`px-${N}`, item],
+			[`py-${N}`, item],
+			[`gap-${N}`, item],
+			[`data-inset:pl-${N}`, item],
+			[`py-${N}`, choice],
+			[`left-${N}`, indicator],
+		])
+			if (sourceWord(pattern, source) === undefined)
+				throw new Error(`Menubar registry 缺少 ${pattern} 几何`);
+	}
 	const px = (pattern: string, source: string, fallback: number) => {
 		const value = sourceWord(pattern, source);
 		return value === undefined ? fallback : Number(value) * 4;
@@ -111,13 +136,16 @@ export function parseMenuSource(
 			inset: inset === undefined ? itemPaddingX + 16 + itemGap : Number(inset) * 4,
 			choicePaddingY: px(`py-${N}`, choice, itemPaddingY),
 			separatorBleed: px(`-mx-${N}`, separator, -1) === padding,
+			...(component === "menubar"
+				? { choiceUsesInset: true, choiceIndicatorLeft: px(`left-${N}`, indicator, 0) }
+				: {}),
 		},
 	};
 }
 
 // The built registry for every style; only the requested one is loaded.
 const registryMenus = import.meta.glob<{ files: { target: string; content: string }[] }>(
-	"/src/__registry__/json/styles/*/{dropdown-menu,context-menu}.json",
+	"/src/__registry__/json/styles/*/{dropdown-menu,context-menu,menubar}.json",
 	{ import: "default" }
 );
 
@@ -132,7 +160,9 @@ type Derived = {
 	minWidth?: number;
 	separator?: number;
 	item: { px?: number; py?: number; gap?: number; radius?: RadiusLevel; inset?: number };
+	choicePx?: number;
 	choicePy?: number;
+	indicatorLeft?: number;
 };
 
 /** One place that turns parameters into per-part values, shared by preview and write-back. */
@@ -165,6 +195,11 @@ function derive(overrides: MenuOverrides, context: MenuContext): Derived {
 			radius: level(safe.itemRadius),
 			inset,
 		},
+		choicePx: context.choiceUsesInset ? inset : safe.itemPaddingX,
+		indicatorLeft:
+			safe.itemPaddingX !== undefined && context.choiceIndicatorLeft !== undefined
+				? context.choiceIndicatorLeft + safe.itemPaddingX - context.itemPaddingX
+				: undefined,
 		choicePy:
 			safe.itemPaddingY === undefined
 				? undefined
@@ -186,7 +221,10 @@ function menuCss(
 	context: MenuContext | undefined
 ): string {
 	if (!context) return "";
-	const { panel, minWidth, separator, item, choicePy } = derive(overrides, context);
+	const { panel, minWidth, separator, item, choicePx, choicePy, indicatorLeft } = derive(
+		overrides,
+		context
+	);
 	const rules: string[] = [];
 	const rule = (slots: string[], declarations: string[], suffix?: string) => {
 		if (declarations.length) rules.push(`${select(slots, suffix)} { ${declarations.join(" ")} }`);
@@ -212,9 +250,11 @@ function menuCss(
 	rule(CHOICES, [
 		...shared.filter((declaration) => !declaration.startsWith("padding-block")),
 		...(choicePy !== undefined ? [`padding-block: ${choicePy}px;`] : []),
-		...(item.px !== undefined ? [`padding-left: ${item.px}px;`] : []),
+		...(choicePx !== undefined ? [`padding-left: ${choicePx}px;`] : []),
 	]);
 	if (item.px !== undefined) rule(["label"], [`padding-inline: ${item.px}px;`]);
+	if (indicatorLeft !== undefined)
+		rule(["checkbox-item-indicator", "radio-item-indicator"], [`left: ${indicatorLeft}px;`]);
 	if (item.inset !== undefined)
 		rule([...ITEMS, ...CHOICES, "label"], [`padding-left: ${item.inset}px;`], "[data-inset]");
 	return rules.join("\n");
@@ -227,7 +267,10 @@ export function menuOverrideClasses(
 	overrides: MenuOverrides,
 	context: MenuContext
 ): Record<string, string> {
-	const { panel, minWidth, separator, item, choicePy } = derive(overrides, context);
+	const { panel, minWidth, separator, item, choicePx, choicePy, indicatorLeft } = derive(
+		overrides,
+		context
+	);
 	const panelClasses: string[] = [];
 	if (panel.padding !== undefined) panelClasses.push(`p-${spacing(panel.padding)}`);
 	if (panel.radius) panelClasses.push(`rounded-${panel.radius}`);
@@ -246,7 +289,7 @@ export function menuOverrideClasses(
 	];
 	const choiceClasses = [
 		...shared,
-		...(item.px !== undefined ? [`pl-${spacing(item.px)}`] : []),
+		...(choicePx !== undefined ? [`pl-${spacing(choicePx)}`] : []),
 		...(choicePy !== undefined ? [`py-${spacing(choicePy)}`] : []),
 	];
 	const label = [
@@ -264,6 +307,14 @@ export function menuOverrideClasses(
 			[`cn-${component}-sub-trigger`, itemClasses],
 			[`cn-${component}-checkbox-item`, choiceClasses],
 			[`cn-${component}-radio-item`, choiceClasses],
+			[
+				`cn-${component}-checkbox-item-indicator`,
+				indicatorLeft !== undefined ? [`left-${spacing(indicatorLeft)}`] : [],
+			],
+			[
+				`cn-${component}-radio-item-indicator`,
+				indicatorLeft !== undefined ? [`left-${spacing(indicatorLeft)}`] : [],
+			],
 			[`cn-${component}-label`, label],
 			[`cn-${component}-separator`, separator !== undefined ? [`-mx-${spacing(separator)}`] : []],
 		]
@@ -277,22 +328,37 @@ const radiusOptions = [
 	...RADIUS_LEVELS.map((value) => ({ value, label: RADIUS_LABELS[value] })),
 ];
 
-export function createMenuSpec(
+export function createMenuSpec<K extends keyof MenuValues = keyof MenuValues>(
 	component: MenuComponent,
 	title: string,
-	description: string
-): TunerSpec<MenuValues, MenuContext> {
-	// Context GroupHeading and Label share one style class but expose different slots.
+	description: string,
+	keys?: readonly K[]
+): TunerSpec<Pick<MenuValues, K>, MenuContext> {
+	// GroupHeading and Label share one style class but expose different slots.
 	const slotsFor = (slots: string[]) =>
 		slots.flatMap((slot) =>
-			component === "context-menu" && slot === "label" ? ["label", "group-heading"] : [slot]
+			component !== "dropdown-menu" && slot === "label" ? ["label", "group-heading"] : [slot]
 		);
+	// A consumer can expose only geometry without copying the menu derivation contract.
+	const selectedSchema = keys
+		? valuesSchema.pick(
+				Object.fromEntries(keys.map((key) => [key, true])) as Partial<
+					Record<keyof MenuValues, true>
+				>
+			)
+		: valuesSchema;
+	const schema = selectedSchema as unknown as TunerSpec<
+		Pick<MenuValues, K>,
+		MenuContext
+	>["valuesSchema"];
+	const validate = (overrides: Partial<Pick<MenuValues, K>>) =>
+		selectedSchema.partial().parse(overrides) as MenuOverrides;
 	return {
 		component,
 		title,
 		description,
 		storageKey: `valar.${component}-styles.v2`,
-		group: "面板、菜单项与动效",
+		group: keys ? "面板与菜单项几何" : "面板、菜单项与动效",
 		parameters: [
 			{ kind: "number", key: "padding", label: "面板内边距（px）", min: 0, max: 12, step: 2 },
 			{ kind: "number", key: "minWidth", label: "最小宽度（px）", min: 96, max: 320, step: 16 },
@@ -332,8 +398,11 @@ export function createMenuSpec(
 				],
 			},
 			{ kind: "select", key: "slide", label: "出现时滑入距离", options: SLIDE_OPTIONS },
-		],
-		valuesSchema,
+		].filter((parameter) => !keys || keys.includes(parameter.key as K)) as TunerSpec<
+			Pick<MenuValues, K>,
+			MenuContext
+		>["parameters"],
+		valuesSchema: schema,
 		tokens: [
 			["--radius", "圆角基数"],
 			["--motion-duration-fast", "快档时长"],
@@ -348,7 +417,13 @@ export function createMenuSpec(
 					`/src/__registry__/json/styles/${style.replace("style-", "")}/${component}.json`
 				];
 			if (!load) throw new Error(`没有 ${style} 的 ${title} registry`);
-			return parseMenuSource(component, (await load()).files);
+			const result = parseMenuSource(component, (await load()).files);
+			return {
+				values: keys
+					? schema.parse(Object.fromEntries(keys.map((key) => [key, result.values[key]])))
+					: (result.values as Pick<MenuValues, K>),
+				context: result.context,
+			};
 		},
 		previewCss: (scope, overrides, context) =>
 			menuCss(
@@ -356,7 +431,7 @@ export function createMenuSpec(
 					slotsFor(slots)
 						.map((slot) => `${scope} [data-slot="${component}-${slot}"]${suffix}`)
 						.join(", "),
-				overrides,
+				validate(overrides),
 				context
 			),
 		pageCss: (overrides, context) =>
@@ -365,9 +440,10 @@ export function createMenuSpec(
 					slotsFor(slots)
 						.map((slot) => `[data-slot="${component}-${slot}"]${suffix}${NOT_EDITOR}`)
 						.join(", "),
-				overrides,
+				validate(overrides),
 				context
 			),
-		overrideClasses: (overrides, context) => menuOverrideClasses(component, overrides, context),
+		overrideClasses: (overrides, context) =>
+			menuOverrideClasses(component, validate(overrides), context),
 	};
 }
