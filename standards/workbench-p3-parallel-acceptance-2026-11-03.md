@@ -1,6 +1,6 @@
 # P3 十一组件四组并行编辑器验收（E12）
 
-**交付补记（2026-11-03）**：用户在E14验收后明确要求“提交推送”，本轮统一交付E12–E14。下文未提交／未授权及剩余组件安排为本批验收时的历史快照；最新覆盖68／68，见[E14记录](workbench-remaining-editors-acceptance-2026-11-03.md)。不发布包或部署站点。
+**当前交付（2026-11-03）**：用户在E14验收后授权提交推送，E12–E14已统一推送至main：[f62fb33](https://github.com/onevalar/valar-svelte/commit/f62fb33b14de412d8901d40dfec2558368eff81b)，[远端CI全部通过](https://github.com/onevalar/valar-svelte/actions/runs/41600027003)。当前覆盖68／68，见[E14记录](workbench-remaining-editors-acceptance-2026-11-03.md)。以下正文保留本批验收时的历史快照，不代表当前仍未提交或仍有组件待接入。未发布包或部署站点。
 
 日期：2026-11-03。[实现、截图、录像与交付状态所在工作线程](https://ampcode.com/threads/T-01a199a9-28fa-709a-8877-6fe766c7497e)。用户授权四组并行实施，未授权本批提交、推送、发布或部署。本记录为本地验收结果；不是跨框架转换，不替换交互库，不扩展旧 Studio，不修改用户自写 guides。
 
@@ -71,6 +71,6 @@ Attachment／Bubble／Message／Code Block／Trace画布实际采用Rhea，与�
 
 Attachment组允许局部横滚，不为截图改成wrap；范围日历跨周分段背景为原有合同。未验收操作系统原生色盘、实体手机或Safari。CDP触摸为Chromium模拟，不是实体设备验收。截图和录像不能替代执行过的交互断言。
 
-## 交付状态
+## 验收时交付状态（历史）
 
 四组实现、共享接入、registry、测试和文档均为**本地未提交改动**。没有自动沿用E11的提交推送授权，没有发布或部署。后续14项仍按真实需要确认，Sidebar先设计应用壳、窗口快捷键、同源cookie及移动Sheet隔离，P4九项和Collapsible维持暂不独立建编辑器的决定。

@@ -1,10 +1,10 @@
 # E14：剩余十组件编辑器验收记录
 
-**交付补记（2026-11-03）**：用户在本批验收后明确要求“提交推送”，本轮统一交付E12–E14。下文未提交／未授权为验收时的历史快照，具体提交以Git历史和线程交付消息为准。不发布包或部署站点。
+**当前交付（2026-11-03）**：用户在本批验收后授权提交推送，E12–E14已统一推送至main：[f62fb33](https://github.com/onevalar/valar-svelte/commit/f62fb33b14de412d8901d40dfec2558368eff81b)，[远端CI全部通过](https://github.com/onevalar/valar-svelte/actions/runs/41600027003)。68／68组件编辑器接入完成。用户随后授权收尾并明确要求提交推送，验收见文末；收尾单独提交，其远端CI不沿用上述组件接入提交的结果。未发布包或部署站点。
 
 日期：2026-11-03。工作线程：[E14](https://ampcode.com/threads/T-01a199a9-28fa-709a-8877-6fe766c7497e)。汇总：[并行成果与可视证据](https://ampcode.com/artifacts/e14-f12dd56b-85f0-4b4d-9bee-aaad9e8cf688)。
 
-用户明确要求剩余10个组件继续接入，并授权并行实施，取代E13后的暂缓独立编辑器安排。四组独占实现，主线程统一集成入口、有限写回白名单、registry及运行验收；保留E12／E13成果，不扩旧Studio、不改用户编写的guides。**本批为本地未提交改动，未推送、发布或部署。**
+用户明确要求剩余10个组件继续接入，并授权并行实施，取代E13后的暂缓独立编辑器安排。四组独占实现，主线程统一集成入口、有限写回白名单、registry及运行验收；保留E12／E13成果，不扩旧Studio、不改用户编写的guides。
 
 ## 合同与边界
 
@@ -66,4 +66,28 @@ CLI验证使用独立临时Vite项目、`--no-deps-install --skip-preflight`，�
 - 交互录像：`.amp/in/artifacts/e14-form-interaction.mp4`及同名`.loop.webp`，展示真实错误、输入、成功提交与对比侧独立状态；静态截图不代替交互断言。
 - 真实写回值：Field46、Form22、Label22、Collapsible30、Aspect Ratio xl＋hidden、Separator7、Resizable3、Scroll Area22、Message Scroller46、Marker22。其他参数未自动写入。
 
-所有临时验证脚本、fixture与安装目录在验收后清理；没有删除或恢复其他批次未提交成果。未执行提交、推送、发布或部署。
+所有临时验证脚本、fixture与安装目录在验收后清理；没有删除或恢复其他批次成果。组件接入成果已提交推送，未发布或部署。
+
+## 接入完成后的本地收尾（2026-11-03）
+
+用户要求先收尾，不新增组件或参数、不决定旧Studio去留、不代写guides、不发布或部署。README、路线图及E12／E13交付记录已区分当前状态与历史快照；68／68为文档页编辑器覆盖，不是旧Studio覆盖或所有API全面认证。
+
+语言切换：在未修改的生产构建上暂停脚本响应，页面SSR语言按钮仍enabled；真实点击后URL不变，放行脚本并完成接管后URL仍不变，第二次点击才切换成功。该实验稳定复现了此前失败的表现，证实存在接管前丢点击的路径；由于原失败trace已被后续测试清理，不宣称已追溯证明原偶发失败只能由这一原因造成。
+
+修正仅让现有语言按钮在onMount前disabled，接管完成后启用；保留原goto、noScroll和URL翻译逻辑。既有语言切换E2E加入脚本响应闸门，确认SSR禁用，再放行并执行原双向切换、文档标题、html语言及query／hash保留断言。该用例在旧构建上因“预期disabled，实际enabled”失败，没有增加超时、重试或放宽原断言。
+
+修正后使用Node24.22.2／pnpm12.14.0完成：
+
+| 检查 | 收尾结果 |
+| --- | --- |
+| `pnpm test` | **756通过**，原有测试数不变 |
+| `pnpm check` | 全仓通过，Svelte **0 errors、0 warnings**；124篇中文合同通过 |
+| `NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm build` | 生产构建通过 |
+| 生产`playwright test e2e/i18n.spec.ts --repeat-each=10 --workers=2` | **30 passed（30.6s）**；重试仍为0 |
+| 完整生产`playwright test` | **90 passed、2 skipped（4.8分钟）**；两项开发写回默认跳过 |
+| 延迟接管补充检查 | 1280px英文页及390px中文页均先disabled，再首次有效点击切换；路径、query、hash保留，无pageerror |
+| 定向Oxfmt／ESLint、`git diff --check` | 通过；未重排全仓既有格式问题 |
+
+最终页头截图`.amp/in/artifacts/finalize-i18n-ready.png`（默认可用）与`finalize-i18n-pending.png`（接管前禁用）均已审阅；2560px图宽来自1280px视窗DPR2。真实指针录像`finalize-i18n-interaction.mp4`及同名`.loop.webp`完整显示经过邻近控件、英文→中文→英文；录像和5fps联系表已检查。query／hash与禁用合同由DOM断言验证，不以录像代替。390px为Chromium窄视窗，不是真手机。
+
+本次收尾共7个文件，用户在验收后明确要求提交推送，单独交付；具体提交及CI结果见Git历史和工作线程记录。未发布、未部署。旧Studio、guides及正式分发安排仍由用户决定。

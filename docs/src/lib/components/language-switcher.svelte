@@ -2,17 +2,18 @@
 	import { goto } from "$app/navigation";
 	import { page } from "$app/state";
 	import LanguagesIcon from "@lucide/svelte/icons/languages";
-	import { Button } from "$lib/registry/ui/button/index.js";
-	import {
-		localeFromPathname,
-		translateUrl,
-		type Locale,
-		localeNames,
-	} from "$lib/i18n/config.js";
+	import { onMount } from "svelte";
+	import { localeFromPathname, translateUrl, type Locale, localeNames } from "$lib/i18n/config.js";
 	import { t } from "$lib/i18n/index.js";
+	import { Button } from "$lib/registry/ui/button/index.js";
 	import { cn } from "$lib/utils.js";
 
 	let { class: className }: { class?: string } = $props();
+
+	let mounted = $state(false);
+	onMount(() => {
+		mounted = true;
+	});
 
 	const current = $derived(localeFromPathname(page.url.pathname));
 	const target: Locale = $derived(current === "zh" ? "en" : "zh");
@@ -27,6 +28,7 @@
 	variant="ghost"
 	size="sm"
 	class={cn("extend-touch-target gap-1.5 px-2", className)}
+	disabled={!mounted}
 	onclick={switchLocale}
 	title={t("footer.switchTo", { language: label })}
 	aria-label={t("footer.switchTo", { language: label })}

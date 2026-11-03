@@ -1,6 +1,6 @@
 # E13：问卷、图表、侧栏与通知编辑器验收
 
-**交付补记（2026-11-03）**：用户在E14验收后明确要求“提交推送”，本轮统一交付E12–E14。下文未提交／未授权及剩余组件安排为本批验收时的历史快照；最新覆盖68／68，见[E14记录](workbench-remaining-editors-acceptance-2026-11-03.md)。不发布包或部署站点。
+**当前交付（2026-11-03）**：用户在E14验收后授权提交推送，E12–E14已统一推送至main：[f62fb33](https://github.com/onevalar/valar-svelte/commit/f62fb33b14de412d8901d40dfec2558368eff81b)，[远端CI全部通过](https://github.com/onevalar/valar-svelte/actions/runs/41600027003)。当前覆盖68／68，见[E14记录](workbench-remaining-editors-acceptance-2026-11-03.md)。以下正文保留本批验收时的历史快照，不代表当前仍未提交或仍有组件待接入。未发布包或部署站点。
 
 日期：2026-11-03。[工作线程与视觉证据](https://ampcode.com/threads/T-01a199a9-28fa-709a-8877-6fe766c7497e)。用户授权四组并行、先验证再实施；未授权提交、推送、发布或部署。保留E12本地改动，不扩旧Studio、不修改用户自写guides。本批不是跨框架转换，不替换交互库。
 
@@ -67,6 +67,6 @@ e13-chart-interaction.mp4（约9.9秒）与同名loop.webp展示真实指针经�
 
 **同源iframe不是storage安全沙箱**：虽然不挂第二个ModeWatcher，wrapper导入mode-watcher模块时仍可能初始化缺失的mode-watcher-mode／mode-watcher-theme键；已有值不被覆盖，参数／明暗update本身不写storage。父站原本也使用该依赖；本批隔离承诺针对通知store、窗口／Portal和预览主动持久化，不承诺空storage首次导入零写入，不使用未跨浏览器验证的credentialless伪装解决。
 
-## 交付状态
+## 验收时交付状态（历史）
 
 四组件、共享外壳／有限桥、白名单、永久回归、registry与文档为本地未提交成果；E12改动原样保留。未提交、未推送、未发布、未部署；不自动启动后续10项。
