@@ -10,3 +10,9 @@ services:
     portals:
       - url: /docs/components
         title: Components
+  playground:
+    command: 'export PATH="$HOME/.nvm/versions/node/v$(cat .nvmrc)/bin:$PATH"; exec pnpm dev:playground'
+    port: 5188
+    portal:
+      title: Valar workspace playground
+      description: Independent consumer of the shared UI package. Watches component source, saved style/token changes and primitives; no docs runtime dependency.

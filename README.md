@@ -27,8 +27,22 @@ pnpm --filter docs exec vite dev --host 127.0.0.1 --port 5186 --strictPort
 - `docs/content/`：Valar 文档与组件用法。
 - `packages/cli/`：`@valar/svelte-cli`，命令名 `valar-svelte`。
 - `packages/primitives/`：`@valar/svelte-primitives`。
+- `packages/ui/`：`@valar/svelte-ui`，由唯一 registry 维护源生成的共享组件包。
+- `apps/playground/`：只通过共享 UI 包使用组件的独立消费应用。
 - `packages/parity/`：内部对照工具。
 - `sv-addons/`：内部扩展模板，尚未发布。
+
+## 项目共享组件（初期推荐）
+
+需要频繁修改组件并让项目自动跟进时，将 Svelte 项目放在本 workspace 的 `apps/` 下，通过 `@valar/svelte-ui: workspace:*` 引用，而不是向每个项目复制整套组件源码。
+
+```sh
+pnpm dev:playground
+```
+
+该命令同时监听组件生成、样式／token 与底层原语，启动独立消费应用。组件编辑器须“写回组件库”后才影响应用；浏览器草稿不会同步。八套组件样式均有包导出，默认 Nova／neutral／Lucide。热更新可能重置临时交互状态，已部署项目仍须重新构建发布。
+
+接入步骤、导入示例与验证边界见[共享 UI 工作区说明](standards/SHARED_UI.md)。自有包仍 private，未发布 npm，也未部署。
 
 ## 设计师调参工作台
 

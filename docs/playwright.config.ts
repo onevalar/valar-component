@@ -15,12 +15,23 @@ export default defineConfig({
 		trace: "retain-on-failure",
 		launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH },
 	},
-	webServer: process.env.E2E_BASE_URL
-		? undefined
-		: {
-				command: "pnpm exec vite preview --host 127.0.0.1 --port 5187 --strictPort",
-				url: baseURL,
-				timeout: 120_000,
-				reuseExistingServer: !process.env.CI,
-			},
+	webServer: [
+		...(process.env.E2E_BASE_URL
+			? []
+			: [
+					{
+						command: "pnpm exec vite preview --host 127.0.0.1 --port 5187 --strictPort",
+						url: baseURL,
+						timeout: 120_000,
+						reuseExistingServer: !process.env.CI,
+					},
+				]),
+		{
+			command:
+				"pnpm --filter @valar/svelte-playground preview --host 127.0.0.1 --port 5190 --strictPort",
+			url: "http://127.0.0.1:5190",
+			timeout: 120_000,
+			reuseExistingServer: !process.env.CI,
+		},
+	],
 });
