@@ -14,6 +14,7 @@
 	data-slot="label"
 	class={cn(
 		"cn-label flex items-center select-none group-data-[disabled=true]:pointer-events-none peer-disabled:cursor-not-allowed",
+		"cn-label-layout",
 		className
 	)}
 	{...restProps}

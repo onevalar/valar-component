@@ -152,7 +152,7 @@ test.describe("phone layout and touch navigation", () => {
 			page.getByRole("button", { name: "Toggle menu Menu", exact: true })
 		).toHaveAttribute("aria-expanded", "false");
 		await page.getByRole("button", { name: "Search documentation", exact: true }).tap();
-		await page.getByRole("combobox").fill("Stepper");
+		await page.getByRole("dialog").getByRole("combobox").fill("Stepper");
 		await expect(page.getByRole("option", { name: "Stepper", exact: true })).toBeVisible();
 		await page.setViewportSize({ width: 390, height: 360 });
 		await expect

@@ -34,7 +34,13 @@
 
 **组件编辑器推广**（2026-11-02）：Hover Card、Context Menu、Drawer 已完成，见[弹层编辑器验收记录](workbench-acceptance-2026-11-02.md)；Tabs、Card 已完成，见[Tabs／Card 验收记录](workbench-tabs-card-acceptance-2026-11-02.md)。这两批已推送至 `main`（[2633f5f](https://github.com/onevalar/valar-svelte/commit/2633f5fd8c96cd7e6ae41a9f6d7b62fcbc257819)），GitHub CI 全部通过。Checkbox、Radio Group、Switch 已完成并推送（[c57b2fc](https://github.com/onevalar/valar-svelte/commit/c57b2fcaee32645ae7e9cf0968ff5fd6f21bb5ac)），GitHub CI 全部通过，见[选择控件验收记录](workbench-selection-controls-acceptance-2026-11-02.md)。Toggle、Toggle Group、Slider（E4）已推送至 `main`（[ad8fde5](https://github.com/onevalar/valar-svelte/commit/ad8fde528a21b668db21774b6eafb2f8d12e6ec4)），GitHub CI 全部通过，见[验收记录](workbench-toggle-slider-acceptance-2026-11-02.md)。Native Select、Input Group、Input OTP（E5）已推送至 `main`（[638bfb4](https://github.com/onevalar/valar-svelte/commit/638bfb4608891b580886dfd344c16e4390404886)），GitHub CI 全部通过，见[验收记录](workbench-input-composites-acceptance-2026-11-02.md)。Badge、基础 Table（E6）已推送至 `main`（[b91209e](https://github.com/onevalar/valar-svelte/commit/b91209e364e2ee825fe2a9f57ae8c820cc5b124c)），GitHub CI 全部通过，见[验收记录](workbench-badge-table-acceptance-2026-11-02.md)。Alert、Empty（E7）已推送至 `main`（[d306978](https://github.com/onevalar/valar-svelte/commit/d3069785c43da9288653d88b1f9fb78385fb24cd)），GitHub CI 全部通过，见[验收记录](workbench-alert-empty-acceptance-2026-11-02.md)。Accordion、Alert Dialog（E8）已推送至 `main`（[493dea9](https://github.com/onevalar/valar-svelte/commit/493dea9985816494a19883eedd49a4ace1bb84a2)），GitHub CI 全部通过，见[验收记录](workbench-accordion-alert-dialog-acceptance-2026-11-02.md)。Avatar、Item（E9）已推送至 `main`（[23f3a4c](https://github.com/onevalar/valar-svelte/commit/23f3a4c066e10980166aa44cdd68f1c757ef7d2d)），GitHub CI 全部通过，见[验收记录](workbench-avatar-item-acceptance-2026-11-02.md)。本批 E10 接入 Number Field、Slider Field，覆盖增至 **33／68 个**；参数、交互、写回与回归证据见[本批验收记录](workbench-number-slider-field-acceptance-2026-11-02.md)和所链工作线程。用户已授权本批验收通过后统一提交推送，不发布包或部署站点。其余组件见下面“剩余 35 个组件的优先级”；不扩大旧 Studio 的覆盖范围，不自动启动下一批。
 
-**最新批次 E11（2026-11-03）**：四组并行完成 Tags Input、Button Group、Breadcrumb、Pagination、Progress、Skeleton、Spinner、Kbd、Menubar、Navigation Menu，当前覆盖 **43／68**，剩余 **25**。上段33／68为E10历史快照。647项单元测试、全仓检查、生产构建、59项生产E2E以及十组件真实开发站写回通过，见[本批验收记录](workbench-p2-parallel-acceptance-2026-11-03.md)。按用户授权统一提交推送，不发布或部署，不自动开始下一批。
+**历史批次 E11（2026-11-03）**：四组并行完成 Tags Input、Button Group、Breadcrumb、Pagination、Progress、Skeleton、Spinner、Kbd、Menubar、Navigation Menu，该批结束覆盖 **43／68**，剩余 **25**。上段33／68为E10历史快照。647项单元测试、全仓检查、生产构建、59项生产E2E以及十组件真实开发站写回通过，见[本批验收记录](workbench-p2-parallel-acceptance-2026-11-03.md)。按用户授权统一提交推送，不发布或部署，不自动开始下一批。
+
+**最新批次 E12（2026-11-03）**：按用户授权四组并行接入 Calendar、Range Calendar、Command；Carousel、Color Picker；Attachment、Bubble、Message；Code Block、Trace、Stepper，共11项，覆盖增至 **54／68**，剩余 **14**。660项单元测试、全仓检查、生产构建、71项生产E2E（2项开发写回按配置跳过）及11组件真实开发站写回通过；默认／比较／390px最大数字参数深色截图和真实指针录像已审阅，见[验收记录](workbench-p3-parallel-acceptance-2026-11-03.md)。本批为本地未提交改动，尚未获提交推送授权；不发布、部署或自动开始下一批。全仓lint另有130个本批未修改文件的既有格式问题，本批代码定向Oxfmt／ESLint通过。
+
+**最新进度 E13（2026-11-03）**：Questionnaire、Chart、Sidebar、Sonner四组完成有限参数编辑器与本地验收，覆盖增至 **58／68**。剩余 **10** 项为Collapsible和P4九项，仍维持组合优先，不为覆盖率制造独立参数。666项单元测试、全仓check、生产构建、76项生产E2E（2项开发写回默认跳过）、四组件真实UI写回与Sidebar八样式endpoint→registry→CLI add安装回读通过，见[验收记录](workbench-isolated-previews-acceptance-2026-11-03.md)。Sidebar／Sonner用独立document隔离窗口／Portal／通知store，不将同源iframe宣称为storage安全沙箱；Sonner普通Tab不暂停沿用上游现状。E12／E13均为本地未提交改动，没有推送、发布或部署授权。
+
+**最新进度 E14（2026-11-03）**：按用户明确要求，四组并行接入Field／Form／Label、Collapsible／Aspect Ratio／Separator、Resizable／Scroll Area、Message Scroller／Marker，文档页编辑器覆盖增至 **68／68**（67项普通示例入口＋Sidebar block入口）。只开放自身有限视觉参数，不保存校验、宽高比、分栏比例或滚动跟随等场景状态，默认外观保持不变。756项单元测试、全仓check、生产构建、90项完整生产E2E（含本批14项，2项开发写回默认跳过）、十组件真实UI写回及实际CLI安装／37份Svelte编译通过，见[验收记录](workbench-remaining-editors-acceptance-2026-11-03.md)。完整回归另记录一次既有语言切换波动，不将单次通过当作已修复。用户随后明确要求“提交推送”，本轮统一交付E12–E14；上述未提交／未授权文字保留为各批验收时的历史快照。不发布包或部署站点。
 
 ### 后续任务（按顺序；完成一项就在此更新状态）
 
@@ -54,6 +60,9 @@
 | E9   | 接入 Avatar、Item | 完成 | Avatar联动三尺寸、Badge、GroupCount与圆角；Item分三尺寸调留白／gap，保留子控件和列表／链接语义。真实写回同时修复生成registry缓存失效；632项单元测试、全仓检查、生产构建及生产浏览器47项通过，1项显式写回另行通过 |
 | E10  | 接入 Number Field、Slider Field | 完成（验收通过） | 最小cn入口不改默认几何；Number Field外框高度与内部控件联动，Slider Field只调组合布局。集成远端Avatar修复后636项测试通过，全仓检查、生产构建及生产浏览器49项通过，1项显式写回按配置跳过；本批两次真实写回另行通过，见[记录](workbench-number-slider-field-acceptance-2026-11-02.md) |
 | E11  | 四组并行接入P2十个组件 | 完成（验收通过） | 四组独占实现、主线程统一接入；647项测试、全仓检查、生产构建、59项生产E2E通过，2项开发写回默认跳过；十组件真实写回另行通过，Tags Input写回回归显式执行通过。覆盖43／68，见[记录](workbench-p2-parallel-acceptance-2026-11-03.md)；Collapsible仍不建独立编辑器 |
+| E12  | 四组并行接入P3十一个组件 | 完成（本地验收，未提交） | 日期／搜索3项、轮播／取色2项、消息组合3项、代码／轨迹／步骤3项；保留Nova／Rhea真实基线及业务边界。660项测试、check、build、71项生产E2E和11项真实写回通过，覆盖54／68，见[记录](workbench-p3-parallel-acceptance-2026-11-03.md) |
+| E13  | Questionnaire、Chart、Sidebar、Sonner四组并行 | 完成（本地验收，未提交） | 有限几何、真实Tooltip、侧栏／通知独立document；666项测试、check、build、76项生产E2E、四组件UI写回及Sidebar八样式CLI安装回读通过，覆盖58／68，见[记录](workbench-isolated-previews-acceptance-2026-11-03.md) |
+| E14  | 剩余10组件四组并行接入 | 完成（本地验收，未提交） | 756项单测、全仓check／build、90项完整生产E2E、十组件UI写回及CLI安装通过，覆盖68／68；默认外观与行为边界不变。2项默认跳过与语言切换波动见[记录](workbench-remaining-editors-acceptance-2026-11-03.md) |
 | B1   | 给弹层与表单组件补说明卡 `meta.json` | 完成 | 68 个组件全部有卡（新增 48 个，含 code-block 补卡），`REQUIRED_CARDS` 覆盖全部组件，`missingCards` 为空                       |
 | B2   | 给弹层与表单组件补 `RULES.md`        | 完成 | 2026-11-01：弹层 12 个、表单 18 个；新增 lint 规则见安装文档“AI 与设计规范”                                                   |
 | B3   | 其余组件补说明卡和 `RULES.md`        | 完成 | 2026-11-01：说明卡随 B1 完成；68 个组件全部有 `RULES.md`                                                                      |
@@ -61,11 +70,13 @@
 | C2   | 线上版 MCP（HTTP）                   | 用户 | 等用户准备好服务器并授权部署后再做                                                                                            |
 | C3   | 决定 `/workbench` Studio 去留        | 用户 | 已知问题：Studio 的 `global.motionDuration`（默认 180ms）会覆盖全局动效 token；保留则需改为跟随 token，撤掉则删入口与回归测试 |
 
-### 剩余 25 个组件的优先级（2026-11-03）
+### 历史：剩余 10 个组件的安排（2026-11-03，E13后、E14前）
 
-**口径与价值**：68 个是[组件清单](../docs/src/lib/features/workbench/coverage.ts)中的组件数；43 个已在[组件文档预览入口](../docs/src/lib/components/component-preview-tabs.svelte)接入全屏编辑器，其余25个缺的是编辑器，不代表组件缺失或不能使用。`coverage.ts` 的 `coverage.ready` 仍描述旧 Studio，不能用它统计新编辑器。接入后新增受限实时调参、对比、浏览器版本保存及开发站写回；不自动改变默认外观、增强业务交互或更新消费者已安装的源码。
+**本节保留此前暂缓理由，不是当前待办。用户随后明确要求全部接入，E14已按有限视觉合同完成这10项；当前覆盖68／68，边界与验收见上文和E14记录。**
 
-下表按各组件 `ui/<组件>/meta.json`、`RULES.md`、源码及样式写回路径作工程判断，不是用户使用频率统计，也不承诺效率提升比例或工期。优先考虑可重复使用、参数边界清楚的视觉调整；成本包含八套样式、交互、窄屏和写回的长期回归。**E11已完成下表P2中的十项；未接入的25项为Collapsible、P3十五项和P4九项。优先级不代表后续批次已获开发授权，不追求68／68。**
+**口径与价值**：68 个是[组件清单](../docs/src/lib/features/workbench/coverage.ts)中的组件数；58 个已接入文档页全屏编辑器（57项普通预览入口，Sidebar由block预览入口承载），其余10个缺的是编辑器，不代表组件缺失或不能使用。`coverage.ts` 的 `coverage.ready` 仍描述旧 Studio，不能用它统计新编辑器。接入后新增受限实时调参、对比、浏览器版本保存及开发站写回；不自动改变默认外观、增强业务交互或更新消费者已安装的源码。
+
+下表按各组件 `ui/<组件>/meta.json`、`RULES.md`、源码及样式写回路径作工程判断，不是用户使用频率统计，也不承诺效率提升比例或工期。优先考虑可重复使用、参数边界清楚的视觉调整；成本包含八套样式、交互、窄屏和写回的长期回归。**E11完成P2中的十项，E12／E13完成P3全部十五项；未接入的10项为Collapsible和P4九项。它们默认随真实组合场景验收，不自动启动新一批，不追求68／68。**
 
 **P1 两项已接入 E6**：Badge 调文字侧留白／图文间距／圆角；基础 Table 调表头高度下限／横向留白、数据格横纵留白。未扩展为 Data Table，不自动推进到 P2。
 
@@ -104,17 +115,17 @@
 
 **E10实际合同**：Number Field外框高度沿用真实Button档位，加减按钮保持外框内正方形，圆角同步逻辑起止侧，数字区横向留白0–16px、步长2；原42px外框不匹配档位时保留样式自带。Slider Field只调列间距0–32px、行间距0–24px（步长2）与数值框宽96–192px（步长8），不复制子控件参数。E10结束时33／68；E11结束时43／68，剩余25。
 
-#### P3：先有真实场景，再定编辑范围，15 个
+#### P3：E12／E13已接入全部15个
 
 | 组件 | 启动条件与成本来源 |
 | ---- | ------------------ |
-| `calendar`、`range-calendar` | 有日期／日期范围页面后成对设计，复用已有 `--cell-size`；多月、范围端点、月份年份选择、禁用日期和键盘使回归范围较大，不先做两套孤立参数 |
-| `command` | 有命令面板或搜索选择页面后再定搜索框／结果项参数；依赖 Input Group 和 Dialog／Popover，并覆盖过滤、空结果和焦点，不把搜索逻辑参数化 |
-| `sidebar` | 有应用壳页面后再定宽度／菜单密度；展开、图标折叠、移动 Sheet 和快捷键是同一验收范围，不只是展示一个静态侧栏 |
-| `chart`、`carousel` | 分别以实际数据图表、内容轮播为输入；先界定图表容器／提示框与数据配置、轮播留白与 Embla 行为的边界，不做无边界的“所有选项编辑器” |
-| `color-picker`、`sonner` | 分别有取色布局、通知系统的调整需求时；Color Picker 需区分原生色盘与自有 UI，Sonner 需遵守第三方 Toast 生命周期、播报和暂停行为；颜色值／通知内容不是组件样式参数 |
-| `attachment`、`bubble`、`message`、`code-block`、`trace` | 有完整消息／Agent 对话页后统一密度与层次；结合附件多状态、消息分组、代码长行／流式输出、轨迹嵌套验收，避免五个独立画布调好后组合仍不协调 |
-| `questionnaire`、`stepper` | 有实际问卷／分步流程后确定布局参数；先复用现有控件，保留校验门禁、异步取消、跳题和焦点行为，不将流程配置伪装成视觉调参 |
+| `calendar`、`range-calendar` | **E12已接入**：共用有限几何合同，但使用独立写回锚点和版本；保留多月、范围端点、禁用日期、年月选择和键盘，月数按各自pane宽度决定 |
+| `command` | **E12已接入**：只调结果项留白／gap和列表高度；真实过滤、空结果、Loading及Dialog／Popover组合，不复制Input Group参数 |
+| `sidebar` | **E13已接入**：只调展开宽度与菜单gap；真实sidebar-07壳用独立document，预览关闭cookie写入，保留Ctrl／⌘+B、767／768断点、真实移动Sheet与嵌套Esc |
+| `chart`、`carousel` | **Carousel随E12、Chart随E13接入**：Chart只调真实Tooltip三个外层几何参数，编辑器Container局部PortalTarget；保留图例与语义数据表，不扩大数据／轴／系列配置或宣称点位键盘Tooltip导航 |
+| `color-picker`、`sonner` | **Color Picker随E12、Sonner随E13接入**：Sonner只调标准styled通知三个几何变量，独立realm防store串扰，参数变化明确重播；custom／unstyled及调用方inline覆盖保持，普通Tab不暂停是上游现状 |
+| `attachment`、`bubble`、`message`、`code-block`、`trace` | **E12已接入**：保留附件条件留白、ghost例外、消息子控件边界，代码两尺寸留白联动、轨迹详情层次；真实消息＋附件、轨迹＋代码组合已验收 |
+| `questionnaire`、`stepper` | **Stepper随E12、Questionnaire随E13接入**：Questionnaire只调五个gap／选项留白，真实三题包含required单选、多选、自由回答、末题skip、FormData与reset；不将流程配置伪装成视觉参数 |
 
 #### P4：默认不建独立编辑器，9 个
 
@@ -125,7 +136,7 @@
 | `resizable`、`scroll-area` | 在分栏／滚动页面验收；只有把手或滚动条几何确有跨页面定制需求时再升级，面板比例、容器尺寸、滚动行为仍由使用处负责 |
 | `message-scroller`、`marker` | 在完整消息页处理滚动容器、跳转按钮和系统标记的一致性；滚动锚定／跟随不属于视觉参数。Marker 有自己的变体样式，但先随消息组合评估，不因名称简单就认定没有样式 |
 
-**后续选择（尚未开始，开始前确认）**：E4–E11已接入，P1无剩余项，P2仅Collapsible暂不独立做。接下来先在已有页面组合中试用，再从P3按真实页面需要选下一批；没有重复调参需求的组件可以停止或不建独立编辑器。每批沿用下方完整验收清单，不因参数少而跳过真实写回和交互验证，不默认承诺覆盖全部组件。
+**E13实施与验收记录（2026-11-03）**：四组先验证再实施，主线程统一接线、白名单、写回、安装与生产回归；实际结果见[记录](workbench-isolated-previews-acceptance-2026-11-03.md)。覆盖58／68，剩余P4九项和Collapsible仍维持组合优先、暂不独立建编辑器；不自动开始下一批。本批未授权提交推送。
 
 ### 收尾（2026-11-01，均已完成）
 
@@ -139,7 +150,7 @@
 ### 候选任务（AI 可做，开始前向用户确认）
 
 - 新增“成功／警告”语义色 token，替换示例中借用的 `chart-2`。
-- 其余组件按实际页面需要从 P2／P3 选择，先确认范围，再按上面的优先级及下面的清单逐个做；Badge、基础 Table 已随 E6 接入。
+- 当前68项均已接入文档页编辑器；以后新增参数或组件仍按实际需求确认范围，不为了覆盖率复制全局token或业务配置。
 - Combobox 的高度接入 Button 尺寸档位；Textarea 最小高度（写死在组件源码，需要改源码或换写回方式）。Native Select、Input Group单行与Input OTP已随E5接入档位。
 - date-picker 等示例自己写了 `DateFormatter("en-US")`，与已改为中文的日历不一致。
 
@@ -171,6 +182,7 @@
 
 - **共用外壳**：`docs/src/lib/features/workbench/component-tuner.svelte` 负责全屏编辑器的一切共用部分（顶栏、仅草稿／并排对比、浅深色、DialKit 面板、已修改参数、只读全局 token、命名版本与备份、写回确认）。各组件只提供一份参数说明 `TunerSpec`（类型在 `tuner.ts`）和画布：Button 是 `button-tuning.ts`＋`button-tuner.svelte`（变体矩阵），Dialog 是 `dialog-tuning.ts`＋`dialog-tuner.svelte`（内联渲染真实 Dialog，带“重播进入与退出”）。`parameter-dials.svelte` 按参数说明生成 DialKit 面板；`component-preview-tabs.svelte` 决定哪个示例套上编辑器。各组件共用的档位与解析函数（动效档位、缩放、滑入距离、“样式自带”、`tierVar`、`sourceWord`）放在 `tuner.ts`，新组件直接引用，不要再复制一份。
 - **当前值从哪来**：Button 量取页面上真实按钮的尺寸；Dialog 读取当前样式安装出去的 registry 源码（`parseDialogSource`），所以 8 套样式各自显示自己的默认值。
+- **E14新增十项**：Field／Form／Label、Collapsible／Aspect Ratio／Separator、Resizable／Scroll Area、Message Scroller／Marker全部复用该外壳；只保存各自有限几何，Form入口在`/docs/forms`。67个普通预览入口加Sidebar block入口覆盖68项，旧Studio的`coverage.ready`不用于统计。参数、真实UI写回、安装与视觉证据见[E14记录](workbench-remaining-editors-acceptance-2026-11-03.md)。
 - **Dialog 参数**：宽度档、内边距、内容间距、圆角档位（含“样式自带”）、遮罩不透明度、动效档位（快／中／慢，只选全局 token 的档位）、出现时缩放（组件自己的动效参数）。改内边距时，带“出血”页脚的样式（如 nova）同步调整页脚负边距，页脚仍贴边。
 - **写回白名单**：`style-overrides.ts` 的 `OVERRIDE_RULES` 按每个 `cn-*` 类规定允许的工具类；颜色、任意输入的 CSS 值、未登记的类一律拒绝。Card 的 `--card-spacing` 仅接受固定模板和有限数值（见 E2）；Switch 小数轨道高度仅接受16个固定像素值（见 E3），均不是通用任意值入口。合并用 `packages/parity` 的 `mergeClasses`，补足 tailwind-merge 识别不了的 `zoom-in-*`、`duration-*`、`ease-*`。
 - **注意**：开发站的写回校验规则在 vite 配置中加载，改了 `style-overrides.ts` 后要重启开发服务（`amp orb service restart docs`），否则新组件写回会提示“参数无效”。

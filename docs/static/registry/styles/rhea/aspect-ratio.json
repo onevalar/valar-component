@@ -50,7 +50,7 @@
 			"target": "aspect-ratio/RULES.md"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { AspectRatio as AspectRatioPrimitive } from \"bits-ui\";\n\n\tlet { ref = $bindable(null), ...restProps }: AspectRatioPrimitive.RootProps = $props();\n</script>\n\n<AspectRatioPrimitive.Root bind:ref data-slot=\"aspect-ratio\" {...restProps} />\n",
+			"content": "<script lang=\"ts\">\n\timport { AspectRatio as AspectRatioPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\t...restProps\n\t}: AspectRatioPrimitive.RootProps = $props();\n</script>\n\n<AspectRatioPrimitive.Root\n\tbind:ref\n\tdata-slot=\"aspect-ratio\"\n\tclass={cn(className)}\n\t{...restProps}\n/>\n",
 			"type": "registry:file",
 			"target": "aspect-ratio/aspect-ratio.svelte"
 		},

@@ -18,6 +18,7 @@
 	import {
 		changedValues,
 		versionSchemas,
+		type TunerCanvasState,
 		type TunerSpec,
 		type TunerValues,
 		type TunerVersion,
@@ -31,9 +32,9 @@
 	}: {
 		spec: TunerSpec<V, C>;
 		/** The docs example shown on the page. */
-		children: Snippet;
+		children: Snippet<[state: TunerCanvasState<V>]>;
 		/** Editor canvas content for one pane; overrides are applied by CSS scoped to the pane. */
-		canvas: Snippet<[pane: "current" | "before"]>;
+		canvas: Snippet<[pane: "current" | "before", state: TunerCanvasState<V>]>;
 		/** Unmodified instances that `spec.readBaseline` measures. */
 		probe?: Snippet;
 	} = $props();
@@ -51,6 +52,7 @@
 	let mounted = $state(false);
 	let editing = $state(false);
 	let loading = $state(false);
+	let pageDark = $state(false);
 	let mode = $state<"light" | "dark">("light");
 	let source = $state<TunerVersion["source"]>();
 	let baseline = $state<TunerValues>();
@@ -105,6 +107,10 @@
 
 	onMount(() => {
 		mounted = true;
+		const syncTheme = () => (pageDark = document.documentElement.classList.contains("dark"));
+		syncTheme();
+		const observer = new MutationObserver(syncTheme);
+		observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 		message = sessionStorage.getItem(FLASH_KEY) ?? "";
 		sessionStorage.removeItem(FLASH_KEY);
 		try {
@@ -120,6 +126,7 @@
 			(result) => (context ??= result.context),
 			() => {}
 		);
+		return () => observer.disconnect();
 	});
 	$effect(() => {
 		const style = document.createElement("style");
@@ -284,7 +291,16 @@
 		data-tuning-before={pane === "before" ? "" : undefined}
 	>
 		<figcaption class="border-b px-4 py-2.5 text-xs text-muted-foreground">{caption}</figcaption>
-		{@render canvas(pane)}
+		{@render canvas(pane, {
+			overrides: (pane === "current"
+				? currentOverrides
+				: (previous?.overrides ?? {})) as Partial<V>,
+			style: source?.style ?? "style-nova",
+			dark: canvasMode === "dark",
+			requestClose: () => {
+				if (!confirming && !writing) close();
+			},
+		})}
 	</figure>
 {/snippet}
 
@@ -314,7 +330,14 @@
 		>
 	</div>
 	{#if !editing}{@render status()}{/if}
-	<div class="sample" data-tuning-current>{@render children()}</div>
+	<div class="sample" data-tuning-current>
+		{@render children({
+			overrides: currentOverrides as Partial<V>,
+			style: source?.style ?? "style-nova",
+			dark: pageDark,
+			requestClose: () => {},
+		})}
+	</div>
 	<!-- Unmodified instances supply the rendered values of every size and the radius levels. -->
 	<div class="probe" bind:this={probe} aria-hidden="true" inert>
 		{@render probeSnippet?.()}

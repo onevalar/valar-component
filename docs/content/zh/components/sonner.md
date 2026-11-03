@@ -29,6 +29,8 @@ links:
 
 消息提示组件由 [svelte-sonner](https://svelte-sonner.vercel.app/) 提供，它是 [Sonner](https://sonner.emilkowal.ski/) 的 Svelte 版本。Sonner 最初由 [Emil Kowalski](https://twitter.com/emilkowalski_) 为 React 开发。
 
+组件编辑器只调整标准样式通知的横纵留白与图文间距，自定义通知和 `unstyled` 通知保持各自布局。显式 `toastOptions` 仍整体替换包装器默认值，每条通知的内联 `style` 优先。调整参数会重播本侧预览示例，不会重启生产通知。当前上游版本在悬停或 Alt+T 展开时暂停计时，但普通 Tab 聚焦操作按钮不会暂停。
+
 ## 安装
 
 <Step>设置主题支持</Step>

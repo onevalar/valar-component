@@ -101,6 +101,14 @@ export type TunerParameter =
 
 export type TunerValues = Record<string, string | number>;
 
+/** Validated geometry and presentation for one independently mounted editor canvas. */
+export type TunerCanvasState<V extends TunerValues = TunerValues> = {
+	overrides: Partial<V>;
+	style: string;
+	dark: boolean;
+	requestClose(): void;
+};
+
 export type TunerSpec<V extends TunerValues = TunerValues, C = unknown> = {
 	/** Registry name, e.g. `button`. */
 	component: string;

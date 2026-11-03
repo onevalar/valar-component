@@ -1,4 +1,6 @@
 <script lang="ts" module>
+	import type { Content as PopoverContent } from "$lib/registry/ui/popover/index.js";
+	import type { ComponentProps } from "svelte";
 	import type { HTMLAttributes } from "svelte/elements";
 
 	export type ColorPickerProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
@@ -11,6 +13,8 @@
 		disabled?: boolean;
 		/** Submitted as the six-digit hex value. */
 		name?: string;
+		/** Popover Content configuration; portals remain enabled unless explicitly disabled. */
+		contentProps?: Omit<ComponentProps<typeof PopoverContent>, "children" | "child">;
 		onValueChange?: (value: string) => void;
 	};
 
@@ -26,7 +30,7 @@
 </script>
 
 <script lang="ts">
-	import { untrack } from "svelte";
+	import { onMount, untrack } from "svelte";
 	import * as Popover from "$lib/registry/ui/popover/index.js";
 	import { cn } from "$lib/utils.js";
 
@@ -36,6 +40,7 @@
 		presets = [],
 		disabled = false,
 		name,
+		contentProps,
 		onValueChange,
 		id: idProp,
 		class: className,
@@ -46,6 +51,12 @@
 	const current = $derived(normalizeHex(value) ?? "#000000");
 	let text = $state("");
 	let open = $state(false);
+	let root: HTMLDivElement;
+	let editorOwned = $state(false);
+	// A portaled panel keeps its editor ownership even outside the editor's DOM subtree.
+	onMount(() => {
+		editorOwned = !!root.closest('[role="dialog"][data-component-tuner]');
+	});
 	// Partial input such as "#1e" is still being typed; only impossible characters are errors.
 	const invalid = $derived(!/^#?[\da-f]{0,6}$/i.test(text.trim()));
 
@@ -66,9 +77,10 @@
 </script>
 
 <div
+	bind:this={root}
 	data-slot="color-picker"
 	data-disabled={disabled || undefined}
-	class={cn("grid gap-2", className)}
+	class={cn("grid gap-2", "cn-color-picker", className)}
 	{...restProps}
 >
 	<span id={`${id}-label`} class="text-sm font-medium">{label}</span>
@@ -85,7 +97,13 @@
 			></span>
 			<span id={`${id}-value`} class="font-mono text-xs">{current}</span>
 		</Popover.Trigger>
-		<Popover.Content class="grid w-64 gap-3" aria-label={label}>
+		<Popover.Content
+			aria-label={label}
+			{...contentProps}
+			data-slot="color-picker-content"
+			data-color-picker-editor={editorOwned || undefined}
+			class={cn("grid w-64 gap-3", "cn-color-picker-content", contentProps?.class)}
+		>
 			<input
 				type="color"
 				aria-label={`${label}：色盘`}

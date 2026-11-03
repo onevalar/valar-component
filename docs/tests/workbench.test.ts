@@ -28,6 +28,10 @@ import {
 	parseAlertSource,
 } from "../src/lib/features/workbench/alert-tuning.js";
 import {
+	attachmentOverrideClasses,
+	parseAttachmentSource,
+} from "../src/lib/features/workbench/attachment-tuning.js";
+import {
 	AVATAR_SPEC,
 	avatarOverrideClasses,
 	parseAvatarSource,
@@ -42,20 +46,49 @@ import {
 	breadcrumbOverrideClasses,
 } from "../src/lib/features/workbench/breadcrumb-tuning.js";
 import {
+	bubbleOverrideClasses,
+	parseBubbleSource,
+} from "../src/lib/features/workbench/bubble-tuning.js";
+import {
 	parseButtonGroupSource,
 	buttonGroupOverrideClasses,
 } from "../src/lib/features/workbench/button-group-tuning.js";
 import { buttonOverrideClasses } from "../src/lib/features/workbench/button-tuning.js";
+import {
+	calendarOverrideClasses,
+	parseCalendarSource,
+} from "../src/lib/features/workbench/calendar-tuning.js";
 import {
 	CARD_SPEC,
 	cardOverrideClasses,
 	parseCardSource,
 } from "../src/lib/features/workbench/card-tuning.js";
 import {
+	carouselOverrideClasses,
+	parseCarouselSource,
+} from "../src/lib/features/workbench/carousel-tuning.js";
+import {
+	CHART_SPEC,
+	chartOverrideClasses,
+	parseChartSource,
+} from "../src/lib/features/workbench/chart-tuning.js";
+import {
 	CHECKBOX_SPEC,
 	checkboxOverrideClasses,
 	parseCheckboxSource,
 } from "../src/lib/features/workbench/checkbox-tuning.js";
+import {
+	codeBlockOverrideClasses,
+	parseCodeBlockSource,
+} from "../src/lib/features/workbench/code-block-tuning.js";
+import {
+	colorPickerOverrideClasses,
+	parseColorPickerSource,
+} from "../src/lib/features/workbench/color-picker-tuning.js";
+import {
+	commandOverrideClasses,
+	parseCommandSource,
+} from "../src/lib/features/workbench/command-tuning.js";
 import { CONTEXT_MENU_SPEC } from "../src/lib/features/workbench/context-menu-tuning.js";
 import { heightTier } from "../src/lib/features/workbench/control-tiers.js";
 import { COMPONENT_INVENTORY } from "../src/lib/features/workbench/coverage.js";
@@ -101,6 +134,10 @@ import {
 	menubarOverrideClasses,
 } from "../src/lib/features/workbench/menubar-tuning.js";
 import {
+	messageOverrideClasses,
+	parseMessageSource,
+} from "../src/lib/features/workbench/message-tuning.js";
+import {
 	COMPONENTS,
 	PARAMETERS,
 	defaultPreset,
@@ -135,15 +172,29 @@ import {
 	progressOverrideClasses,
 } from "../src/lib/features/workbench/progress-tuning.js";
 import {
+	QUESTIONNAIRE_SPEC,
+	questionnaireOverrideClasses,
+	parseQuestionnaireSource,
+} from "../src/lib/features/workbench/questionnaire-tuning.js";
+import {
 	RADIO_GROUP_SPEC,
 	parseRadioGroupSource,
 	radioGroupOverrideClasses,
 } from "../src/lib/features/workbench/radio-group-tuning.js";
+import {
+	rangeCalendarOverrideClasses,
+	parseRangeCalendarSource,
+} from "../src/lib/features/workbench/range-calendar-tuning.js";
 import { selectOverrideClasses } from "../src/lib/features/workbench/select-tuning.js";
 import {
 	parseSheetSource,
 	sheetOverrideClasses,
 } from "../src/lib/features/workbench/sheet-tuning.js";
+import {
+	SIDEBAR_SPEC,
+	sidebarOverrideClasses,
+	parseSidebarSource,
+} from "../src/lib/features/workbench/sidebar-tuning.js";
 import {
 	parseSkeletonSource,
 	skeletonOverrideClasses,
@@ -158,9 +209,18 @@ import {
 	sliderOverrideClasses,
 } from "../src/lib/features/workbench/slider-tuning.js";
 import {
+	SONNER_SPEC,
+	sonnerOverrideClasses,
+	parseSonnerSource,
+} from "../src/lib/features/workbench/sonner-tuning.js";
+import {
 	parseSpinnerSource,
 	spinnerOverrideClasses,
 } from "../src/lib/features/workbench/spinner-tuning.js";
+import {
+	stepperOverrideClasses,
+	parseStepperSource,
+} from "../src/lib/features/workbench/stepper-tuning.js";
 import {
 	applyStyleOverrides,
 	styleOverridePayloadSchema,
@@ -199,6 +259,10 @@ import {
 	parseTooltipSource,
 	tooltipOverrideClasses,
 } from "../src/lib/features/workbench/tooltip-tuning.js";
+import {
+	traceOverrideClasses,
+	parseTraceSource,
+} from "../src/lib/features/workbench/trace-tuning.js";
 
 function originals(): RegistryItem[] {
 	return COMPONENTS.map(({ id }) =>
@@ -1076,7 +1140,7 @@ const registryFiles = (component: string, style: string) =>
 const emptyOverrides = (style: string) =>
 	readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
 
-describe("P2 parallel editor installation contracts", () => {
+describe("Parallel editor installation contracts", () => {
 	function roundtrip<T extends Record<string, unknown>, C>(
 		component: string,
 		parse: (files: { target: string; content: string }[]) => { values: T; context: C },
@@ -1088,7 +1152,7 @@ describe("P2 parallel editor installation contracts", () => {
 				let css = emptyOverrides(style);
 				const sources = () =>
 					readdirSync(resolve(`src/lib/registry/ui/${component}`))
-						.filter((file) => file.endsWith(".svelte"))
+						.filter((file) => file.endsWith(".svelte") || file === "constants.ts")
 						.map((file) => ({ target: file, content: installed(component, style, css, file) }));
 				let context = parse(sources()).context;
 				expect(classes({}, context)).toEqual({});
@@ -1100,13 +1164,198 @@ describe("P2 parallel editor installation contracts", () => {
 					const files = sources();
 					expect(parse(files).values).toEqual(values);
 					context = parse(files).context;
-					for (const file of files)
+					for (const file of files.filter((file) => file.target.endsWith(".svelte")))
 						expect(() => compile(file.content, { filename: file.target })).not.toThrow();
 				}
 			}
 			expect(() => parse([])).toThrow();
-		});
+		}, 15_000);
 	}
+	roundtrip("calendar", parseCalendarSource, calendarOverrideClasses, [
+		{ cellSize: 36, padding: 2, radius: "none" },
+		{ cellSize: 24, padding: 16, radius: "full" },
+	]);
+	roundtrip("range-calendar", parseRangeCalendarSource, rangeCalendarOverrideClasses, [
+		{ cellSize: 24, padding: 14, radius: "md" },
+		{ cellSize: 36, padding: 0, radius: "full" },
+	]);
+	roundtrip("command", parseCommandSource, commandOverrideClasses, [
+		{ paddingX: 22, paddingY: 2, gap: 14, listHeight: 176 },
+		{ paddingX: 0, paddingY: 16, gap: 0, listHeight: 384 },
+	]);
+	roundtrip("carousel", parseCarouselSource, carouselOverrideClasses, [{ gap: 30 }, { gap: 0 }]);
+	roundtrip("color-picker", parseColorPickerSource, colorPickerOverrideClasses, [
+		{ gap: 14, width: 240, contentGap: 22 },
+		{ gap: 0, width: 320, contentGap: 4 },
+	]);
+	roundtrip("attachment", parseAttachmentSource, attachmentOverrideClasses, [
+		{ defaultPadding: 14, smPadding: 2, xsPadding: 6, radius: "none" },
+		{ defaultPadding: 0, smPadding: 16, xsPadding: 10, radius: "full" },
+	]);
+	roundtrip("bubble", parseBubbleSource, bubbleOverrideClasses, [
+		{ paddingX: 30, paddingY: 2, groupGap: 22, radius: "none" },
+		{ paddingX: 0, paddingY: 24, groupGap: 0, radius: "full" },
+	]);
+	roundtrip("message", parseMessageSource, messageOverrideClasses, [
+		{ rowGap: 30, bodyGap: 2, groupGap: 14 },
+		{ rowGap: 0, bodyGap: 32, groupGap: 0 },
+	]);
+	roundtrip("code-block", parseCodeBlockSource, codeBlockOverrideClasses, [
+		{ paddingX: 30, smPaddingX: 10 },
+		{ paddingX: 8, smPaddingX: 32 },
+	]);
+	roundtrip("trace", parseTraceSource, traceOverrideClasses, [
+		{ gap: 22, detailMarginTop: 2 },
+		{ gap: 0, detailMarginTop: 24 },
+	]);
+	roundtrip("stepper", parseStepperSource, stepperOverrideClasses, [
+		{ gap: 30, triggerPadding: 10 },
+		{ gap: 0, triggerPadding: 24 },
+	]);
+	roundtrip("questionnaire", parseQuestionnaireSource, questionnaireOverrideClasses, [
+		{ rootGap: 30, choicesGap: 2, actionsGap: 14, choicePaddingX: 22, choicePaddingY: 6 },
+		{ rootGap: 2, choicesGap: 22, actionsGap: 4, choicePaddingX: 4, choicePaddingY: 20 },
+		{ rootGap: 0, choicesGap: 0, actionsGap: 0, choicePaddingX: 0, choicePaddingY: 0 },
+		{ rootGap: 32, choicesGap: 24, actionsGap: 16, choicePaddingX: 24, choicePaddingY: 24 },
+	]);
+	roundtrip("chart", parseChartSource, chartOverrideClasses, [
+		{ paddingX: 24, paddingY: 2, labelSeriesGap: 14 },
+		{ paddingX: 4, paddingY: 16, labelSeriesGap: 0 },
+	]);
+	roundtrip("sidebar", parseSidebarSource, sidebarOverrideClasses, [
+		{ width: 376, menuGap: 7 },
+		{ width: 192, menuGap: 1 },
+		{ width: 384, menuGap: 12 },
+	]);
+	roundtrip("sonner", parseSonnerSource, sonnerOverrideClasses, [
+		{ paddingX: 30, paddingY: 2, contentGap: 14 },
+		{ paddingX: 0, paddingY: 24, contentGap: 0 },
+	]);
+	it("reads real E13 style baselines and preserves independent Questionnaire padding on partial writes", () => {
+		const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+		const defaults = [
+			[16, 8, 8, 12, 10],
+			[24, 12, 8, 16, 14],
+			[16, 8, 6, 12, 10],
+			[24, 12, 8, 16, 14],
+			[16, 6, 6, 12, 10],
+			[24, 12, 8, 16, 12],
+			[24, 12, 8, 16, 12],
+			[24, 12, 8, 16, 16],
+		];
+		for (const [index, style] of styles.entries()) {
+			expect(
+				Object.values(parseQuestionnaireSource(registryFiles("questionnaire", style)).values)
+			).toEqual(defaults[index]);
+			expect(parseChartSource(registryFiles("chart", style)).values).toEqual({
+				paddingX: 10,
+				paddingY: 6,
+				labelSeriesGap: 6,
+			});
+			expect(parseSidebarSource(registryFiles("sidebar", style)).values).toEqual({
+				width: 256,
+				menuGap: [0, 4, 0, 4, 1, 2, 2, 2][index],
+			});
+			let css = emptyOverrides(style);
+			for (const overrides of [{ choicePaddingX: 22, choicePaddingY: 6 }, { choicePaddingX: 4 }]) {
+				css = applyStyleOverrides(
+					css,
+					styleOverridePayloadSchema.parse({
+						style,
+						classes: questionnaireOverrideClasses(overrides),
+					})
+				);
+			}
+			const choice = installed("questionnaire", style, css, "questionnaire-choice.svelte");
+			const files = registryFiles("questionnaire", style).map((file) =>
+				file.target.endsWith("/questionnaire-choice.svelte") ? { ...file, content: choice } : file
+			);
+			expect(parseQuestionnaireSource(files).values).toMatchObject({
+				choicePaddingX: 4,
+				choicePaddingY: 6,
+			});
+			expect(choice).toContain("min-h-11");
+		}
+	});
+	it("rejects E13 business, arbitrary CSS and geometry outside the finite contracts", () => {
+		for (const classes of [
+			{ "cn-questionnaire": "grid-cols-4" },
+			{ "cn-questionnaire-choice": "min-h-0" },
+			{ "cn-questionnaire-choice": "p-4" },
+			{ "cn-chart-tooltip-layout": "px-6.5" },
+			{ "cn-chart-tooltip-layout": "rounded-none" },
+			{ "cn-chart-tooltip": "px-2" },
+			{ "cn-sidebar-provider": "[--sidebar-width-default:24.5rem]" },
+			{ "cn-sidebar-provider": "[--sidebar-width:20rem]" },
+			{ "cn-sidebar-menu": "gap-3.25" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+		for (const [spec, invalid] of [
+			[QUESTIONNAIRE_SPEC, { rootGap: 3 }],
+			[QUESTIONNAIRE_SPEC, { required: false }],
+			[CHART_SPEC, { paddingY: 18 }],
+			[CHART_SPEC, { data: [] }],
+			[SIDEBAR_SPEC, { width: 200.5 }],
+			[SIDEBAR_SPEC, { menuGap: 13 }],
+			[SONNER_SPEC, { paddingX: 33 }],
+			[SONNER_SPEC, { duration: 3000 }],
+		] as const)
+			expect(() => spec.overrideClasses(invalid as never, null)).toThrow();
+	});
+	it("keeps Calendar and Range Calendar defaults independent after either editor writes", () => {
+		for (const style of ["nova", "mira", "rhea", "sera"]) {
+			const original = emptyOverrides(style);
+			const sources = (component: string, css: string) => [
+				{
+					target: `${component}.svelte`,
+					content: installed(component, style, css, `${component}.svelte`),
+				},
+			];
+			const calendar = parseCalendarSource(sources("calendar", original));
+			const range = parseRangeCalendarSource(sources("range-calendar", original));
+			const first = applyStyleOverrides(
+				original,
+				styleOverridePayloadSchema.parse({
+					style,
+					classes: calendarOverrideClasses({ cellSize: 36, padding: 2, radius: "md" }),
+				})
+			);
+			expect(parseRangeCalendarSource(sources("range-calendar", first))).toEqual(range);
+			const second = applyStyleOverrides(
+				first,
+				styleOverridePayloadSchema.parse({
+					style,
+					classes: rangeCalendarOverrideClasses({ cellSize: 24, padding: 16, radius: "full" }),
+				})
+			);
+			expect(parseCalendarSource(sources("calendar", second)).values).toEqual({
+				...calendar.values,
+				cellSize: 36,
+				padding: 2,
+				radius: "md",
+			});
+		}
+	});
+	it("rejects out-of-contract P3 CSS and cross-component parameter leakage", () => {
+		for (const classes of [
+			{ "cn-calendar": "p-4" },
+			{ "cn-calendar-geometry": "[--cell-size:--spacing(10)]" },
+			{ "cn-range-calendar-geometry": "[--cell-radius:12px]" },
+			{ "cn-command-list": "max-h-41" },
+			{ "cn-command-item": "bg-red-500" },
+			{ "cn-carousel-item-horizontal": "basis-1/2" },
+			{ "cn-carousel-content-horizontal": "-mt-4" },
+			{ "cn-color-picker-content": "w-[280px]" },
+			{ "cn-attachment-size-sm": "p-2" },
+			{ "cn-bubble-content": "max-w-full" },
+			{ "cn-message": "rounded-full" },
+			{ "cn-code-block-content": "py-6" },
+			{ "cn-code-block-header": "-mx-4" },
+			{ "cn-trace": "animate-spin" },
+			{ "cn-stepper-trigger": "p-1" },
+		])
+			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+	});
 	roundtrip("button-group", parseButtonGroupSource, buttonGroupOverrideClasses, [
 		{ textPaddingX: 22, textGap: 2, joinedRadius: "none" },
 		{ textPaddingX: 0, textGap: 16, joinedRadius: "full" },
@@ -3099,5 +3348,46 @@ describe("Context Menu write-back uses its own source and shared menu contract",
 			{ "cn-context-menu-trigger": "p-4" },
 		])
 			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+	});
+});
+
+describe("E14 development writeback boundary", () => {
+	it("accepts the finite geometry of all ten editors and rejects unrelated utilities", () => {
+		const allowed: Record<string, string> = {
+			"cn-field-group": "gap-11.5",
+			"cn-field": "gap-8",
+			"cn-field-content": "gap-6",
+			"cn-form-item-layout": "space-y-5.5",
+			"cn-label-layout": "gap-6",
+			"cn-collapsible-content-geometry": "px-7.5 py-0",
+			"cn-aspect-ratio-geometry": "rounded-xl overflow-hidden",
+			"cn-separator-geometry": "data-horizontal:h-1.75 data-vertical:w-px",
+			"cn-resizable-handle": "w-0.75 data-[direction=vertical]:h-1",
+			"cn-scroll-area-scrollbar": "data-vertical:w-5.5 data-horizontal:h-1.5",
+			"cn-scroll-area-thumb": "rounded-none",
+			"cn-message-scroller-content": "gap-11.5 px-0 py-12",
+			"cn-marker-variant-default": "gap-0",
+			"cn-marker-variant-separator": "gap-5.5",
+			"cn-marker-variant-border": "gap-6 pb-0",
+		};
+		expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes: allowed }).success).toBe(
+			true
+		);
+		for (const anchor of Object.keys(allowed)) {
+			for (const utility of [
+				"bg-red-500",
+				"p-[100px]",
+				"hidden",
+				"text-lg",
+				"gap-99",
+				"gap-2!",
+				"sm:gap-2",
+			]) {
+				expect(
+					styleOverridePayloadSchema.safeParse({ style: "nova", classes: { [anchor]: utility } })
+						.success
+				).toBe(false);
+			}
+		}
 	});
 });

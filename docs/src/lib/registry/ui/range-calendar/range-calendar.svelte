@@ -58,8 +58,10 @@
 	bind:placeholder
 	{weekdayFormat}
 	{disableDaysOutsideMonth}
+	data-slot="range-calendar"
 	class={cn(
 		"cn-calendar group/calendar bg-background p-3 [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
+		"cn-range-calendar-geometry",
 		className
 	)}
 	{locale}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SidebarTuner from "$lib/features/workbench/sidebar-tuner.svelte";
 	import ComponentPreviewTabs from "./component-preview-tabs.svelte";
 	import type { PresetConfig } from "@valar/svelte-cli/preset";
 	import type { Component } from "svelte";
@@ -12,6 +13,7 @@
 		hideCode = false,
 		previewClassName,
 		previewStyle,
+		tunable = true,
 		...restProps
 	}: HTMLAttributes<HTMLElement> & {
 		name: string;
@@ -26,7 +28,11 @@
 	} = $props();
 </script>
 
-{#if type === "block"}
+{#if type === "block" && name === "demo-sidebar-icon" && tunable}
+	<div class="my-4 w-full overflow-hidden rounded-2xl border" data-llm-ignore>
+		<SidebarTuner />
+	</div>
+{:else if type === "block"}
 	<div
 		class="relative aspect-[4/2.5] w-full overflow-hidden rounded-md border md:-mx-4"
 		data-llm-ignore
@@ -57,6 +63,7 @@
 		{hideCode}
 		{previewClassName}
 		{previewStyle}
+		{tunable}
 		{...restProps}
 	/>
 {/if}

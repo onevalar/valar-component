@@ -111,12 +111,15 @@ The `Sidebar.Provider` component is used to provide the sidebar context to the `
 
 ### Props
 
-| Name           | Type                      | Description                                                                                                                             |
-| -------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `open`         | `boolean`                 | Open state of the sidebar (bindable).                                                                                                   |
-| `onOpenChange` | `(open: boolean) => void` | A callback fired _after_ the open state of the sidebar changes if uncontrolled, and _before_ the sidebar opens or closes if controlled. |
+| Name           | Type                      | Description                                                                                                                                                               |
+| -------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `open`         | `boolean`                 | Open state of the sidebar (bindable).                                                                                                                                     |
+| `onOpenChange` | `(open: boolean) => void` | A callback fired _after_ the open state of the sidebar changes if uncontrolled, and _before_ the sidebar opens or closes if controlled.                                   |
+| `persistState` | `boolean`                 | Defaults to `true`. Set to `false` to disable `sidebar_state` cookie writes in temporary or embedded previews; bindings, callbacks, and keyboard shortcuts remain active. |
 
 ### Width
+
+The expanded desktop width uses the style's `--sidebar-width-default`, falling back to `SIDEBAR_WIDTH`. An explicit `style="--sidebar-width: …"` on the Provider still takes priority. The component editor changes only this expanded width and menu spacing, not icon-collapse or mobile Sheet width.
 
 If you have a single sidebar in your application, you can use the `SIDEBAR_WIDTH` and `SIDEBAR_WIDTH_MOBILE` constants in `constants.ts` to set the width of the sidebar.
 

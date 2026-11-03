@@ -62,8 +62,10 @@ get along, so we shut typescript up by casting `value` to `never`.
 	bind:placeholder
 	{weekdayFormat}
 	{disableDaysOutsideMonth}
+	data-slot="calendar"
 	class={cn(
 		"cn-calendar group/calendar bg-background in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
+		"cn-calendar-geometry",
 		className
 	)}
 	{locale}

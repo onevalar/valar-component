@@ -102,7 +102,15 @@ function flattenedRegistry(): Plugin {
 		// Editor canvases must render the installed baseline too: base-layer CSS cannot
 		// override literal utilities in raw components such as Tags Input and Spinner.
 		// Do not include the old multi-style Studio or non-canvas workbench helpers.
-		if (within(file, [tunerDir]) && file.endsWith("-tuner.svelte")) return DEFAULT_STYLE;
+		if (within(file, [tunerDir]) && file.endsWith("-tuner.svelte")) {
+			// These component pages explicitly preview Rhea; their editor must use the
+			// same installed source as the page sample and the registry baseline it reads.
+			return /\/(?:attachment|bubble|message|message-scroller|marker|code-block|trace)-tuner\.svelte$/.test(
+				file
+			)
+				? "rhea"
+				: DEFAULT_STYLE;
+		}
 		return null;
 	};
 
@@ -125,6 +133,8 @@ function flattenedRegistry(): Plugin {
 		enforce: "pre",
 		async resolveId(source, importer, options) {
 			if (!importer) return null;
+			// Svelte owns extracted CSS/other virtual subrequests; they are not source modules.
+			if (splitId(source).params.has("svelte")) return null;
 			// The dependency scanner loads what it resolves straight from disk, where the queried id
 			// doesn't exist. It only looks for bare imports, which are the same in both variants.
 			if ((options as { scan?: boolean }).scan) return null;
@@ -164,6 +174,7 @@ function flattenedRegistry(): Plugin {
 		load(id) {
 			if (!isFlattened(id)) return null;
 			const { file, params } = splitId(id);
+			if (params.has("svelte")) return null;
 			const content = fs.readFileSync(file, "utf8");
 			// The query also marks example and helper modules so their UI imports share
 			// one style. Only registry UI source has `cn-*` tokens to inline.

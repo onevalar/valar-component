@@ -13,6 +13,788 @@ async function setNumber(page: Page, label: string, value: number) {
 	await input.press("Enter");
 }
 
+for (const sample of [
+	{
+		slug: "field",
+		title: "Field",
+		label: "字段组间距（基准 px）",
+		value: 46,
+		selector: '[data-slot="field-group"]',
+		property: "row-gap",
+		baseline: "20px",
+	},
+	{
+		slug: "form",
+		title: "Form",
+		label: "表单项内部间距（基准 px）",
+		value: 22,
+		selector: '[data-slot="form-item"] > label',
+		property: "margin-bottom",
+		baseline: "8px",
+	},
+	{
+		slug: "label",
+		title: "Label",
+		label: "图文间距（基准 px）",
+		value: 22,
+		selector: '[data-slot="label"]',
+		property: "column-gap",
+		baseline: "8px",
+	},
+	{
+		slug: "collapsible",
+		title: "Collapsible",
+		label: "内容横向留白（px 基准）",
+		value: 30,
+		selector: '[data-slot="collapsible-content"]',
+		property: "padding-left",
+		baseline: "0px",
+	},
+	{
+		slug: "separator",
+		title: "Separator",
+		label: "横向粗细（px 基准）",
+		value: 7,
+		selector: '[data-slot="separator"][data-orientation="horizontal"]',
+		property: "height",
+		baseline: "1px",
+	},
+	{
+		slug: "resizable",
+		title: "Resizable",
+		label: "左右分栏线宽（px）",
+		value: 3,
+		selector: '[data-slot="resizable-handle"]',
+		property: "width",
+		baseline: "1px",
+	},
+	{
+		slug: "scroll-area",
+		title: "Scroll Area",
+		label: "纵向滚动条宽（px）",
+		value: 22,
+		selector: '[data-slot="scroll-area-scrollbar"][data-orientation="vertical"]',
+		property: "width",
+		baseline: "10px",
+	},
+	{
+		slug: "message-scroller",
+		title: "Message Scroller",
+		label: "消息间距（基准 px）",
+		value: 46,
+		selector: '[data-slot="message-scroller-content"]',
+		property: "row-gap",
+		baseline: "32px",
+	},
+	{
+		slug: "marker",
+		title: "Marker",
+		label: "Border 底部留白（基准 px）",
+		value: 22,
+		selector: '[data-slot="marker"][data-variant="border"]',
+		property: "padding-bottom",
+		baseline: "8px",
+	},
+] as const) {
+	test(`E14 ${sample.title} editor previews isolated geometry and restores versions`, async ({
+		page,
+	}) => {
+		test.setTimeout(60_000);
+		const errors: string[] = [];
+		page.on("pageerror", (error) => errors.push(error.message));
+		const route = sample.slug === "form" ? "/docs/forms" : `/docs/components/${sample.slug}`;
+		await page.goto(route, { waitUntil: "networkidle" });
+		const opener = page.getByRole("button", { name: `微调 ${sample.title}`, exact: true }).first();
+		await opener.click();
+		const editor = page.getByRole("dialog", { name: `${sample.title} · 组件参数`, exact: true });
+		await expect(editor.getByTestId(`${sample.slug}-dials`)).toBeVisible();
+		const current = editor.locator("[data-tuning-current]");
+		const subject = current.locator(sample.selector).first();
+		await expect(subject).toHaveCSS(sample.property, sample.baseline);
+		await setNumber(page, sample.label, sample.value);
+		await expect(subject).toHaveCSS(sample.property, `${sample.value}px`);
+		await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+		await expect(editor.locator("[data-tuning-before]").locator(sample.selector).first()).toHaveCSS(
+			sample.property,
+			sample.baseline
+		);
+		await editor.getByRole("radio", { name: "深色", exact: true }).click();
+		await page.setViewportSize({ width: 390, height: 1000 });
+		await expect(subject).toHaveCSS(sample.property, `${sample.value}px`);
+		expect(await current.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(
+			true
+		);
+		await editor
+			.getByRole("textbox", { name: `${sample.title} 版本名称`, exact: true })
+			.fill("E14 宽松");
+		await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+		await expect(
+			editor.getByRole("status").filter({ hasText: "已保存「E14 宽松」" })
+		).toBeVisible();
+		await page.keyboard.press("Escape");
+		await expect(opener).toBeFocused();
+		await page.reload({ waitUntil: "networkidle" });
+		await page
+			.getByRole("combobox", { name: `${sample.title} 使用版本`, exact: true })
+			.first()
+			.selectOption({ label: "E14 宽松" });
+		await opener.click();
+		await expect(editor.getByRole("slider", { name: sample.label, exact: true })).toHaveAttribute(
+			"aria-valuenow",
+			String(sample.value)
+		);
+		await expect(
+			editor.locator("[data-tuning-current]").locator(sample.selector).first()
+		).toHaveCSS(sample.property, `${sample.value}px`);
+		expect(errors).toEqual([]);
+	});
+}
+
+test("E14 Aspect Ratio separates saved boundaries from temporary aspect ratios", async ({
+	page,
+}) => {
+	await page.goto("/docs/components/aspect-ratio", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Aspect Ratio", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Aspect Ratio · 组件参数", exact: true });
+	const current = editor.locator("[data-tuning-current]");
+	const ratio = current.locator('[data-slot="aspect-ratio"]');
+	await expect(ratio).toHaveCSS("overflow", "visible");
+	await editor.getByRole("button", { name: /^容器圆角/ }).click();
+	await page.getByRole("option", { name: "lg · 1 × 基数", exact: true }).click();
+	await expect(ratio).toHaveCSS("border-top-left-radius", "10px");
+	await expect(ratio).toHaveCSS("overflow", "visible");
+	await editor.getByRole("button", { name: /^内容裁切/ }).click();
+	await page.getByRole("option", { name: "裁切溢出内容", exact: true }).click();
+	await expect(ratio).toHaveCSS("overflow", "hidden");
+	await current.getByLabel("场景宽高比（不保存）").selectOption({ label: "1:1 方形" });
+	const square = await ratio.boundingBox();
+	expect(Math.abs(square!.width - square!.height)).toBeLessThan(1);
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator('[data-tuning-before] [data-slot="aspect-ratio"]');
+	await expect(before).toHaveCSS("overflow", "visible");
+	await expect(before).toHaveCSS("border-top-left-radius", "0px");
+	await editor
+		.getByRole("textbox", { name: "Aspect Ratio 版本名称", exact: true })
+		.fill("E14 媒体边界");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await page.keyboard.press("Escape");
+	await expect(opener).toBeFocused();
+	await page.reload({ waitUntil: "networkidle" });
+	await page
+		.getByRole("combobox", { name: "Aspect Ratio 使用版本", exact: true })
+		.selectOption({ label: "E14 媒体边界" });
+	await opener.click();
+	await expect(ratio).toHaveCSS("overflow", "hidden");
+	await expect(ratio).toHaveCSS("border-top-left-radius", "10px");
+	await expect(current.getByLabel("场景宽高比（不保存）")).toHaveValue("0");
+});
+
+test("E14 Form uses real local validation, accessible errors and independent resets", async ({
+	page,
+}) => {
+	await page.goto("/docs/forms", { waitUntil: "networkidle" });
+	await page.getByRole("button", { name: "微调 Form", exact: true }).click();
+	const editor = page.getByRole("dialog", { name: "Form · 组件参数", exact: true });
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const current = editor.locator("[data-tuning-current]");
+	const before = editor.locator("[data-tuning-before]");
+	const name = current.getByRole("textbox", { name: "联系人姓名（必填）", exact: true });
+	await current.getByRole("button", { name: "本地校验并提交", exact: true }).click();
+	await expect(name).toHaveAttribute("aria-invalid", "true");
+	await expect(
+		current.getByText("请填写至少两个字符的联系人姓名。", { exact: true })
+	).toBeVisible();
+	await expect(
+		before.getByRole("textbox", { name: "联系人姓名（必填）", exact: true })
+	).not.toHaveAttribute("aria-invalid", "true");
+	await name.fill("本地联系人");
+	await setNumber(page, "表单项内部间距（基准 px）", 22);
+	await expect(name).toHaveValue("本地联系人");
+	await current.getByRole("button", { name: "本地校验并提交", exact: true }).click();
+	await expect(current.getByRole("status")).toContainText("成功提交 1 次");
+	await expect(before.getByRole("status")).toContainText("成功提交 0 次");
+	await current.getByRole("button", { name: "重置表单", exact: true }).click();
+	await expect(name).toHaveValue("");
+	await expect(name).not.toHaveAttribute("aria-invalid", "true");
+	await expect(current.getByRole("status")).toContainText("成功提交 0 次");
+});
+
+test("E14 labels, collapsible state and separator semantics remain real and isolated", async ({
+	page,
+}) => {
+	await page.goto("/docs/components/label", { waitUntil: "networkidle" });
+	await page.getByRole("button", { name: "微调 Label", exact: true }).click();
+	let editor = page.getByRole("dialog", { name: "Label · 组件参数", exact: true });
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	let current = editor.locator("[data-tuning-current]");
+	await current.locator("label").filter({ hasText: "电子邮箱（必填）" }).click();
+	await expect(
+		current.getByRole("textbox", { name: "电子邮箱（必填）", exact: true })
+	).toBeFocused();
+	await current.locator("label").filter({ hasText: "接收产品更新" }).click();
+	await expect(current.getByRole("checkbox").first()).toBeChecked();
+	await expect(
+		editor.locator("[data-tuning-before]").getByRole("checkbox").first()
+	).not.toBeChecked();
+	await page.keyboard.press("Escape");
+	await page.goto("/docs/components/collapsible", { waitUntil: "networkidle" });
+	await page.getByRole("button", { name: "微调 Collapsible", exact: true }).click();
+	editor = page.getByRole("dialog", { name: "Collapsible · 组件参数", exact: true });
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	current = editor.locator("[data-tuning-current]");
+	await current.getByRole("button", { name: "收起高级设置", exact: true }).press("Space");
+	await expect(current.getByRole("button", { name: "展开高级设置", exact: true })).toHaveAttribute(
+		"aria-expanded",
+		"false"
+	);
+	await expect(
+		editor
+			.locator("[data-tuning-before]")
+			.getByRole("button", { name: "收起高级设置", exact: true })
+	).toHaveAttribute("aria-expanded", "true");
+	await current.getByRole("button", { name: "禁用折叠区", exact: true }).click();
+	await expect(current.getByRole("button", { name: "展开高级设置", exact: true })).toBeDisabled();
+	await page.keyboard.press("Escape");
+	await page.goto("/docs/components/separator", { waitUntil: "networkidle" });
+	await page.getByRole("button", { name: "微调 Separator", exact: true }).click();
+	editor = page.getByRole("dialog", { name: "Separator · 组件参数", exact: true });
+	current = editor.locator("[data-tuning-current]");
+	await expect(current.getByRole("separator")).toHaveCount(2);
+	await current.getByRole("button", { name: "切换为装饰分隔", exact: true }).click();
+	await expect(current.getByRole("separator")).toHaveCount(0);
+	await expect(current.locator('[data-slot="separator"]')).toHaveCount(4);
+});
+
+test("E14 Resizable and Scroll Area preserve native keyboard interaction across panes", async ({
+	page,
+}) => {
+	await page.goto("/docs/components/resizable", { waitUntil: "networkidle" });
+	await page.getByRole("button", { name: "微调 Resizable", exact: true }).click();
+	let editor = page.getByRole("dialog", { name: "Resizable · 组件参数", exact: true });
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	let current = editor.locator("[data-tuning-current]");
+	const handle = current.getByRole("separator", { name: "调整导航与内容分栏", exact: true });
+	await handle.focus();
+	const start = Number(await handle.getAttribute("aria-valuenow"));
+	await handle.press("ArrowRight");
+	await expect
+		.poll(async () => Number(await handle.getAttribute("aria-valuenow")))
+		.toBeGreaterThan(start);
+	await expect(
+		editor.locator('[data-tuning-before] [data-slot="resizable-handle"]')
+	).toHaveAttribute("aria-valuenow", "40");
+	await current.getByLabel("演示方向（不保存）").selectOption("vertical");
+	await setNumber(page, "上下分栏线宽（px）", 4);
+	await expect(handle).toHaveCSS("height", "4px");
+	await page.keyboard.press("Escape");
+	await page.goto("/docs/components/scroll-area", { waitUntil: "networkidle" });
+	await page.getByRole("button", { name: "微调 Scroll Area", exact: true }).click();
+	editor = page.getByRole("dialog", { name: "Scroll Area · 组件参数", exact: true });
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	current = editor.locator("[data-tuning-current]");
+	const viewport = current.getByRole("region", { name: "草稿 · 可滚动文件列表", exact: true });
+	await viewport.focus();
+	await viewport.press("PageDown");
+	await expect.poll(() => viewport.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+	await expect(
+		editor.locator('[data-tuning-before] [data-slot="scroll-area-viewport"]')
+	).toHaveJSProperty("scrollTop", 0);
+});
+
+test("E14 message previews isolate history, streams, statuses and teardown", async ({ page }) => {
+	await page.goto("/docs/components/message-scroller", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Message Scroller", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Message Scroller · 组件参数", exact: true });
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const current = editor.locator("[data-tuning-current]");
+	const before = editor.locator("[data-tuning-before]");
+	await current.getByRole("button", { name: "加载历史", exact: true }).click();
+	await expect(current.locator('[data-slot="message-scroller-item"]')).toHaveCount(8);
+	await expect(before.locator('[data-slot="message-scroller-item"]')).toHaveCount(6);
+	await current.getByRole("button", { name: "本地流式回复", exact: true }).click();
+	await expect(current.getByRole("log")).toHaveAttribute("aria-busy", "true");
+	await expect(before.getByRole("log")).toHaveAttribute("aria-busy", "false");
+	await expect(current.getByRole("log")).toHaveAttribute("aria-busy", "false", { timeout: 5_000 });
+	await expect(current.getByText(/定时器会在停止、画布关闭或卸载时清理/)).toBeAttached();
+	await current.getByRole("button", { name: "开启新回合", exact: true }).click();
+	await expect(current.locator('[data-slot="message-scroller-item"]')).toHaveCount(10);
+	await page.keyboard.press("Escape");
+	await expect(opener).toBeFocused();
+	await page.goto("/docs/components/marker", { waitUntil: "networkidle" });
+	await page.getByRole("button", { name: "微调 Marker", exact: true }).click();
+	const marker = page.getByRole("dialog", { name: "Marker · 组件参数", exact: true });
+	await marker.getByRole("radio", { name: "并排对比", exact: true }).click();
+	await marker
+		.locator("[data-tuning-current]")
+		.getByRole("button", { name: "切换运行／完成状态", exact: true })
+		.click();
+	await expect(
+		marker.locator('[data-tuning-current] [data-slot="marker"][role="status"]').first()
+	).toContainText("本地会话检查已完成");
+	await expect(
+		marker.locator('[data-tuning-before] [data-slot="marker"][role="status"]').first()
+	).toContainText("正在检查本地会话");
+	await expect(marker.locator('[data-slot="marker"][role="separator"]')).toHaveCount(0);
+});
+
+for (const sample of [
+	{
+		slug: "calendar",
+		title: "Calendar",
+		label: "日期格子边长（px）",
+		value: 36,
+		selector: '[data-slot="calendar"]',
+		property: "--cell-size",
+		expected: "36px",
+		style: "nova",
+	},
+	{
+		slug: "range-calendar",
+		title: "Range Calendar",
+		label: "日期格子边长（px）",
+		value: 24,
+		selector: '[data-slot="range-calendar"]',
+		property: "--cell-size",
+		expected: "24px",
+		style: "nova",
+	},
+	{
+		slug: "command",
+		title: "Command",
+		label: "命令项横向留白（px）",
+		value: 22,
+		selector: '[data-slot="command-item"]',
+		property: "padding-left",
+		expected: "22px",
+		style: "nova",
+	},
+	{
+		slug: "carousel",
+		title: "Carousel",
+		label: "幻灯片间距（px）",
+		value: 30,
+		selector: '[data-slot="carousel-item"][data-orientation="horizontal"]',
+		property: "padding-inline-start",
+		expected: "30px",
+		style: "nova",
+	},
+	{
+		slug: "color-picker",
+		title: "Color Picker",
+		label: "标签与触发器间距（px）",
+		value: 14,
+		selector: '[data-slot="color-picker"]',
+		property: "row-gap",
+		expected: "14px",
+		style: "nova",
+	},
+	{
+		slug: "attachment",
+		title: "Attachment",
+		label: "Default 留白（px，纯文字横向 +2）",
+		value: 14,
+		selector: '[data-slot="attachment"][data-size="default"]:has([data-slot="attachment-media"])',
+		property: "padding-left",
+		expected: "14px",
+		style: "rhea",
+	},
+	{
+		slug: "bubble",
+		title: "Bubble",
+		label: "普通气泡横向留白（px）",
+		value: 30,
+		selector: '[data-slot="bubble"]:not([data-variant="ghost"]) > [data-slot="bubble-content"]',
+		property: "padding-left",
+		expected: "30px",
+		style: "rhea",
+	},
+	{
+		slug: "message",
+		title: "Message",
+		label: "头像与正文间距（px）",
+		value: 30,
+		selector: '[data-slot="message"]',
+		property: "column-gap",
+		expected: "30px",
+		style: "rhea",
+	},
+	{
+		slug: "code-block",
+		title: "Code Block",
+		label: "默认横向留白（px）",
+		value: 30,
+		selector: '[data-slot="code-block"][data-size="default"] > [data-slot="code-block-content"]',
+		property: "padding-left",
+		expected: "30px",
+		style: "rhea",
+	},
+	{
+		slug: "trace",
+		title: "Trace",
+		label: "列表间距（px）",
+		value: 22,
+		selector: '[data-slot="trace"]',
+		property: "row-gap",
+		expected: "22px",
+		style: "rhea",
+	},
+	{
+		slug: "stepper",
+		title: "Stepper",
+		label: "根布局间距（px）",
+		value: 30,
+		selector: '[data-slot="stepper"]',
+		property: "row-gap",
+		expected: "30px",
+		style: "nova",
+	},
+	{
+		slug: "questionnaire",
+		title: "Questionnaire",
+		label: "选项横向留白（px）",
+		value: 22,
+		selector: '[data-slot="questionnaire-choice"]',
+		property: "padding-left",
+		expected: "22px",
+		style: "nova",
+	},
+] as const) {
+	test(`P3 ${sample.title} editor isolates drafts and restores saved geometry`, async ({
+		page,
+	}) => {
+		test.setTimeout(60_000);
+		const errors: string[] = [];
+		page.on("pageerror", (error) => errors.push(error.message));
+		await page.goto(`/docs/components/${sample.slug}`, { waitUntil: "networkidle" });
+		const opener = page.getByRole("button", { name: `微调 ${sample.title}`, exact: true });
+		await opener.click();
+		const editor = page.getByRole("dialog", { name: `${sample.title} · 组件参数`, exact: true });
+		await expect(editor.getByTestId(`${sample.slug}-dials`)).toBeVisible();
+		await expect(editor.locator('[data-slot="dialog-description"]')).toContainText(
+			`${sample.style} ·`
+		);
+		const current = editor.locator("[data-tuning-current]");
+		const subject = current.locator(sample.selector).first();
+		const baseline = await subject.evaluate(
+			(element, property) => getComputedStyle(element).getPropertyValue(property),
+			sample.property
+		);
+		expect(baseline).not.toBe(sample.expected);
+		await setNumber(page, sample.label, sample.value);
+		await expect(subject).toHaveCSS(sample.property, sample.expected);
+		await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+		await expect(editor.locator("[data-tuning-before]").locator(sample.selector).first()).toHaveCSS(
+			sample.property,
+			baseline
+		);
+		await editor.getByRole("radio", { name: "深色", exact: true }).click();
+		await page.setViewportSize({ width: 390, height: 1000 });
+		await expect(subject).toHaveCSS(sample.property, sample.expected);
+		expect(await current.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(
+			true
+		);
+		await editor
+			.getByRole("textbox", { name: `${sample.title} 版本名称`, exact: true })
+			.fill("P3 密度");
+		await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+		await expect(editor.getByRole("status").filter({ hasText: "已保存「P3 密度」" })).toBeVisible();
+		await page.keyboard.press("Escape");
+		await expect(opener).toBeFocused();
+		await page.reload({ waitUntil: "networkidle" });
+		await page
+			.getByRole("combobox", { name: `${sample.title} 使用版本`, exact: true })
+			.selectOption({ label: "P3 密度" });
+		await opener.click();
+		await expect(page.getByRole("slider", { name: sample.label, exact: true })).toHaveAttribute(
+			"aria-valuenow",
+			String(sample.value)
+		);
+		await expect(
+			editor.locator("[data-tuning-current]").locator(sample.selector).first()
+		).toHaveCSS(sample.property, sample.expected);
+		expect(errors).toEqual([]);
+	});
+}
+
+test("Questionnaire editor preserves answers while tuning and isolates comparison forms", async ({
+	page,
+}) => {
+	await page.goto("/docs/components/questionnaire", { waitUntil: "networkidle" });
+	await page.getByRole("button", { name: "微调 Questionnaire", exact: true }).click();
+	const editor = page.getByRole("dialog", { name: "Questionnaire · 组件参数", exact: true });
+	const current = editor.locator("[data-tuning-current]");
+	const form = current.getByRole("form", { name: "草稿本地问卷" });
+	await editor.getByRole("button", { name: "草稿问卷：下一步", exact: true }).click();
+	await expect(form.locator('[aria-invalid="true"]').first()).toBeVisible();
+	await current
+		.getByRole("textbox", { name: "草稿问卷的其他完善方向", exact: true })
+		.fill("保持真实公开接口");
+	await setNumber(page, "选项横向留白（px）", 22);
+	await expect(
+		current.getByRole("textbox", { name: "草稿问卷的其他完善方向", exact: true })
+	).toHaveValue("保持真实公开接口");
+	await current.getByRole("button", { name: "草稿问卷：下一步", exact: true }).click();
+	for (const name of ["当前进度", "风险与阻碍"]) {
+		const choice = current.getByRole("checkbox", { name, exact: true });
+		await choice.focus();
+		await choice.press("Space");
+		await expect(choice).toBeChecked();
+	}
+	await current
+		.getByRole("textbox", { name: "草稿问卷的其他进度信息", exact: true })
+		.fill("可重复验收");
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.locator("[data-tuning-before]");
+	await expect(
+		before.getByRole("textbox", { name: "对照问卷的其他完善方向", exact: true })
+	).toHaveValue("");
+	await current.getByRole("button", { name: "草稿问卷：下一步", exact: true }).click();
+	await current.getByRole("textbox", { name: "草稿问卷的补充备注", exact: true }).fill("");
+	await current.getByRole("button", { name: "草稿问卷：提交答案", exact: true }).click();
+	await expect(current.getByRole("status")).toContainText("本地提交 0 次");
+	await current.getByRole("button", { name: "草稿问卷：跳过备注", exact: true }).click();
+	await expect(current.getByRole("status")).toContainText("本地提交 1 次");
+	expect(await form.evaluate((element) => [...new FormData(element as HTMLFormElement)])).toEqual([
+		["direction", "保持真实公开接口"],
+		["signals", "progress"],
+		["signals", "risks"],
+		["signals", "可重复验收"],
+	]);
+	await expect(before.getByRole("status")).toContainText("本地提交 0 次");
+	await current.getByRole("button", { name: "草稿问卷：恢复默认答案", exact: true }).click();
+	await expect(
+		current.getByRole("textbox", { name: "草稿问卷的其他完善方向", exact: true })
+	).toHaveValue("");
+	await expect(current.getByRole("status")).toContainText("本地提交 0 次");
+});
+
+test("Chart editor scopes real portaled tooltips and preserves accessible data", async ({
+	page,
+}) => {
+	await page.goto("/docs/components/chart", { waitUntil: "networkidle" });
+	await page.getByRole("button", { name: "微调 Chart", exact: true }).click();
+	const editor = page.getByRole("dialog", { name: "Chart · 组件参数", exact: true });
+	const current = editor.locator("[data-tuning-current]");
+	await expect(editor.getByTestId("chart-dials")).toBeVisible();
+	await setNumber(page, "横向留白（基准 px）", 24);
+	await setNumber(page, "纵向留白（基准 px）", 2);
+	await setNumber(page, "标题／系列区间距（基准 px）", 14);
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	await current.locator("[data-chart]").hover({ position: { x: 120, y: 100 } });
+	const tooltip = current.locator('[data-slot="chart-tooltip"]');
+	await expect(tooltip).toBeVisible();
+	await expect(tooltip).toHaveCSS("padding-left", "24px");
+	await expect(tooltip).toHaveCSS("padding-top", "2px");
+	await expect(tooltip).toHaveCSS("row-gap", "14px");
+	expect(await tooltip.evaluate((element) => element.closest("[data-chart]") !== null)).toBe(true);
+	await expect(current.getByRole("table")).toContainText("305");
+	const before = editor.locator("[data-tuning-before]");
+	await before.locator("[data-chart]").hover({ position: { x: 120, y: 100 } });
+	await expect(before.locator('[data-slot="chart-tooltip"]')).toHaveCSS("padding-left", "10px");
+	await current.getByRole("combobox", { name: "图表类型（仅预览）" }).selectOption("line");
+	await current.locator("[data-chart]").hover({ position: { x: 150, y: 100 } });
+	await expect(tooltip).toBeVisible();
+	await expect(tooltip).toHaveCSS("padding-left", "24px");
+	await expect(before.getByRole("combobox", { name: "图表类型（仅预览）" })).toHaveValue("bar");
+	await editor.getByRole("textbox", { name: "Chart 版本名称", exact: true }).fill("图表提示留白");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await page.keyboard.press("Escape");
+	await page.reload({ waitUntil: "networkidle" });
+	await page
+		.getByRole("combobox", { name: "Chart 使用版本", exact: true })
+		.selectOption({ label: "图表提示留白" });
+	await page.getByRole("button", { name: "微调 Chart", exact: true }).click();
+	await expect(
+		page.getByRole("slider", { name: "横向留白（基准 px）", exact: true })
+	).toHaveAttribute("aria-valuenow", "24");
+});
+
+test("Sidebar editor isolates cookies, breakpoint portals and nested Escape", async ({
+	page,
+	context,
+}) => {
+	test.setTimeout(60_000);
+	await context.addCookies([
+		{
+			name: "sidebar_state",
+			value: "sentinel",
+			url: new URL(test.info().project.use.baseURL!).origin,
+		},
+	]);
+	await page.goto("/docs/components/sidebar", { waitUntil: "domcontentloaded" });
+	const opener = page.getByRole("button", { name: "微调 Sidebar", exact: true });
+	const sample = page.frameLocator('iframe[data-preview-frame="sidebar"]');
+	await expect(sample.locator("[data-preview-ready]")).toBeVisible();
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Sidebar · 组件参数", exact: true });
+	await expect(editor.getByTestId("sidebar-dials")).toBeVisible();
+	await setNumber(page, "展开宽度（标称 px）", 320);
+	await setNumber(page, "菜单间距（标称 px）", 7);
+	await editor.getByRole("combobox", { name: "草稿侧栏预览窗口", exact: true }).selectOption("768");
+	const current = editor.frameLocator("[data-tuning-current] iframe");
+	await expect(current.locator('[data-slot="sidebar-container"]')).toHaveCSS("width", "320px");
+	await current.getByTestId("sidebar-main-action").click();
+	await page.keyboard.press("Control+b");
+	await expect(current.locator('[data-slot="sidebar"][data-state]')).toHaveAttribute(
+		"data-state",
+		"collapsed"
+	);
+	await expect(current.locator('[data-slot="sidebar-container"]')).toHaveCSS("width", "48px");
+	expect((await context.cookies()).find((cookie) => cookie.name === "sidebar_state")?.value).toBe(
+		"sentinel"
+	);
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	await editor.getByRole("combobox", { name: "对照侧栏预览窗口", exact: true }).selectOption("768");
+	const before = editor.frameLocator("[data-tuning-before] iframe");
+	await expect(before.locator('[data-slot="sidebar"][data-state]')).toHaveAttribute(
+		"data-state",
+		"expanded"
+	);
+	await expect(before.locator('[data-slot="sidebar-container"]')).toHaveCSS("width", "256px");
+	await editor.getByRole("textbox", { name: "Sidebar 版本名称", exact: true }).fill("侧栏密度");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await editor.getByRole("combobox", { name: "草稿侧栏预览窗口", exact: true }).selectOption("767");
+	await current.getByRole("button", { name: "切换侧边栏", exact: true }).click();
+	await expect(current.getByRole("dialog")).toBeVisible();
+	await expect(current.locator('[data-slot="sidebar-menu"]').first()).toHaveCSS("row-gap", "7px");
+	await expect(before.getByRole("dialog")).toHaveCount(0);
+	await page.keyboard.press("Escape");
+	await expect(current.getByRole("dialog")).toHaveCount(0);
+	await expect(editor).toBeVisible();
+	await expect(current.getByRole("button", { name: "切换侧边栏", exact: true })).toBeFocused();
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	await page.reload({ waitUntil: "domcontentloaded" });
+	await page
+		.getByRole("combobox", { name: "Sidebar 使用版本", exact: true })
+		.selectOption({ label: "侧栏密度" });
+	await expect(sample.locator('[data-slot="sidebar-wrapper"]')).toHaveCSS(
+		"--sidebar-width-default",
+		"20rem"
+	);
+});
+
+test("Sonner editor isolates notification stores and leaves unstyled layout untouched", async ({
+	page,
+}) => {
+	test.setTimeout(60_000);
+	await page.goto("/docs/components/sonner", { waitUntil: "networkidle" });
+	const showToast = page
+		.getByRole("region", { name: "Sonner 样式微调", exact: true })
+		.getByRole("button", { name: "Show Toast", exact: true });
+	await showToast.click();
+	await expect(page.locator("[data-sonner-toast]")).toHaveCount(1);
+	const opener = page.getByRole("button", { name: "微调 Sonner", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Sonner · 组件参数", exact: true });
+	await expect(editor.getByTestId("sonner-dials")).toBeVisible();
+	const current = editor.frameLocator("[data-tuning-current] iframe");
+	await expect(current.locator('[data-sonner-toast][data-styled="true"]').first()).toHaveCSS(
+		"padding-left",
+		"16px"
+	);
+	await setNumber(page, "横向留白（标称 px）", 30);
+	await setNumber(page, "纵向留白（标称 px）", 2);
+	await setNumber(page, "图文间距（标称 px）", 14);
+	await expect(current.locator('[data-sonner-toast]:not([data-removed="true"])').first()).toHaveCSS(
+		"padding-left",
+		"30px"
+	);
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const before = editor.frameLocator("[data-tuning-before] iframe");
+	await expect(before.locator("[data-sonner-toast]").first()).toHaveCSS("padding-left", "16px");
+	await current.getByRole("button", { name: "无样式通知", exact: true }).click();
+	await expect(current.locator('[data-sonner-toast][data-styled="false"]')).toHaveCSS(
+		"padding-left",
+		"0px"
+	);
+	await expect(current.locator('[data-sonner-toast][data-styled="false"]')).toHaveCSS(
+		"gap",
+		"normal"
+	);
+	await current.getByRole("button", { name: "清空通知", exact: true }).click();
+	await expect(current.locator("[data-sonner-toast]")).toHaveCount(0);
+	await expect(before.locator("[data-sonner-toast]")).toHaveCount(1);
+	await current.getByRole("button", { name: "本地 Promise", exact: true }).click();
+	await expect(current.locator("[data-sonner-toast]")).toContainText("本地导出已完成");
+	await expect(before.locator("[data-sonner-toast]")).toContainText("报告已保存");
+	await editor.getByRole("textbox", { name: "Sonner 版本名称", exact: true }).fill("通知密度");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await current.getByRole("button", { name: "本地 Promise", exact: true }).focus();
+	await page.keyboard.press("Escape");
+	await expect(editor).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	await page.reload({ waitUntil: "networkidle" });
+	await page
+		.getByRole("combobox", { name: "Sonner 使用版本", exact: true })
+		.selectOption({ label: "通知密度" });
+	await showToast.click();
+	await expect(page.locator('[data-sonner-toast][data-styled="true"]')).toHaveCSS(
+		"padding-left",
+		"30px"
+	);
+});
+
+test("Color Picker editor contains independent panels and applies saved width to the real page portal", async ({
+	page,
+}) => {
+	await page.goto("/docs/components/color-picker", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "微调 Color Picker", exact: true });
+	await opener.click();
+	const editor = page.getByRole("dialog", { name: "Color Picker · 组件参数", exact: true });
+	await expect(editor.getByTestId("color-picker-dials")).toBeVisible();
+	await setNumber(page, "自有面板宽度（px）", 320);
+	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
+	const current = editor.locator("[data-tuning-current]");
+	const before = editor.locator("[data-tuning-before]");
+	const trigger = (pane: typeof current) =>
+		pane.getByRole("button", { name: "演示颜色 #1e40af", exact: true });
+	await trigger(before).click();
+	await trigger(current).click();
+	const panel = (pane: typeof current) => pane.locator('[data-slot="color-picker-content"]');
+	await expect(panel(current)).toHaveCSS("width", "320px");
+	await expect(panel(before)).toHaveCSS("width", "256px");
+	const hex = current.getByRole("textbox", { name: "演示颜色：十六进制", exact: true });
+	await hex.fill("#abc");
+	await hex.press("Enter");
+	await expect(current.locator('input[name="color"]')).toHaveValue("#aabbcc");
+	await expect(before.locator('input[name="color"]')).toHaveValue("#1e40af");
+	await current.getByRole("button", { name: "查看颜色提交值", exact: true }).click();
+	await expect(current.locator("output")).toHaveText('{"color":"#aabbcc"}');
+	await page.setViewportSize({ width: 390, height: 1000 });
+	for (const pane of [before, current]) {
+		const bounds = await pane.boundingBox();
+		const content = await panel(pane).boundingBox();
+		expect(content!.x).toBeGreaterThanOrEqual(bounds!.x);
+		expect(content!.x + content!.width).toBeLessThanOrEqual(bounds!.x + bounds!.width);
+		expect(content!.y).toBeGreaterThanOrEqual(bounds!.y);
+		expect(content!.y + content!.height).toBeLessThanOrEqual(bounds!.y + bounds!.height);
+	}
+	await hex.focus();
+	await page.keyboard.press("Escape");
+	await expect(panel(current)).toBeHidden();
+	await expect(editor).toBeVisible();
+	await expect(
+		current.getByRole("button", { name: "演示颜色 #aabbcc", exact: true })
+	).toBeFocused();
+	await before.getByRole("textbox", { name: "演示颜色：十六进制", exact: true }).focus();
+	await page.keyboard.press("Escape");
+	await expect(panel(before)).toBeHidden();
+	await editor.getByRole("textbox", { name: "Color Picker 版本名称", exact: true }).fill("宽面板");
+	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
+	await page.keyboard.press("Escape");
+	await expect(opener).toBeFocused();
+	await page.locator('.sample [data-slot="color-picker"] button').first().click();
+	const pagePanel = page.locator(
+		'[data-slot="color-picker-content"]:not([data-color-picker-editor])'
+	);
+	await expect(pagePanel).toHaveCSS("width", "320px");
+	expect(await pagePanel.evaluate((element) => element.closest(".sample"))).toBeNull();
+});
+
 // Opt-in because this contract writes local development sources. Run alone with --workers 1.
 test("Avatar editor dev writeback refreshes the registry baseline and subsequent important badge drafts", async ({
 	page,

@@ -216,6 +216,75 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-spinner": /^size-(?:3|4|5|6|8)$/,
 	"cn-kbd": new RegExp(`^(?:h-(?:[4-7](?:\\.5)?|8)|px-(?:[0-2](?:\\.5)?|3)|rounded-${RADIUS})$`),
 	"cn-kbd-group": /^gap-(?:[0-3](?:\.5)?|4)$/,
+	...Object.fromEntries(
+		["cn-calendar-geometry", "cn-range-calendar-geometry"].map((name) => [
+			name,
+			new RegExp(
+				`^(?:\\[--cell-size:--spacing\\([6-9]\\)\\]|p-(?:[0-3](?:\\.5)?|4)|\\[--cell-radius:(?:var\\(--radius-(?:sm|md|lg|xl|2xl|3xl|4xl)\\)|0|calc\\(infinity\\*1px\\))\\])$`
+			),
+		])
+	),
+	"cn-command-item": /^(?:px-(?:[0-5](?:\.5)?|6)|(?:py|gap)-(?:[0-3](?:\.5)?|4))$/,
+	"cn-command-list": /^max-h-(?:4[048]|5[26]|6[048]|7[26]|8[048]|9[26])$/,
+	"cn-carousel-content-horizontal": /^-ms-(?:[0-7](?:\.5)?|8)$/,
+	"cn-carousel-content-vertical": /^-mt-(?:[0-7](?:\.5)?|8)$/,
+	"cn-carousel-item-horizontal": /^ps-(?:[0-7](?:\.5)?|8)$/,
+	"cn-carousel-item-vertical": /^pt-(?:[0-7](?:\.5)?|8)$/,
+	"cn-color-picker": /^gap-(?:[0-3](?:\.5)?|4)$/,
+	"cn-color-picker-content": /^(?:w-(?:56|60|64|68|72|76|80)|gap-(?:[1-5](?:\.5)?|6))$/,
+	...Object.fromEntries(
+		["default", "sm", "xs"].map((size) => [
+			`cn-attachment-size-${size}`,
+			new RegExp(
+				`^(?:has-data-\\[slot=attachment-content\\]:(?:px-(?:0\\.5|[1-3](?:\\.5)?|4(?:\\.5)?)|py-(?:[0-3](?:\\.5)?|4))|has-data-\\[slot=attachment-media\\]:p-(?:[0-3](?:\\.5)?|4)|rounded-${RADIUS})$`
+			),
+		])
+	),
+	"cn-bubble-content": new RegExp(
+		`^(?:px-(?:[0-7](?:\\.5)?|8)|py-(?:[0-5](?:\\.5)?|6)|rounded-${RADIUS})$`
+	),
+	"cn-bubble-group": /^gap-(?:[0-5](?:\.5)?|6)$/,
+	"cn-message": /^gap-(?:[0-7](?:\.5)?|8)$/,
+	"cn-message-content": /^gap-(?:[0-7](?:\.5)?|8)$/,
+	"cn-message-group": /^gap-(?:[0-7](?:\.5)?|8)$/,
+	...Object.fromEntries(
+		["header", "footer", "content"].map((part) => [
+			`cn-code-block-${part}`,
+			/^(?:group-data-\[size=sm\]\/code-block:)?px-(?:[2-7](?:\.5)?|8)$/,
+		])
+	),
+	"cn-code-block-line": /^(?:group-data-\[size=sm\]\/code-block:)?(?:px|-mx)-(?:[2-7](?:\.5)?|8)$/,
+	"cn-trace": /^gap-(?:[0-5](?:\.5)?|6)$/,
+	"cn-trace-collapsible-content-inner": /^mt-(?:[0-5](?:\.5)?|6)$/,
+	"cn-stepper": /^gap-(?:[0-7](?:\.5)?|8)$/,
+	"cn-stepper-trigger": /^p-(?:[2-5](?:\.5)?|6)$/,
+	"cn-questionnaire": /^gap-(?:[0-7](?:\.5)?|8)$/,
+	"cn-questionnaire-choices": /^gap-(?:[0-5](?:\.5)?|6)$/,
+	"cn-questionnaire-actions": /^gap-(?:[0-3](?:\.5)?|4)$/,
+	"cn-questionnaire-choice": /^(?:px|py)-(?:[0-5](?:\.5)?|6)$/,
+	"cn-chart-tooltip-layout": /^(?:px-(?:[0-5](?:\.5)?|6)|(?:py|gap)-(?:[0-3](?:\.5)?|4))$/,
+	"cn-sidebar-provider": /^\[--sidebar-width-default:(?:1[2-9](?:\.5)?|2[0-3](?:\.5)?|24)rem\]$/,
+	"cn-sidebar-menu": /^gap-(?:px|[0-2](?:\.(?:25|5|75))?|3)$/,
+	"cn-sonner-layout":
+		/^\[--valar-toast-(?:padding-x:--spacing\((?:[0-7](?:\.5)?|8)\)|padding-y:--spacing\((?:[0-5](?:\.5)?|6)\)|gap:--spacing\((?:[0-3](?:\.5)?|4)\))\]$/,
+	"cn-field-group": /^gap-(?:[0-9](?:\.5)?|1[01](?:\.5)?|12)$/,
+	"cn-field": /^gap-(?:[0-7](?:\.5)?|8)$/,
+	"cn-field-content": /^gap-(?:[0-5](?:\.5)?|6)$/,
+	"cn-form-item-layout": /^space-y-(?:[0-5](?:\.5)?|6)$/,
+	"cn-label-layout": /^gap-(?:[0-5](?:\.5)?|6)$/,
+	"cn-collapsible-content-geometry": /^(?:px|py)-(?:[0-7](?:\.5)?|8)$/,
+	"cn-aspect-ratio-geometry": new RegExp(`^(?:rounded-${RADIUS}|overflow-(?:hidden|visible))$`),
+	"cn-separator-geometry":
+		/^(?:data-horizontal:h|data-vertical:w)-(?:px|0\.(?:5|75)|1(?:\.(?:25|5|75))?|2)$/,
+	"cn-resizable-handle":
+		/^(?:w-(?:0\.25|0\.5|0\.75|1)|data-\[direction=vertical\]:h-(?:0\.25|0\.5|0\.75|1))$/,
+	"cn-scroll-area-scrollbar":
+		/^data-(?:vertical:w|horizontal:h)-(?:1\.5|2(?:\.5)?|3(?:\.5)?|4(?:\.5)?|5(?:\.5)?|6)$/,
+	"cn-scroll-area-thumb": new RegExp(`^rounded-${RADIUS}$`),
+	"cn-message-scroller-content": /^(?:gap|px|py)-(?:[0-9](?:\.5)?|1[01](?:\.5)?|12)$/,
+	"cn-marker-variant-default": /^gap-(?:[0-5](?:\.5)?|6)$/,
+	"cn-marker-variant-separator": /^gap-(?:[0-5](?:\.5)?|6)$/,
+	"cn-marker-variant-border": /^(?:gap|pb)-(?:[0-5](?:\.5)?|6)$/,
 	"cn-avatar": new RegExp(
 		`^(?:(?:data-\\[size=(?:sm|lg)\\]:)?size-(?:[5-9]|1[0-6])|(?:after:)?rounded-${RADIUS})$`
 	),

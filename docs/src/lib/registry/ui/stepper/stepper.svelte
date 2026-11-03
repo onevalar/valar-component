@@ -232,7 +232,7 @@
 	aria-busy={pending}
 	data-slot="stepper"
 	data-orientation={orientation}
-	class={cn("grid w-full min-w-0 gap-5 text-foreground", className)}
+	class={cn("grid w-full min-w-0 gap-5 text-foreground", "cn-stepper", className)}
 >
 	<ol
 		class={cn(
@@ -267,7 +267,10 @@
 						.join(" ") || undefined}
 					disabled={disabled || !reachable(index) || (pending && index > currentIndex)}
 					tabindex={(focused || value) === step.id ? 0 : -1}
-					class="flex w-full items-start gap-3 rounded-md border border-border bg-background p-3 text-start text-sm outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 data-[state=active]:border-primary data-[state=error]:border-destructive"
+					class={cn(
+						"flex w-full items-start gap-3 rounded-md border border-border bg-background p-3 text-start text-sm outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 data-[state=active]:border-primary data-[state=error]:border-destructive",
+						"cn-stepper-trigger"
+					)}
 					onclick={() => goTo(step.id)}
 					onkeydown={(event) => keydown(event, index)}
 					onfocus={() => (focused = step.id)}

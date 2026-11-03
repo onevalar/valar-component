@@ -14,6 +14,7 @@
 		ref = $bindable(null),
 		open = $bindable(true),
 		onOpenChange = () => {},
+		persistState = true,
 		class: className,
 		style,
 		children,
@@ -21,6 +22,8 @@
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		open?: boolean;
 		onOpenChange?: (open: boolean) => void;
+		/** Disable cookie writes for temporary or embedded application shells. */
+		persistState?: boolean;
 	} = $props();
 
 	const sidebar = setSidebar({
@@ -30,7 +33,9 @@
 			onOpenChange(value);
 
 			// This sets the cookie to keep the sidebar state.
-			document.cookie = `${SIDEBAR_COOKIE_NAME}=${open}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+			if (persistState) {
+				document.cookie = `${SIDEBAR_COOKIE_NAME}=${open}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+			}
 		},
 	});
 </script>
@@ -40,9 +45,10 @@
 <Tooltip.Provider delayDuration={0}>
 	<div
 		data-slot="sidebar-wrapper"
-		style="--sidebar-width: {SIDEBAR_WIDTH}; --sidebar-width-icon: {SIDEBAR_WIDTH_ICON}; {style}"
+		style="--sidebar-width: var(--sidebar-width-default, {SIDEBAR_WIDTH}); --sidebar-width-icon: {SIDEBAR_WIDTH_ICON}; {style}"
 		class={cn(
 			"group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar",
+			"cn-sidebar-provider",
 			className
 		)}
 		bind:this={ref}

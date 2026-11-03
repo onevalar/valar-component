@@ -29,6 +29,8 @@ links:
 
 The Sonner component is provided by [svelte-sonner](https://svelte-sonner.vercel.app/), which is a Svelte port of [Sonner](https://sonner.emilkowal.ski/), originally created by [Emil Kowalski](https://twitter.com/emilkowalski_) for React.
 
+The component editor adjusts padding and content gap for standard styled notifications only. Custom notifications and `unstyled` notifications keep their own layout. Explicit `toastOptions` still replaces the wrapper defaults as a whole, and each notification's inline `style` takes priority. Changing editor parameters replays that preview's examples; it does not restart production notifications. In the current upstream version, hover or Alt+T expansion pauses the timer, but ordinary Tab focus on an action does not.
+
 ## Installation
 
 <Step>Setup theme support</Step>

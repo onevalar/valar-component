@@ -12,7 +12,7 @@
 	style="--normal-bg: var(--color-popover); --normal-text: var(--color-popover-foreground); --normal-border: var(--color-border);"
 	toastOptions={{
 		classes: {
-			toast: "cn-toast",
+			toast: "cn-toast cn-sonner-layout",
 		},
 	}}
 	{...restProps}
@@ -68,3 +68,12 @@
 		/>
 	{/snippet}
 </Sonner>
+
+<style>
+	/* Unlayered, like Sonner's own defaults. Custom/unstyled and caller inline styles win. */
+	:global(.cn-toast[data-sonner-toast][data-styled="true"]) {
+		padding-inline: var(--valar-toast-padding-x, 16px);
+		padding-block: var(--valar-toast-padding-y, 16px);
+		gap: var(--valar-toast-gap, 6px);
+	}
+</style>

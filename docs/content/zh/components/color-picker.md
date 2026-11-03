@@ -40,5 +40,7 @@ links:
 - 弹层内提供浏览器原生色盘（Chromium 等浏览器自带取色器）、十六进制输入和可选预设色块，三者实时同步。
 - 十六进制输入：输入满六位时立即生效；三位简写在 Enter 或失焦时展开生效；未完成的输入不会修改当前值，失焦后恢复为当前值。出现非十六进制字符时提示错误。
 - 预设色块是带 `aria-pressed` 的按钮，当前颜色处于按下状态。弹层的打开、关闭、焦点归还和 Esc 行为来自 Bits UI Popover。
+- `contentProps` 透传 Popover.Content 的配置（不含 `children`／`child`），例如 `sideOffset`、`class` 或 `portalProps`；默认仍使用 Portal，只有需要容器内渲染时才传 `portalProps={{ disabled: true }}`。面板样式只影响 Color Picker，不修改全局 Popover。
+- 根节点 `class` 与 `contentProps.class` 中的显式工具类优先于各自默认类；面板使用专属 `data-slot="color-picker-content"`，包括默认 Portal 渲染时。
 - 传入 `name` 时以 `#rrggbb` 参与原生表单提交。
 - 当前不支持透明度、OKLCH／HSL 等其他色彩空间的直接编辑；原生色盘的外观由浏览器决定。

@@ -30,9 +30,14 @@
 >
 	<div
 		bind:this={ref}
+		data-slot="carousel-container"
+		data-orientation={emblaCtx.orientation}
 		class={cn(
 			"flex",
 			emblaCtx.orientation === "horizontal" ? "-ms-4" : "-mt-4 flex-col",
+			emblaCtx.orientation === "horizontal"
+				? "cn-carousel-content-horizontal"
+				: "cn-carousel-content-vertical",
 			className
 		)}
 		data-embla-container=""
