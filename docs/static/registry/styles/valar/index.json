@@ -522,6 +522,7 @@
 		"type": "registry:ui",
 		"description": "在页面上展示月历并选择日期。",
 		"registryDependencies": [
+			"popover",
 			"button"
 		],
 		"meta": {
@@ -2214,6 +2215,7 @@
 		"type": "registry:ui",
 		"description": "在月历上选择开始和结束日期。",
 		"registryDependencies": [
+			"popover",
 			"button"
 		],
 		"meta": {
@@ -4712,6 +4714,12 @@
 			"highlighter"
 		],
 		"relativeUrl": "use-highlighted-code.json"
+	},
+	{
+		"name": "use-scrollbar-autohide",
+		"type": "registry:hook",
+		"registryDependencies": [],
+		"relativeUrl": "use-scrollbar-autohide.json"
 	},
 	{
 		"name": "casing",

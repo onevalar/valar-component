@@ -56,34 +56,70 @@ const docSchema = s
 		// its visual states and keep install and usage notes behind them.
 		const previews = [];
 		let heading = "";
-		let notes = [];
+		// Plain paragraphs under the current heading, and whether each came after the last code block.
+		/** @type {{ text: string; afterCode: boolean }[]} */
+		let paragraphs = [];
+		/** @type {string[]} */
+		let current = [];
 		let fenced = false;
 		let script = false;
+		const flush = () => {
+			if (current.length) paragraphs.push({ text: current.join(" "), afterCode: true });
+			current = [];
+		};
+		/** The first couple of sentences, so a card explains its example without a wall of text. */
+		const brief = (/** @type {string} */ text) => {
+			const plain = text
+				.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+				.replace(/[`*]/g, "")
+				.trim();
+			const sentences = plain.match(/[^。！？]+[。！？]?/g) ?? [plain];
+			let out = "";
+			for (const sentence of sentences) {
+				if (out && (out + sentence).length > 90) break;
+				out += sentence;
+			}
+			return out.trim();
+		};
 		for (const line of raw.split("\n")) {
-			if (line.startsWith("```")) fenced = !fenced;
-			if (fenced || line.startsWith("```")) continue;
+			if (line.startsWith("```")) {
+				flush();
+				// Text before a code block describes the code; only what follows it explains the example.
+				if (fenced) for (const p of paragraphs) p.afterCode = false;
+				fenced = !fenced;
+				continue;
+			}
+			if (fenced) continue;
 			if (/^\s*<script\b/.test(line)) script = true;
 			if (script) {
 				if (/<\/script>/.test(line)) script = false;
 				continue;
 			}
-			const h = line.match(/^##\s+(.+)$/);
+			// Both `##` and `###` name an example: the nearest heading wins.
+			const h = line.match(/^#{2,3}\s+(.+)$/);
 			if (h) {
+				flush();
 				heading = h[1].trim();
-				notes = [];
+				paragraphs = [];
 				continue;
 			}
 			const p = line.match(/<ComponentPreview\b[^>]*\bname="([^"]+)"/);
 			if (p) {
-				// The plain sentences between the heading and the example explain what it shows.
-				const text = notes
-					.join(" ")
-					.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-					.trim();
+				flush();
+				// The paragraph written right before the example says what it shows; failing that,
+				// the section's opening paragraph does.
+				const near = paragraphs.findLast((x) => x.afterCode);
+				const text = brief((near ?? paragraphs[0])?.text ?? "");
 				previews.push({ name: p[1], title: heading, text });
-				notes = [];
-			} else if (line.trim() && !/^[<{|#\t-]/.test(line.trim()) && !line.startsWith("\t")) {
-				notes.push(line.trim());
+				paragraphs = [];
+			} else if (!line.trim()) {
+				flush();
+			} else if (
+				!/^[<{|#\t-]/.test(line.trim()) &&
+				!line.startsWith("\t") &&
+				!/^\d+\.\s/.test(line.trim())
+			) {
+				current.push(line.trim());
 			}
 		}
 

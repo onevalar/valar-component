@@ -82,7 +82,7 @@
 			"target": "sidebar/index.ts"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"sidebar-content\"\n\tdata-sidebar=\"content\"\n\tclass={cn(\n\t\t\"no-scrollbar gap-0 flex min-h-0 flex-1 flex-col overflow-auto group-data-[collapsible=icon]:overflow-hidden\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"sidebar-content\"\n\tdata-sidebar=\"content\"\n\tclass={cn(\n\t\t\"no-scrollbar gap-0 flex min-h-0 flex-1 flex-col scrollbar-stable overflow-auto group-data-[collapsible=icon]:overflow-hidden\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
 			"type": "registry:file",
 			"target": "sidebar/sidebar-content.svelte"
 		},

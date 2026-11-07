@@ -1,0 +1,12 @@
+{
+	"$schema": "http://127.0.0.1:5186/schema/registry-item.json",
+	"name": "use-scrollbar-autohide",
+	"type": "registry:hook",
+	"files": [
+		{
+			"content": "/**\n * Makes scrollbars that ask for it hide while nothing is scrolling and return when the reader\n * scrolls. Call it once in the root layout. Which scrollbars hide is decided in the markup:\n * `data-scrollbar=\"autohide\"` (or the `scrollbar-autohide` class) on the element, or on <html>\n * for the page. Nothing hides unless asked, and without this hook nothing hides at all.\n *\n * It only sets two attributes; the colours and the fade live in the library's stylesheet.\n */\nexport function useScrollbarAutohide(delay = 1000) {\n\t$effect(() => {\n\t\tconst root = document.documentElement;\n\t\tconst timers = new WeakMap<Element, ReturnType<typeof setTimeout>>();\n\t\troot.setAttribute(\"data-scrollbar-ready\", \"\");\n\n\t\t// `scroll` does not bubble, but a capturing listener on the document hears every region.\n\t\tfunction onScroll(event: Event) {\n\t\t\tconst target = event.target === document ? root : event.target;\n\t\t\tif (!(target instanceof Element)) return;\n\t\t\ttarget.setAttribute(\"data-scrolling\", \"\");\n\t\t\tclearTimeout(timers.get(target));\n\t\t\ttimers.set(\n\t\t\t\ttarget,\n\t\t\t\tsetTimeout(() => target.removeAttribute(\"data-scrolling\"), delay)\n\t\t\t);\n\t\t}\n\n\t\tdocument.addEventListener(\"scroll\", onScroll, { capture: true, passive: true });\n\t\treturn () => {\n\t\t\tdocument.removeEventListener(\"scroll\", onScroll, { capture: true });\n\t\t\troot.removeAttribute(\"data-scrollbar-ready\");\n\t\t};\n\t});\n}\n",
+			"type": "registry:hook",
+			"target": "use-scrollbar-autohide.svelte.ts"
+		}
+	]
+}

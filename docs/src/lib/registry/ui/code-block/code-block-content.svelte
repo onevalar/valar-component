@@ -55,7 +55,7 @@
 	tabindex={0}
 	style="counter-reset: line {startLine - 1};{style ?? ''}"
 	class={cn(
-		"cn-code-block-content min-h-0 min-w-0 scroll-fade-x scrollbar-thin overflow-auto text-start font-mono outline-none data-wrap:scroll-fade-y data-wrap:wrap-break-word data-wrap:whitespace-pre-wrap",
+		"cn-code-block-content min-h-0 min-w-0 scroll-fade-x scrollbar-stable overflow-auto text-start font-mono outline-none data-wrap:scroll-fade-y data-wrap:wrap-break-word data-wrap:whitespace-pre-wrap",
 		className
 	)}
 	{...restProps}>{@render content()}</pre>

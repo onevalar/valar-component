@@ -47,7 +47,7 @@
 	},
 	"files": [
 		{
-			"content": "# Message Scroller 设计规范\n\n- 结构为 `MessageScroller.Provider` > `MessageScroller.Root` > `MessageScroller.Viewport` > `MessageScroller.Content`，`MessageScroller.Button` 放在 Root 内；不要自己写聊天滚动逻辑。\n- 它会填满父元素：放在高度受限的容器中（如 `flex h-screen flex-col` 里设 `flex-1`），否则无法滚动。\n- `MessageScroller.Content` 的每个直接子元素都包一层 `MessageScroller.Item`，并设稳定的 `messageId`（消息 id，不要用数组下标）。\n- 用 `scrollAnchor` 标记开启新一轮对话的行（通常是用户的消息），新一轮会停在视口上方并保留上一轮的一部分；输入提示、加载更多等行不要设为锚点。\n- 不要自动滚到底部打断阅读；跳到指定消息用 `useMessageScroller` 提供的方法。\n",
+			"content": "# Message Scroller 设计规范\n\n- 结构为 `MessageScroller.Provider` > `MessageScroller.Root` > `MessageScroller.Viewport` > `MessageScroller.Content`，`MessageScroller.Button` 放在 Root 内；不要自己写聊天滚动逻辑。\n- 它会填满父元素：放在高度受限的容器中（如 `flex h-screen flex-col` 里设 `flex-1`），否则无法滚动。\n- `MessageScroller.Content` 的每个直接子元素都包一层 `MessageScroller.Item`，并设稳定的 `messageId`（消息 id，不要用数组下标）。\n- 用 `scrollAnchor` 标记开启新一轮对话的行（通常是用户的消息），新一轮会停在视口上方并保留上一轮的一部分；输入提示、加载更多等行不要设为锚点。\n- 不要自动滚到底部打断阅读；跳到指定消息用 `useMessageScroller` 提供的方法。\n- 视口已用 `scrollbar-stable`：滚动条出现或消失时消息不会左右移动；不要给 `MessageScroller.Viewport` 另加 `overflow-*` 或 `scrollbar-*` 类。\n",
 			"type": "registry:file",
 			"target": "message-scroller/RULES.md"
 		},
@@ -77,7 +77,7 @@
 			"target": "message-scroller/message-scroller-provider.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { MessageScroller as MessageScrollerPrimitive } from \"@valar/svelte-primitives/message-scroller\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tclass: className,\n\t\tref = $bindable(null),\n\t\t\"aria-label\": ariaLabel = \"消息\",\n\t\t...restProps\n\t}: MessageScrollerPrimitive.ViewportProps = $props();\n</script>\n\n<MessageScrollerPrimitive.Viewport\n\tbind:ref\n\tdata-slot=\"message-scroller-viewport\"\n\taria-label={ariaLabel}\n\tclass={cn(\n\t\t\"size-full min-h-0 min-w-0 scroll-fade-b scrollbar-thin scrollbar-gutter-stable overflow-y-auto overscroll-contain contain-content data-autoscrolling:scrollbar-thumb-transparent data-autoscrolling:scrollbar-track-transparent data-pending-scroll:invisible\",\n\t\tclassName\n\t)}\n\t{...restProps}\n/>\n",
+			"content": "<script lang=\"ts\">\n\timport { MessageScroller as MessageScrollerPrimitive } from \"@valar/svelte-primitives/message-scroller\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tclass: className,\n\t\tref = $bindable(null),\n\t\t\"aria-label\": ariaLabel = \"消息\",\n\t\t...restProps\n\t}: MessageScrollerPrimitive.ViewportProps = $props();\n</script>\n\n<MessageScrollerPrimitive.Viewport\n\tbind:ref\n\tdata-slot=\"message-scroller-viewport\"\n\taria-label={ariaLabel}\n\tclass={cn(\n\t\t\"size-full min-h-0 min-w-0 scroll-fade-b scrollbar-stable overflow-y-auto overscroll-contain contain-content data-autoscrolling:scrollbar-thumb-transparent data-autoscrolling:scrollbar-track-transparent data-pending-scroll:invisible\",\n\t\tclassName\n\t)}\n\t{...restProps}\n/>\n",
 			"type": "registry:file",
 			"target": "message-scroller/message-scroller-viewport.svelte"
 		},

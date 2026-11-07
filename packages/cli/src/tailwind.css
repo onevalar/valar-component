@@ -88,6 +88,55 @@
 	}
 }
 
+/*
+ * Scrollbars never move the layout and never draw a groove.
+ * - The page keeps the scrollbar's width in reserve, so a long page and a short one line up and
+ *   nothing slides sideways.
+ * - The track is transparent, so only the thumb shows, resting on the page background.
+ * - Hiding is opt-in. Put `data-scrollbar="autohide"` on the page (the <html> tag) or on any
+ *   scrolling element, or the `scrollbar-autohide` class on an element, and its thumb fades out a
+ *   moment after scrolling stops and returns when scrolling starts. An element is also shown while
+ *   the pointer is over it. This needs `useScrollbarAutohide()` running once in the root layout
+ *   (it sets `data-scrollbar-ready`); without it nothing is ever hidden, so a forgotten hook
+ *   never leaves a page without a scrollbar.
+ */
+@layer base {
+	html {
+		scrollbar-width: thin;
+		scrollbar-gutter: stable;
+		scrollbar-color: color-mix(in oklab, var(--foreground, currentColor) 30%, transparent)
+			transparent;
+		transition: scrollbar-color 0.3s ease;
+	}
+}
+
+/* Outside any layer on purpose: it has to beat the colour a utility such as `scrollbar-stable` sets. */
+:root[data-scrollbar-ready][data-scrollbar="autohide"]:not([data-scrolling]),
+:root[data-scrollbar-ready] [data-scrollbar="autohide"]:not([data-scrolling]):not(:hover) {
+	scrollbar-color: transparent transparent;
+}
+
+/*
+ * The same for a scrolling region inside a component: a thin thumb with no track, its width held
+ * back even while there is nothing to scroll. Use it instead of a bare `overflow-auto`.
+ * Horizontal bars take height rather than width and cannot be held back this way; use the
+ * floating Scroll Area component for those.
+ */
+@utility scrollbar-stable {
+	scrollbar-width: thin;
+	scrollbar-gutter: stable;
+	scrollbar-color: color-mix(in oklab, var(--foreground, currentColor) 30%, transparent)
+		transparent;
+	transition: scrollbar-color 0.3s ease;
+}
+
+/* Hide this element's scrollbar while it is not scrolling (see above). */
+@utility scrollbar-autohide {
+	:root[data-scrollbar-ready] &:not([data-scrolling]):not(:hover) {
+		scrollbar-color: transparent transparent;
+	}
+}
+
 /* scroll-fade */
 @property --scroll-fade-t {
 	syntax: "<length-percentage>";
