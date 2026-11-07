@@ -3,4 +3,11 @@
  * 组件文档页的“写回组件库”会重写本文件；也可以手动编辑。上游文件保持原样。
  */
 .style-valar {
+  /* 日历：格子 36px，整体约 268px 宽，比上游的 28px 宽松、不挤。 */
+  .cn-calendar-geometry {
+    @apply [--cell-size:--spacing(9)];
+  }
+  .cn-range-calendar-geometry {
+    @apply [--cell-size:--spacing(9)];
+  }
 }

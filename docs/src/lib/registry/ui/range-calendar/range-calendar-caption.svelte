@@ -45,17 +45,23 @@
 		{months}
 		{monthFormat}
 		value={month.month}
-		onchange={(e) => {
+		onValueChange={(v) => {
 			if (!placeholder) return;
-			const v = Number.parseInt(e.currentTarget.value);
-			const newPlaceholder = placeholder.set({ month: v });
-			placeholder = newPlaceholder.subtract({ months: monthIndex });
+			placeholder = placeholder.set({ month: v }).subtract({ months: monthIndex });
 		}}
 	/>
 {/snippet}
 
 {#snippet YearSelect()}
-	<RangeCalendarYearSelect {years} {yearFormat} value={month.year} />
+	<RangeCalendarYearSelect
+		{years}
+		{yearFormat}
+		value={month.year}
+		onValueChange={(v) => {
+			if (!placeholder) return;
+			placeholder = month.set({ year: v }).subtract({ months: monthIndex });
+		}}
+	/>
 {/snippet}
 
 {#if captionLayout === "dropdown"}
