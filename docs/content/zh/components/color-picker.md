@@ -1,6 +1,6 @@
 ---
 title: 颜色选择器
-description: 选择颜色：色盘、十六进制输入与预设色块，值为 #rrggbb。
+description: 选择颜色：色盘、十六进制输入与预设色块，值为 "#rrggbb"。
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/color-picker

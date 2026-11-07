@@ -9,9 +9,10 @@ import {
 	registry,
 	utils,
 } from "$content/index.js";
-import type { Component } from "svelte";
+import { COMPONENT_CATEGORIES, OTHER_CATEGORY } from "$lib/component-categories.js";
 import { localeFromPathname, localizeHref, type Locale } from "$lib/i18n/config.js";
 import { translate, type MessageKey } from "$lib/i18n/index.js";
+import type { Component } from "svelte";
 
 export type NavItem = {
 	title: string;
@@ -22,10 +23,29 @@ export type NavItem = {
 	icon?: Component;
 	/** Stable identifier used for grouping and filtering, independent of the locale. */
 	key?: string;
+	/** Top-level section this item belongs to, used to highlight it in the header. */
+	section?: NavSection;
 };
+
+export type NavSection = "home" | "components" | "advanced" | "docs" | "themes";
+
+/** Which top-level section a pathname belongs to. Basic and advanced components are separate sections. */
+export function sectionOf(pathname: string, locale: Locale): NavSection | null {
+	const path = pathname.length > 1 ? pathname.replace(/\/$/, "") : pathname;
+	const under = (base: string) =>
+		path === to(locale, base) || path.startsWith(`${to(locale, base)}/`);
+	if (path === "/" || path === "/zh") return "home";
+	if (under("/docs/components")) return "components";
+	if (under("/docs/ai-elements")) return "advanced";
+	if (under("/docs")) return "docs";
+	if (under("/themes")) return "themes";
+	return null;
+}
 
 export type SidebarNavItem = NavItem & {
 	items: SidebarNavItem[];
+	/** Optional sub-groups of `items` for the sidebar and mobile menu; `items` stays flat for search. */
+	subgroups?: { key: string; title: string; items: SidebarNavItem[] }[];
 };
 
 export type NavItemWithChildren = NavItem & {
@@ -74,7 +94,12 @@ function compareTitles(locale: Locale) {
 
 function generateSectionsNav(locale: Locale): SidebarNavItem[] {
 	return [
-		{ key: "get-started", title: label(locale, translationKeys.getStarted), href: to(locale, "/docs"), items: [] },
+		{
+			key: "get-started",
+			title: label(locale, translationKeys.getStarted),
+			href: to(locale, "/docs"),
+			items: [],
+		},
 		{
 			key: "components",
 			title: label(locale, translationKeys.components),
@@ -87,7 +112,12 @@ function generateSectionsNav(locale: Locale): SidebarNavItem[] {
 			href: to(locale, "/docs/ai-elements"),
 			items: [],
 		},
-		{ key: "forms", title: label(locale, translationKeys.forms), href: to(locale, "/docs/forms"), items: [] },
+		{
+			key: "forms",
+			title: label(locale, translationKeys.forms),
+			href: to(locale, "/docs/forms"),
+			items: [],
+		},
 		{
 			key: "changelog",
 			title: label(locale, translationKeys.changelog),
@@ -106,21 +136,35 @@ function generateGetStartedNav(locale: Locale): SidebarNavItem[] {
 			items: [],
 		},
 		{ title: "components.json", href: to(locale, "/docs/components-json"), items: [] },
-		{ key: "theming", title: label(locale, translationKeys.theming), href: to(locale, "/docs/theming"), items: [] },
+		{
+			key: "theming",
+			title: label(locale, translationKeys.theming),
+			href: to(locale, "/docs/theming"),
+			items: [],
+		},
 		{
 			key: "dark-mode",
 			title: label(locale, translationKeys.darkMode),
 			href: to(locale, "/docs/dark-mode"),
 			items: [],
 		},
-		{ key: "cli", title: label(locale, translationKeys.cli), href: to(locale, "/docs/cli"), items: [] },
+		{
+			key: "cli",
+			title: label(locale, translationKeys.cli),
+			href: to(locale, "/docs/cli"),
+			items: [],
+		},
 		{
 			key: "javascript",
 			title: label(locale, translationKeys.javascript),
 			href: to(locale, "/docs/javascript"),
 			items: [],
 		},
-		{ title: locale === "zh" ? "方向 / RTL" : "Direction / RTL", href: to(locale, "/docs/direction"), items: [] },
+		{
+			title: locale === "zh" ? "方向 / RTL" : "Direction / RTL",
+			href: to(locale, "/docs/direction"),
+			items: [],
+		},
 		// The llms.txt endpoints are generated once for the whole site, not per locale.
 		{ title: "llms.txt", href: "/llms.txt", items: [] },
 	];
@@ -164,6 +208,27 @@ function generateComponentsNav(locale: Locale): SidebarNavItem[] {
 	}
 
 	return items;
+}
+
+function groupComponentsNav(
+	locale: Locale,
+	items: SidebarNavItem[]
+): NonNullable<SidebarNavItem["subgroups"]> {
+	const lang = locale === "zh" ? "zh" : "en";
+	const slugOf = (item: SidebarNavItem) => item.href?.replace(/\/$/, "").split("/").pop() ?? "";
+	const known = new Set<string>(COMPONENT_CATEGORIES.flatMap((category) => category.slugs));
+	return [
+		...COMPONENT_CATEGORIES.map((category) => ({
+			key: category.key,
+			title: category[lang],
+			items: items.filter((item) => (category.slugs as readonly string[]).includes(slugOf(item))),
+		})),
+		{
+			key: OTHER_CATEGORY.key,
+			title: OTHER_CATEGORY[lang],
+			items: items.filter((item) => !known.has(slugOf(item))),
+		},
+	].filter((group) => group.items.length);
 }
 
 const DARK_MODE_ORDER = ["svelte", "astro"];
@@ -227,7 +292,8 @@ function generateFormsNav(locale: Locale): SidebarNavItem[] {
 		.sort(compareTitles(locale))
 		.map((doc) => ({
 			title: doc.title,
-			href: doc.path === "forms" ? to(locale, "/docs/forms") : to(locale, `/docs/forms/${doc.slug}`),
+			href:
+				doc.path === "forms" ? to(locale, "/docs/forms") : to(locale, `/docs/forms/${doc.slug}`),
 			items: [],
 		}));
 }
@@ -249,15 +315,36 @@ function generateMigrationNav(locale: Locale): SidebarNavItem[] {
 /** Sidebar navigation, generated per locale so titles and hrefs match the current language. */
 export function getSidebarNavItems(locale: Locale = "en"): SidebarNavItem[] {
 	return [
-		{ key: "sections", title: label(locale, translationKeys.sections), items: generateSectionsNav(locale) },
+		{
+			key: "sections",
+			title: label(locale, translationKeys.sections),
+			items: generateSectionsNav(locale),
+		},
 		{
 			key: "components",
 			title: label(locale, translationKeys.components),
-			items: generateComponentsNav(locale).filter((item) => item.href !== to(locale, "/docs/components")),
+			...(() => {
+				const items = generateComponentsNav(locale).filter(
+					(item) => item.href !== to(locale, "/docs/components")
+				);
+				return { items, subgroups: groupComponentsNav(locale, items) };
+			})(),
 		},
-		{ key: "ai-elements", title: label(locale, translationKeys.aiElements), items: generateAiElementsNav(locale) },
-		{ key: "get-started", title: label(locale, translationKeys.getStarted), items: generateGetStartedNav(locale) },
-		{ key: "utilities", title: label(locale, translationKeys.utils), items: generateUtilsNav(locale) },
+		{
+			key: "ai-elements",
+			title: label(locale, translationKeys.aiElements),
+			items: generateAiElementsNav(locale),
+		},
+		{
+			key: "get-started",
+			title: label(locale, translationKeys.getStarted),
+			items: generateGetStartedNav(locale),
+		},
+		{
+			key: "utilities",
+			title: label(locale, translationKeys.utils),
+			items: generateUtilsNav(locale),
+		},
 		{
 			key: "changelog",
 			title: label(locale, translationKeys.changelog),
@@ -267,24 +354,47 @@ export function getSidebarNavItems(locale: Locale = "en"): SidebarNavItem[] {
 		{
 			key: "installation",
 			title: label(locale, translationKeys.installation),
-			items: generateInstallationNav(locale).filter((item) => item.href !== to(locale, "/docs/installation")),
+			items: generateInstallationNav(locale).filter(
+				(item) => item.href !== to(locale, "/docs/installation")
+			),
 		},
-		{ key: "dark-mode", title: label(locale, translationKeys.darkMode), items: generateDarkModeNav(locale) },
-		{ key: "registry", title: label(locale, translationKeys.registry), items: generateRegistryNav(locale) },
+		{
+			key: "dark-mode",
+			title: label(locale, translationKeys.darkMode),
+			items: generateDarkModeNav(locale),
+		},
+		{
+			key: "registry",
+			title: label(locale, translationKeys.registry),
+			items: generateRegistryNav(locale),
+		},
 		{ key: "forms", title: label(locale, translationKeys.forms), items: generateFormsNav(locale) },
 		{
 			key: "migration",
 			title: label(locale, translationKeys.migration),
-			items: generateMigrationNav(locale).filter((item) => item.href !== to(locale, "/docs/migration")),
+			items: generateMigrationNav(locale).filter(
+				(item) => item.href !== to(locale, "/docs/migration")
+			),
 		},
 	];
 }
 
 export function getMainNavItems(locale: Locale = "en"): NavItem[] {
+	const zh = locale === "zh";
 	return [
-		{ title: label(locale, "nav.components"), href: to(locale, "/docs/components") },
-		{ title: locale === "zh" ? "设计 token" : "Design tokens", href: to(locale, "/themes") },
-		{ title: label(locale, "nav.docs"), href: to(locale, "/docs/installation") },
+		{ title: label(locale, "nav.home"), href: to(locale, "/"), section: "home" },
+		{
+			title: zh ? "基础组件" : "Basic components",
+			href: to(locale, "/docs/components"),
+			section: "components",
+		},
+		{
+			title: zh ? "高级组件" : "Advanced components",
+			href: to(locale, "/docs/ai-elements"),
+			section: "advanced",
+		},
+		{ title: label(locale, "nav.docs"), href: to(locale, "/docs/installation"), section: "docs" },
+		{ title: zh ? "设计 token" : "Design tokens", href: to(locale, "/themes"), section: "themes" },
 	];
 }
 
@@ -294,7 +404,9 @@ export function getFullNavItems(locale: Locale = "en"): Array<SidebarNavItem & {
 		...generateAiElementsNav(locale),
 		...generateGetStartedNav(locale),
 		...generateUtilsNav(locale),
-		...generateInstallationNav(locale).filter((item) => item.href !== to(locale, "/docs/installation")),
+		...generateInstallationNav(locale).filter(
+			(item) => item.href !== to(locale, "/docs/installation")
+		),
 		...generateDarkModeNav(locale),
 		...generateRegistryNav(locale),
 		...generateFormsNav(locale),

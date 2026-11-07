@@ -42,8 +42,9 @@ const docSchema = s
 			.optional(),
 		component: s.boolean().default(false),
 		toc: s.toc(),
+		raw: s.raw(),
 	})
-	.transform((data) => {
+	.transform(({ raw, ...data }) => {
 		// Chinese documents live under `content/zh` with the same relative structure as the
 		// English originals, so a single collection can serve both locales.
 		const isChinese = data.path === "zh" || data.path.startsWith("zh/");
@@ -51,8 +52,44 @@ const docSchema = s
 		// Velite normalizes `zh/index.md` to `zh`, so the Chinese home doc needs its path back.
 		if (path === "") path = "index";
 
+		// Live examples of the page with the heading above each, so a component page can lead with
+		// its visual states and keep install and usage notes behind them.
+		const previews = [];
+		let heading = "";
+		let notes = [];
+		let fenced = false;
+		let script = false;
+		for (const line of raw.split("\n")) {
+			if (line.startsWith("```")) fenced = !fenced;
+			if (fenced || line.startsWith("```")) continue;
+			if (/^\s*<script\b/.test(line)) script = true;
+			if (script) {
+				if (/<\/script>/.test(line)) script = false;
+				continue;
+			}
+			const h = line.match(/^##\s+(.+)$/);
+			if (h) {
+				heading = h[1].trim();
+				notes = [];
+				continue;
+			}
+			const p = line.match(/<ComponentPreview\b[^>]*\bname="([^"]+)"/);
+			if (p) {
+				// The plain sentences between the heading and the example explain what it shows.
+				const text = notes
+					.join(" ")
+					.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+					.trim();
+				previews.push({ name: p[1], title: heading, text });
+				notes = [];
+			} else if (line.trim() && !/^[<{|#\t-]/.test(line.trim()) && !line.startsWith("\t")) {
+				notes.push(line.trim());
+			}
+		}
+
 		return {
 			...data,
+			previews,
 			/** @type {"en" | "zh"} */
 			locale: isChinese ? "zh" : "en",
 			path,

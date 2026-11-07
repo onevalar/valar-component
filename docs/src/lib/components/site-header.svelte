@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { page } from "$app/state";
+	import SparklesIcon from "@lucide/svelte/icons/sparkles";
 	import SquareTerminal from "@lucide/svelte/icons/square-terminal";
 	import Separator from "$lib/registry/ui/separator/separator.svelte";
+	import { agentPanel } from "$lib/agent/panel.svelte.js";
 	import { getColors } from "$lib/colors.js";
-	import { getMainNavItems } from "$lib/navigation.js";
-	import { Button } from "$lib/registry/ui/button/index.js";
 	import type { Locale } from "$lib/i18n/config.js";
 	import { t } from "$lib/i18n/index.js";
+	import { getMainNavItems, sectionOf } from "$lib/navigation.js";
+	import { Button } from "$lib/registry/ui/button/index.js";
 	import CommandMenu from "./command-menu/command-menu.svelte";
 	import GithubLink from "./github-link.svelte";
 	import LanguageSwitcher from "./language-switcher.svelte";
@@ -22,6 +24,8 @@
 
 	const locale = $derived((page.data.locale ?? "en") as Locale);
 	const mainNavItems = $derived(getMainNavItems(locale));
+	// The home page is the assistant itself, so it needs no button to open it.
+	const atHome = $derived(sectionOf(page.url.pathname, locale) === "home");
 
 	let mobileNavRef: { closeMenu: () => void } | undefined;
 
@@ -45,7 +49,7 @@
 				href={locale === "zh" ? "/zh" : "/"}
 				aria-label={t("header.home")}
 				class="mr-2 ml-3 flex shrink-0 items-baseline gap-2 sm:mr-5 lg:ml-0"
-			><span class="text-lg font-semibold tracking-tight">Valar</span><span
+				><span class="text-lg font-semibold tracking-tight">Valar</span><span
 					class="text-xs text-muted-foreground">Svelte</span
 				></a
 			>
@@ -54,6 +58,17 @@
 				<div class="flex shrink-0 md:w-auto md:flex-none">
 					<CommandMenu {colors} {closeMobileMenu} />
 				</div>
+				{#if !atHome}
+					<Button
+						variant="outline"
+						size="sm"
+						onclick={() => (agentPanel.open = true)}
+						aria-keyshortcuts="Control+J Meta+J"
+					>
+						<SparklesIcon />
+						<span class="hidden sm:inline">问 AI</span>
+					</Button>
+				{/if}
 				<Separator orientation="vertical" class="ml-2 hidden lg:block" />
 				<LanguageSwitcher />
 				<div class="hidden sm:block"><GithubLink /></div>

@@ -83,6 +83,7 @@
 		name,
 		hideCode = false,
 		tunable = true,
+		bare = false,
 		chromeLessOnMobile = false,
 		previewStyle,
 		...restProps
@@ -91,6 +92,8 @@
 		align?: "center" | "start" | "end";
 		hideCode?: boolean;
 		tunable?: boolean;
+		/** Only the example (and its tuner): no outer border, no code, compact sizing. */
+		bare?: boolean;
 		chromeLessOnMobile?: boolean;
 		previewStyle?: PresetConfig["style"];
 		example?: Snippet;
@@ -112,6 +115,18 @@
 	{/if}
 {/snippet}
 
+{#snippet Framed()}
+	{#if bare}
+		<div
+			class="flex max-h-[28rem] min-h-32 w-full items-center justify-center overflow-auto rounded-xl border p-6"
+		>
+			{@render PreviewExample()}
+		</div>
+	{:else}
+		{@render PreviewExample()}
+	{/if}
+{/snippet}
+
 {#snippet PreviewExample()}
 	{#if example}
 		{@render example()}
@@ -123,7 +138,9 @@
 <div
 	data-slot="component-preview"
 	class={cn(
-		"group relative mt-4 mb-12 flex flex-col overflow-hidden rounded-2xl border",
+		bare
+			? "relative flex flex-col"
+			: "group relative mt-4 mb-12 flex flex-col overflow-hidden rounded-2xl border",
 		className
 	)}
 	{...restProps}
@@ -136,6 +153,7 @@
 				"preview relative flex min-h-72 w-full min-w-0 justify-center overflow-x-auto p-4 data-[align=center]:items-center data-[align=end]:items-start data-[align=start]:items-start data-[chromeless=true]:h-auto data-[chromeless=true]:p-0 sm:p-10 sm:data-[align=end]:items-end",
 				previewStyle && `style-${previewStyle}`,
 				previewClassName,
+				bare && "min-h-0 overflow-visible p-0 sm:p-0",
 				tunable &&
 					[
 						"accordion-demo",
@@ -210,7 +228,7 @@
 			)}
 		>
 			{#if !tunable}
-				{@render PreviewExample()}
+				{@render Framed()}
 			{:else if name === "accordion-demo"}
 				<AccordionTuner>{@render PreviewExample()}</AccordionTuner>
 			{:else if name === "aspect-ratio-demo"}
@@ -346,11 +364,11 @@
 			{:else if name === "tooltip-demo"}
 				<TooltipTuner>{@render PreviewExample()}</TooltipTuner>
 			{:else}
-				{@render PreviewExample()}
+				{@render Framed()}
 			{/if}
 		</div>
 	</div>
-	{#if !hideCode}
+	{#if !hideCode && !bare}
 		<div
 			data-slot="code"
 			data-code-visible={codeVisible}

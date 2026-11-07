@@ -2,9 +2,9 @@
 	import { page } from "$app/state";
 	import { onMount, tick } from "svelte";
 	import * as Sidebar from "$lib/registry/ui/sidebar/index.js";
-	import { PAGES_NEW, type SidebarNavItem } from "$lib/navigation.js";
 	import { localizeHref, type Locale } from "$lib/i18n/config.js";
 	import { t } from "$lib/i18n/index.js";
+	import { PAGES_NEW, type SidebarNavItem } from "$lib/navigation.js";
 	import type { ComponentProps } from "svelte";
 
 	let {
@@ -21,7 +21,6 @@
 
 	const TOP_LEVEL_SECTIONS = $derived([
 		{ title: t("nav.introduction"), href: link("/docs"), items: [] },
-		{ title: t("nav.components"), href: link("/docs/components"), items: [] },
 		{ title: t("nav.installation"), href: link("/docs/installation"), items: [] },
 		{ title: t("nav.theming"), href: link("/docs/theming"), items: [] },
 		{ title: t("nav.cli"), href: link("/docs/cli"), items: [] },
@@ -30,7 +29,14 @@
 		{ title: t("nav.changelog"), href: link("/docs/changelog"), items: [] },
 	] satisfies SidebarNavItem[]);
 
-	const EXCLUDED_SECTIONS = new Set(["sections", "installation", "dark-mode", "changelog", "forms", "migration"]);
+	const EXCLUDED_SECTIONS = new Set([
+		"sections",
+		"installation",
+		"dark-mode",
+		"changelog",
+		"forms",
+		"migration",
+	]);
 	const EXCLUDED_PAGES = $derived(new Set([link("/docs"), link("/docs/changelog")]));
 	const renderedNavItems = $derived(
 		navItems.filter(
@@ -141,7 +147,9 @@
 		class="w-(--sidebar-menu-width) scroll-fade scrollbar-none overflow-x-hidden pl-2.5"
 	>
 		<Sidebar.Group class="pt-12">
-			<Sidebar.GroupLabel class="font-medium text-muted-foreground">{t("nav.sections")}</Sidebar.GroupLabel>
+			<Sidebar.GroupLabel class="font-medium text-muted-foreground"
+				>{t("nav.sections")}</Sidebar.GroupLabel
+			>
 			<Sidebar.GroupContent>
 				<Sidebar.Menu>
 					{#each TOP_LEVEL_SECTIONS as item (item.href)}
@@ -158,7 +166,8 @@
 										></span>
 										{item.title}
 										{#if item.href && PAGES_NEW.includes(item.href)}
-											<span class="flex size-2 rounded-full bg-svelte-orange" title={t("nav.new")}></span>
+											<span class="flex size-2 rounded-full bg-svelte-orange" title={t("nav.new")}
+											></span>
 										{/if}
 									</a>
 								{/snippet}
@@ -190,7 +199,9 @@
 													></span>
 													{subItem.title}
 													{#if subItem.href && PAGES_NEW.includes(subItem.href)}
-														<span class="flex size-2 rounded-full bg-svelte-orange" title={t("nav.new")}
+														<span
+															class="flex size-2 rounded-full bg-svelte-orange"
+															title={t("nav.new")}
 														></span>
 													{/if}
 												</a>

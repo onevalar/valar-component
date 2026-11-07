@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { page } from "$app/state";
+	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
+	import * as Collapsible from "$lib/registry/ui/collapsible/index.js";
 	import * as Popover from "$lib/registry/ui/popover/index.js";
-	import { getMainNavItems, getSidebarNavItems, PAGES_NEW } from "$lib/navigation.js";
-	import { Button, type ButtonProps } from "$lib/registry/ui/button/index.js";
 	import type { Locale } from "$lib/i18n/config.js";
 	import { t } from "$lib/i18n/index.js";
+	import { getMainNavItems, getSidebarNavItems, PAGES_NEW } from "$lib/navigation.js";
+	import { Button, type ButtonProps } from "$lib/registry/ui/button/index.js";
 	import { cn } from "$lib/utils.js";
 	import LanguageSwitcher from "./language-switcher.svelte";
 	import type { HTMLAnchorAttributes } from "svelte/elements";
@@ -19,7 +21,12 @@
 
 	const locale = $derived((page.data.locale ?? "en") as Locale);
 	const mainNavItems = $derived(getMainNavItems(locale));
-	const sidebarNavItems = $derived(getSidebarNavItems(locale));
+	// Components are browsed through the Basic and Advanced pages; the menu lists documentation only.
+	const sidebarNavItems = $derived(
+		getSidebarNavItems(locale).filter(
+			(group) => !["sections", "components", "ai-elements"].includes(group.key ?? "")
+		)
+	);
 
 	// Expose a function to close the mobile menu
 	let closeMenu = () => {
@@ -104,11 +111,34 @@
 						<div class="text-sm font-medium text-muted-foreground">
 							{group.title}
 						</div>
-						<div class="flex flex-col gap-3">
-							{#each group.items as item, i (i)}
-								{@render MobileLink({ href: item.href, content: item.title })}
+						{#if group.subgroups}
+							{#each group.subgroups as sub (sub.key)}
+								<Collapsible.Root>
+									<Collapsible.Trigger
+										class="group/cat flex w-full items-center gap-2 py-1 text-lg font-semibold text-foreground"
+									>
+										<ChevronRightIcon
+											class="size-4 text-muted-foreground transition-transform group-data-[state=open]/cat:rotate-90"
+										/>
+										{sub.title}
+										<span class="ml-auto text-sm font-normal text-muted-foreground tabular-nums">
+											{sub.items.length}
+										</span>
+									</Collapsible.Trigger>
+									<Collapsible.Content class="flex flex-col gap-3 pt-3 pl-6">
+										{#each sub.items as item, i (i)}
+											{@render MobileLink({ href: item.href, content: item.title })}
+										{/each}
+									</Collapsible.Content>
+								</Collapsible.Root>
 							{/each}
-						</div>
+						{:else}
+							<div class="flex flex-col gap-3">
+								{#each group.items as item, i (i)}
+									{@render MobileLink({ href: item.href, content: item.title })}
+								{/each}
+							</div>
+						{/if}
 					</div>
 				{/each}
 			</div>

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { page } from "$app/state";
 	import Button from "$lib/registry/ui/button/button.svelte";
-	import type { NavItem } from "$lib/navigation.js";
+	import { localeFromPathname } from "$lib/i18n/config.js";
+	import { sectionOf, type NavItem } from "$lib/navigation.js";
 	import { cn } from "$lib/utils.js";
 	import type { HTMLAttributes } from "svelte/elements";
 
@@ -13,6 +14,8 @@
 		items: NavItem[];
 		class?: string;
 	} & HTMLAttributes<HTMLElement> = $props();
+
+	const current = $derived(sectionOf(page.url.pathname, localeFromPathname(page.url.pathname)));
 </script>
 
 <nav class={cn("items-center gap-0.5", className)} {...restProps}>
@@ -21,7 +24,8 @@
 			href={item.href}
 			variant="ghost"
 			size="sm"
-			class={cn(page.url.pathname === item.href && "text-primary")}
+			class={cn(item.section && item.section === current && "text-primary")}
+			aria-current={item.section && item.section === current ? "page" : undefined}
 		>
 			{item.title}
 		</Button>

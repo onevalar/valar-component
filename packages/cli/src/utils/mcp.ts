@@ -94,7 +94,7 @@ export function searchComponents(catalog: Catalog, query: string, limit = 5): Ca
 const line = (c: CatalogComponent) =>
 	`- \`${c.name}\` ${c.title}（${c.categories[0]}）：${c.description}`;
 
-async function callTool(data: McpData, name: string, args: any): Promise<string> {
+export async function callTool(data: McpData, name: string, args: any): Promise<string> {
 	switch (name) {
 		case "list_components": {
 			const catalog = await data.catalog();

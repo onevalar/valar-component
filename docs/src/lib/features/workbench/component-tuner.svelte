@@ -9,6 +9,7 @@
 	import { onMount, tick, type Component, type Snippet } from "svelte";
 	import * as AlertDialog from "$lib/registry/ui/alert-dialog/index.js";
 	import * as Dialog from "$lib/registry/ui/dialog/index.js";
+	import * as NativeSelect from "$lib/registry/ui/native-select/index.js";
 	import * as ToggleGroup from "$lib/registry/ui/toggle-group/index.js";
 	import { Badge } from "$lib/registry/ui/badge/index.js";
 	import { Button } from "$lib/registry/ui/button/index.js";
@@ -48,7 +49,7 @@
 	);
 	type Draft = Partial<TunerValues>;
 	let probe = $state<HTMLDivElement>();
-	let openButton = $state<HTMLButtonElement>();
+	let openButton = $state<HTMLElement | null>(null);
 	let mounted = $state(false);
 	let editing = $state(false);
 	let loading = $state(false);
@@ -308,26 +309,29 @@
 	{#if message}<p role="status" class="notice">{message}</p>{/if}
 {/snippet}
 
-<section class="tuner" data-component-tuner={id} aria-label={`${title} 样式微调`}>
-	<div class="toolbar">
-		<div>
-			<span class="eyebrow">{title.toUpperCase()} / 组件参数</span>
-			<p class="context">{styleName} · {spec.description}</p>
-		</div>
-		<label class="version-select"
-			>使用版本
-			<select aria-label={`${title} 使用版本`} bind:value={selected} disabled={editing}>
-				<option value="">当前组件库样式</option>
-				{#each compatible as version (version.id)}<option value={version.id}>{version.name}</option
-					>{/each}
-			</select>
-		</label>
-		<button
-			class="action primary"
-			bind:this={openButton}
-			onclick={begin}
-			disabled={!mounted || loading}>{loading ? "加载中…" : `微调 ${title}`}</button
+<section class="tuner" data-component-tuner={id} aria-label={`${title} 样式调节`}>
+	<div class="bar">
+		<NativeSelect.Root
+			size="sm"
+			aria-label={`${title} 使用版本`}
+			bind:value={selected}
+			disabled={editing}
 		>
+			<NativeSelect.Option value="">默认样式</NativeSelect.Option>
+			{#each compatible as version (version.id)}
+				<NativeSelect.Option value={version.id}>{version.name}</NativeSelect.Option>
+			{/each}
+		</NativeSelect.Root>
+		<Button
+			variant="outline"
+			size="sm"
+			bind:ref={openButton}
+			onclick={begin}
+			disabled={!mounted || loading}>{loading ? "加载中…" : "样式调节器"}</Button
+		>
+		{#if active}
+			<Button variant="ghost" size="sm" onclick={download}>导出当前版本</Button>
+		{/if}
 	</div>
 	{#if !editing}{@render status()}{/if}
 	<div class="sample" data-tuning-current>
@@ -342,18 +346,6 @@
 	<div class="probe" bind:this={probe} aria-hidden="true" inert>
 		{@render probeSnippet?.()}
 		<span data-probe-radius></span>
-	</div>
-	<div class="backup-row">
-		<label class="import-label"
-			>导入版本备份<input
-				aria-label={`导入 ${title} 版本`}
-				type="file"
-				accept=".json,application/json"
-				onchange={importVersion}
-			/></label
-		>
-		{#if active}<button class="action" onclick={download}>导出当前版本</button>{/if}
-		<span>版本保存在本地浏览器；写回组件库在微调编辑器中确认</span>
 	</div>
 </section>
 
@@ -491,6 +483,17 @@
 					</div>
 				</section>
 				<section class="grid gap-2">
+					<h3 class="text-xs font-semibold text-muted-foreground">版本备份</h3>
+					<label class="import-label"
+						>导入版本备份<input
+							aria-label={`导入 ${title} 版本`}
+							type="file"
+							accept=".json,application/json"
+							onchange={importVersion}
+						/></label
+					>
+				</section>
+				<section class="grid gap-2">
 					<h3 class="text-xs font-semibold text-muted-foreground">全局 token（只读）</h3>
 					<p class="text-xs leading-relaxed text-muted-foreground">
 						影响所有组件，在组件页不能修改，请到<a class="underline" href="/themes">全局主题页</a
@@ -558,84 +561,23 @@
 		min-width: 0;
 		font-size: 13px;
 	}
-	.toolbar,
-	.backup-row {
+	.bar {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 10px;
-	}
-	.toolbar {
-		padding: 16px;
-		border-bottom: 1px solid var(--border);
-	}
-	.toolbar > :first-child {
-		margin-right: auto;
-	}
-	.eyebrow {
-		font-size: 11px;
-		font-weight: 600;
-		letter-spacing: 0.08em;
-		color: var(--muted-foreground);
-	}
-	.context {
-		margin: 4px 0 0;
-		font-size: 12px;
-		color: var(--muted-foreground);
-	}
-	.action,
-	select {
-		border: 1px solid var(--border);
-		border-radius: 7px;
-		background: var(--background);
-		color: var(--foreground);
-		padding: 8px 10px;
-		font: inherit;
-		max-width: 100%;
-		min-width: 0;
-	}
-	.action {
-		cursor: pointer;
-	}
-	.action:hover {
-		background: var(--muted);
-	}
-	.action:disabled,
-	select:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-	.primary {
-		background: var(--primary);
-		color: var(--primary-foreground);
-		border-color: var(--primary);
-	}
-	.primary:hover {
-		opacity: 0.85;
-		background: var(--primary);
-	}
-	.action:focus-visible,
-	select:focus-visible,
-	input:focus-visible {
-		outline: 2px solid var(--ring);
-		outline-offset: 3px;
-	}
-	.version-select {
-		display: flex;
 		gap: 8px;
-		align-items: center;
-		min-width: 0;
-	}
-	.version-select select {
-		max-width: 170px;
+		margin-bottom: 8px;
 	}
 	.sample {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 140px;
-		padding: 24px 12px;
-		overflow-x: auto;
+		min-height: 120px;
+		max-height: 28rem;
+		padding: 24px 16px;
+		overflow: auto;
+		border: 1px solid var(--border);
+		border-radius: 12px;
 	}
 	.probe {
 		position: absolute;
@@ -644,41 +586,37 @@
 		top: 0;
 		left: 0;
 	}
-	.backup-row {
-		padding: 12px 16px;
-		border-top: 1px solid var(--border);
-		font-size: 11px;
-		color: var(--muted-foreground);
-	}
 	.import-label {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 8px;
 		align-items: center;
+		font-size: 11px;
+		color: var(--muted-foreground);
 	}
 	.import-label input {
 		max-width: 200px;
 		font-size: 11px;
 	}
+	.import-label input:focus-visible {
+		outline: 2px solid var(--ring);
+		outline-offset: 3px;
+	}
 	.notice {
-		margin: 0;
-		padding: 12px 16px;
-		border-top: 1px solid var(--border);
+		margin: 0 0 8px;
+		padding: 8px 12px;
+		border: 1px solid var(--border);
+		border-radius: 8px;
 		font-size: 12px;
 		overflow-wrap: anywhere;
 	}
 	aside .notice {
-		border: 1px solid var(--border);
-		border-radius: 8px;
+		margin: 0;
 	}
 	@media (max-width: 640px) {
 		.sample {
-			min-height: 120px;
+			min-height: 100px;
 			padding: 16px 8px;
-		}
-		.version-select {
-			width: 100%;
-			order: 1;
 		}
 	}
 </style>

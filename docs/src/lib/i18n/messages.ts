@@ -32,6 +32,16 @@ export const en = {
 	"nav.menu": "Menu",
 	"nav.toggleMenu": "Toggle menu",
 	"nav.new": "New",
+	"components.filter": "Filter components…",
+	"components.all": "All",
+	"components.states": "States & tuning",
+	"components.default": "Default",
+	"components.docsAndCode": "Guide & rules",
+	"components.basic": "Basic components",
+	"components.complex": "Advanced components",
+	"components.browse": "Browse all",
+	"components.categories": "Categories",
+	"components.noResults": "No components match “{query}”.",
 
 	// Header / footer
 	"header.search": "Search",
@@ -123,19 +133,23 @@ export const en = {
 	"docs.mobile": "Mobile",
 	"docs.refreshPreview": "Refresh preview",
 	"layout.toggle": "Toggle layout",
-	"pm.localNote": "Local development build: run this inside the Valar repository and replace the path to your project. The CLI is not published to npm yet.",
+	"pm.localNote":
+		"Local development build: run this inside the Valar repository and replace the path to your project. The CLI is not published to npm yet.",
 	"pm.installationGuide": "Installation guide",
-	"docs.prompt": "I’m looking at this Valar Svelte documentation: {url}.\nHelp me understand how to use it. Be ready to explain concepts, give examples, or help debug based on it.",
+	"docs.prompt":
+		"I’m looking at this Valar Svelte documentation: {url}.\nHelp me understand how to use it. Be ready to explain concepts, give examples, or help debug based on it.",
 
 	// Home
 	"home.title": "Valar starts with components.",
-	"home.description": "Build a consistent interface for your product. Svelte is Valar's first implementation — the components, blocks, and source stay yours.",
+	"home.description":
+		"Build a consistent interface for your product. Svelte is Valar's first implementation — the components, blocks, and source stay yours.",
 	"home.getStarted": "Get Started",
 	"home.browseComponents": "Browse Components",
 
 	// Section pages
 	"blocks.title": "Building Blocks for the Web",
-	"blocks.description": "Clean, modern building blocks that work with any Svelte project. Copy and paste them into your app. Open source, free forever.",
+	"blocks.description":
+		"Clean, modern building blocks that work with any Svelte project. Copy and paste them into your app. Open source, free forever.",
 	"blocks.browse": "Browse Blocks",
 	"blocks.browseAll": "Browse all blocks",
 	"blocks.featured": "Featured",
@@ -145,7 +159,8 @@ export const en = {
 	"blocks.category.otp": "OTP",
 	"blocks.category.calendar": "Calendar",
 	"charts.title": "Beautiful Charts & Graphs",
-	"charts.description": "A collection of ready-to-use chart components built with LayerChart. From basic charts to rich data displays, copy and paste them into your app.",
+	"charts.description":
+		"A collection of ready-to-use chart components built with LayerChart. From basic charts to rich data displays, copy and paste them into your app.",
 	"charts.browse": "Browse Charts",
 	"charts.area": "Area Charts",
 	"charts.bar": "Bar Charts",
@@ -155,12 +170,14 @@ export const en = {
 	"charts.radial": "Radial Charts",
 	"charts.tooltip": "Tooltips",
 	"colors.title": "Tailwind Colors in Every Format",
-	"colors.description": "The complete Tailwind color palette in HEX, RGB, HSL, CSS variables, and classes, ready to copy into your project.",
+	"colors.description":
+		"The complete Tailwind color palette in HEX, RGB, HSL, CSS variables, and classes, ready to copy into your project.",
 	"colors.browse": "Browse Colors",
 	"examples.title": "Examples",
 	"examples.description": "A few example apps built with these components.",
 	"examples.heading": "The Foundation for your Design System",
-	"examples.lead": "A set of beautifully designed components you can customize, extend, and build on. Start here, then make it your own. Open source. Open code.",
+	"examples.lead":
+		"A set of beautifully designed components you can customize, extend, and build on. Start here, then make it your own. Open source. Open code.",
 	"examples.dashboard": "Dashboard",
 	"examples.tasks": "Tasks",
 	"examples.playground": "Playground",
@@ -169,7 +186,8 @@ export const en = {
 
 	// Themes
 	"themes.title": "Pick a Color. Make it yours.",
-	"themes.description": "Try our hand-picked themes. Copy and paste them into your project. A new theme editor is coming soon.",
+	"themes.description":
+		"Try our hand-picked themes. Copy and paste them into your project. A new theme editor is coming soon.",
 	"themes.browse": "Browse Themes",
 
 	// Create tool
@@ -200,11 +218,14 @@ export const en = {
 	"create.search": "Search",
 	"create.description": "Configure Valar Svelte.",
 	"create.welcomeTitle": "Configure Valar Svelte",
-	"create.welcomeDescription": "Customize everything from the ground up. Pick your component library, font, color scheme, and more.",
+	"create.welcomeDescription":
+		"Customize everything from the ground up. Pick your component library, font, color scheme, and more.",
 	"create.welcomeAvailable": "Available for SvelteKit, Vite, and Astro.",
-	"create.initializeNote": "Run the following command inside the Valar repository and replace the path to your target project. The CLI is not published to npm yet.",
+	"create.initializeNote":
+		"Run the following command inside the Valar repository and replace the path to your target project. The CLI is not published to npm yet.",
 	"create.setupBefore": "Refer to the",
-	"create.setupAfter": "for framework setup before initializing Valar Svelte with the command below.",
+	"create.setupAfter":
+		"for framework setup before initializing Valar Svelte with the command below.",
 	"create.installationDocs": "installation docs",
 } as const;
 
@@ -237,6 +258,16 @@ export const zh: Record<MessageKey, string> = {
 	"nav.menu": "菜单",
 	"nav.toggleMenu": "打开菜单",
 	"nav.new": "新建",
+	"components.filter": "按名称筛选组件…",
+	"components.all": "全部",
+	"components.states": "状态与调节",
+	"components.default": "默认",
+	"components.docsAndCode": "说明与准则",
+	"components.basic": "基础组件",
+	"components.complex": "高级组件",
+	"components.browse": "全部组件",
+	"components.categories": "分类",
+	"components.noResults": "没有找到与“{query}”相关的组件。",
 
 	// Header / footer
 	"header.search": "搜索",
@@ -328,19 +359,23 @@ export const zh: Record<MessageKey, string> = {
 	"docs.mobile": "移动端",
 	"docs.refreshPreview": "刷新预览",
 	"layout.toggle": "切换布局",
-	"pm.localNote": "本地开发版本：在 Valar 仓库内运行，并把路径换成你的项目目录。CLI 尚未发布到 npm。",
+	"pm.localNote":
+		"本地开发版本：在 Valar 仓库内运行，并把路径换成你的项目目录。CLI 尚未发布到 npm。",
 	"pm.installationGuide": "安装说明",
-	"docs.prompt": "我正在查看 Valar Svelte 文档：{url}。\n请帮我理解它的用法，可以解释概念、给出示例，或根据文档帮我排查问题。",
+	"docs.prompt":
+		"我正在查看 Valar Svelte 文档：{url}。\n请帮我理解它的用法，可以解释概念、给出示例，或根据文档帮我排查问题。",
 
 	// Home
 	"home.title": "Valar，始于组件。",
-	"home.description": "为自己的产品建立一致的界面。Svelte 是 Valar 的第一个实现，组件、区块与源码都由你掌握。",
+	"home.description":
+		"为自己的产品建立一致的界面。Svelte 是 Valar 的第一个实现，组件、区块与源码都由你掌握。",
 	"home.getStarted": "开始使用",
 	"home.browseComponents": "浏览组件",
 
 	// Section pages
 	"blocks.title": "为 Web 打造的区块",
-	"blocks.description": "干净、现代的区块，适用于任何 Svelte 项目。复制到应用里即可使用。开源，永久免费。",
+	"blocks.description":
+		"干净、现代的区块，适用于任何 Svelte 项目。复制到应用里即可使用。开源，永久免费。",
 	"blocks.browse": "浏览区块",
 	"blocks.browseAll": "浏览全部区块",
 	"blocks.featured": "精选",
@@ -350,7 +385,8 @@ export const zh: Record<MessageKey, string> = {
 	"blocks.category.otp": "验证码",
 	"blocks.category.calendar": "日历",
 	"charts.title": "精美的图表",
-	"charts.description": "一组开箱即用的图表组件，基于 LayerChart 构建。从基础图表到丰富的数据展示，都可以直接复制到应用里。",
+	"charts.description":
+		"一组开箱即用的图表组件，基于 LayerChart 构建。从基础图表到丰富的数据展示，都可以直接复制到应用里。",
 	"charts.browse": "浏览图表",
 	"charts.area": "面积图",
 	"charts.bar": "条形图",
@@ -360,12 +396,14 @@ export const zh: Record<MessageKey, string> = {
 	"charts.radial": "径向图",
 	"charts.tooltip": "工具提示",
 	"colors.title": "覆盖各种格式的 Tailwind 颜色",
-	"colors.description": "完整的 Tailwind 调色板，提供 HEX、RGB、HSL、CSS 变量和类名，可直接复制到项目中使用。",
+	"colors.description":
+		"完整的 Tailwind 调色板，提供 HEX、RGB、HSL、CSS 变量和类名，可直接复制到项目中使用。",
 	"colors.browse": "浏览颜色",
 	"examples.title": "示例",
 	"examples.description": "用这些组件搭建的几个示例应用。",
 	"examples.heading": "你的设计系统，从这里开始",
-	"examples.lead": "一套精心设计的组件，可以自由定制、扩展和二次开发。从这里起步，然后做成你自己的样子。开源，代码开放。",
+	"examples.lead":
+		"一套精心设计的组件，可以自由定制、扩展和二次开发。从这里起步，然后做成你自己的样子。开源，代码开放。",
 	"examples.dashboard": "仪表盘",
 	"examples.tasks": "任务",
 	"examples.playground": "演练场",

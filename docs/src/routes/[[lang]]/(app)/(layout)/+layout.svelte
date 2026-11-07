@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import * as Tooltip from "$lib/registry/ui/tooltip/index.js";
+	import AgentPanel from "$lib/components/agent-panel.svelte";
 	import SiteFooter from "$lib/components/site-footer.svelte";
 	import SiteHeader from "$lib/components/site-header.svelte";
 	import { syncMenuColor } from "$lib/features/design-system/index.js";
@@ -24,4 +25,5 @@
 		</Tooltip.Provider>
 	</main>
 	<SiteFooter />
+	<AgentPanel />
 </div>
