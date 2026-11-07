@@ -10,5 +10,5 @@
 
 <!-- The home page is the assistant: ask a question, or ask it to draw an interface from the library. -->
 <div class="container-wrapper flex h-[calc(100svh-var(--header-height))] min-h-[32rem] flex-col">
-	<AgentChat variant="page" />
+	<AgentChat />
 </div>

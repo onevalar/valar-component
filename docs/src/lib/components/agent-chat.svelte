@@ -1,24 +1,20 @@
 <script lang="ts">
 	import { page } from "$app/state";
-	import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
 	import BrainIcon from "@lucide/svelte/icons/brain";
 	import CircleCheckIcon from "@lucide/svelte/icons/circle-check";
 	import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
 	import MessageCircleDashedIcon from "@lucide/svelte/icons/message-circle-dashed";
-	import SettingsIcon from "@lucide/svelte/icons/settings";
-	import Trash2Icon from "@lucide/svelte/icons/trash-2";
 	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
 	import WrenchIcon from "@lucide/svelte/icons/wrench";
 	import * as Alert from "$lib/registry/ui/alert/index.js";
 	import * as Bubble from "$lib/registry/ui/bubble/index.js";
+	import * as Dialog from "$lib/registry/ui/dialog/index.js";
 	import * as Empty from "$lib/registry/ui/empty/index.js";
 	import * as MessageScroller from "$lib/registry/ui/message-scroller/index.js";
 	import * as Message from "$lib/registry/ui/message/index.js";
-	import * as Tooltip from "$lib/registry/ui/tooltip/index.js";
 	import * as Trace from "$lib/registry/ui/trace/index.js";
 	import Markdown from "$lib/components/markdown/markdown.svelte";
 	import { agentChat as chat } from "$lib/agent/chat.svelte.js";
-	import { agentPanel } from "$lib/agent/panel.svelte.js";
 	import { EFFORTS } from "$lib/agent/settings.js";
 	import { agentSettings } from "$lib/agent/settings.svelte.js";
 	import type { UiNode } from "$lib/agent/ui-catalog.js";
@@ -29,9 +25,6 @@
 	import UiRenderer from "./ui-renderer.svelte";
 	import type { UIMessage } from "ai";
 
-	/** `page` is the home screen; `panel` is the narrow drawer used on every other page. */
-	let { variant = "panel" }: { variant?: "page" | "panel" } = $props();
-
 	const locale = $derived((page.data.locale ?? "en") as Locale);
 
 	const SUGGESTIONS = [
@@ -41,29 +34,37 @@
 		"给设置页拼一组开关和单选",
 	];
 
-	let view = $state<"chat" | "settings">("chat");
+	// The model settings open as a dialog: when the reader asks for them, or when a question fails for want of a model.
+	let settingsOpen = $state(false);
 	// The reader's choice per reasoning row; until they click, it follows whether it is still running.
 	let reasoningOpen = $state<Record<string, boolean>>({});
 
-	const hero = $derived(variant === "page" && view === "chat" && !chat.messages.length);
+	const hero = $derived(!chat.messages.length);
 	const busy = $derived(chat.status === "submitted" || chat.status === "streaming");
 	const notConfigured = $derived(chat.error?.message.includes("not_configured") ?? false);
 
 	function send(text: string) {
 		const value = text.trim();
 		if (!value || busy) return;
-		view = "chat";
 		void chat.sendMessage({ text: value });
 	}
 
-	// A question handed over from elsewhere on the site (search box, suggestion buttons).
+	// A question that fails for want of a model opens the settings by itself; filling them in and
+	// closing the dialog sends that question again.
 	$effect(() => {
-		if (variant === "panel" ? agentPanel.open && agentPanel.pending : agentPanel.pending) {
-			const question = agentPanel.pending!;
-			agentPanel.pending = null;
-			send(question);
-		}
+		if (notConfigured) settingsOpen = true;
 	});
+
+	function onSettingsOpenChange(open: boolean) {
+		settingsOpen = open;
+		if (open || !notConfigured || !agentSettings.apiKey || !agentSettings.model) return;
+		const last = chat.messages.at(-1);
+		if (last?.role !== "user") return;
+		const text = messageText(last);
+		chat.clearError();
+		chat.messages = chat.messages.slice(0, -1);
+		void chat.sendMessage({ text });
+	}
 
 	type Part = UIMessage["parts"][number];
 	type ToolPart = Extract<Part, { type: `tool-${string}` }>;
@@ -172,69 +173,7 @@
 {/snippet}
 
 <div class="flex min-h-0 flex-1 flex-col">
-	{#if !hero}
-		<div class="flex items-center gap-1 px-4 py-2 {variant === 'panel' ? 'pr-12' : ''}">
-			{#if view === "settings"}
-				<Button
-					variant="ghost"
-					size="icon-sm"
-					aria-label="返回对话"
-					onclick={() => (view = "chat")}
-				>
-					<ArrowLeftIcon />
-				</Button>
-			{/if}
-			<span class="text-sm font-medium">{view === "settings" ? "模型设置" : "组件助手"}</span>
-			{#if view === "chat"}
-				<div class="ml-auto flex items-center gap-1">
-					<Tooltip.Root>
-						<Tooltip.Trigger>
-							{#snippet child({ props })}
-								<Button
-									{...props}
-									variant="ghost"
-									size="icon-sm"
-									aria-label="模型设置"
-									onclick={() => (view = "settings")}
-								>
-									<SettingsIcon />
-								</Button>
-							{/snippet}
-						</Tooltip.Trigger>
-						<Tooltip.Content>模型设置</Tooltip.Content>
-					</Tooltip.Root>
-					{#if chat.messages.length}
-						<Tooltip.Root>
-							<Tooltip.Trigger>
-								{#snippet child({ props })}
-									<Button
-										{...props}
-										variant="ghost"
-										size="icon-sm"
-										aria-label="清空对话"
-										onclick={() => {
-											void chat.stop();
-											chat.messages = [];
-											chat.clearError();
-										}}
-									>
-										<Trash2Icon />
-									</Button>
-								{/snippet}
-							</Tooltip.Trigger>
-							<Tooltip.Content>清空对话</Tooltip.Content>
-						</Tooltip.Root>
-					{/if}
-				</div>
-			{/if}
-		</div>
-	{/if}
-
-	{#if view === "settings"}
-		<div class="mx-auto w-full max-w-xl flex-1 overflow-y-auto px-4 pb-4">
-			<AgentSettings onDone={() => (view = "chat")} />
-		</div>
-	{:else if hero}
+	{#if hero}
 		<!-- Before the first message the home page is only a box: ask, search or tell it what to build. -->
 		<div class="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center gap-6 px-4 pb-24">
 			<div class="flex flex-col items-center gap-2 text-center">
@@ -247,7 +186,7 @@
 				{busy}
 				onSend={send}
 				onStop={() => void chat.stop()}
-				onSettings={() => (view = "settings")}
+				onSettings={() => (settingsOpen = true)}
 			/>
 			<div class="flex flex-wrap justify-center gap-2">
 				{#each SUGGESTIONS as suggestion (suggestion)}
@@ -267,8 +206,8 @@
 								问我组件怎么选，或者让我用库里的组件拼一个界面给你看。查到的、拼出来的都来自这个站。
 							</Empty.Description>
 						</Empty.Header>
-						<Empty.Content class={variant === "page" ? "max-w-xl" : ""}>
-							{#each SUGGESTIONS.slice(0, variant === "page" ? 4 : 3) as suggestion (suggestion)}
+						<Empty.Content class="max-w-xl">
+							{#each SUGGESTIONS.slice(0, 4) as suggestion (suggestion)}
 								<Button variant="outline" size="sm" onclick={() => send(suggestion)}
 									>{suggestion}</Button
 								>
@@ -280,7 +219,7 @@
 						<MessageScroller.Viewport>
 							<MessageScroller.Content
 								aria-busy={busy}
-								class="mx-auto w-full gap-6 px-4 py-0 {variant === 'page' ? 'max-w-3xl' : ''}"
+								class="mx-auto w-full max-w-3xl gap-6 px-4 py-0"
 							>
 								{#each chat.messages as message (message.id)}
 									{#if message.role === "user"}
@@ -337,7 +276,6 @@
 																	variant="outline"
 																	size="sm"
 																	href={localizeHref(`/docs/components/${pick.slug}`, locale)}
-																	onclick={() => (agentPanel.open = false)}
 																>
 																	<WrenchIcon />
 																	{pick.title}
@@ -369,14 +307,15 @@
 		</MessageScroller.Provider>
 
 		{#if chat.error}
-			<div class="mx-auto w-full px-4 pb-2 {variant === 'page' ? 'max-w-3xl' : ''}">
+			<div class="mx-auto w-full max-w-3xl px-4 pb-2">
 				<Alert.Root variant="destructive">
 					<TriangleAlertIcon />
 					{#if notConfigured}
 						<Alert.Title>还没有填写模型</Alert.Title>
-						<Alert.Description>在「模型设置」里填写 API Key 和模型名后再提问。</Alert.Description>
+						<Alert.Description>填好 API Key 和模型名后，这个问题会自动重新发送。</Alert.Description>
 						<Alert.Action>
-							<Button size="xs" variant="outline" onclick={() => (view = "settings")}>去设置</Button
+							<Button size="xs" variant="outline" onclick={() => (settingsOpen = true)}
+								>去设置</Button
 							>
 						</Alert.Action>
 					{:else}
@@ -400,13 +339,23 @@
 			</div>
 		{/if}
 
-		<div class="mx-auto w-full p-4 {variant === 'page' ? 'max-w-3xl' : ''}">
+		<div class="mx-auto w-full max-w-3xl p-4">
 			<AgentPrompt
 				{busy}
 				onSend={send}
 				onStop={() => void chat.stop()}
-				onSettings={() => (view = "settings")}
+				onSettings={() => (settingsOpen = true)}
 			/>
 		</div>
 	{/if}
+
+	<Dialog.Root open={settingsOpen} onOpenChange={onSettingsOpenChange}>
+		<Dialog.Content closeLabel="关闭" class="max-h-[85svh] overflow-y-auto sm:max-w-lg">
+			<Dialog.Header>
+				<Dialog.Title>模型设置</Dialog.Title>
+				<Dialog.Description>只需要填一次，之后在输入框里点模型名可以再改。</Dialog.Description>
+			</Dialog.Header>
+			<AgentSettings onDone={() => onSettingsOpenChange(false)} />
+		</Dialog.Content>
+	</Dialog.Root>
 </div>

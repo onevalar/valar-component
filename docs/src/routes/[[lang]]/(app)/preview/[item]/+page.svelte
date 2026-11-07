@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/state";
 	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
-	import TailwindIndicator from "$lib/components/tailwind-indicator.svelte";
 	import Button from "$lib/registry/ui/button/button.svelte";
 	import type { Component } from "svelte";
 
@@ -38,4 +37,3 @@
 {#await ComponentPromise then { default: Component }}
 	<Component />
 {/await}
-<TailwindIndicator />

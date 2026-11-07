@@ -7,7 +7,7 @@
 
 export const en = {
 	// Navigation
-	"nav.home": "Home",
+	"nav.home": "Assistant",
 	"nav.docs": "Docs",
 	"nav.components": "Components",
 	"nav.introduction": "Introduction",
@@ -38,6 +38,7 @@ export const en = {
 	"components.default": "Default",
 	"components.docsAndCode": "Guide & rules",
 	"components.basic": "Basic components",
+	"components.backTo": "Back to {name}",
 	"components.complex": "Advanced components",
 	"components.browse": "Browse all",
 	"components.categories": "Categories",
@@ -50,8 +51,6 @@ export const en = {
 	"header.toggleTheme": "Toggle theme",
 	"header.initializeProject": "Initialize Project",
 	"header.home": "Valar Svelte home",
-	"footer.docs": "Docs",
-	"footer.license": "License & credits",
 	"footer.language": "Language",
 	"footer.switchTo": "Switch to {language}",
 	"home.badge": "Component library",
@@ -233,7 +232,7 @@ export type MessageKey = keyof typeof en;
 
 export const zh: Record<MessageKey, string> = {
 	// Navigation
-	"nav.home": "首页",
+	"nav.home": "组件助手",
 	"nav.docs": "文档",
 	"nav.components": "组件",
 	"nav.introduction": "简介",
@@ -264,6 +263,7 @@ export const zh: Record<MessageKey, string> = {
 	"components.default": "默认",
 	"components.docsAndCode": "说明与准则",
 	"components.basic": "基础组件",
+	"components.backTo": "返回{name}",
 	"components.complex": "高级组件",
 	"components.browse": "全部组件",
 	"components.categories": "分类",
@@ -276,8 +276,6 @@ export const zh: Record<MessageKey, string> = {
 	"header.toggleTheme": "切换主题",
 	"header.initializeProject": "初始化项目",
 	"header.home": "Valar Svelte 首页",
-	"footer.docs": "文档",
-	"footer.license": "许可与来源",
 	"footer.language": "语言",
 	"footer.switchTo": "切换到{language}",
 	"home.badge": "组件库",

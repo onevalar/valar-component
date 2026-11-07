@@ -3,7 +3,6 @@
 	import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
 	import ArrowRightIcon from "@lucide/svelte/icons/arrow-right";
 	import ArrowUpRight from "@lucide/svelte/icons/arrow-up-right";
-	import * as Breadcrumb from "$lib/registry/ui/breadcrumb/index.js";
 	import * as Tabs from "$lib/registry/ui/tabs/index.js";
 	import ComponentCodeViewer from "$lib/components/component-code-viewer/component-code-viewer.svelte";
 	import ComponentGuide from "$lib/components/component-guide.svelte";
@@ -62,8 +61,9 @@
 
 {#if isComponent}
 	<!--
-		A single component: the title row and the two tabs stay put, only the content under them
-		changes. Both tabs share one centered column, so switching never shifts the layout.
+		A single component is its own level: the category row of the catalog is gone, and a labelled
+		back button takes its place, naming the page it returns to. The title row and the two tabs stay
+		put, only the content under them changes. Both tabs share one centered column.
 	-->
 	<div
 		data-slot="docs"
@@ -72,25 +72,22 @@
 	>
 		<Tabs.Root bind:value={tab} class="gap-6">
 			<div class="flex flex-col gap-4">
-				<Breadcrumb.Root data-llm-ignore>
-					<Breadcrumb.List>
-						<Breadcrumb.Item>
-							<Breadcrumb.Link href={isBasic ? basicHref : advancedHref}>
-								{isBasic ? t("components.basic") : t("components.complex")}
-							</Breadcrumb.Link>
-						</Breadcrumb.Item>
-						{#if category}
-							<Breadcrumb.Separator />
-							<Breadcrumb.Item>
-								<Breadcrumb.Link href={isBasic ? `${basicHref}#${category.key}` : advancedHref}>
-									{category[locale === "zh" ? "zh" : "en"]}
-								</Breadcrumb.Link>
-							</Breadcrumb.Item>
-						{/if}
-						<Breadcrumb.Separator />
-						<Breadcrumb.Item><Breadcrumb.Page>{doc.title}</Breadcrumb.Page></Breadcrumb.Item>
-					</Breadcrumb.List>
-				</Breadcrumb.Root>
+				<div data-llm-ignore>
+					<Button
+						href="{isBasic ? basicHref : advancedHref}#{category?.key ?? (isBasic ? '' : 'all')}"
+						variant="outline"
+						size="sm"
+					>
+						<ArrowLeftIcon />
+						{t("components.backTo", {
+							name: category
+								? category[locale === "zh" ? "zh" : "en"]
+								: isBasic
+									? t("components.basic")
+									: t("components.complex"),
+						})}
+					</Button>
+				</div>
 				<div class="flex flex-wrap items-end justify-between gap-4">
 					<div class="flex min-w-0 flex-col gap-1">
 						<h1 class="text-3xl font-semibold tracking-tight">{doc.title}</h1>
@@ -186,72 +183,77 @@ the docs container. The issue this resolves is prominent on slow connections (3G
 					wide ? "max-w-6xl md:px-6" : "max-w-[40rem]",
 				]}
 			>
-				<div class="flex flex-col gap-2">
+				{#if wide}
+					<!-- The two catalogs have no title block: the header already says where you are. -->
+					<h1 class="sr-only">{doc.title}</h1>
+				{:else}
 					<div class="flex flex-col gap-2">
-						<div class="flex flex-wrap items-center justify-between gap-2 md:items-start">
-							<h1 class="scroll-m-24 text-3xl font-semibold tracking-tight sm:text-3xl">
-								{doc.title}
-							</h1>
-							<div class="docs-nav flex items-center gap-2" data-llm-ignore>
-								<div class="hidden md:block">
-									<DocsCopyPage />
-								</div>
-								<div class="ml-auto flex gap-2">
-									{#if neighbors.previous}
-										<Button
-											variant="secondary"
-											size="icon"
-											class="extend-touch-target size-8 shadow-none md:size-7"
-											href={neighbors.previous.href}
-										>
-											<ArrowLeftIcon />
-											<span class="sr-only">{t("docs.previous")}</span>
-										</Button>
-									{/if}
-									{#if neighbors.next}
-										<Button
-											variant="secondary"
-											size="icon"
-											class="extend-touch-target size-8 shadow-none md:size-7"
-											href={neighbors.next.href}
-										>
-											<span class="sr-only">{t("docs.next")}</span>
-											<ArrowRightIcon />
-										</Button>
-									{/if}
+						<div class="flex flex-col gap-2">
+							<div class="flex flex-wrap items-center justify-between gap-2 md:items-start">
+								<h1 class="scroll-m-24 text-3xl font-semibold tracking-tight sm:text-3xl">
+									{doc.title}
+								</h1>
+								<div class="docs-nav flex items-center gap-2" data-llm-ignore>
+									<div class="hidden md:block">
+										<DocsCopyPage />
+									</div>
+									<div class="ml-auto flex gap-2">
+										{#if neighbors.previous}
+											<Button
+												variant="secondary"
+												size="icon"
+												class="extend-touch-target size-8 shadow-none md:size-7"
+												href={neighbors.previous.href}
+											>
+												<ArrowLeftIcon />
+												<span class="sr-only">{t("docs.previous")}</span>
+											</Button>
+										{/if}
+										{#if neighbors.next}
+											<Button
+												variant="secondary"
+												size="icon"
+												class="extend-touch-target size-8 shadow-none md:size-7"
+												href={neighbors.next.href}
+											>
+												<span class="sr-only">{t("docs.next")}</span>
+												<ArrowRightIcon />
+											</Button>
+										{/if}
+									</div>
 								</div>
 							</div>
+							{#if data.metadata.description}
+								<p
+									class="text-[1.05rem] text-muted-foreground sm:text-base sm:text-balance md:max-w-[80%]"
+								>
+									{doc.description}
+								</p>
+							{/if}
 						</div>
-						{#if data.metadata.description}
-							<p
-								class="text-[1.05rem] text-muted-foreground sm:text-base sm:text-balance md:max-w-[80%]"
-							>
-								{doc.description}
-							</p>
+						{#if apiLink || docLink || source}
+							<div class="flex flex-wrap items-center gap-2 pt-4">
+								{#if docLink}
+									<Badge href={docLink} variant="secondary" target="_blank" rel="noreferrer">
+										{t("docs.docs")}
+										<ArrowUpRight aria-hidden="true" />
+									</Badge>
+								{/if}
+								{#if apiLink}
+									<Badge href={apiLink} variant="secondary" target="_blank" rel="noreferrer">
+										{t("docs.apiReference")}
+										<ArrowUpRight aria-hidden="true" />
+									</Badge>
+								{/if}
+								{#if source}
+									{#key page.url.pathname}
+										<ComponentCodeViewer item={source} allowSidebar={true} />
+									{/key}
+								{/if}
+							</div>
 						{/if}
 					</div>
-					{#if apiLink || docLink || source}
-						<div class="flex flex-wrap items-center gap-2 pt-4">
-							{#if docLink}
-								<Badge href={docLink} variant="secondary" target="_blank" rel="noreferrer">
-									{t("docs.docs")}
-									<ArrowUpRight aria-hidden="true" />
-								</Badge>
-							{/if}
-							{#if apiLink}
-								<Badge href={apiLink} variant="secondary" target="_blank" rel="noreferrer">
-									{t("docs.apiReference")}
-									<ArrowUpRight aria-hidden="true" />
-								</Badge>
-							{/if}
-							{#if source}
-								{#key page.url.pathname}
-									<ComponentCodeViewer item={source} allowSidebar={true} />
-								{/key}
-							{/if}
-						</div>
-					{/if}
-				</div>
+				{/if}
 
 				<div class="w-full flex-1 pb-16 *:data-[slot=alert]:first:mt-0 sm:pb-0">
 					<Markdown viewerData={data.viewerData} />

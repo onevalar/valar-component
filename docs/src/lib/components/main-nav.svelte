@@ -24,7 +24,11 @@
 			href={item.href}
 			variant="ghost"
 			size="sm"
-			class={cn(item.section && item.section === current && "text-primary")}
+			class={cn(
+				item.section && item.section === current
+					? "bg-accent font-semibold text-foreground"
+					: "text-muted-foreground hover:text-foreground"
+			)}
 			aria-current={item.section && item.section === current ? "page" : undefined}
 		>
 			{item.title}
