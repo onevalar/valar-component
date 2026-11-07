@@ -1,6 +1,5 @@
 import { goto } from "$app/navigation";
 import { page } from "$app/state";
-import { StateHistory, Context, PersistedState } from "runed";
 import {
 	decodePreset,
 	encodePreset,
@@ -10,6 +9,7 @@ import {
 	PRESET_BASE_COLOR_KEYS,
 	PRESET_CHART_COLORS,
 } from "@valar/svelte-cli/preset";
+import { StateHistory, Context, PersistedState } from "runed";
 import { SvelteURLSearchParams } from "svelte/reactivity";
 import {
 	BASE_THEMES,
@@ -60,22 +60,8 @@ export type Lockable = {
 	template: boolean;
 };
 
-// Some styles only support a subset of radii. Enforce that when state is written (rather than
-// reacting to it afterwards) so a style change is a single history entry that undo can restore.
-function normalizeConfig(config: PresetConfig): PresetConfig {
-	if ((config.style === "lyra" || config.style === "sera") && config.radius !== "none") {
-		return { ...config, radius: "none" };
-	}
-
-	if (config.style === "rhea" && config.radius === "large") {
-		return { ...config, radius: "default" };
-	}
-
-	return config;
-}
-
 function encodeNormalized(config: PresetConfig): string {
-	return encodePreset(normalizeConfig(config));
+	return encodePreset(config);
 }
 
 class DesignSystemState implements IDesignSystemState {

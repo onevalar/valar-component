@@ -49,7 +49,7 @@ function createConfig(resolvedPaths: {
 		tailwind: { css: "src/app.css", baseColor: "zinc" },
 		typescript: true,
 		registry: "http://127.0.0.1:5186/registry",
-		style: "vega",
+		style: "valar",
 		iconLibrary: "lucide",
 		menuColor: "default",
 		menuAccent: "subtle",

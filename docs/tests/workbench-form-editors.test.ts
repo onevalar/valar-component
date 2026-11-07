@@ -33,7 +33,7 @@ import {
 	type TunerValues,
 } from "../src/lib/features/workbench/tuner.js";
 
-const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+const styles = ["valar"];
 type File = { target: string; content: string };
 const existing = (style: string) =>
 	readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
@@ -153,7 +153,7 @@ describe("Field / Form / Label editor installation contracts", () => {
 			["form", parseFormSource, "form-field.svelte", "space-y-2"],
 			["label", parseLabelSource, "label.svelte", "gap-2"],
 		] as const) {
-			const files = installed(component, "nova");
+			const files = installed(component, "valar");
 			expect(() => parse(files.filter((file) => file.target !== name))).toThrow();
 			expect(() =>
 				parse(
@@ -165,7 +165,7 @@ describe("Field / Form / Label editor installation contracts", () => {
 		}
 		expect(() =>
 			parseFormSource(
-				installed("form", "nova").map((file) =>
+				installed("form", "valar").map((file) =>
 					file.target === "form-field.svelte"
 						? { ...file, content: file.content.replace("space-y-2", "space-y-3") }
 						: file
@@ -208,7 +208,7 @@ describe("Field / Form / Label editor installation contracts", () => {
 			{ "cn-label-layout": "text-lg" },
 			{ "cn-label-layout": "gap-[12px]" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 
 	it("keeps versions separate and preserves finite partial overrides", () => {
@@ -219,14 +219,14 @@ describe("Field / Form / Label editor installation contracts", () => {
 			expect(spec.storageKey).toBe(`valar.${spec.component}-styles.v2`);
 			return versionSchemas<TunerValues>(spec.component, spec.valuesSchema).version;
 		});
-		const baseline = parseFieldSource(installed("field", "nova")).values;
+		const baseline = parseFieldSource(installed("field", "valar")).values;
 		const field = {
 			format: 2,
 			component: "field",
 			id: "5c50581d-ac44-4478-87d0-073bb3ebba49",
 			name: "独立间距",
 			createdAt: "2026-11-03T00:00:00.000Z",
-			source: { style: "style-nova" },
+			source: { style: "style-valar" },
 			baseline,
 			overrides: { fieldGap: 18 },
 		};
@@ -243,7 +243,7 @@ describe("Field / Form / Label editor installation contracts", () => {
 		);
 		expect(css).toContain("calc(var(--spacing) * 11.5)");
 		expect(css).toContain(':not([data-slot="field-group"] > *)');
-		const source = installed("field", "nova").find(
+		const source = installed("field", "valar").find(
 			(file) => file.target === "field-group.svelte"
 		)!.content;
 		expect(source).toContain("*:data-[slot=field-group]:gap-4");
@@ -265,9 +265,9 @@ describe("Field / Form / Label editor installation contracts", () => {
 		// Caller classes stay last in cn, including the newly introduced literal anchor.
 		for (const file of installed(
 			"form",
-			"nova",
-			applyStyleOverrides(existing("nova"), {
-				style: "nova",
+			"valar",
+			applyStyleOverrides(existing("valar"), {
+				style: "valar",
 				classes: formOverrideClasses({ itemSpacing: 22 }),
 			})
 		).filter((file) => ["form-field.svelte", "form-element-field.svelte"].includes(file.target))) {

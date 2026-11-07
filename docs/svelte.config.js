@@ -93,7 +93,7 @@ function componentPreviews() {
 
 /**
  * Registry style to flatten a preview with, from its `previewStyle` prop. Absent means the
- * docs default (nova). The matching `style-*` class is added by `ComponentPreview` itself.
+ * docs default (valar). The matching `style-*` class is added by `ComponentPreview` itself.
  * @param {string} attrs
  * @param {string} name
  * @param {string} filename

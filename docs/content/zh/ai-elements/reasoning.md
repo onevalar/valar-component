@@ -8,7 +8,7 @@ description: 流式展示智能体的思考过程。
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="reasoning-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="reasoning-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -54,7 +54,7 @@ description: 流式展示智能体的思考过程。
 
 AI SDK 不统计推理耗时。在服务端计时，作为消息元数据发出，再在标题后用 `Trace.Description` 显示。
 
-<ComponentPreview name="reasoning-duration" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="reasoning-duration" previewClassName="h-auto min-h-0">
 
 <div></div>
 

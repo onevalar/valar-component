@@ -24,20 +24,38 @@
 				"icon-sm": "cn-button-size-icon-sm",
 				"icon-lg": "cn-button-size-icon-lg",
 			},
+			// Icon-only buttons are circles; `pill` makes any button a capsule and `square` keeps the
+			// rounded square. Inside a ButtonGroup the group decides the corners, so none apply there.
+			shape: {
+				auto: "",
+				pill: "not-in-data-[slot=button-group]:rounded-full",
+				square: "",
+			},
 		},
+		compoundVariants: [
+			{
+				size: ["icon", "icon-xs", "icon-sm", "icon-lg"],
+				shape: "auto",
+				class: "not-in-data-[slot=button-group]:rounded-full",
+			},
+		],
 		defaultVariants: {
 			variant: "default",
 			size: "default",
+			shape: "auto",
 		},
 	});
 
 	export type ButtonVariant = VariantProps<typeof buttonVariants>["variant"];
 	export type ButtonSize = VariantProps<typeof buttonVariants>["size"];
+	export type ButtonShape = VariantProps<typeof buttonVariants>["shape"];
 
 	export type ButtonProps = WithElementRef<HTMLButtonAttributes> &
 		WithElementRef<HTMLAnchorAttributes> & {
 			variant?: ButtonVariant;
 			size?: ButtonSize;
+			/** Icon-only buttons are circles by default; `pill` is a capsule, `square` a rounded square. */
+			shape?: ButtonShape;
 		};
 </script>
 
@@ -46,6 +64,7 @@
 		class: className,
 		variant = "default",
 		size = "default",
+		shape = "auto",
 		ref = $bindable(null),
 		href = undefined,
 		type = "button",
@@ -61,7 +80,7 @@
 		data-slot="button"
 		data-variant={variant}
 		data-size={size}
-		class={cn(buttonVariants({ variant, size }), className)}
+		class={cn(buttonVariants({ variant, size, shape }), className)}
 		href={disabled ? undefined : href}
 		aria-disabled={disabled}
 		role={disabled ? "link" : undefined}
@@ -76,7 +95,7 @@
 		data-slot="button"
 		data-variant={variant}
 		data-size={size}
-		class={cn(buttonVariants({ variant, size }), className)}
+		class={cn(buttonVariants({ variant, size, shape }), className)}
 		{type}
 		{disabled}
 		{...restProps}

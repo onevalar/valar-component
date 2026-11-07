@@ -8,7 +8,7 @@ description: Displays a command the agent runs, with its output as it streams.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="terminal-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="terminal-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -57,7 +57,7 @@ Terminal is built with the [Trace](/docs/components/trace) and [Code Block](/doc
 
 A command that exits with any code other than `0` failed. Set `status="error"`.
 
-<ComponentPreview name="terminal-error" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="terminal-error" previewClassName="h-auto min-h-0">
 
 <div></div>
 

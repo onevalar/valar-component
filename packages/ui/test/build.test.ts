@@ -60,7 +60,7 @@ test("all component exports compile without docs aliases or undeclared runtime d
 	}
 	assert.equal(
 		import.meta.resolve("@valar/svelte-ui/button"),
-		import.meta.resolve("@valar/svelte-ui/styles/nova/button")
+		import.meta.resolve("@valar/svelte-ui/styles/valar/button")
 	);
 });
 
@@ -121,32 +121,29 @@ test(
 		const read = (file: string) => (fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "");
 		try {
 			const button = path.join(fixtureRegistry, "ui/button/button.svelte");
-			const output = path.join(fixtureUi, "dist/nova/ui/button/button.svelte");
+			const output = path.join(fixtureUi, "dist/valar/ui/button/button.svelte");
 			await until(() => log.includes("outputs changed"));
 			const original = read(button);
-			const unaffected = path.join(fixtureUi, "dist/vega/ui/input/input.svelte");
-			const timestamp = fs.statSync(unaffected).mtimeMs;
 			fs.writeFileSync(
 				button,
 				original.replace('data-slot="button"', 'data-slot="button" data-live-probe="updated"')
 			);
 			await until(() => read(output).includes('data-live-probe="updated"'));
-			const style = path.join(fixtureRegistry, "styles/valar/style-nova.css");
-			fs.appendFileSync(style, "\n.style-nova { .cn-button-size-default { @apply h-14 px-7; } }\n");
+			const style = path.join(fixtureRegistry, "styles/valar/style-valar.css");
+			fs.appendFileSync(style, "\n.style-valar { .cn-button-size-default { @apply h-14 px-7; } }\n");
 			await until(
 				() => /default: "[^"]*h-14/.test(read(output)) && /default: "[^"]*px-7/.test(read(output))
 			);
-			assert.equal(fs.statSync(unaffected).mtimeMs, timestamp);
 			fs.writeFileSync(
 				path.join(fixtureRegistry, "styles/valar/tokens.json"),
 				JSON.stringify({ neutral: { light: { radius: "1rem" }, theme: { "text-sm": "1.125rem" } } })
 			);
-			const css = path.join(fixtureUi, "dist/nova/theme.css");
+			const css = path.join(fixtureUi, "dist/valar/theme.css");
 			await until(
 				() => /--radius:\s*1rem/.test(read(css)) && /--text-sm:\s*1.125rem/.test(read(css))
 			);
 			const probe = path.join(fixtureRegistry, "ui/button/live-probe.ts");
-			const generatedProbe = path.join(fixtureUi, "dist/nova/ui/button/live-probe.ts");
+			const generatedProbe = path.join(fixtureUi, "dist/valar/ui/button/live-probe.ts");
 			fs.writeFileSync(probe, "export const probe = 1;\n");
 			await until(() => fs.existsSync(generatedProbe));
 			fs.rmSync(probe);

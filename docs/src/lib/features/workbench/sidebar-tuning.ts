@@ -19,7 +19,7 @@ export const sidebarPreviewUpdateSchema = z
 		type: z.literal("valar-sidebar-preview"),
 		action: z.literal("update"),
 		revision: z.number().int().positive(),
-		style: z.literal("style-nova"),
+		style: z.literal("style-valar"),
 		dark: z.boolean(),
 		overrides: sidebarOverridesSchema,
 		tokens: frameTokensSchema,

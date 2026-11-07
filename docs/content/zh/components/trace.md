@@ -17,7 +17,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="trace-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -154,7 +154,7 @@ Trace.Root
 
 没有细节可展示的步骤，单独使用 `Trace.Line`。读起来就是一段纯文本。
 
-<ComponentPreview name="trace-static" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-static" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -164,7 +164,7 @@ Trace.Root
 
 步骤正在运行、已经失败或尚未开始时，在 `Trace.Line` 上设置 `status`。
 
-<ComponentPreview name="trace-status" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-status" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -181,7 +181,7 @@ Trace.Root
 
 差异统计、耗时或计数等次要信息，放在 `Trace.Title` 之后的 `Trace.Description` 中。这部分不会截断。
 
-<ComponentPreview name="trace-description" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-description" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -191,7 +191,7 @@ Trace.Root
 
 用 `Trace.Collapsible` 包裹该行，展开时显示更多细节。`Trace.Line` 放在 `Trace.CollapsibleTrigger` 内，细节放在 `Trace.CollapsibleContent` 中。
 
-<ComponentPreview name="trace-collapsible" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-collapsible" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -201,7 +201,7 @@ Trace.Root
 
 行默认收起。绑定 `Trace.Collapsible` 的 `open`，可让某行初始展开，也可手动控制它的开合。
 
-<ComponentPreview name="trace-open" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-open" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -229,7 +229,7 @@ Trace.Root
 
 用链接元素包裹 `Trace.Line`。在新标签页打开时，使用右上箭头图标，并用 sr-only 加上“(opens in a new tab)”。
 
-<ComponentPreview name="trace-link" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-link" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -253,7 +253,7 @@ Trace.Root
 
 用对话框的触发器包裹 `Trace.Line`。展开状态、Escape 键和焦点返回都由对话框管理。
 
-<ComponentPreview name="trace-dialog" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-dialog" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -277,7 +277,7 @@ Trace.Root
 
 结构与对话框相同。抽屉和弹出层的用法也一样。
 
-<ComponentPreview name="trace-sheet" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-sheet" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -287,7 +287,7 @@ Trace.Root
 
 位置相邻的多行放进同一个 `Trace.Root`。它也会为包裹 `Trace.Line` 的触发器和链接应用样式。
 
-<ComponentPreview name="trace-group" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-group" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -297,7 +297,7 @@ Trace.Root
 
 可折叠的行，展开内容是一个由链接行组成的 `Trace.Root`。
 
-<ComponentPreview name="trace-sources" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-sources" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -309,7 +309,7 @@ Trace.Root
 
 思维链是一个可折叠的行，内部包含各个步骤行。根据子行设置父行的状态和标题。
 
-<ComponentPreview name="trace-steps" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-steps" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -321,7 +321,7 @@ Trace.Root
 
 提交是一个可折叠的行，每个改动的文件对应一行。标题写明改动类型：Added、Edited 或 Deleted，增删行数放在描述里。点击文件会在[面板](#面板)中打开对应的 diff。
 
-<ComponentPreview name="trace-commit" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-commit" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -331,7 +331,7 @@ Trace.Root
 
 三层结构：轮次、摘要和行。步骤之间的文本放在两个 `Trace.Root` 列表之间。
 
-<ComponentPreview name="trace-turn" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-turn" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -341,7 +341,7 @@ Trace.Root
 
 渲染 AI SDK 中的 `reasoning` 部分。第一段文本到达前，该行只是一个 `Trace.Line`。见[展开状态](#展开状态)。
 
-<ComponentPreview name="trace-thinking" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-thinking" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -353,7 +353,7 @@ Trace.Root
 
 渲染 AI SDK 中的工具调用部分。工具调用数据按[工具调用](/docs/ai-elements/tool#状态)中的方式映射。
 
-<ComponentPreview name="trace-tool-calls" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-tool-calls" previewClassName="h-auto min-h-0">
 
 <div></div>
 

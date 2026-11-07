@@ -92,7 +92,7 @@ it("init (config-full)", async () => {
 		cwd: targetDir,
 		config,
 		decidedPresets: {
-			style: "vega",
+			style: "valar",
 			theme: "neutral",
 			font: "inter",
 			radius: "default",

@@ -29,20 +29,20 @@
 <Example title="With Borders">
 	<Accordion.Root
 		type="single"
-		class="mx-auto flex max-w-lg flex-col style-vega:gap-2 style-nova:gap-2 style-lyra:gap-2"
+		class="mx-auto flex max-w-lg flex-col style-valar:gap-2"
 	>
 		{#each items as item (item.value)}
 			<Accordion.Item
 				value={item.value}
-				class="style-vega:rounded-lg style-vega:border style-nova:rounded-lg style-nova:border style-lyra:border"
+				class="style-valar:rounded-lg style-valar:border"
 			>
 				<Accordion.Trigger
-					class="font-medium style-vega:px-4 style-vega:text-sm style-nova:px-2.5 style-nova:text-sm style-lyra:px-2 style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+					class="font-medium style-valar:px-2.5 style-valar:text-sm"
 				>
 					{item.trigger}
 				</Accordion.Trigger>
 				<Accordion.Content
-					class="text-muted-foreground style-vega:px-4 style-nova:px-2.5 style-nova:text-sm style-lyra:px-2 style-lyra:text-xs style-maia:px-0 style-mira:px-0"
+					class="text-muted-foreground style-valar:px-2.5 style-valar:text-sm"
 				>
 					{#if Array.isArray(item.content)}
 						{#each item.content as paragraph, i (i)}

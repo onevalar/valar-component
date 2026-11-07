@@ -8,7 +8,7 @@ description: 显示智能体发起的一次工具调用，从输入到输出。
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="tool-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="tool-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -57,7 +57,7 @@ description: 显示智能体发起的一次工具调用，从输入到输出。
 
 `Trace` 不读取工具部分。需要把每个部分的 `state` 映射为 `status` 和标题。
 
-<ComponentPreview name="tool-states" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="tool-states" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -131,7 +131,7 @@ description: 显示智能体发起的一次工具调用，从输入到输出。
 
 输出较长时，用 `Sheet.Trigger` 包裹 `Trace.Line`，在面板中打开输出。
 
-<ComponentPreview name="tool-sheet" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="tool-sheet" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -143,7 +143,7 @@ description: 显示智能体发起的一次工具调用，从输入到输出。
 
 待处理的审批是向用户提出的问题，不是智能体执行的步骤，因此以 `Item` 的形式放在 `Trace` 外部。用户作答后，工具调用重新变回一行。见[确认](/docs/ai-elements/confirmation)。
 
-<ComponentPreview name="tool-approval" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="tool-approval" previewClassName="h-auto min-h-0">
 
 <div></div>
 

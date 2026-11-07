@@ -2,28 +2,15 @@
 @import "tw-animate-css";
 @import "@valar/svelte-cli/tailwind.css";
 
-@import "./lib/registry/styles/style-nova.css" layer(base);
-@import "./lib/registry/styles/valar/style-nova.css" layer(base);
-@import "./lib/registry/styles/style-vega.css" layer(base);
-@import "./lib/registry/styles/valar/style-vega.css" layer(base);
-@import "./lib/registry/styles/style-luma.css" layer(base);
-@import "./lib/registry/styles/valar/style-luma.css" layer(base);
-@import "./lib/registry/styles/style-rhea.css" layer(base);
-@import "./lib/registry/styles/valar/style-rhea.css" layer(base);
+@import "./lib/registry/styles/style-valar.css" layer(base);
+@import "./lib/registry/styles/valar/style-valar.css" layer(base);
 
 @import "@fontsource-variable/geist/index.css";
 @import "@fontsource-variable/geist-mono/index.css";
 
 @source "../node_modules/svelte-streamdown/dist";
 
-@custom-variant style-vega (&:where(.style-vega *));
-@custom-variant style-nova (&:where(.style-nova *));
-@custom-variant style-lyra (&:where(.style-lyra *));
-@custom-variant style-maia (&:where(.style-maia *));
-@custom-variant style-mira (&:where(.style-mira *));
-@custom-variant style-luma (&:where(.style-luma *));
-@custom-variant style-sera (&:where(.style-sera *));
-@custom-variant style-rhea (&:where(.style-rhea *));
+@custom-variant style-valar (&:where(.style-valar *));
 
 @custom-variant dark (&:is(.dark *));
 @custom-variant fixed (&:is(.layout-fixed *));
@@ -246,7 +233,7 @@
  * Blue theme used by the chat component previews (message, bubble, and the
  * rest of that set). Upstream scopes this to those previews rather than the
  * whole docs site. `rounded-*` reads `var(--radius)`, so this also keeps the
- * rhea radius scale in effect inside the preview.
+ * default radius scale in effect inside the preview.
  */
 .theme-blue {
 	--background: oklch(1 0 0);

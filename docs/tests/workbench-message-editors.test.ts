@@ -21,7 +21,7 @@ import {
 import { applyStyleOverrides } from "../src/lib/features/workbench/style-overrides.js";
 import { versionSchemas } from "../src/lib/features/workbench/tuner.js";
 
-const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"] as const;
+const styles = ["valar"] as const;
 type Files = { target: string; content: string }[];
 function registry(component: string, style: string): Files {
 	return JSON.parse(
@@ -56,7 +56,7 @@ describe("Message Scroller and Marker source-backed editor contracts", () => {
 		const probe = document.createElement("div");
 		const scroller = parseMessageScrollerSource(registry("message-scroller", style));
 		expect(scroller.values).toEqual({
-			gap: ["nova", "lyra", "mira"].includes(style) ? 24 : 32,
+			gap: 24,
 			paddingX: 0,
 			paddingY: 0,
 		});
@@ -150,7 +150,7 @@ describe("Message Scroller and Marker source-backed editor contracts", () => {
 	);
 
 	it("aggregates every Content cn literal and resolves independent padding axes", () => {
-		const files = registry("message-scroller", "rhea").map((file) => ({
+		const files = registry("message-scroller", "valar").map((file) => ({
 			...file,
 			content: file.content.replace(
 				/class=\{cn\("[^"]*", className\)\}/,
@@ -176,22 +176,22 @@ describe("Message Scroller and Marker source-backed editor contracts", () => {
 		for (const bad of ["gap-[12px]", "gap-NaN", "gap-13", "gap-0.25", "gap-99", "gap--1"]) {
 			expect(() =>
 				parseMessageScrollerSource(
-					registry("message-scroller", "rhea").map((file) => ({
+					registry("message-scroller", "valar").map((file) => ({
 						...file,
-						content: file.content.replace(/gap-8/g, bad),
+						content: file.content.replace(/gap-6/g, bad),
 					}))
 				)
 			).toThrow();
 			expect(() =>
 				parseMarkerSource(
-					registry("marker", "rhea").map((file) => ({
+					registry("marker", "valar").map((file) => ({
 						...file,
 						content: file.content.replace(/gap-2/g, bad),
 					}))
 				)
 			).toThrow();
 		}
-		const marker = registry("marker", "rhea");
+		const marker = registry("marker", "valar");
 		for (const pattern of [/separator:\s*"[^"]*",/, /pb-2/, /gap-2/])
 			expect(() =>
 				parseMarkerSource(
@@ -200,9 +200,9 @@ describe("Message Scroller and Marker source-backed editor contracts", () => {
 			).toThrow();
 		expect(() =>
 			parseMessageScrollerSource(
-				registry("message-scroller", "rhea").map((file) => ({
+				registry("message-scroller", "valar").map((file) => ({
 					...file,
-					content: file.content.replace(/gap-8/, ""),
+					content: file.content.replace(/gap-6/, ""),
 				}))
 			)
 		).toThrow();
@@ -218,8 +218,8 @@ describe("Message Scroller and Marker source-backed editor contracts", () => {
 		for (const spec of [MESSAGE_SCROLLER_SPEC, MARKER_SPEC]) {
 			const baseline =
 				spec.component === "marker"
-					? parseMarkerSource(registry("marker", "rhea")).values
-					: parseMessageScrollerSource(registry("message-scroller", "rhea")).values;
+					? parseMarkerSource(registry("marker", "valar")).values
+					: parseMessageScrollerSource(registry("message-scroller", "valar")).values;
 			const schemas = versionSchemas<Record<string, number>>(spec.component, spec.valuesSchema);
 			const record = {
 				format: 2,
@@ -227,7 +227,7 @@ describe("Message Scroller and Marker source-backed editor contracts", () => {
 				id: "49765b92-3c6f-4cd1-ad39-75f89bb3cfed",
 				name: "局部间距",
 				createdAt: "2026-11-03T00:00:00.000Z",
-				source: { style: "style-rhea" },
+				source: { style: "style-valar" },
 				baseline,
 				overrides: {},
 			};

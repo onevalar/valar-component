@@ -12,19 +12,12 @@
 		"dist"
 	],
 	"exports": {
-		"./theme.css": "./dist/nova/theme.css",
-		"./hooks/*": "./dist/nova/hooks/*.svelte.ts",
-		"./lib/*": "./dist/nova/lib/*.ts",
-		"./styles/nova/*": "./dist/nova/ui/*/index.ts",
-		"./styles/vega/*": "./dist/vega/ui/*/index.ts",
-		"./styles/maia/*": "./dist/maia/ui/*/index.ts",
-		"./styles/lyra/*": "./dist/lyra/ui/*/index.ts",
-		"./styles/mira/*": "./dist/mira/ui/*/index.ts",
-		"./styles/luma/*": "./dist/luma/ui/*/index.ts",
-		"./styles/sera/*": "./dist/sera/ui/*/index.ts",
-		"./styles/rhea/*": "./dist/rhea/ui/*/index.ts",
+		"./theme.css": "./dist/valar/theme.css",
+		"./hooks/*": "./dist/valar/hooks/*.svelte.ts",
+		"./lib/*": "./dist/valar/lib/*.ts",
+		"./styles/valar/*": "./dist/valar/ui/*/index.ts",
 		"./themes/*": "./dist/*/theme.css",
-		"./*": "./dist/nova/ui/*/index.ts"
+		"./*": "./dist/valar/ui/*/index.ts"
 	},
 	"scripts": {
 		"build": "node --import tsx scripts/build.ts",

@@ -8,7 +8,7 @@ description: Displays a failed tool call and its stack frames.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="stack-trace-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="stack-trace-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -73,7 +73,7 @@ The title truncates, so repeat the full error at the top of the content. Frames 
 
 Turn your own frames into links that open the file at the line. Fold the framework frames into a collapsible line of their own, so the frames you can fix come first.
 
-<ComponentPreview name="stack-trace-frames" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="stack-trace-frames" previewClassName="h-auto min-h-0">
 
 <div></div>
 

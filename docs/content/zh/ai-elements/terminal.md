@@ -8,7 +8,7 @@ description: 显示智能体运行的命令，并随运行流式展示其输出�
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="terminal-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="terminal-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -57,7 +57,7 @@ description: 显示智能体运行的命令，并随运行流式展示其输出�
 
 命令以 `0` 以外的任何退出码结束都算失败。此时设置 `status="error"`。
 
-<ComponentPreview name="terminal-error" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="terminal-error" previewClassName="h-auto min-h-0">
 
 <div></div>
 

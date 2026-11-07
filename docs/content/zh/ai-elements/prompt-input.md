@@ -8,7 +8,7 @@ description: 带附件和发送按钮的消息输入框。
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="prompt-input-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="prompt-input-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

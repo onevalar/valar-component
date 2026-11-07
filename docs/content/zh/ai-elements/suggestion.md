@@ -8,7 +8,7 @@ description: 一次点击就能发给智能体的简短提示词。
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="suggestion-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="suggestion-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

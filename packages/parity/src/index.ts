@@ -38,8 +38,8 @@ Examples:
   $ parity --check
   $ parity --ignored
   $ parity --ignored command
-  $ parity variants --style mira
-  $ parity variants mira/empty
+  $ parity variants --style valar
+  $ parity variants valar/empty
   $ parity fix empty
   $ parity fix empty --dry-run
 `

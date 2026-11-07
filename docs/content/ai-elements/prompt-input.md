@@ -8,7 +8,7 @@ description: A message field with attachments and a send button.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="prompt-input-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="prompt-input-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

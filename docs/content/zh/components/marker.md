@@ -18,7 +18,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="marker-demo" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="marker-demo" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -87,7 +87,7 @@ Marker.Root
 
 用 `variant` 在行内标记、带边框的行和带标签的分隔线之间切换。
 
-<ComponentPreview name="marker-variants" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="marker-variants" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -103,7 +103,7 @@ Marker.Root
 
 为流式或进行中的标记设置 `role="status"`，并加入 [`Spinner`](/docs/components/spinner)，让更新被播报。
 
-<ComponentPreview name="marker-status" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="marker-status" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -113,7 +113,7 @@ Marker.Root
 
 给 `Marker.Content` 加上 [`shimmer`](/docs/utils/shimmer) 工具类，获得流式文本的动画效果。该工具随 `Valar Svelte` 包提供，安装方式见 shimmer 文档。
 
-<ComponentPreview name="marker-shimmer" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="marker-shimmer" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -123,7 +123,7 @@ Marker.Root
 
 需要带标签的分隔线时用 `separator` 变体，例如对话中的日期或章节分隔。
 
-<ComponentPreview name="marker-separator" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="marker-separator" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -133,7 +133,7 @@ Marker.Root
 
 `border` 变体用于状态行：保持默认标记的对齐方式，同时与下一行分隔开。
 
-<ComponentPreview name="marker-border" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="marker-border" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -143,7 +143,7 @@ Marker.Root
 
 用 `Marker.Icon` 在内容旁渲染图标。用 `flex-col` 把图标叠到内容上方。
 
-<ComponentPreview name="marker-icon" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="marker-icon" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -153,7 +153,7 @@ Marker.Root
 
 在 `Marker.Root` 上使用 `child` 片段，把标记变成链接或按钮。
 
-<ComponentPreview name="marker-link-button" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="marker-link-button" previewClassName="h-auto theme-blue">
 
 <div></div>
 

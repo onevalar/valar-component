@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { t } from "$lib/i18n/index.js";
 	import { useDesignSystem } from "$lib/features/design-system/index.js";
+	import { t } from "$lib/i18n/index.js";
 	import { RADII, type RadiusValue } from "$lib/registry/config.js";
 	import { IsMobile } from "$lib/registry/hooks/is-mobile.svelte.js";
 	import * as Picker from "./picker/index.js";
@@ -14,11 +14,7 @@
 
 	const designSystem = useDesignSystem();
 
-	const isRadiusLocked = $derived(designSystem.style === "lyra" || designSystem.style === "sera");
-
-	const isLargeRadiusDisabled = $derived(designSystem.style === "rhea");
-
-	const selectedRadiusName = $derived(isRadiusLocked ? "none" : designSystem.radius);
+	const selectedRadiusName = $derived(designSystem.radius);
 
 	const currentRadius = $derived(
 		RADII.find((radius) => radius.name === selectedRadiusName) ?? RADII[0]
@@ -29,7 +25,7 @@
 
 <div class="group/picker relative">
 	<Picker.Root {submenu}>
-		<Picker.Trigger {submenu} disabled={isRadiusLocked}>
+		<Picker.Trigger {submenu}>
 			<div class="flex flex-col justify-start text-left">
 				<div class="text-xs text-muted-foreground">{t("create.radius")}</div>
 				<div class="text-sm font-medium text-foreground">
@@ -55,7 +51,6 @@
 				bind:value={
 					() => selectedRadiusName,
 					(value) => {
-						if (isRadiusLocked) return;
 						designSystem.radius = value as RadiusValue;
 					}
 				}
@@ -73,11 +68,7 @@
 							</Picker.RadioItem>
 							<Picker.Separator />
 						{:else}
-							<Picker.RadioItem
-								value={radius.name}
-								closeOnSelect={false}
-								disabled={isLargeRadiusDisabled && radius.name === "large"}
-							>
+							<Picker.RadioItem value={radius.name} closeOnSelect={false}>
 								{radius.label}
 							</Picker.RadioItem>
 						{/if}

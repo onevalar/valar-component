@@ -8,7 +8,7 @@ description: Displays the links the agent used for a reply.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="sources-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="sources-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

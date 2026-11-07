@@ -18,7 +18,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="code-block-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -117,7 +117,7 @@ CodeBlock.Root
 
 给 `CodeBlock.Content` 的 `code` 属性传入字符串。它渲染为一个文本节点，输出流式写入时开销依然很低。
 
-<ComponentPreview name="code-block-basic" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-basic" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -127,7 +127,7 @@ CodeBlock.Root
 
 `CodeBlock.Header` 容纳 `CodeBlock.Title` 和 `CodeBlock.Actions`。`CodeBlock.CopyButton` 复制传入的 `value`。
 
-<ComponentPreview name="code-block-header" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-header" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -147,7 +147,7 @@ CodeBlock.Root
 
 `CodeBlock.Actions` 容纳任意数量的按钮。需要换行开关时，自行维护状态并传给 `wrap`。
 
-<ComponentPreview name="code-block-actions" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-actions" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -177,7 +177,7 @@ CodeBlock.Root
 
 没有头部时，把 `CodeBlock.Actions` 直接放在 `CodeBlock.Root` 内。操作浮动在顶部末端，在代码块被悬停或聚焦之前保持隐藏。触摸屏上始终显示。
 
-<ComponentPreview name="code-block-floating-actions" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-floating-actions" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -187,7 +187,7 @@ CodeBlock.Root
 
 在 `CodeBlock.Content` 上加上 `lineNumbers`。`code` 字符串会按行拆分，行号不会随选区一起被复制。
 
-<ComponentPreview name="code-block-line-numbers" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-line-numbers" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -197,7 +197,7 @@ CodeBlock.Root
 
 设置 `startLine`，行号就从指定行开始编号，适合取自文件中间的代码片段。行号栏会随最宽的行号自动加宽。
 
-<ComponentPreview name="code-block-start-line" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-start-line" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -207,7 +207,7 @@ CodeBlock.Root
 
 长行默认横向滚动。加上 `wrap` 后自动换行，适合工具输出和错误信息。需要让读者自行切换时，见[操作](#操作)。
 
-<ComponentPreview name="code-block-wrap" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-wrap" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -217,7 +217,7 @@ CodeBlock.Root
 
 把每一行渲染为 `CodeBlock.Line`，并给需要突出的行设置 `variant="highlighted"`。
 
-<ComponentPreview name="code-block-highlighted-lines" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-highlighted-lines" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -227,7 +227,7 @@ CodeBlock.Root
 
 在 `CodeBlock.Line` 上设置 `variant="added"` 或 `variant="removed"`，对应的行会加上 `+` 或 `−` 标记。
 
-<ComponentPreview name="code-block-diff" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-diff" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -237,7 +237,7 @@ CodeBlock.Root
 
 用 `max-h-*` 类名给 `CodeBlock.Content` 设置高度上限，内容在块内滚动。
 
-<ComponentPreview name="code-block-height" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-height" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -249,7 +249,7 @@ CodeBlock.Root
 
 `CodeBlock.Footer` 是内容下方的插槽。做“展开更多”时，收起状态下给内容设置高度上限，并在页脚放一个 `xs` 尺寸的幽灵按钮。
 
-<ComponentPreview name="code-block-show-more" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-show-more" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -283,7 +283,7 @@ CodeBlock.Root
 
 为避免长代码块占满整页，展开时应提高高度上限，而不是取消上限。展开后的内容可滚动，滚动时边缘渐隐。
 
-<ComponentPreview name="code-block-show-more-scroll" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-show-more-scroll" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -293,7 +293,7 @@ CodeBlock.Root
 
 工具输出和[调用链](#调用链)输出使用 `size="sm"`。它的内边距更紧凑，文字为 `text-xs`。
 
-<ComponentPreview name="code-block-size" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-size" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -303,7 +303,7 @@ CodeBlock.Root
 
 错误和失败的输出使用 `variant="destructive"`。
 
-<ComponentPreview name="code-block-destructive" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-destructive" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -313,7 +313,7 @@ CodeBlock.Root
 
 在 `Trace.CollapsibleContent` 中放一个 `size="sm"` 的 `CodeBlock.Root`，用于工具和终端输出。给 `CodeBlock.Content` 加上 `wrap` 和 `max-h-64` 类名，长输出会在调用链内换行并滚动。代码块自带文字颜色，因此 `Trace.CollapsibleContent` 不会将其调暗。
 
-<ComponentPreview name="code-block-trace" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-trace" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -325,7 +325,7 @@ CodeBlock.Root
 
 用[标签页](/docs/components/tabs)展示多个文件，每个 `Tabs.Content` 中放一个 `CodeBlock.Root`。
 
-<ComponentPreview name="code-block-tabs" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-tabs" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -335,7 +335,7 @@ CodeBlock.Root
 
 在[消息](/docs/components/message)的段落之间放一个 `CodeBlock.Root`。
 
-<ComponentPreview name="code-block-chat" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-chat" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -345,7 +345,7 @@ CodeBlock.Root
 
 `useHighlightedCode` 使用 [Shiki](https://shiki.style) 完成高亮。它的 `current` 属性按行保存结果，每行一项。把每一项传给 `CodeBlock.Line` 的 `code` 属性。
 
-<ComponentPreview name="code-block-highlighting" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-highlighting" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -376,7 +376,7 @@ Shiki 使用 JavaScript 正则引擎，无需加载 WASM。
 
 每种语言在首次使用时加载。编辑 `lib/highlighter.ts` 中的列表。不在列表中的语言按纯文本渲染。
 
-<ComponentPreview name="code-block-languages" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-languages" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -388,7 +388,7 @@ Shiki 使用 JavaScript 正则引擎，无需加载 WASM。
 
 把语言设为 `"ansi"`，终端输出中的颜色才会渲染。不设置时，转义序列会作为文本显示。
 
-<ComponentPreview name="code-block-ansi" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-ansi" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -434,7 +434,7 @@ export async function load() {
 
 代码流式写入时，hook 只对新增加的行做分词，并从上一行的结束位置继续。未发生变化的行保留相同的 token，Svelte 会跳过它们。
 
-<ComponentPreview name="code-block-streaming" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-streaming" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -444,7 +444,7 @@ export async function load() {
 
 用 [svelte-streamdown](https://github.com/beynar/svelte-streamdown) 渲染消息，并通过 `components.code` 把围栏代码交给 `CodeBlock` 渲染。行内代码走 `codespan` 片段，因此保持行内样式。
 
-<ComponentPreview name="code-block-markdown" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-markdown" previewClassName="h-auto min-h-0">
 
 <div></div>
 

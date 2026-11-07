@@ -28,7 +28,7 @@ async function createTestConfig(cssContent: string): Promise<ResolvedConfig> {
 			lib: "$lib",
 		},
 		registry: "http://127.0.0.1:5186/registry",
-		style: "vega",
+		style: "valar",
 		iconLibrary: "lucide",
 		menuColor: "default",
 		menuAccent: "subtle",

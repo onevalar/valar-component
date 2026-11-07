@@ -1535,9 +1535,12 @@ function cacheLabel(): string {
 		: `Upstream cache: ${CACHE_DIR} (expires after ${hours}h; pass --refresh to refetch)`;
 }
 
+/** Valar's only style is the upstream Nova style under its own name. */
+const upstreamStyle = (style: string) => (style === "valar" ? "nova" : style);
+
 async function fetchUpstream(style: string, name: string): Promise<RegistryItem | null> {
-	const url = `${UPSTREAM_VARIANT_BASE}/radix-${style}/${name}.json`;
-	const cachePath = path.join(CACHE_DIR, `radix-${style}`, `${name}.json`);
+	const url = `${UPSTREAM_VARIANT_BASE}/radix-${upstreamStyle(style)}/${name}.json`;
+	const cachePath = path.join(CACHE_DIR, `radix-${upstreamStyle(style)}`, `${name}.json`);
 	const cached = readCache(cachePath);
 	if (cached) return JSON.parse(cached) as RegistryItem;
 
@@ -1753,7 +1756,7 @@ async function runBase() {
 		console.log(`Legend: ${styleText("red", "- upstream")}  ${styleText("green", "+ ours")}`);
 	}
 
-	const { names, skipped } = filterUiNames(loadUiNames("nova"));
+	const { names, skipped } = filterUiNames(loadUiNames("valar"));
 	const summary = emptyCounts();
 	const missingUpstream: string[] = [];
 	let items = 0;
@@ -1845,7 +1848,7 @@ async function runVariants() {
 			(a, b) => Number(b.diff) - Number(a.diff) || (a.item ?? "").localeCompare(b.item ?? "")
 		);
 		console.log(
-			`\n## ${style} vs radix-${style} (${names.length} ui items${skipped.length ? `, skipped ${skipped.join(", ")}` : ""})`
+			`\n## ${style} vs radix-${upstreamStyle(style)} (${names.length} ui items${skipped.length ? `, skipped ${skipped.join(", ")}` : ""})`
 		);
 		if (rows.length) console.log(formatTable(rows, TABLE_COLUMNS));
 		for (const detail of diffDetails) {

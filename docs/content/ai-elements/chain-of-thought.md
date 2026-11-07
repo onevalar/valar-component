@@ -8,7 +8,7 @@ description: Displays a summary that expands into the steps an agent took.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="chain-of-thought-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="chain-of-thought-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

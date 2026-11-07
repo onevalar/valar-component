@@ -2,12 +2,12 @@ import path from "node:path";
 import { registryCategories } from "$lib/registry/registry-categories.js";
 import type { EntryGenerator, PageServerLoad } from "./$types.js";
 
-const sidebars = import.meta.glob("/src/__registry__/json/styles/nova/sidebar-*.json");
-const dashboards = import.meta.glob("/src/__registry__/json/styles/nova/dashboard-*.json");
-const logins = import.meta.glob("/src/__registry__/json/styles/nova/login-*.json");
-const calendars = import.meta.glob("/src/__registry__/json/styles/nova/calendar-*.json");
-const otps = import.meta.glob("/src/__registry__/json/styles/nova/otp-*.json");
-const signUps = import.meta.glob("/src/__registry__/json/styles/nova/signup-*.json");
+const sidebars = import.meta.glob("/src/__registry__/json/styles/valar/sidebar-*.json");
+const dashboards = import.meta.glob("/src/__registry__/json/styles/valar/dashboard-*.json");
+const logins = import.meta.glob("/src/__registry__/json/styles/valar/login-*.json");
+const calendars = import.meta.glob("/src/__registry__/json/styles/valar/calendar-*.json");
+const otps = import.meta.glob("/src/__registry__/json/styles/valar/otp-*.json");
+const signUps = import.meta.glob("/src/__registry__/json/styles/valar/signup-*.json");
 
 export const prerender = true;
 

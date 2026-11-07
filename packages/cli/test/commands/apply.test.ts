@@ -35,7 +35,7 @@ vi.mock("../../src/utils/add-registry-items.js", () => ({
 vi.mock("../../src/utils/install-deps.js", () => ({ installDependencies: vi.fn() }));
 
 const decidedPresets: PresetConfig = {
-	style: "vega",
+	style: "valar",
 	theme: "neutral",
 	font: "inter",
 	fontHeading: "inherit",
@@ -113,7 +113,7 @@ describe("runApply", () => {
 
 		// config is rewritten to reflect the preset
 		expect(cliConfig.writeConfig).toHaveBeenCalledTimes(1);
-		expect(config.style).toBe("vega");
+		expect(config.style).toBe("valar");
 		expect(config.tailwind.baseColor).toBe("zinc");
 
 		const [args] = vi.mocked(addRegistryItems).mock.calls[0]!;
@@ -138,7 +138,7 @@ describe("runApply", () => {
 		});
 
 		expect(cliConfig.writeConfig).toHaveBeenCalledTimes(1);
-		expect(config.style).toBe("vega");
+		expect(config.style).toBe("valar");
 
 		const [args] = vi.mocked(addRegistryItems).mock.calls[0]!;
 		expect(args.only).toEqual(["theme"]);

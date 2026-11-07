@@ -8,7 +8,7 @@ description: 智能体改动的文件，以文件夹树的形式呈现。
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="file-tree-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="file-tree-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

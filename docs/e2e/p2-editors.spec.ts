@@ -257,10 +257,10 @@ test("Tags Input writeback renders installed geometry in the reopened editor, no
 }) => {
 	test.skip(process.env.E2E_WRITEBACK !== "1", "Requires explicit development-source write opt-in");
 	test.setTimeout(120_000);
-	const file = resolve("src/lib/registry/styles/valar/style-nova.css");
+	const file = resolve("src/lib/registry/styles/valar/style-valar.css");
 	const original = readFileSync(file, "utf8");
 	const written = applyStyleOverrides(original, {
-		style: "nova",
+		style: "valar",
 		classes: { "cn-tags-input": "p-3.5" },
 	});
 	try {

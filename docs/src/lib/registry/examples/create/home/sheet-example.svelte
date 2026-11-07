@@ -26,7 +26,7 @@
 					</Sheet.Header>
 					<div class="overflow-y-auto px-4 text-sm">
 						{#each Array.from({ length: 10 }) as _, index (index)}
-							<p class="mb-4 leading-normal style-lyra:mb-2 style-lyra:leading-relaxed">
+							<p class="mb-4 leading-normal">
 								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
 								incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
 								exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute

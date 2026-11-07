@@ -75,7 +75,7 @@
 					</Button>
 				{/snippet}
 			</Collapsible.Trigger>
-			<Collapsible.Content class="mt-1 ml-5 style-lyra:ml-4">
+			<Collapsible.Content class="mt-1 ml-5">
 				<div class="flex flex-col gap-1">
 					{#each fileItem.items as child (child.name)}
 						{@render treeItem(child)}

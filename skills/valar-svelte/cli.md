@@ -184,7 +184,7 @@ Design-system options (style, theme, icons, fonts, etc.) can be captured as an e
 | `tailwind.baseColor` | Base palette (cannot change after init)                          |
 | `aliases.*`          | Import aliases; must match `svelte.config.js` / `tsconfig` paths |
 | `registry`           | Base registry URL (default `http://127.0.0.1:5186/registry`)     |
-| `style`              | Registered style name (e.g. `nova`, `vega`, …)                   |
+| `style`              | Registered style name (`valar`, the only style)                  |
 | `iconLibrary`        | Icon set key (`lucide`, `tabler`, …) — drives generated imports  |
 | `typescript`         | Whether TS and optional custom config path                       |
 

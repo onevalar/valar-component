@@ -23,7 +23,7 @@ const styleMap = {
 describe("parseStyleCss", () => {
 	it("reads nested @apply rules for cn-field-title", () => {
 		const css = `
-			.style-rhea {
+			.style-valar {
 				cn-field-title {
 					@apply gap-2 text-sm leading-snug font-medium;
 				}
@@ -224,14 +224,14 @@ describe("applyTokenUtilities", () => {
 		);
 	});
 
-	it("covers every hard-coded tier in the shipped nova Dialog and Sheet", () => {
-		const nova = parseStyleCss(
+	it("covers every hard-coded tier in the shipped valar Dialog and Sheet", () => {
+		const valar = parseStyleCss(
 			readFileSync(
-				new URL("../../../docs/src/lib/registry/styles/style-nova.css", import.meta.url),
+				new URL("../../../docs/src/lib/registry/styles/style-valar.css", import.meta.url),
 				"utf8"
 			)
 		);
-		const out = applyTokenUtilities(`"${nova["cn-dialog-content"]} | ${nova["cn-sheet-content"]}"`);
+		const out = applyTokenUtilities(`"${valar["cn-dialog-content"]} | ${valar["cn-sheet-content"]}"`);
 		expect(out).toContain("duration-fast");
 		expect(out).toContain("duration-normal ease-standard");
 		expect(out).not.toMatch(/duration-(?:100|200|300)\b/);

@@ -17,7 +17,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="trace-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -154,7 +154,7 @@ Trace.Root
 
 Use a `Trace.Line` on its own for a step with no detail to show. It reads as plain text.
 
-<ComponentPreview name="trace-static" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-static" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -164,7 +164,7 @@ Use a `Trace.Line` on its own for a step with no detail to show. It reads as pla
 
 Set `status` on `Trace.Line` when a step is running, has failed or hasn't started yet.
 
-<ComponentPreview name="trace-status" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-status" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -181,7 +181,7 @@ Set `status` on `Trace.Line` when a step is running, has failed or hasn't starte
 
 Put secondary text such as a diff stat, a duration or a count in a `Trace.Description` after the `Trace.Title`. It does not truncate.
 
-<ComponentPreview name="trace-description" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-description" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -191,7 +191,7 @@ Put secondary text such as a diff stat, a duration or a count in a `Trace.Descri
 
 Wrap the line in a `Trace.Collapsible` to show more detail when it expands. Put the `Trace.Line` inside `Trace.CollapsibleTrigger` and the detail in `Trace.CollapsibleContent`.
 
-<ComponentPreview name="trace-collapsible" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-collapsible" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -201,7 +201,7 @@ Wrap the line in a `Trace.Collapsible` to show more detail when it expands. Put 
 
 Rows start closed. Bind `open` on `Trace.Collapsible` to start open or to control a row.
 
-<ComponentPreview name="trace-open" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-open" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -229,7 +229,7 @@ To open a row while it streams and let the reader's click win, pass `open ?? run
 
 Wrap the `Trace.Line` in an anchor. For a new tab, use an arrow-up-right icon and sr-only "(opens in a new tab)".
 
-<ComponentPreview name="trace-link" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-link" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -253,7 +253,7 @@ Wrap the `Trace.Line` in an anchor. For a new tab, use an arrow-up-right icon an
 
 Wrap the `Trace.Line` in the dialog's trigger. The dialog owns its open state, Escape and focus return.
 
-<ComponentPreview name="trace-dialog" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-dialog" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -277,7 +277,7 @@ Wrap the `Trace.Line` in the dialog's trigger. The dialog owns its open state, E
 
 The same shape as the dialog. Drawer and Popover work the same way.
 
-<ComponentPreview name="trace-sheet" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-sheet" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -287,7 +287,7 @@ The same shape as the dialog. Drawer and Popover work the same way.
 
 Put rows that sit next to each other in a `Trace.Root`. It also styles any trigger or link that wraps a `Trace.Line`.
 
-<ComponentPreview name="trace-group" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-group" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -297,7 +297,7 @@ Put rows that sit next to each other in a `Trace.Root`. It also styles any trigg
 
 A collapsible row whose detail is a `Trace.Root` of link rows.
 
-<ComponentPreview name="trace-sources" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-sources" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -309,7 +309,7 @@ See [Sources](/docs/ai-elements/sources) for more examples.
 
 A chain of thought is a collapsible row with step rows inside. Set the parent's status and title from its children.
 
-<ComponentPreview name="trace-steps" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-steps" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -321,7 +321,7 @@ See [Chain of Thought](/docs/ai-elements/chain-of-thought) and [Task](/docs/ai-e
 
 A commit is a collapsible row with a line for each changed file. Say what changed in the title, Added, Edited or Deleted, and put the line counts in the description. Each file opens its diff in a [Sheet](#sheet).
 
-<ComponentPreview name="trace-commit" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-commit" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -331,7 +331,7 @@ A commit is a collapsible row with a line for each changed file. Say what change
 
 Three levels: the turn, a summary, and the rows. Text between steps sits between two `Trace.Root` lists.
 
-<ComponentPreview name="trace-turn" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-turn" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -341,7 +341,7 @@ Three levels: the turn, a summary, and the rows. Text between steps sits between
 
 Render a `reasoning` part from the AI SDK. The row is a `Trace.Line` until the first text arrives. See [Open State](#open-state).
 
-<ComponentPreview name="trace-thinking" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-thinking" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -353,7 +353,7 @@ See [Reasoning](/docs/ai-elements/reasoning) for more examples.
 
 Render tool parts from the AI SDK. Map the tool part as in [Tool](/docs/ai-elements/tool#states).
 
-<ComponentPreview name="trace-tool-calls" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="trace-tool-calls" previewClassName="h-auto min-h-0">
 
 <div></div>
 

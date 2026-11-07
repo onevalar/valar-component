@@ -8,7 +8,7 @@ description: The thread. Message Scroller keeps your place while the reply strea
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="chat-demo" class="rounded-[34px] sm:rounded-4xl" previewStyle="rhea" previewClassName="h-auto theme-blue p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:pt-16 sm:pb-8 min-h-0">
+<ComponentPreview name="chat-demo" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:pt-16 sm:pb-8 min-h-0">
 
 <div></div>
 

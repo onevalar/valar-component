@@ -8,7 +8,7 @@ description: Displays the agent's todo list, split into what is left and what is
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="queue-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="queue-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -87,7 +87,7 @@ Queue is built with the [Trace](/docs/components/trace) component.
 
 A todo with a description is a `Trace.Collapsible` that opens to show it. A todo without one stays a `Trace.Line`.
 
-<ComponentPreview name="queue-descriptions" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="queue-descriptions" previewClassName="h-auto min-h-0">
 
 <div></div>
 

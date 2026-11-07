@@ -8,7 +8,7 @@ description: Displays a tool call the agent makes, from input to output.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="tool-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="tool-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -57,7 +57,7 @@ Tool is built with the [Trace](/docs/components/trace) and [Code Block](/docs/co
 
 Trace does not read tool parts. Map each part's `state` to a `status` and a title.
 
-<ComponentPreview name="tool-states" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="tool-states" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -131,7 +131,7 @@ A tool that runs on the client stays `input-available` after the chat stops unti
 
 For long output, wrap the `Trace.Line` in a `Sheet.Trigger` and show the output in the sheet.
 
-<ComponentPreview name="tool-sheet" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="tool-sheet" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -143,7 +143,7 @@ See [Trace](/docs/components/trace#dialog).
 
 A pending approval is a question for the person, not a step the agent took, so it sits outside `Trace` as an `Item`. Once the person answers, the tool goes back to being a line. See [Confirmation](/docs/ai-elements/confirmation).
 
-<ComponentPreview name="tool-approval" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="tool-approval" previewClassName="h-auto min-h-0">
 
 <div></div>
 

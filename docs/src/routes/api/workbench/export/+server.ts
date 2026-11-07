@@ -19,7 +19,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		const items = await Promise.all(
 			COMPONENTS.map(async ({ id }) => {
-				const response = await fetch(`/registry/styles/vega/${id}.json`);
+				const response = await fetch(`/registry/styles/valar/${id}.json`);
 				if (!response.ok) throw new Error(`无法读取 ${id} 的 registry。`);
 				return registryItemSchema.parse(await response.json());
 			})

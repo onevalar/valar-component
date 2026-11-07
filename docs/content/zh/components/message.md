@@ -17,7 +17,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="message-demo" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="message-demo" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -112,7 +112,7 @@ Message.Group
 
 使用 `Message.Avatar` 在消息旁渲染头像。在消息上设置 `align="end"`，头像会对齐到消息末尾。
 
-<ComponentPreview name="message-avatar" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="message-avatar" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -127,7 +127,7 @@ Message.Group
 
 使用 `Message.Group` 把同一发送者的连续消息堆叠在一起。在靠前的消息上渲染空的 `Message.Avatar`，让它们与最后一条消息的头像保持对齐。
 
-<ComponentPreview name="message-group" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="message-group" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -137,7 +137,7 @@ Message.Group
 
 用 `Message.Header` 显示发送者名称，用 `Message.Footer` 显示送达状态、已读状态等元数据。
 
-<ComponentPreview name="message-header-footer" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="message-header-footer" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -147,7 +147,7 @@ Message.Group
 
 把消息级操作放在 `Message.Footer` 中，例如复制、重试或反馈按钮。
 
-<ComponentPreview name="message-actions" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="message-actions" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -155,7 +155,7 @@ Message.Group
 
 ## 附件
 
-<ComponentPreview name="message-attachment" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="message-attachment" previewClassName="h-auto theme-blue">
 
 <div></div>
 

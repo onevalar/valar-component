@@ -8,7 +8,7 @@ description: 显示失败的工具调用及其栈帧。
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="stack-trace-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="stack-trace-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -73,7 +73,7 @@ description: 显示失败的工具调用及其栈帧。
 
 把自己的栈帧做成链接，点击后打开文件并定位到对应行。框架的栈帧收进单独的可折叠行，可以自行修复的栈帧因此排在前面。
 
-<ComponentPreview name="stack-trace-frames" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="stack-trace-frames" previewClassName="h-auto min-h-0">
 
 <div></div>
 

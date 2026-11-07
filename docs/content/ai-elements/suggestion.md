@@ -8,7 +8,7 @@ description: A short prompt you can send to the agent in one click.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="suggestion-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="suggestion-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

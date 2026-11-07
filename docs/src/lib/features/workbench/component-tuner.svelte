@@ -86,7 +86,7 @@
 	const currentOverrides = $derived(editing ? draft : (active?.overrides ?? {}));
 	const initial = $derived(baseline ? ({ ...baseline, ...draft } as TunerValues) : undefined);
 	const changed = $derived(Object.keys(draft));
-	const styleName = $derived(source?.style.replace("style-", "") ?? "nova");
+	const styleName = $derived(source?.style.replace("style-", "") ?? "valar");
 	const scope = (pane: string) => `[data-component-tuner="${id}"] [data-tuning-${pane}]`;
 	const css = $derived(
 		[
@@ -102,7 +102,7 @@
 		const owner = probe!.closest('[class*="style-"]');
 		return {
 			style:
-				[...(owner?.classList ?? [])].find((value) => /^style-[a-z]+$/.test(value)) ?? "style-nova",
+				[...(owner?.classList ?? [])].find((value) => /^style-[a-z]+$/.test(value)) ?? "style-valar",
 		};
 	}
 
@@ -296,7 +296,7 @@
 			overrides: (pane === "current"
 				? currentOverrides
 				: (previous?.overrides ?? {})) as Partial<V>,
-			style: source?.style ?? "style-nova",
+			style: source?.style ?? "style-valar",
 			dark: canvasMode === "dark",
 			requestClose: () => {
 				if (!confirming && !writing) close();
@@ -337,7 +337,7 @@
 	<div class="sample" data-tuning-current>
 		{@render children({
 			overrides: currentOverrides as Partial<V>,
-			style: source?.style ?? "style-nova",
+			style: source?.style ?? "style-valar",
 			dark: pageDark,
 			requestClose: () => {},
 		})}

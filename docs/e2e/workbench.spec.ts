@@ -348,7 +348,7 @@ for (const sample of [
 		selector: '[data-slot="calendar"]',
 		property: "--cell-size",
 		expected: "36px",
-		style: "nova",
+		style: "valar",
 	},
 	{
 		slug: "range-calendar",
@@ -358,7 +358,7 @@ for (const sample of [
 		selector: '[data-slot="range-calendar"]',
 		property: "--cell-size",
 		expected: "24px",
-		style: "nova",
+		style: "valar",
 	},
 	{
 		slug: "command",
@@ -368,7 +368,7 @@ for (const sample of [
 		selector: '[data-slot="command-item"]',
 		property: "padding-left",
 		expected: "22px",
-		style: "nova",
+		style: "valar",
 	},
 	{
 		slug: "carousel",
@@ -378,7 +378,7 @@ for (const sample of [
 		selector: '[data-slot="carousel-item"][data-orientation="horizontal"]',
 		property: "padding-inline-start",
 		expected: "30px",
-		style: "nova",
+		style: "valar",
 	},
 	{
 		slug: "color-picker",
@@ -388,7 +388,7 @@ for (const sample of [
 		selector: '[data-slot="color-picker"]',
 		property: "row-gap",
 		expected: "14px",
-		style: "nova",
+		style: "valar",
 	},
 	{
 		slug: "attachment",
@@ -398,7 +398,7 @@ for (const sample of [
 		selector: '[data-slot="attachment"][data-size="default"]:has([data-slot="attachment-media"])',
 		property: "padding-left",
 		expected: "14px",
-		style: "rhea",
+		style: "valar",
 	},
 	{
 		slug: "bubble",
@@ -408,7 +408,7 @@ for (const sample of [
 		selector: '[data-slot="bubble"]:not([data-variant="ghost"]) > [data-slot="bubble-content"]',
 		property: "padding-left",
 		expected: "30px",
-		style: "rhea",
+		style: "valar",
 	},
 	{
 		slug: "message",
@@ -418,7 +418,7 @@ for (const sample of [
 		selector: '[data-slot="message"]',
 		property: "column-gap",
 		expected: "30px",
-		style: "rhea",
+		style: "valar",
 	},
 	{
 		slug: "code-block",
@@ -428,7 +428,7 @@ for (const sample of [
 		selector: '[data-slot="code-block"][data-size="default"] > [data-slot="code-block-content"]',
 		property: "padding-left",
 		expected: "30px",
-		style: "rhea",
+		style: "valar",
 	},
 	{
 		slug: "trace",
@@ -438,7 +438,7 @@ for (const sample of [
 		selector: '[data-slot="trace"]',
 		property: "row-gap",
 		expected: "22px",
-		style: "rhea",
+		style: "valar",
 	},
 	{
 		slug: "stepper",
@@ -448,7 +448,7 @@ for (const sample of [
 		selector: '[data-slot="stepper"]',
 		property: "row-gap",
 		expected: "30px",
-		style: "nova",
+		style: "valar",
 	},
 	{
 		slug: "questionnaire",
@@ -458,7 +458,7 @@ for (const sample of [
 		selector: '[data-slot="questionnaire-choice"]',
 		property: "padding-left",
 		expected: "22px",
-		style: "nova",
+		style: "valar",
 	},
 ] as const) {
 	test(`P3 ${sample.title} editor isolates drafts and restores saved geometry`, async ({
@@ -804,10 +804,10 @@ test("Avatar editor dev writeback refreshes the registry baseline and subsequent
 		"Requires a development server and explicit source-write opt-in"
 	);
 	test.setTimeout(120_000);
-	const file = resolve("src/lib/registry/styles/valar/style-nova.css");
+	const file = resolve("src/lib/registry/styles/valar/style-valar.css");
 	const original = readFileSync(file, "utf8");
 	const written = applyStyleOverrides(original, {
-		style: "nova",
+		style: "valar",
 		classes: {
 			"cn-avatar": "data-[size=sm]:size-7 size-11",
 			"cn-avatar-group-count":
@@ -2493,7 +2493,7 @@ test("Dialog editor reuses the shared shell and previews layout, overlay and mot
 	const openButton = tuner.getByRole("button", { name: "微调 Dialog", exact: true });
 	await openButton.click();
 	await expect(editor.getByTestId("dialog-dials")).toBeVisible();
-	// Baseline comes from the installed nova source.
+	// Baseline comes from the installed valar source.
 	for (const [label, value] of [
 		["内边距（px）", "16"],
 		["内容间距（px）", "16"],
@@ -2554,7 +2554,7 @@ test("Popover editor previews padding, slide distance and motion tier on a real 
 	});
 	await openButton.click();
 	await expect(editor.getByTestId("popover-dials")).toBeVisible();
-	// Baseline comes from the installed nova source (p-2.5, gap-2.5, slide 2 = 8px).
+	// Baseline comes from the installed valar source (p-2.5, gap-2.5, slide 2 = 8px).
 	for (const label of ["内边距（px）", "内容间距（px）"])
 		await expect(editor.getByRole("slider", { name: label, exact: true })).toHaveAttribute(
 			"aria-valuenow",
@@ -2677,7 +2677,7 @@ test("Input editor picks Button's height tier and radius level, compares and sav
 	await expect(pageSample).toHaveCSS("height", "32px");
 	await openButton.click();
 	await expect(editor.getByTestId("input-dials")).toBeVisible();
-	// Measured from nova: the Input is as tall as Button's default size.
+	// Measured from valar: the Input is as tall as Button's default size.
 	await expect(editor.getByRole("button", { name: "高度档位 同 Button 默认" })).toBeVisible();
 	await expect(editor.getByRole("button", { name: "圆角档位 lg · 1 × 基数" })).toBeVisible();
 	await expect(
@@ -2689,7 +2689,7 @@ test("Input editor picks Button's height tier and radius level, compares and sav
 	await page.getByRole("option", { name: "同 Button 大", exact: true }).click();
 	await setNumber(page, "横向内边距（px）", 16);
 	await expect(editor.getByText("已修改 2 项", { exact: true })).toBeVisible();
-	// Button's large size is 36px in nova; every Input in the draft follows, Buttons do not.
+	// Button's large size is 36px in valar; every Input in the draft follows, Buttons do not.
 	await expect(input("current").first()).toHaveCSS("height", "36px");
 	await expect(input("current").first()).toHaveCSS("padding-left", "16px");
 	await expect(input("current").last()).toHaveCSS("height", "36px");
@@ -2737,7 +2737,7 @@ test("Select and Textarea editors share the shell and Button's levels", async ({
 	await page.getByRole("option", { name: "none · 直角", exact: true }).click();
 	await expect(trigger("current", "sm")).toHaveCSS("height", "32px");
 	await expect(trigger("current", "default")).toHaveCSS("height", "32px");
-	// One radius level for both sizes, replacing nova's own small-size radius.
+	// One radius level for both sizes, replacing valar's own small-size radius.
 	await expect(trigger("current", "sm")).toHaveCSS("border-top-left-radius", "0px");
 	await expect(trigger("current", "default")).toHaveCSS("border-top-left-radius", "0px");
 	await editor.getByRole("radio", { name: "并排对比" }).click();
@@ -2787,7 +2787,7 @@ test("Dropdown Menu editor previews panel, item spacing and motion tier on a rea
 	const openButton = tuner.getByRole("button", { name: "微调 Dropdown Menu", exact: true });
 	await openButton.click();
 	await expect(editor.getByTestId("dropdown-menu-dials")).toBeVisible();
-	// Baseline comes from the installed nova source.
+	// Baseline comes from the installed valar source.
 	for (const [label, value] of [
 		["面板内边距（px）", "4"],
 		["最小宽度（px）", "128"],
@@ -2823,7 +2823,7 @@ test("Dropdown Menu editor previews panel, item spacing and motion tier on a rea
 		"padding-left",
 		"32px"
 	);
-	// Separators bleed to the panel edge in nova, so they follow the panel padding.
+	// Separators bleed to the panel edge in valar, so they follow the panel padding.
 	await expect(part("current", "separator").first()).toHaveCSS("margin-left", "-8px");
 	await editor.getByRole("button", { name: "重播进入与退出" }).click();
 	await expect(part("current", "content")).toBeVisible();

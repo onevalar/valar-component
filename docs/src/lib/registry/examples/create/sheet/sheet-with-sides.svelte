@@ -23,10 +23,10 @@
 						</Sheet.Description>
 					</Sheet.Header>
 					<div
-						class="no-scrollbar overflow-y-auto style-vega:px-4 style-nova:px-4 style-lyra:px-4 style-maia:px-6 style-mira:px-6 style-luma:px-6 style-rhea:px-6"
+						class="no-scrollbar overflow-y-auto style-valar:px-4"
 					>
 						{#each Array.from({ length: 10 }) as _, index (index)}
-							<p class="mb-4 leading-normal style-lyra:mb-2 style-lyra:leading-relaxed">
+							<p class="mb-4 leading-normal">
 								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
 								incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
 								exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute

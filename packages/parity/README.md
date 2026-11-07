@@ -21,7 +21,7 @@ Or directly, which is handy for `--help`:
 
 ```sh
 node packages/parity/src/index.ts --help
-node packages/parity/src/index.ts variants mira/empty --verbose
+node packages/parity/src/index.ts variants valar/empty --verbose
 ```
 
 ## Commands
@@ -36,7 +36,7 @@ Compares our UI source in `docs/src/lib/registry/ui/**` against upstream's radix
 
 Compares the generated registries in `docs/static/registry/styles/<style>/*.json` against the published upstream registries at `https://ui.shadcn.com/r/styles/radix-<style>/`. Here `cn-*` tokens have been inlined on both sides, so this also checks that our style CSS and injection match upstream's output.
 
-`item` accepts `name` or `style/name`. `parity variants mira/empty` checks a single variant. The `-s, --style <style>` option restricts the run to one style; it cannot be use in conjunction with a `style/` prefix on `item` naming a different style.
+`item` accepts `name` or `style/name`. `parity variants valar/empty` checks a single variant. The `-s, --style <style>` option restricts the run to one style; it cannot be use in conjunction with a `style/` prefix on `item` naming a different style.
 
 ### `parity fix <item> [--dry-run]`
 

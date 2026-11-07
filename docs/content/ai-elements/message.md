@@ -8,7 +8,7 @@ description: One turn. The person's message, and the agent's reply with its acti
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="message-pattern" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="message-pattern" previewClassName="h-auto min-h-0">
 
 <div></div>
 

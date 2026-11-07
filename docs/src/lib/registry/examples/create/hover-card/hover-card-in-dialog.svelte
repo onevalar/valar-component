@@ -25,7 +25,7 @@
 				</HoverCard.Trigger>
 				<HoverCard.Content>
 					<div
-						class="flex flex-col style-vega:gap-2 style-nova:gap-1.5 style-lyra:gap-1 style-maia:gap-2 style-mira:gap-1"
+						class="flex flex-col style-valar:gap-1.5"
 					>
 						<h4 class="font-medium">Hover Card</h4>
 						<p>This hover card appears inside a dialog. Hover over the button to see it.</p>

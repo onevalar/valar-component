@@ -14,7 +14,7 @@
 	"typescript": true,
 	"registry": "http://127.0.0.1:5186/registry",
 	"designSystem": {
-		"style": "nova",
+		"style": "valar",
 		"iconLibrary": "tabler",
 		"theme": "pink",
 		"menuAccent": "subtle",

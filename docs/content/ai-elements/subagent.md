@@ -8,7 +8,7 @@ description: Displays a subagent run, with its tool calls and result.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="subagent-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="subagent-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -62,7 +62,7 @@ Subagent is built with the [Trace](/docs/components/trace), [Code Block](/docs/c
 
 While the subagent runs, the line has `status="running"` and its content shows the tool calls so far. Add the result when the subagent finishes.
 
-<ComponentPreview name="subagent-running" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="subagent-running" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -72,7 +72,7 @@ While the subagent runs, the line has `status="running"` and its content shows t
 
 Put the task the subagent was given at the top of the content, with its model and tools as [Badge](/docs/components/badge) items. Show how long it ran in a `Trace.Description` after the title.
 
-<ComponentPreview name="subagent-details" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="subagent-details" previewClassName="h-auto min-h-0">
 
 <div></div>
 

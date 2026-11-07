@@ -8,7 +8,7 @@ description: 显示一次子代理运行，包含它的工具调用和结果。
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="subagent-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="subagent-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -62,7 +62,7 @@ description: 显示一次子代理运行，包含它的工具调用和结果。
 
 子代理运行期间，该行设为 `status="running"`，内容显示到目前为止的工具调用。子代理结束后再补上结果。
 
-<ComponentPreview name="subagent-running" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="subagent-running" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -72,7 +72,7 @@ description: 显示一次子代理运行，包含它的工具调用和结果。
 
 把交给子代理的任务放在内容顶部，模型和工具用[徽标](/docs/components/badge)列出。运行耗时放在标题之后的 `Trace.Description` 中。
 
-<ComponentPreview name="subagent-details" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="subagent-details" previewClassName="h-auto min-h-0">
 
 <div></div>
 

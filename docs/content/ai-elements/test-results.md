@@ -8,7 +8,7 @@ description: Displays a test run by the agent, with its suites and failures.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="test-results-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="test-results-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -81,7 +81,7 @@ Test Results is built with the [Trace](/docs/components/trace) and [Code Block](
 
 Group tests by file. Each suite is a collapsible line with a `Trace` of its tests. Open the suites that have a failure.
 
-<ComponentPreview name="test-results-suites" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="test-results-suites" previewClassName="h-auto min-h-0">
 
 <div></div>
 

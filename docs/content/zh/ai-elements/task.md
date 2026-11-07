@@ -8,7 +8,7 @@ description: 显示智能体执行过程中的各个步骤。
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="task-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="task-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

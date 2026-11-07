@@ -31,7 +31,7 @@ import { versionSchemas } from "../src/lib/features/workbench/tuner.js";
 import { AspectRatio } from "../src/lib/registry/ui/aspect-ratio/index.js";
 import { Separator } from "../src/lib/registry/ui/separator/index.js";
 
-const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+const styles = ["valar"];
 const read = (path: string) => readFileSync(resolve(path), "utf8");
 const registryFiles = (component: string, style: string): { target: string; content: string }[] =>
 	JSON.parse(read(`src/__registry__/json/styles/${style}/${component}.json`)).files;
@@ -226,7 +226,7 @@ describe("layout editor baseline and installable geometry contracts", () => {
 			id: "11111111-1111-4111-8111-111111111111",
 			name: "边界",
 			createdAt: "2026-11-03T00:00:00.000Z",
-			source: { style: "style-rhea" },
+			source: { style: "style-valar" },
 			baseline: { radius: "style", clipping: "style" },
 			overrides: { clipping: "hidden" },
 		};
@@ -245,7 +245,7 @@ describe("layout editor baseline and installable geometry contracts", () => {
 			["collapsible", "collapsible-content.svelte", parseCollapsibleSource],
 			["aspect-ratio", "aspect-ratio.svelte", parseAspectRatioSource],
 		] as const) {
-			const source = installed(component, "nova", "").find(
+			const source = installed(component, "valar", "").find(
 				(entry) => entry.target === file
 			)!.content;
 			expect(() =>
@@ -268,7 +268,7 @@ describe("layout editor baseline and installable geometry contracts", () => {
 				parse([{ target: file, content: source.replace(/data-slot="[^"]+"/, "") }])
 			).toThrow();
 		}
-		const separator = installed("separator", "nova", "").find(
+		const separator = installed("separator", "valar", "").find(
 			(file) => file.target === "separator.svelte"
 		)!;
 		expect(() =>
@@ -330,7 +330,7 @@ describe("layout editor baseline and installable geometry contracts", () => {
 
 	it("keeps caller classes last after flattened write-back", () => {
 		const css = applyStyleOverrides("", {
-			style: "nova",
+			style: "valar",
 			classes: {
 				...collapsibleOverrideClasses({ paddingX: 30, paddingY: 6 }),
 				...aspectRatioOverrideClasses({ radius: "xl", clipping: "hidden" }),
@@ -352,7 +352,7 @@ describe("layout editor baseline and installable geometry contracts", () => {
 				["data-horizontal:h-px", "data-vertical:w-0.5"],
 			],
 		] as const) {
-			const source = installed(component, "nova", css).find(
+			const source = installed(component, "valar", css).find(
 				(entry) => entry.target === file
 			)!.content;
 			expect(source).toMatch(/className\s*\)\}/);

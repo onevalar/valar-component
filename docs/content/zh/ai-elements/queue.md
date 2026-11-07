@@ -8,7 +8,7 @@ description: 显示智能体的待办清单，分为未完成和已完成两部�
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="queue-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="queue-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -87,7 +87,7 @@ description: 显示智能体的待办清单，分为未完成和已完成两部�
 
 带描述的待办用 `Trace.Collapsible`，展开后显示描述；没有描述的待办保持为 `Trace.Line`。
 
-<ComponentPreview name="queue-descriptions" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="queue-descriptions" previewClassName="h-auto min-h-0">
 
 <div></div>
 

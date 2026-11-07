@@ -74,7 +74,7 @@ describe("addRegistryItems", () => {
 		typescript: true,
 		registry: "https://example.com/registry",
 		sveltekit: true,
-		style: "vega",
+		style: "valar",
 		iconLibrary: "lucide",
 		menuColor: "default",
 		menuAccent: "subtle",
@@ -193,7 +193,7 @@ describe("addRegistryItems", () => {
 		// mirrors the `/init?preset=` response: a base item carrying the theme
 		// colors, with the chosen font as a resolved `registry:font` dependency
 		const themeItem = {
-			name: "vega",
+			name: "valar",
 			type: "registry:base",
 			files: [],
 			registryDependencies: ["utils", "font-inter"],
@@ -301,7 +301,7 @@ describe("addRegistryItems", () => {
 		// the file-less base item carries the theme; `utils` is a file-bearing
 		// dependency pulled in by the preset that a project already has
 		const themeItem = {
-			name: "vega",
+			name: "valar",
 			type: "registry:base",
 			files: [],
 			registryDependencies: ["utils"],

@@ -18,7 +18,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="message-scroller-demo" class="rounded-[34px] sm:rounded-4xl" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
+<ComponentPreview name="message-scroller-demo" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
 
 <div></div>
 
@@ -177,7 +177,7 @@ links:
 
 下例把用户消息设为锚点。发送新消息时，视口把它锚定在顶部附近，助手回复追加在下方。把锚点切到助手消息，就能看到两者的差别。
 
-<ComponentPreview name="message-scroller-anchoring" class="rounded-[34px] sm:rounded-4xl" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
+<ComponentPreview name="message-scroller-anchoring" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
 
 <div></div>
 
@@ -197,7 +197,7 @@ links:
 </MessageScroller.Item>
 ```
 
-<ComponentPreview name="message-scroller-group-chat" class="rounded-[34px] sm:rounded-4xl" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
+<ComponentPreview name="message-scroller-group-chat" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
 
 <div></div>
 
@@ -218,7 +218,7 @@ links:
 
 调整下例中露出的高度，观察它对对话的影响。
 
-<ComponentPreview name="message-scroller-previous-context" class="rounded-[34px] sm:rounded-4xl" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
+<ComponentPreview name="message-scroller-previous-context" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
 
 <div></div>
 
@@ -238,7 +238,7 @@ links:
 </MessageScroller.Provider>
 ```
 
-<ComponentPreview name="message-scroller-streaming" class="rounded-[34px] sm:rounded-4xl" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
+<ComponentPreview name="message-scroller-streaming" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
 
 <div></div>
 
@@ -260,7 +260,7 @@ links:
 </MessageScroller.Provider>
 ```
 
-<ComponentPreview name="message-scroller-opening-position" class="rounded-[34px] sm:rounded-4xl" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16" hideCode>
+<ComponentPreview name="message-scroller-opening-position" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16" hideCode>
 
 <div></div>
 
@@ -311,7 +311,7 @@ links:
 
 该行为通过 `preserveScrollOnPrepend` 默认开启。
 
-<ComponentPreview name="message-scroller-load-history" class="rounded-[34px] sm:rounded-4xl" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
+<ComponentPreview name="message-scroller-load-history" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
 
 <div></div>
 
@@ -333,7 +333,7 @@ links:
 />
 ```
 
-<ComponentPreview name="message-scroller-animation" class="rounded-[34px] sm:rounded-4xl" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
+<ComponentPreview name="message-scroller-animation" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
 
 <div></div>
 
@@ -353,7 +353,7 @@ links:
 </script>
 ```
 
-<ComponentPreview name="message-scroller-commands" class="rounded-[34px] sm:rounded-4xl" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16" hideCode>
+<ComponentPreview name="message-scroller-commands" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16" hideCode>
 
 <div></div>
 
@@ -375,7 +375,7 @@ links:
 </script>
 ```
 
-<ComponentPreview name="message-scroller-visibility" class="rounded-[34px] sm:rounded-4xl" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16" hideCode>
+<ComponentPreview name="message-scroller-visibility" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16" hideCode>
 
 <div></div>
 
@@ -397,7 +397,7 @@ links:
 </script>
 ```
 
-<ComponentPreview name="message-scroller-scrollable" class="rounded-[34px] sm:rounded-4xl" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
+<ComponentPreview name="message-scroller-scrollable" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
 
 <div></div>
 

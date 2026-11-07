@@ -8,7 +8,7 @@ description: 显示智能体执行的一次测试，包含测试套件和失败�
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="test-results-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="test-results-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -81,7 +81,7 @@ description: 显示智能体执行的一次测试，包含测试套件和失败�
 
 按文件分组测试。每个套件是一个可折叠行，内部用一个 `Trace` 列出其中的测试。有失败的套件要展开。
 
-<ComponentPreview name="test-results-suites" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="test-results-suites" previewClassName="h-auto min-h-0">
 
 <div></div>
 

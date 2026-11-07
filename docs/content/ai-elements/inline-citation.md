@@ -8,7 +8,7 @@ description: A source in the sentence that opens on hover.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="inline-citation-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="inline-citation-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

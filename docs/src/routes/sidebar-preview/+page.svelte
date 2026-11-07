@@ -12,7 +12,7 @@
 	// avoids pretending that TypeScript resolves Vite's virtual .svelte?flattened module name.
 	const previews = import.meta.glob<Component>(
 		"/src/lib/features/workbench/sidebar-preview.svelte",
-		{ eager: true, import: "default", query: "?flattened=nova" }
+		{ eager: true, import: "default", query: "?flattened=valar" }
 	);
 	const SidebarPreview = previews["/src/lib/features/workbench/sidebar-preview.svelte"]!;
 	let state = $state<SidebarPreviewUpdate>();

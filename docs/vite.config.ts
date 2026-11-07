@@ -65,7 +65,7 @@ export const ogDirPath = path.join(__dirname, "src/routes/og");
  */
 function flattenedRegistry(): Plugin {
 	// Keep in sync with the style loaded by `app.css` and set on `<body>` in `app.html`.
-	const DEFAULT_STYLE = "nova";
+	const DEFAULT_STYLE = "valar";
 	const QUERY = "flattened";
 	const rawUiDir = path.join(__dirname, "src/lib/registry/ui");
 	const stylesDir = path.join(__dirname, "src/lib/registry/styles");
@@ -102,15 +102,7 @@ function flattenedRegistry(): Plugin {
 		// Editor canvases must render the installed baseline too: base-layer CSS cannot
 		// override literal utilities in raw components such as Tags Input and Spinner.
 		// Do not include the old multi-style Studio or non-canvas workbench helpers.
-		if (within(file, [tunerDir]) && file.endsWith("-tuner.svelte")) {
-			// These component pages explicitly preview Rhea; their editor must use the
-			// same installed source as the page sample and the registry baseline it reads.
-			return /\/(?:attachment|bubble|message|message-scroller|marker|code-block|trace)-tuner\.svelte$/.test(
-				file
-			)
-				? "rhea"
-				: DEFAULT_STYLE;
-		}
+		if (within(file, [tunerDir]) && file.endsWith("-tuner.svelte")) return DEFAULT_STYLE;
 		return null;
 	};
 
@@ -141,7 +133,7 @@ function flattenedRegistry(): Plugin {
 			// Note: Vite passes `scan: true` here ^^ at runtime but only types it on the internal plugin
 			// container's options, not on the public hook signature.
 			// A `style-*` class on the preview imports the example as `?flattened=<style>`.
-			// That request wins over the importer's default (nova) style.
+			// That request wins over the importer's default (valar) style.
 			const requested = isFlattened(source)
 				? (splitId(source).params.get(QUERY) ?? DEFAULT_STYLE)
 				: null;

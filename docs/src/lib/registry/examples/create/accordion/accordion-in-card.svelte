@@ -56,11 +56,7 @@
 			<Card.Description>Common questions about your account, plans, and payments</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<Accordion.Root
-				type="multiple"
-				value={["plans"]}
-				class="style-maia:rounded-md style-mira:rounded-md"
-			>
+			<Accordion.Root type="multiple" value={["plans"]}>
 				{#each items as item (item.value)}
 					<Accordion.Item value={item.value}>
 						<Accordion.Trigger>{item.trigger}</Accordion.Trigger>

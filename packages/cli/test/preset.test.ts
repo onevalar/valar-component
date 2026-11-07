@@ -44,7 +44,7 @@ describe("encodePreset / decodePreset", () => {
 
 	it("should round-trip a custom config", () => {
 		const config: PresetConfig = {
-			style: "lyra",
+			style: "valar",
 			baseColor: "zinc",
 			theme: "blue",
 			chartColor: "blue",
@@ -71,10 +71,10 @@ describe("encodePreset / decodePreset", () => {
 	});
 
 	it("should handle partial config by filling defaults", () => {
-		const code = encodePreset({ style: "lyra" });
+		const code = encodePreset({ style: "valar" });
 		const decoded = decodePreset(code);
 		expect(decoded).not.toBeNull();
-		expect(decoded!.style).toBe("lyra");
+		expect(decoded!.style).toBe("valar");
 		expect(decoded!.theme).toBe(DEFAULT_PRESET_CONFIG.theme);
 	});
 

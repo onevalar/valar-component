@@ -8,7 +8,7 @@ description: How much of the context window the conversation has used.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="context-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="context-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

@@ -17,7 +17,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="attachment-demo" class="bg-surface dark:bg-background" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
+<ComponentPreview name="attachment-demo" class="bg-surface dark:bg-background" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
 
 <div></div>
 
@@ -116,7 +116,7 @@ Attachment.Group
 
 在 `Attachment.Media` 上设置 `variant="image"`，并在其中渲染 `<img>`。传入 `orientation="vertical"` 可把媒体堆叠到内容上方。
 
-<ComponentPreview name="attachment-image" class="bg-surface dark:bg-background" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
+<ComponentPreview name="attachment-image" class="bg-surface dark:bg-background" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
 
 <div></div>
 
@@ -126,7 +126,7 @@ Attachment.Group
 
 用 `state` 反映上传过程。`uploading` 和 `processing` 状态下标题带微光动画，`error` 状态下改用危险样式。
 
-<ComponentPreview name="attachment-states" class="bg-surface dark:bg-background" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
+<ComponentPreview name="attachment-states" class="bg-surface dark:bg-background" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
 
 <div></div>
 
@@ -136,7 +136,7 @@ Attachment.Group
 
 用 `size` 在 `default`、`sm` 和 `xs` 之间切换。
 
-<ComponentPreview name="attachment-sizes" class="bg-surface dark:bg-background" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
+<ComponentPreview name="attachment-sizes" class="bg-surface dark:bg-background" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
 
 <div></div>
 
@@ -146,7 +146,7 @@ Attachment.Group
 
 用 `Attachment.Group` 包裹附件，排成可横向滚动、带吸附效果与边缘渐隐的一行。
 
-<ComponentPreview name="attachment-group" class="bg-surface dark:bg-background" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
+<ComponentPreview name="attachment-group" class="bg-surface dark:bg-background" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
 
 <div></div>
 
@@ -156,7 +156,7 @@ Attachment.Group
 
 加入 `Attachment.Trigger`，让整张卡片可以打开链接或对话框。它铺在操作按钮下层并覆盖整张卡片，因此操作按钮仍可点击。
 
-<ComponentPreview name="attachment-trigger" class="bg-surface dark:bg-background" previewStyle="rhea" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
+<ComponentPreview name="attachment-trigger" class="bg-surface dark:bg-background" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
 
 <div></div>
 

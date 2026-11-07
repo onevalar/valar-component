@@ -7,9 +7,9 @@
 业务应用与组件库放在同一个 pnpm workspace，以 `@valar/svelte-ui: workspace:*` 引用共享组件。应用不再通过 CLI 各自复制一套组件源码。
 
 - **唯一维护源**仍是 `docs/src/lib/registry/ui/`、`hooks/`、`lib/` 与 `styles/`；没有移动或复制另一套手工维护源。
-- `packages/ui/` 将 68 个组件生成成八套可消费样式，展开已有样式与写回覆盖、替换真实 Lucide 图标、解析内部依赖。`dist/` 是忽略的产物，不能手改。
+- `packages/ui/` 将 68 个组件生成单一的 `valar` 风格组件，展开已有样式与写回覆盖、替换真实 Lucide 图标、解析内部依赖。`dist/` 是忽略的产物，不能手改。
 - `apps/playground/` 是独立 SvelteKit 消费应用，仅导入公共包；不加载文档站、编辑器或文档图标 provider。
-- 应用默认使用 Nova、neutral 浅／深主题和 Lucide。八套组件样式均有导出；其他基础色板／图标库的包级配置尚未提供。
+- 应用使用 valar 风格（原 Nova）、neutral 浅／深主题和 Lucide。不再有其他风格；其他基础色板／图标库的包级配置尚未提供。
 - 自有包继续 `private`，没有 npm 发布、生产域名或自动部署。组件文档／CLI 安装方式仍保留，但已复制到外部项目的源码不会因此自动同步。
 
 ## 立即使用联调项目
@@ -55,11 +55,11 @@ pnpm dev:playground
 
 ### 选择其他样式
 
-例如应用选择 Rhea 时，组件与主题应配套：
+组件与主题配套导入：
 
 ```svelte
 <script lang="ts">
-  import { Button } from "@valar/svelte-ui/styles/rhea/button";
+  import { Button } from "@valar/svelte-ui/styles/valar/button";
 </script>
 
 <Button>保存</Button>
@@ -67,7 +67,7 @@ pnpm dev:playground
 
 ```css
 @import "tailwindcss";
-@import "@valar/svelte-ui/themes/rhea";
+@import "@valar/svelte-ui/themes/valar";
 ```
 
 可选 `nova`、`vega`、`maia`、`lyra`、`mira`、`luma`、`sera`、`rhea`。无 style 前缀的组件子路径等价于 Nova。单应用建议统一一套样式；未提供运行时整体切换八套样式的功能。

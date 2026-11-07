@@ -68,7 +68,7 @@
 </svelte:head>
 
 <div
-	class="style-vega min-h-svh bg-background p-6 text-foreground sm:p-10"
+	class="style-valar min-h-svh bg-background p-6 text-foreground sm:p-10"
 	data-testid="workbench-canvas"
 	style:background-color={dark ? "#18181b" : String(value("global.background"))}
 	style:color={dark ? "#fafafa" : String(value("global.foreground"))}

@@ -20,7 +20,7 @@
 			{/snippet}
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Content
-			class="style-vega:w-56 style-nova:w-48 style-lyra:w-48 style-maia:w-56 style-mira:w-48"
+			class="style-valar:w-48"
 		>
 			<DropdownMenu.Group>
 				<DropdownMenu.Label>File</DropdownMenu.Label>

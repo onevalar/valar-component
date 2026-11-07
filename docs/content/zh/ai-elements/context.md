@@ -8,7 +8,7 @@ description: 对话已占用的上下文窗口比例。
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="context-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="context-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

@@ -34,7 +34,7 @@
 		}
 	}
 
-	const effectiveRadius = $derived(designSystem.style === "lyra" ? "none" : designSystem.radius);
+	const effectiveRadius = $derived(designSystem.radius);
 
 	const radius = $derived(
 		RADII.find((radius) => radius.name === effectiveRadius)?.value ?? RADII[0].value

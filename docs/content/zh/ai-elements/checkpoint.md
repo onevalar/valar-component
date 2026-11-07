@@ -8,7 +8,7 @@ description: 标记对话中可以返回的位置。
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="checkpoint-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="checkpoint-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

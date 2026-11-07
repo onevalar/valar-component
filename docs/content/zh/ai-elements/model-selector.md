@@ -8,7 +8,7 @@ description: 两个菜单。一个选择智能体运行的模型，另一个选�
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="model-selector-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="model-selector-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

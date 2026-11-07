@@ -18,7 +18,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="code-block-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -117,7 +117,7 @@ CodeBlock.Root
 
 Pass a string to the `code` prop of `CodeBlock.Content`. It renders as one text node, so it stays cheap while output streams.
 
-<ComponentPreview name="code-block-basic" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-basic" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -127,7 +127,7 @@ Pass a string to the `code` prop of `CodeBlock.Content`. It renders as one text 
 
 `CodeBlock.Header` holds a `CodeBlock.Title` and `CodeBlock.Actions`. `CodeBlock.CopyButton` copies its `value`.
 
-<ComponentPreview name="code-block-header" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-header" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -147,7 +147,7 @@ A long title truncates. To link the title to a file, wrap `CodeBlock.Title` in a
 
 `CodeBlock.Actions` holds any number of buttons. For a wrap toggle, keep the state yourself and pass it to `wrap`.
 
-<ComponentPreview name="code-block-actions" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-actions" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -177,7 +177,7 @@ A long title truncates. To link the title to a file, wrap `CodeBlock.Title` in a
 
 Without a header, put `CodeBlock.Actions` directly inside `CodeBlock.Root`. The actions float at the top end and stay hidden until the block is hovered or focused. They always show on touch screens.
 
-<ComponentPreview name="code-block-floating-actions" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-floating-actions" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -187,7 +187,7 @@ Without a header, put `CodeBlock.Actions` directly inside `CodeBlock.Root`. The 
 
 Add `lineNumbers` to `CodeBlock.Content`. A `code` string is split into lines, and the numbers are not copied with a selection.
 
-<ComponentPreview name="code-block-line-numbers" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-line-numbers" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -197,7 +197,7 @@ Add `lineNumbers` to `CodeBlock.Content`. A `code` string is split into lines, a
 
 Set `startLine` to number lines from a given line, for a snippet from the middle of a file. The gutter grows to fit the widest number.
 
-<ComponentPreview name="code-block-start-line" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-start-line" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -207,7 +207,7 @@ Set `startLine` to number lines from a given line, for a snippet from the middle
 
 Long lines scroll by default. Add `wrap` to wrap them, which suits tool output and error messages. To let the reader toggle it, see [Actions](#actions).
 
-<ComponentPreview name="code-block-wrap" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-wrap" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -217,7 +217,7 @@ Long lines scroll by default. Add `wrap` to wrap them, which suits tool output a
 
 Render each line as a `CodeBlock.Line` and set `variant="highlighted"` on the lines to call out.
 
-<ComponentPreview name="code-block-highlighted-lines" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-highlighted-lines" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -227,7 +227,7 @@ Render each line as a `CodeBlock.Line` and set `variant="highlighted"` on the li
 
 Set `variant="added"` or `variant="removed"` on a `CodeBlock.Line`. Each one adds a `+` or `−` marker.
 
-<ComponentPreview name="code-block-diff" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-diff" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -237,7 +237,7 @@ Set `variant="added"` or `variant="removed"` on a `CodeBlock.Line`. Each one add
 
 Cap the height with a `max-h-*` class on `CodeBlock.Content`. The content scrolls inside the block.
 
-<ComponentPreview name="code-block-height" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-height" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -249,7 +249,7 @@ Cap the height with a `max-h-*` class on `CodeBlock.Content`. The content scroll
 
 `CodeBlock.Footer` is a slot below the content. For Show More, cap the content while it is collapsed and put a ghost `xs` `Button` in the footer.
 
-<ComponentPreview name="code-block-show-more" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-show-more" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -283,7 +283,7 @@ Cap the height with a `max-h-*` class on `CodeBlock.Content`. The content scroll
 
 To keep a long block from taking over the page, raise the cap instead of removing it. The expanded content scrolls, and the edges fade as you scroll.
 
-<ComponentPreview name="code-block-show-more-scroll" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-show-more-scroll" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -293,7 +293,7 @@ To keep a long block from taking over the page, raise the cap instead of removin
 
 Use `size="sm"` for tool and [Trace](#trace) output. It has tighter padding and `text-xs` text.
 
-<ComponentPreview name="code-block-size" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-size" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -303,7 +303,7 @@ Use `size="sm"` for tool and [Trace](#trace) output. It has tighter padding and 
 
 Use `variant="destructive"` for errors and failed output.
 
-<ComponentPreview name="code-block-destructive" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-destructive" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -313,7 +313,7 @@ Use `variant="destructive"` for errors and failed output.
 
 Put a `CodeBlock.Root` with `size="sm"` in `Trace.CollapsibleContent` for tool and terminal output. Add `wrap` and a `max-h-64` class to `CodeBlock.Content` so long output wraps and scrolls inside the trace. The block sets its own text color, so `Trace.CollapsibleContent` does not mute it.
 
-<ComponentPreview name="code-block-trace" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-trace" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -325,7 +325,7 @@ See [Tool](/docs/ai-elements/tool), [Terminal](/docs/ai-elements/terminal) and [
 
 Show several files with [Tabs](/docs/components/tabs), one `CodeBlock.Root` in each `Tabs.Content`.
 
-<ComponentPreview name="code-block-tabs" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-tabs" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -335,7 +335,7 @@ Show several files with [Tabs](/docs/components/tabs), one `CodeBlock.Root` in e
 
 Put a `CodeBlock.Root` between paragraphs inside a [Message](/docs/components/message).
 
-<ComponentPreview name="code-block-chat" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-chat" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -345,7 +345,7 @@ Put a `CodeBlock.Root` between paragraphs inside a [Message](/docs/components/me
 
 `useHighlightedCode` highlights with [Shiki](https://shiki.style). Its `current` property has one entry per line. Pass each one to the `code` prop of a `CodeBlock.Line`.
 
-<ComponentPreview name="code-block-highlighting" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-highlighting" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -376,7 +376,7 @@ Shiki uses its JavaScript regex engine, so there is no WASM to load.
 
 Each language loads the first time it is used. Edit the list in `lib/highlighter.ts`. A language that is not in the list renders as plain text.
 
-<ComponentPreview name="code-block-languages" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-languages" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -388,7 +388,7 @@ The list ships with `bash`, `css`, `diff`, `html`, `javascript`, `json`, `jsx`, 
 
 Pass `"ansi"` as the language to render the colors in terminal output. Without it, escape codes show as text.
 
-<ComponentPreview name="code-block-ansi" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-ansi" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -434,7 +434,7 @@ export async function load() {
 
 While the code streams, the hook tokenizes only the new lines, starting where the last line left off. Lines that did not change keep the same tokens, so Svelte skips them.
 
-<ComponentPreview name="code-block-streaming" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-streaming" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -444,7 +444,7 @@ While the code streams, the hook tokenizes only the new lines, starting where th
 
 Render the message with [svelte-streamdown](https://github.com/beynar/svelte-streamdown) and route fenced code to a `CodeBlock` with `components.code`. Inline code goes through the `codespan` snippet, so it stays inline.
 
-<ComponentPreview name="code-block-markdown" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="code-block-markdown" previewClassName="h-auto min-h-0">
 
 <div></div>
 

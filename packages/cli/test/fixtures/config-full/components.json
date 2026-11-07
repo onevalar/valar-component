@@ -28,7 +28,7 @@
 		"menuAccent": "subtle",
 		"menuColor": "default",
 		"radius": "0.5rem",
-		"style": "vega",
+		"style": "valar",
 		"theme": "neutral"
 	},
 	"typescript": true,

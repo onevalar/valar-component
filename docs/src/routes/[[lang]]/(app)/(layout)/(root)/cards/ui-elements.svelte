@@ -98,8 +98,8 @@
 		<div class="flex items-center gap-4">
 			<AlertDialog>
 				<AlertDialogTrigger class={buttonVariants({ variant: "outline" })}>
-					<span class="hidden md:flex style-sera:md:hidden"> Alert Dialog </span>
-					<span class="flex md:hidden style-sera:md:flex">Dialog</span>
+					<span class="hidden md:flex"> Alert Dialog </span>
+					<span class="flex md:hidden">Dialog</span>
 				</AlertDialogTrigger>
 				<AlertDialogContent size="sm" portalProps={{ disabled: true }}>
 					<AlertDialogHeader>
@@ -116,8 +116,7 @@
 			</AlertDialog>
 			<ButtonGroup class="ml-auto">
 				<Button variant="outline">
-					<span class="style-sera:hidden">Button Group</span>
-					<span class="hidden style-sera:block">Group</span>
+					<span>Button Group</span>
 				</Button>
 				<DropdownMenu>
 					<DropdownMenuTrigger

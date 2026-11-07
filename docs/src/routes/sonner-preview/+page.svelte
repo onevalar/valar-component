@@ -10,7 +10,7 @@
 
 	const previews = import.meta.glob<Component>(
 		"/src/lib/features/workbench/sonner-preview.svelte",
-		{ eager: true, import: "default", query: "?flattened=nova" }
+		{ eager: true, import: "default", query: "?flattened=valar" }
 	);
 	const SonnerPreview = previews["/src/lib/features/workbench/sonner-preview.svelte"]!;
 	const connectSchema = z

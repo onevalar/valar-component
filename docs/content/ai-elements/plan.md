@@ -8,7 +8,7 @@ description: Displays the steps the agent plans to take, and how far it has got.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="plan-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="plan-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -76,7 +76,7 @@ Plan is built with the [Trace](/docs/components/trace) component.
 
 Put a description above the steps, inside `Trace.CollapsibleContent`.
 
-<ComponentPreview name="plan-description" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="plan-description" previewClassName="h-auto min-h-0">
 
 <div></div>
 

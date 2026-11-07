@@ -10,13 +10,28 @@
 				"icon-xs": "cn-input-group-button-size-icon-xs",
 				"icon-sm": "cn-input-group-button-size-icon-sm",
 			},
+			shape: {
+				auto: "",
+				pill: "rounded-full",
+				square: "",
+			},
 		},
+		compoundVariants: [
+			// Icon-only buttons are circles, like Button.
+			{
+				size: ["icon-xs", "icon-sm"],
+				shape: "auto",
+				class: "rounded-full",
+			},
+		],
 		defaultVariants: {
 			size: "xs",
+			shape: "auto",
 		},
 	});
 
 	export type InputGroupButtonSize = VariantProps<typeof inputGroupButtonVariants>["size"];
+	export type InputGroupButtonShape = VariantProps<typeof inputGroupButtonVariants>["shape"];
 </script>
 
 <script lang="ts">
@@ -31,9 +46,11 @@
 		type = "button",
 		variant = "ghost",
 		size = "xs",
+		shape = "auto",
 		...restProps
-	}: Omit<ComponentProps<typeof Button>, "href" | "size"> & {
+	}: Omit<ComponentProps<typeof Button>, "href" | "size" | "shape"> & {
 		size?: InputGroupButtonSize;
+		shape?: InputGroupButtonShape;
 	} = $props();
 </script>
 
@@ -43,7 +60,7 @@
 	data-size={size}
 	{variant}
 	class={cn(
-		inputGroupButtonVariants({ size }),
+		inputGroupButtonVariants({ size, shape }),
 		// The addon around the button is muted text, which outline and ghost buttons would
 		// inherit. Buttons must read as clickable, so they take the normal text colour.
 		(variant === "outline" || variant === "ghost") && "text-foreground",

@@ -8,7 +8,7 @@ description: 一轮对话。用户的消息，以及智能体的回复与其操�
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="message-pattern" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="message-pattern" previewClassName="h-auto min-h-0">
 
 <div></div>
 

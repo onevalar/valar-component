@@ -267,7 +267,7 @@ import {
 function originals(): RegistryItem[] {
 	return COMPONENTS.map(({ id }) =>
 		registryItemSchema.parse(
-			JSON.parse(readFileSync(resolve(`static/registry/styles/vega/${id}.json`), "utf8"))
+			JSON.parse(readFileSync(resolve(`static/registry/styles/valar/${id}.json`), "utf8"))
 		)
 	);
 }
@@ -709,7 +709,7 @@ const wrongDefault: WorkbenchAccordionProps = { value: ${type === "single" ? '["
 });
 
 describe("Button write-back into Valar style overrides", () => {
-	const upstream = readFileSync(resolve("src/lib/registry/styles/style-nova.css"), "utf8");
+	const upstream = readFileSync(resolve("src/lib/registry/styles/style-valar.css"), "utf8");
 	const buttonSource = readFileSync(resolve("src/lib/registry/ui/button/button.svelte"), "utf8");
 	const sizeClasses = (css: string, size: string) =>
 		injectStyleClasses(buttonSource, mergeStyleMaps(parseStyleCss(upstream), parseStyleCss(css)))
@@ -718,11 +718,11 @@ describe("Button write-back into Valar style overrides", () => {
 			.split(" ");
 
 	it("replaces conflicting utilities in the installed source and keeps earlier write-backs", () => {
-		const empty = readFileSync(resolve("src/lib/registry/styles/valar/style-nova.css"), "utf8");
+		const empty = readFileSync(resolve("src/lib/registry/styles/valar/style-valar.css"), "utf8");
 		const first = applyStyleOverrides(
 			empty,
 			styleOverridePayloadSchema.parse({
-				style: "nova",
+				style: "valar",
 				classes: buttonOverrideClasses({ "default.height": 44, "default.paddingX": 16 }),
 			})
 		);
@@ -730,7 +730,7 @@ describe("Button write-back into Valar style overrides", () => {
 		const second = applyStyleOverrides(
 			first,
 			styleOverridePayloadSchema.parse({
-				style: "nova",
+				style: "valar",
 				classes: buttonOverrideClasses({ "lg.height": 50, radius: "xl" }),
 			})
 		);
@@ -758,7 +758,7 @@ describe("Button write-back into Valar style overrides", () => {
 			{ "cn-card": "h-11" },
 			{ "cn-button": "rounded-xl } .x { color: red" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 		expect(styleOverridePayloadSchema.safeParse({ style: "../x", classes: {} }).success).toBe(
 			false
 		);
@@ -790,35 +790,27 @@ describe("Dialog write-back into Valar style overrides", () => {
 	};
 
 	it("reads each style's own baseline from the installed source", () => {
-		const nova = parseDialogSource(registry("nova").files);
-		expect(nova.values).toMatchObject({ padding: 16, gap: 16, overlay: 10, radius: "xl" });
-		expect(nova.context).toEqual({ footerBleed: true, footerRounded: true });
-		const vega = parseDialogSource(registry("vega").files);
-		expect(vega.values).toMatchObject({ padding: 24, gap: 24, overlay: 10 });
-		expect(vega.context).toEqual({ footerBleed: false, footerRounded: false });
-		expect(parseDialogSource(registry("maia").files).values.overlay).toBe(80);
+		const valar = parseDialogSource(registry("valar").files);
+		expect(valar.values).toMatchObject({ padding: 16, gap: 16, overlay: 10, radius: "xl" });
+		expect(valar.context).toEqual({ footerBleed: true, footerRounded: true });
 	});
 
 	it("keeps the bleeding footer aligned with the new padding and swaps motion tiers", () => {
-		const css = write("nova", { padding: 24, duration: "slow", zoom: "90", overlay: 40 });
-		const content = injected("nova", css, "dialog-content.svelte");
+		const css = write("valar", { padding: 24, duration: "slow", zoom: "90", overlay: 40 });
+		const content = injected("valar", css, "dialog-content.svelte");
 		expect(content).toEqual(expect.arrayContaining(["p-6", "gap-4", "duration-slow"]));
 		expect(content).toEqual(
 			expect.arrayContaining(["data-open:zoom-in-90", "data-closed:zoom-out-90"])
 		);
 		expect(content).not.toContain("p-4");
 		expect(content).not.toContain("data-open:zoom-in-95");
-		const footer = injected("nova", css, "dialog-footer.svelte");
+		const footer = injected("valar", css, "dialog-footer.svelte");
 		expect(footer).toEqual(expect.arrayContaining(["-mx-6", "-mb-6", "p-6"]));
 		expect(footer).not.toContain("-mx-4");
-		const overlay = injected("nova", css, "dialog-overlay.svelte");
+		const overlay = injected("valar", css, "dialog-overlay.svelte");
 		expect(overlay).toEqual(expect.arrayContaining(["bg-black/40", "duration-slow"]));
 		expect(overlay).not.toContain("bg-black/10");
 		expect(overlay).not.toContain("duration-100");
-		// Vega's footer does not bleed, so padding must not add negative margins there.
-		expect(injected("vega", write("vega", { padding: 20 }), "dialog-footer.svelte")).not.toContain(
-			"-mx-5"
-		);
 	});
 
 	it("rejects colors, arbitrary values and utilities outside each Dialog part", () => {
@@ -830,7 +822,7 @@ describe("Dialog write-back into Valar style overrides", () => {
 			{ "cn-dialog-footer": "duration-slow" },
 			{ "cn-dialog-title": "p-4" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 });
 
@@ -860,7 +852,7 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 		readFileSync(resolve(`src/lib/registry/styles/valar/style-${style}.css`), "utf8");
 
 	it("reads each style's own Popover and Sheet baseline from the installed source", () => {
-		expect(parsePopoverSource(registry("nova", "popover").files).values).toEqual({
+		expect(parsePopoverSource(registry("valar", "popover").files).values).toEqual({
 			padding: 10,
 			gap: 10,
 			radius: "lg",
@@ -868,13 +860,7 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 			zoom: "95",
 			slide: "8",
 		});
-		expect(parsePopoverSource(registry("vega", "popover").files).values).toMatchObject({
-			padding: 16,
-			gap: 16,
-			radius: "md",
-		});
-		expect(parsePopoverSource(registry("lyra", "popover").files).values.radius).toBe("none");
-		expect(parseSheetSource(registry("nova", "sheet").files).values).toEqual({
+		expect(parseSheetSource(registry("valar", "sheet").files).values).toEqual({
 			width: "sm",
 			padding: 16,
 			gap: 16,
@@ -882,21 +868,15 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 			duration: "normal",
 			slide: "40",
 		});
-		expect(parseSheetSource(registry("luma", "sheet").files).values).toMatchObject({
-			padding: 24,
-			gap: 0,
-			overlay: 30,
-		});
-		expect(parseSheetSource(registry("sera", "sheet").files).values.padding).toBe(32);
 	});
 
 	it("replaces Popover's layout, zoom, slide and tier in the installed source", () => {
 		const files = installed(
-			"vega",
+			"valar",
 			"popover",
 			write(
-				"vega",
-				empty("vega"),
+				"valar",
+				empty("valar"),
 				popoverOverrideClasses({
 					padding: 12,
 					slide: "16",
@@ -909,7 +889,7 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 		expect(content).toEqual(
 			expect.arrayContaining([
 				"p-3",
-				"gap-4",
+				"gap-2.5",
 				"duration-normal",
 				"data-open:zoom-in-90",
 				"data-closed:zoom-out-90",
@@ -918,7 +898,7 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 			])
 		);
 		for (const stale of [
-			"p-4",
+			"p-2.5",
 			"duration-fast",
 			"data-open:zoom-in-95",
 			"data-[side=top]:slide-in-from-bottom-2",
@@ -926,8 +906,8 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 			expect(content).not.toContain(stale);
 		expect(parsePopoverSource(files).values).toEqual({
 			padding: 12,
-			gap: 16,
-			radius: "md",
+			gap: 10,
+			radius: "lg",
 			duration: "normal",
 			zoom: "90",
 			slide: "16",
@@ -936,8 +916,8 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 
 	it("makes Sheet's slide and overlay tier beat the component literals, and rewrites them", () => {
 		const first = write(
-			"nova",
-			empty("nova"),
+			"valar",
+			empty("valar"),
 			sheetOverrideClasses({
 				slide: "64",
 				duration: "slow",
@@ -946,7 +926,7 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 				width: "lg",
 			})
 		);
-		const files = installed("nova", "sheet", first);
+		const files = installed("valar", "sheet", first);
 		const content = classes(files, "sheet-content.svelte");
 		expect(content).toEqual(
 			expect.arrayContaining([
@@ -974,9 +954,9 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 		});
 		// A later write replaces the earlier distance instead of stacking a second one.
 		const second = installed(
-			"nova",
+			"valar",
 			"sheet",
-			write("nova", first, sheetOverrideClasses({ slide: "full" }))
+			write("valar", first, sheetOverrideClasses({ slide: "full" }))
 		);
 		const slides = classes(second, "sheet-content.svelte").filter((token) => token.endsWith("!"));
 		expect(slides).toContain("data-[side=right]:data-open:slide-in-from-right!");
@@ -1004,7 +984,7 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 			{ "cn-sheet-header": "gap-4" },
 			{ "cn-sheet-title": "p-4" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 });
 
@@ -1041,10 +1021,7 @@ describe("Input, Select and Textarea editors share Button's levels", () => {
 		);
 
 	it("reads heights as Button tiers in each style and keeps off-tier values as the style's own", () => {
-		for (const [style, px] of [
-			["nova", 32],
-			["vega", 36],
-		] as const) {
+		for (const [style, px] of [["valar", 32]] as const) {
 			const map = styleMap(style);
 			const tiers = buttonHeights(map);
 			expect(height(map, "cn-input")).toBe(px);
@@ -1053,8 +1030,11 @@ describe("Input, Select and Textarea editors share Button's levels", () => {
 				"sm"
 			);
 		}
-		// After Button's default size was written back to 44px, nova's 32px Input matches no tier.
-		const tuned = styleMap("nova", write("nova", buttonOverrideClasses({ "default.height": 44 })));
+		// After Button's default size was written back to 44px, valar's 32px Input matches no tier.
+		const tuned = styleMap(
+			"valar",
+			write("valar", buttonOverrideClasses({ "default.height": 44 }))
+		);
 		expect(heightTier(32, buttonHeights(tuned), "default")).toBe("style");
 		expect(heightTier(44, buttonHeights(tuned), "default")).toBe("default");
 		expect(heightTier(36, buttonHeights(tuned), "default")).toBe("lg");
@@ -1065,23 +1045,23 @@ describe("Input, Select and Textarea editors share Button's levels", () => {
 	});
 
 	it("writes tier heights and radius levels into the installed sources", () => {
-		const context = { buttonHeights: buttonHeights(styleMap("nova")) };
+		const context = { buttonHeights: buttonHeights(styleMap("valar")) };
 		const input = write(
-			"nova",
+			"valar",
 			inputOverrideClasses({ height: "lg", radius: "xl", paddingX: 12 }, context)
 		);
 		const both = write(
-			"nova",
+			"valar",
 			selectOverrideClasses(
 				{ "sm.height": "default", radius: "none", paddingStart: 12, "default.height": "style" },
 				context
 			),
 			input
 		);
-		const inputClasses = installed("nova", both, "input/input.svelte");
+		const inputClasses = installed("valar", both, "input/input.svelte");
 		expect(inputClasses).toEqual(expect.arrayContaining(["h-9", "rounded-xl", "px-3", "file:h-6"]));
 		for (const old of ["h-8", "rounded-lg", "px-2.5"]) expect(inputClasses).not.toContain(old);
-		const trigger = installed("nova", both, "select/select-trigger.svelte");
+		const trigger = installed("valar", both, "select/select-trigger.svelte");
 		expect(trigger).toEqual(
 			expect.arrayContaining([
 				"data-[size=sm]:h-8",
@@ -1097,8 +1077,8 @@ describe("Input, Select and Textarea editors share Button's levels", () => {
 		// "样式自带" is never written.
 		expect(selectOverrideClasses({ radius: "style", "sm.height": "style" }, context)).toEqual({});
 		const textarea = installed(
-			"vega",
-			write("vega", textareaOverrideClasses({ radius: "xl", paddingY: 12 })),
+			"valar",
+			write("valar", textareaOverrideClasses({ radius: "xl", paddingY: 12 })),
 			"textarea/textarea.svelte"
 		);
 		expect(textarea).toEqual(expect.arrayContaining(["rounded-xl", "py-3", "px-2.5", "min-h-16"]));
@@ -1118,7 +1098,7 @@ describe("Input, Select and Textarea editors share Button's levels", () => {
 			{ "cn-textarea": "h-9" },
 			{ "cn-select-content": "rounded-xl" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 });
 
@@ -1148,7 +1128,7 @@ describe("Parallel editor installation contracts", () => {
 		rounds: T[]
 	) {
 		it(`roundtrips ${component} geometry across all eight installed styles`, () => {
-			for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"]) {
+			for (const style of ["valar"]) {
 				let css = emptyOverrides(style);
 				const sources = () =>
 					readdirSync(resolve(`src/lib/registry/ui/${component}`))
@@ -1232,7 +1212,7 @@ describe("Parallel editor installation contracts", () => {
 		{ paddingX: 0, paddingY: 24, contentGap: 0 },
 	]);
 	it("reads real E13 style baselines and preserves independent Questionnaire padding on partial writes", () => {
-		const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+		const styles = ["valar"];
 		const defaults = [
 			[16, 8, 8, 12, 10],
 			[24, 12, 8, 16, 14],
@@ -1289,7 +1269,7 @@ describe("Parallel editor installation contracts", () => {
 			{ "cn-sidebar-provider": "[--sidebar-width:20rem]" },
 			{ "cn-sidebar-menu": "gap-3.25" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 		for (const [spec, invalid] of [
 			[QUESTIONNAIRE_SPEC, { rootGap: 3 }],
 			[QUESTIONNAIRE_SPEC, { required: false }],
@@ -1303,7 +1283,7 @@ describe("Parallel editor installation contracts", () => {
 			expect(() => spec.overrideClasses(invalid as never, null)).toThrow();
 	});
 	it("keeps Calendar and Range Calendar defaults independent after either editor writes", () => {
-		for (const style of ["nova", "mira", "rhea", "sera"]) {
+		for (const style of ["valar"]) {
 			const original = emptyOverrides(style);
 			const sources = (component: string, css: string) => [
 				{
@@ -1354,7 +1334,7 @@ describe("Parallel editor installation contracts", () => {
 			{ "cn-trace": "animate-spin" },
 			{ "cn-stepper-trigger": "p-1" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 	roundtrip("button-group", parseButtonGroupSource, buttonGroupOverrideClasses, [
 		{ textPaddingX: 22, textGap: 2, joinedRadius: "none" },
@@ -1425,10 +1405,10 @@ describe("Parallel editor installation contracts", () => {
 			{ "cn-button-group-text": "h-8" },
 			{ "cn-button-group-orientation-horizontal": "[&>*]:rounded-full!" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 	it("roundtrips Tags Input outer geometry without changing tags, input or business props", () => {
-		for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"]) {
+		for (const style of ["valar"]) {
 			let css = emptyOverrides(style);
 			const baseline = installed("tags-input", style, css, "tags-input.svelte");
 			expect(
@@ -1467,14 +1447,14 @@ describe("Parallel editor installation contracts", () => {
 			{ "cn-tags-input": "p-[12px]" },
 			{ "cn-tags-input": "gap-4.5" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 });
 
 describe("Number Field and Slider Field editor installation contracts", () => {
 	it("roundtrips outer Button heights and linked internal geometry without changing numeric behavior", () => {
 		const context = { buttonHeights: { xs: 24, sm: 28, default: 32, lg: 36 }, borderY: 2 };
-		for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"]) {
+		for (const style of ["valar"]) {
 			const baseline = installed(
 				"number-field",
 				style,
@@ -1513,11 +1493,11 @@ describe("Number Field and Slider Field editor installation contracts", () => {
 			{ "cn-number-field-input": "px-4.5" },
 			{ "cn-number-field-increment": "size-[40px]" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 
 	it("roundtrips layout alone across all styles while preserving both child controls", () => {
-		for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"]) {
+		for (const style of ["valar"]) {
 			let css = emptyOverrides(style);
 			const source = installed("slider-field", style, css, "slider-field.svelte");
 			expect(
@@ -1551,13 +1531,13 @@ describe("Number Field and Slider Field editor installation contracts", () => {
 			{ "cn-slider-field-value": "h-8" },
 			{ "cn-slider-field-value": "w-[128px]" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 });
 
 describe("Avatar editor installation contract", () => {
 	it("roundtrips asymmetric sizes with matching count, badge and radius without accumulating offsets", () => {
-		for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"]) {
+		for (const style of ["valar"]) {
 			const original = registryFiles("avatar", style);
 			expect(parseAvatarSource(original).values).toEqual({
 				"sm.size": 24,
@@ -1591,7 +1571,7 @@ describe("Avatar editor installation contract", () => {
 		for (const size of Array.from({ length: 12 }, (_, i) => 20 + i * 4))
 			expect(
 				styleOverridePayloadSchema.safeParse({
-					style: "nova",
+					style: "valar",
 					classes: avatarOverrideClasses({
 						"sm.size": size,
 						"default.size": size,
@@ -1612,7 +1592,7 @@ describe("Avatar editor installation contract", () => {
 			{ "cn-avatar-badge": "bg-primary" },
 			{ "cn-avatar-group-count": "text-xl" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 		expect(avatarOverrideClasses({ radius: "style" })).toEqual({});
 		expect(() => parseAvatarSource([])).toThrow();
 	});
@@ -1620,10 +1600,10 @@ describe("Avatar editor installation contract", () => {
 
 describe("Item editor installation contract", () => {
 	it("preserves independent size density, dropdown padding and all child component styles", () => {
-		for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"]) {
+		for (const style of ["valar"]) {
 			const original = registryFiles("item", style);
 			const baseline = parseItemSource(original).values;
-			expect(baseline["default.paddingX"]).toBe(["nova", "lyra", "mira"].includes(style) ? 12 : 16);
+			expect(baseline["default.paddingX"]).toBe(["valar"].includes(style) ? 12 : 16);
 			let css = emptyOverrides(style);
 			for (const values of [
 				{
@@ -1682,7 +1662,7 @@ describe("Item editor installation contract", () => {
 			{ "cn-item-size-xs": "py-6.5" },
 			{ "cn-item-content": "gap-2" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 		expect(itemOverrideClasses({ radius: "style" })).toEqual({});
 		expect(() => parseItemSource([])).toThrow();
 	});
@@ -1690,7 +1670,7 @@ describe("Item editor installation contract", () => {
 
 describe("Accordion editor installation contract", () => {
 	it("keeps title and animated content aligned across all styles and successive asymmetric changes", () => {
-		const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+		const styles = ["valar"];
 		for (const [index, style] of styles.entries()) {
 			expect(parseAccordionSource(registryFiles("accordion", style)).values).toEqual({
 				triggerPaddingY: [10, 16, 10, 16, 8, 16, 16, 16][index],
@@ -1739,7 +1719,7 @@ describe("Accordion editor installation contract", () => {
 			{ "cn-accordion-content-inner": "pb-10.5" },
 			{ "cn-accordion-item": "bg-primary" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 		for (const values of [
 			{ paddingX: 3 },
 			{ triggerPaddingY: 34 },
@@ -1754,23 +1734,23 @@ describe("Accordion editor installation contract", () => {
 
 describe("Alert Dialog editor installation contracts", () => {
 	it("roundtrips both sizes without changing confirmation semantics, media or footer layout", () => {
-		const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+		const styles = ["valar"];
 		const widths = ["sm", "lg", "sm", "md", "sm", "md", "md", "md"];
 		const radii = ["xl", "xl", "none", "4xl", "xl", "4xl", "style", "none"];
 		for (const [index, style] of styles.entries()) {
 			const baseline = parseAlertDialogSource(registryFiles("alert-dialog", style));
 			expect(baseline.values).toEqual({
 				width: widths[index],
-				padding: ["nova", "lyra", "mira"].includes(style) ? 16 : 24,
-				gap: style === "mira" ? 12 : ["nova", "lyra"].includes(style) ? 16 : 24,
+				padding: ["valar"].includes(style) ? 16 : 24,
+				gap: style === "mira" ? 12 : ["valar"].includes(style) ? 16 : 24,
 				radius: radii[index],
 				overlay: [10, 10, 10, 80, 80, 30, 30, 20][index],
 				duration: "fast",
 				zoom: "95",
 			});
 			expect(baseline.context).toEqual({
-				footerBleed: style === "nova",
-				footerRounded: style === "nova",
+				footerBleed: style === "valar",
+				footerRounded: style === "valar",
 			});
 			let css = emptyOverrides(style);
 			for (const change of [
@@ -1824,7 +1804,7 @@ describe("Alert Dialog editor installation contracts", () => {
 						installed("alert-dialog", style, emptyOverrides(style), file)
 					);
 				const footer = files.find((f) => f.target === "alert-dialog-footer.svelte")!.content;
-				if (style === "nova")
+				if (style === "valar")
 					expect(classList(footer)).toEqual(
 						expect.arrayContaining([
 							`-mx-${change.padding / 4}`,
@@ -1852,7 +1832,7 @@ describe("Alert Dialog editor installation contracts", () => {
 			{ "cn-alert-dialog-header": "gap-4" },
 			{ "cn-alert-dialog-content": "duration-[600ms]" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 		for (const input of [{ padding: 9 }, { gap: 42 }, { overlay: 35 }, { size: "sm" }])
 			expect(() =>
 				ALERT_DIALOG_SPEC.overrideClasses(input as never, {
@@ -1867,7 +1847,7 @@ describe("Alert Dialog editor installation contracts", () => {
 });
 
 describe("Alert and Empty editor installation contracts", () => {
-	const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+	const styles = ["valar"];
 	it("replaces Alert row geometry without changing icon columns, action reserves or alert semantics", () => {
 		const x = [10, 16, 10, 16, 8, 16, 16, 16];
 		const y = [8, 12, 8, 12, 6, 12, 12, 12];
@@ -1920,7 +1900,7 @@ describe("Alert and Empty editor installation contracts", () => {
 		const radii = ["xl", "lg", "none", "lg", "xl", "2xl", "3xl", "style"];
 		for (const [index, style] of styles.entries()) {
 			expect(parseEmptySource(registryFiles("empty", style)).values).toEqual({
-				padding: ["nova", "lyra", "mira"].includes(style) ? 24 : 48,
+				padding: ["valar"].includes(style) ? 24 : 48,
 				gap: 16,
 				radius: radii[index],
 			});
@@ -1973,7 +1953,7 @@ describe("Alert and Empty editor installation contracts", () => {
 			{ "cn-empty": "p-[18px]" },
 			{ "cn-empty-media-icon": "size-8" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 		for (const [spec, invalid] of [
 			[ALERT_SPEC, { paddingX: 3 }],
 			[ALERT_SPEC, { rowGap: 18 }],
@@ -1991,7 +1971,7 @@ describe("Alert and Empty editor installation contracts", () => {
 });
 
 describe("Badge and basic Table editor installation contracts", () => {
-	const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+	const styles = ["valar"];
 	it("roundtrips Badge geometry without changing native height, icon insets, typography or variants", () => {
 		const radii = ["4xl", "4xl", "none", "4xl", "full", "3xl", "2xl", "none"];
 		for (const [index, style] of styles.entries()) {
@@ -2091,7 +2071,7 @@ describe("Badge and basic Table editor installation contracts", () => {
 			{ "cn-table-cell": "px-[13px]" },
 			{ "cn-table": "table-fixed" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 		for (const [spec, invalid] of [
 			[BADGE_SPEC, { paddingX: 3 }],
 			[BADGE_SPEC, { gap: 18 }],
@@ -2106,7 +2086,7 @@ describe("Badge and basic Table editor installation contracts", () => {
 });
 
 describe("Native Select, Input Group and Input OTP editor installation contracts", () => {
-	const styles = ["nova", "vega", "lyra", "maia", "mira", "luma", "rhea", "sera"];
+	const styles = ["valar"];
 	const contextFor = (style: string) => {
 		const map = parseStyleCss(
 			readFileSync(resolve(`src/lib/registry/styles/style-${style}.css`), "utf8")
@@ -2266,7 +2246,7 @@ describe("Native Select, Input Group and Input OTP editor installation contracts
 			{ "cn-input-otp-slot": "h-9" },
 			{ "cn-input-otp-slot": "data-[active=true]:bg-primary" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 		for (const [spec, invalid] of [
 			[NATIVE_SELECT_SPEC, { paddingStart: 3 }],
 			[INPUT_GROUP_SPEC, { inlinePadding: 49 }],
@@ -2279,16 +2259,7 @@ describe("Native Select, Input Group and Input OTP editor installation contracts
 
 describe("Toggle, Toggle Group and Slider editors preserve shared and directional geometry", () => {
 	it("roundtrips joined Group contours without owning shared Toggle sizes or icon insets", () => {
-		for (const [style, padding, radius] of [
-			["nova", 8, "style"],
-			["vega", 8, "md"],
-			["lyra", 8, "none"],
-			["maia", 12, "style"],
-			["mira", 8, "style"],
-			["luma", 12, "3xl"],
-			["rhea", 8, "2xl"],
-			["sera", 24, "none"],
-		] as const) {
+		for (const [style, padding, radius] of [["valar", 8, "style"]] as const) {
 			expect(parseToggleGroupSource(registryFiles("toggle-group", style)).values).toEqual({
 				joinedPaddingX: padding,
 				joinedRadius: radius,
@@ -2324,14 +2295,7 @@ describe("Toggle, Toggle Group and Slider editors preserve shared and directiona
 
 	it("reads all Toggle sizes and writes shared geometry without removing icon insets", () => {
 		for (const [style, heights, padding, radius] of [
-			["nova", [28, 32, 36], [10, 10, 10], "style"],
-			["vega", [32, 36, 40], [10, 10, 10], "md"],
-			["lyra", [28, 32, 36], [10, 10, 10], "none"],
-			["maia", [32, 36, 40], [12, 12, 16], "4xl"],
-			["mira", [24, 28, 32], [8, 8, 10], "style"],
-			["luma", [32, 36, 40], [12, 12, 16], "3xl"],
-			["rhea", [28, 32, 36], [10, 10, 10], "2xl"],
-			["sera", [36, 40, 44], [16, 24, 32], "none"],
+			["valar", [28, 32, 36], [10, 10, 10], "style"],
 		] as const) {
 			const baseline = parseToggleSource(registryFiles("toggle", style)).values;
 			for (const [i, size] of ["sm", "default", "lg"].entries()) {
@@ -2339,7 +2303,7 @@ describe("Toggle, Toggle Group and Slider editors preserve shared and directiona
 				expect(baseline[`${size}.paddingX` as keyof typeof baseline]).toBe(padding[i]);
 			}
 			expect(baseline.radius).toBe(radius);
-			expect(baseline.gap).toBe(style === "sera" ? 6 : 4);
+			expect(baseline.gap).toBe(4);
 			expect(toggleOverrideClasses({ radius: "style" })).toEqual({});
 			const changes = {
 				"sm.height": 22,
@@ -2362,9 +2326,7 @@ describe("Toggle, Toggle Group and Slider editors preserve shared and directiona
 			});
 			expect(content).toContain("min-w-5.5");
 			expect(content).toContain("min-w-11.5");
-			expect(content).toContain(
-				`has-data-[icon=inline-start]:pl-${style === "sera" ? 5 : style === "maia" || style === "luma" ? 3 : 2}`
-			);
+			expect(content).toContain(`has-data-[icon=inline-start]:pl-2`);
 			expect(content).toContain("data-size={size}");
 			// A shared Toggle write must not replace Group's joined treatment.
 			expect(installed("toggle-group", style, css, "toggle-group-item.svelte")).toContain(
@@ -2386,16 +2348,7 @@ describe("Toggle, Toggle Group and Slider editors preserve shared and directiona
 	});
 
 	it("roundtrips Slider extremes and Luma's long side in both orientations without accumulating offsets", () => {
-		for (const [style, thickness, thumb, radius] of [
-			["nova", 4, 12, "full"],
-			["vega", 6, 16, "full"],
-			["lyra", 4, 12, "none"],
-			["maia", 12, 16, "4xl"],
-			["mira", 4, 12, "md"],
-			["luma", 8, 16, "full"],
-			["rhea", 4, 16, "2xl"],
-			["sera", 2, 12, "style"],
-		] as const) {
+		for (const [style, thickness, thumb, radius] of [["valar", 4, 12, "full"]] as const) {
 			let baseline = parseSliderSource(registryFiles("slider", style));
 			expect(baseline.values).toEqual({
 				trackThickness: thickness,
@@ -2403,7 +2356,7 @@ describe("Toggle, Toggle Group and Slider editors preserve shared and directiona
 				trackRadius: radius,
 				thumbRadius: radius,
 			});
-			expect(baseline.context.thumbSizeDelta).toBe(style === "luma" ? 8 : 0);
+			expect(baseline.context.thumbSizeDelta).toBe(0);
 			let css = emptyOverrides(style);
 			for (const [size, track] of [
 				[32, 14],
@@ -2425,11 +2378,8 @@ describe("Toggle, Toggle Group and Slider editors preserve shared and directiona
 				const content = installed("slider", style, css, "slider.svelte");
 				baseline = parseSliderSource([{ target: "slider.svelte", content }]);
 				expect(baseline.values).toEqual(changes);
-				expect(baseline.context).toEqual({ thumbSizeDelta: style === "luma" ? 8 : 0 });
-				if (style === "luma") {
-					expect(content).toContain(`data-vertical:w-${size / 4}`);
-					expect(content).toContain(`data-vertical:h-${(size + 8) / 4}`);
-				} else expect(content).toContain(`size-${size / 4}`);
+				expect(baseline.context).toEqual({ thumbSizeDelta: 0 });
+				expect(content).toContain(`size-${size / 4}`);
 				expect(content).toContain(`data-horizontal:h-${track / 4}`);
 				expect(content).toContain(`data-vertical:w-${track / 4}`);
 				expect(content).toContain("bg-primary");
@@ -2452,13 +2402,13 @@ describe("Toggle, Toggle Group and Slider editors preserve shared and directiona
 			{ "cn-slider-track": "h-2" },
 			{ "cn-slider-thumb": "translate-x-3" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 });
 
 describe("Selection control write-back preserves state styling and linked geometry", () => {
 	it("resizes Checkbox and its check/minus icons without replacing style-owned radii", () => {
-		for (const style of ["nova", "vega", "maia", "mira", "lyra", "luma", "rhea", "sera"]) {
+		for (const style of ["valar"]) {
 			const baseline = parseCheckboxSource(registryFiles("checkbox", style));
 			expect(baseline.values).toEqual({
 				size: style === "sera" ? 18 : 16,
@@ -2496,11 +2446,11 @@ describe("Selection control write-back preserves state styling and linked geomet
 	});
 
 	it("resizes Radio Group dots in both themes and keeps repeated writes stable", () => {
-		for (const style of ["nova", "vega", "maia", "mira", "lyra", "luma", "rhea", "sera"]) {
+		for (const style of ["valar"]) {
 			const baseline = parseRadioGroupSource(registryFiles("radio-group", style));
 			expect(baseline.values).toEqual({
 				size: style === "sera" ? 18 : 16,
-				gap: ["nova", "lyra"].includes(style) ? 8 : 12,
+				gap: ["valar"].includes(style) ? 8 : 12,
 			});
 			const context = {
 				dotOffset: style === "sera" ? -1 : 0,
@@ -2550,16 +2500,7 @@ describe("Selection control write-back preserves state styling and linked geomet
 			radius,
 			nextHeight,
 			nextWidth,
-		] of [
-			["nova", 18.4, 32, 16, 16, 14, 24, 12, 12, "full", 22.4, 40],
-			["vega", 18.4, 32, 16, 16, 14, 24, 12, 12, "full", 22.4, 40],
-			["maia", 18.4, 32, 16, 16, 14, 24, 12, 12, "full", 22.4, 40],
-			["mira", 16.6, 28, 14, 14, 14, 24, 12, 12, "full", 22.6, 40],
-			["lyra", 18.4, 32, 16, 16, 14, 24, 12, 12, "full", 22.4, 40],
-			["luma", 20, 44, 16, 24, 16, 28, 12, 16, "full", 24, 52],
-			["rhea", 20, 32, 16, 16, 16, 24, 12, 12, "2xl", 24, 40],
-			["sera", 18, 33, 14, 14, 14, 25, 10, 10, "style", 24, 45],
-		] as const) {
+		] of [["valar", 18.4, 32, 16, 16, 14, 24, 12, 12, "full", 22.4, 40]] as const) {
 			const baseline = parseSwitchSource(registryFiles("switch", style));
 			expect(baseline).toEqual({
 				values: { thumbHeight, smallThumbHeight, radius, duration: "style" },
@@ -2595,7 +2536,7 @@ describe("Selection control write-back preserves state styling and linked geomet
 				height: nextHeight,
 				width: nextWidth,
 				thumbHeight: 20,
-				thumbWidth: style === "luma" ? 28 : 20,
+				thumbWidth: 20,
 			});
 			// An edit to default must never change the small variant's independent dimensions.
 			const next = applyStyleOverrides(
@@ -2672,21 +2613,14 @@ describe("Selection control write-back preserves state styling and linked geomet
 			{ "cn-switch-thumb": "translate-x-4" },
 			{ "cn-switch-thumb": "group-data-[size=default]/switch:w-5!" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 });
 
 describe("Card write-back preserves shared spacing and part radii", () => {
 	it("reads all styles and replaces both size variables without flattening conditional layouts", () => {
 		for (const [style, spacing, smallSpacing, headerGap, radius] of [
-			["nova", 16, 12, 4, "xl"],
-			["vega", 24, 16, 4, "xl"],
-			["maia", 24, 16, 8, "2xl"],
-			["mira", 16, 12, 4, "lg"],
-			["lyra", 16, 12, 4, "none"],
-			["luma", 24, 16, 6, "4xl"],
-			["rhea", 20, 16, 6, "style"],
-			["sera", 32, 20, 6, "style"],
+			["valar", 16, 12, 4, "xl"],
 		] as const) {
 			expect(parseCardSource(registryFiles("card", style)).values).toEqual({
 				spacing,
@@ -2745,7 +2679,7 @@ describe("Card write-back preserves shared spacing and part radii", () => {
 		for (const spacing of [0, 48])
 			expect(
 				styleOverridePayloadSchema.safeParse({
-					style: "nova",
+					style: "valar",
 					classes: cardOverrideClasses({ spacing, smallSpacing: spacing }),
 				}).success
 			).toBe(true);
@@ -2760,7 +2694,7 @@ describe("Card write-back preserves shared spacing and part radii", () => {
 			"data-[size=lg]:[--card-spacing:--spacing(4)]",
 		])
 			expect(
-				styleOverridePayloadSchema.safeParse({ style: "nova", classes: { "cn-card": value } })
+				styleOverridePayloadSchema.safeParse({ style: "valar", classes: { "cn-card": value } })
 					.success
 			).toBe(false);
 		for (const values of [
@@ -2784,14 +2718,7 @@ describe("Card write-back preserves shared spacing and part radii", () => {
 describe("Tabs write-back preserves variant and orientation contracts", () => {
 	it("reads mixed geometry as style-owned and roundtrips explicit uniform choices in all styles", () => {
 		for (const [style, height, listPadding, listRadius, paddingY, triggerRadius] of [
-			["nova", "32", "3", "lg", "2", "md"],
-			["vega", "36", "3", "lg", "4", "md"],
-			["maia", "36", "3", "style", "style", "xl"],
-			["mira", "32", "3", "lg", "style", "md"],
-			["lyra", "32", "3", "none", "style", "none"],
-			["luma", "36", "4", "style", "style", "style"],
-			["rhea", "32", "style", "2xl", "2", "2xl"],
-			["sera", "40", "4", "style", "style", "style"],
+			["valar", "32", "3", "lg", "2", "md"],
 		] as const) {
 			expect(parseTabsSource(registryFiles("tabs", style)).values).toEqual({
 				listHeight: height,
@@ -2839,8 +2766,7 @@ describe("Tabs write-back preserves variant and orientation contracts", () => {
 			const list = files[1].content;
 			expect(list).toContain("data-[variant=default]:rounded-sm");
 			expect(list).toContain("group-data-vertical/tabs:data-[variant=default]:rounded-sm");
-			if (height !== "40")
-				expect(list).not.toContain(`group-data-horizontal/tabs:h-${Number(height) / 4}`);
+			expect(list).not.toContain(`group-data-horizontal/tabs:h-${Number(height) / 4}`);
 			const second = write(css, { listHeight: "32", triggerPaddingX: "4", triggerRadius: "none" });
 			const output = installed("tabs", style, second, "tabs-trigger.svelte");
 			expect(classList(output)).not.toContain("px-3.5");
@@ -2866,8 +2792,8 @@ describe("Tabs write-back preserves variant and orientation contracts", () => {
 			{ "cn-tabs-trigger": "px-[12px]" },
 			{ "cn-tabs-content": "gap-4" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
-		const baseline = parseTabsSource(registryFiles("tabs", "nova")).values;
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
+		const baseline = parseTabsSource(registryFiles("tabs", "valar")).values;
 		for (const values of [
 			{ listHeight: "44" },
 			{ contentGap: 3 },
@@ -2893,8 +2819,8 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 		classList(installed("dropdown-menu", style, css, `dropdown-menu-${file}.svelte`));
 
 	it("reads each style's own baseline from the installed source", () => {
-		const nova = parseMenuSource("dropdown-menu", registryFiles("dropdown-menu", "nova"));
-		expect(nova.values).toEqual({
+		const valar = parseMenuSource("dropdown-menu", registryFiles("dropdown-menu", "valar"));
+		expect(valar.values).toEqual({
 			padding: 4,
 			minWidth: 128,
 			radius: "lg",
@@ -2906,31 +2832,11 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 			zoom: "95",
 			slide: "8",
 		});
-		expect(nova.context).toMatchObject({ inset: 28, choicePaddingY: 4, separatorBleed: true });
-		const vega = parseMenuSource("dropdown-menu", registryFiles("dropdown-menu", "vega"));
-		expect(vega.values).toMatchObject({
-			radius: "md",
-			itemPaddingX: 8,
-			itemPaddingY: 6,
-			itemGap: 8,
-			itemRadius: "sm",
-		});
-		expect(vega.context.inset).toBe(32);
-		// Lyra has no panel padding but its separators still use -mx-1: they do not bleed.
-		const lyra = parseMenuSource("dropdown-menu", registryFiles("dropdown-menu", "lyra"));
-		expect(lyra.values.padding).toBe(0);
-		expect(lyra.context.separatorBleed).toBe(false);
-		expect(
-			parseMenuSource("dropdown-menu", registryFiles("dropdown-menu", "luma")).values
-		).toMatchObject({
-			padding: 6,
-			minWidth: 192,
-			radius: "3xl",
-		});
+		expect(valar.context).toMatchObject({ inset: 28, choicePaddingY: 4, separatorBleed: true });
 	});
 
 	it("writes panel, item, inset and separator utilities that stay aligned", () => {
-		const css = write("nova", {
+		const css = write("valar", {
 			padding: 8,
 			minWidth: 160,
 			itemPaddingX: 10,
@@ -2939,7 +2845,7 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 			zoom: "90",
 			slide: "16",
 		});
-		const content = part("nova", css, "content");
+		const content = part("valar", css, "content");
 		expect(content).toEqual(
 			expect.arrayContaining([
 				"p-2",
@@ -2958,7 +2864,7 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 			"data-[side=bottom]:slide-in-from-top-2",
 		])
 			expect(content).not.toContain(stale);
-		expect(part("nova", css, "sub-content")).toEqual(
+		expect(part("valar", css, "sub-content")).toEqual(
 			expect.arrayContaining([
 				"p-2",
 				"duration-slow",
@@ -2967,27 +2873,21 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 				"data-[side=right]:slide-in-from-left-4",
 			])
 		);
-		expect(part("nova", css, "sub-content")).not.toContain(
+		expect(part("valar", css, "sub-content")).not.toContain(
 			"data-[side=right]:slide-in-from-left-2"
 		);
 		// Inset rows keep lining up with icon rows: 10px padding + 16px icon + 8px gap = 34px.
-		const item = part("nova", css, "item");
+		const item = part("valar", css, "item");
 		expect(item).toEqual(expect.arrayContaining(["px-2.5", "gap-2", "data-inset:pl-8.5", "py-1"]));
 		expect(item).not.toContain("data-inset:pl-7");
-		const checkbox = part("nova", css, "checkbox-item");
+		const checkbox = part("valar", css, "checkbox-item");
 		// Checkbox rows move only their leading padding; the indicator side stays.
 		expect(checkbox).toEqual(expect.arrayContaining(["pl-2.5", "pr-8", "data-inset:pl-8.5"]));
-		expect(part("nova", css, "label")).toEqual(
+		expect(part("valar", css, "label")).toEqual(
 			expect.arrayContaining(["px-2.5", "data-inset:pl-8.5"])
 		);
-		expect(part("nova", css, "separator")).toContain("-mx-2");
-		expect(part("nova", css, "separator")).not.toContain("-mx-1");
-		// Mira's checkbox rows sit 2px taller than plain rows; the offset survives.
-		const mira = write("mira", { itemPaddingY: 8 });
-		expect(part("mira", mira, "item")).toContain("py-2");
-		expect(part("mira", mira, "checkbox-item")).toContain("py-2.5");
-		// Lyra's separators do not bleed, so panel padding leaves them alone.
-		expect(part("lyra", write("lyra", { padding: 8 }), "separator")).toContain("-mx-1");
+		expect(part("valar", css, "separator")).toContain("-mx-2");
+		expect(part("valar", css, "separator")).not.toContain("-mx-1");
 	});
 
 	it("rejects colors, arbitrary values and utilities outside each Dropdown Menu part", () => {
@@ -3003,7 +2903,7 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 			{ "cn-dropdown-menu-separator": "my-2" },
 			{ "cn-dropdown-menu-shortcut": "px-2" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 });
 
@@ -3015,7 +2915,7 @@ describe("Tooltip write-back into Valar style overrides", () => {
 		);
 
 	it("reads each style's own baseline, including the show delay", () => {
-		expect(parseTooltipSource(registryFiles("tooltip", "nova")).values).toEqual({
+		expect(parseTooltipSource(registryFiles("tooltip", "valar")).values).toEqual({
 			paddingX: 12,
 			paddingY: 6,
 			radius: "md",
@@ -3023,13 +2923,11 @@ describe("Tooltip write-back into Valar style overrides", () => {
 			duration: "style",
 			zoom: "95",
 		});
-		expect(parseTooltipSource(registryFiles("tooltip", "maia")).values.radius).toBe("2xl");
-		expect(parseTooltipSource(registryFiles("tooltip", "lyra")).values.radius).toBe("none");
 		// A written delay is read back from the flattened provider.
 		const provider = installed(
 			"tooltip",
-			"nova",
-			write("nova", { delay: 350 }),
+			"valar",
+			write("valar", { delay: 350 }),
 			"tooltip-provider.svelte"
 		);
 		expect(
@@ -3039,20 +2937,20 @@ describe("Tooltip write-back into Valar style overrides", () => {
 	});
 
 	it("installs the written delay as the Provider default; callers still override it", () => {
-		const css = write("nova", { delay: 300, paddingX: 16, duration: "normal", zoom: "90" });
-		const provider = installed("tooltip", "nova", css, "tooltip-provider.svelte");
+		const css = write("valar", { delay: 300, paddingX: 16, duration: "normal", zoom: "90" });
+		const provider = installed("tooltip", "valar", css, "tooltip-provider.svelte");
 		expect(evaluateProps(provider, {}, "delayDuration")).toBe(300);
 		expect(evaluateProps(provider, { delayDuration: 0 }, "delayDuration")).toBe(0);
 		expect(() => compile(provider, { generate: "client" })).not.toThrow();
 		// Without a write-back the installed default stays upstream's 0.
 		const untouched = installed(
 			"tooltip",
-			"nova",
-			emptyOverrides("nova"),
+			"valar",
+			emptyOverrides("valar"),
 			"tooltip-provider.svelte"
 		);
 		expect(evaluateProps(untouched, {}, "delayDuration")).toBe(0);
-		const content = classList(installed("tooltip", "nova", css, "tooltip-content.svelte"));
+		const content = classList(installed("tooltip", "valar", css, "tooltip-content.svelte"));
 		expect(content).toEqual(
 			expect.arrayContaining([
 				"px-4",
@@ -3077,7 +2975,7 @@ describe("Tooltip write-back into Valar style overrides", () => {
 			{ "cn-tooltip-provider": "delay-99999" },
 			{ "cn-tooltip-arrow": "size-3" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 });
 
@@ -3104,34 +3002,21 @@ describe("Drawer write-back preserves directional and inset surfaces", () => {
 		}));
 
 	it("reads all styles including pseudo-element surfaces and custom radius", () => {
-		for (const style of ["nova", "vega", "lyra", "maia", "mira", "luma", "sera", "rhea"]) {
+		for (const style of ["valar"]) {
 			const { values, context } = parseDrawerSource(registryFiles("drawer", style));
 			expect(values).toEqual({
 				headerPadding: 16,
 				footerPadding: 16,
 				footerGap: 8,
-				radius: (
-					{
-						nova: "xl",
-						vega: "xl",
-						lyra: "none",
-						maia: "4xl",
-						mira: "xl",
-						luma: "4xl",
-						sera: "none",
-						rhea: "style",
-					} as Record<string, string>
-				)[style],
-				overlay:
-					({ maia: 80, mira: 80, luma: 30, sera: 20, rhea: 30 } as Record<string, number>)[style] ??
-					10,
+				radius: "xl",
+				overlay: 10,
 			});
-			expect(context.insetSurface).toBe(["maia", "mira", "luma", "rhea"].includes(style));
+			expect(context.insetSurface).toBe(false);
 		}
 	});
 
 	it("writes and rereads the real surface without flattening its style or changing Vaul motion", () => {
-		for (const style of ["nova", "vega", "lyra", "maia", "rhea"]) {
+		for (const style of ["valar"]) {
 			const css = write(style, {
 				headerPadding: 22,
 				footerPadding: 30,
@@ -3194,17 +3079,13 @@ describe("Drawer write-back preserves directional and inset surfaces", () => {
 			{ "cn-drawer-overlay": "bg-black/45" },
 			{ "cn-drawer-title": "p-4" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 });
 
 describe("Hover Card write-back", () => {
 	it("reads each style and roundtrips layout and motion through installed source", () => {
-		for (const [style, padding, radius] of [
-			["nova", 10, "lg"],
-			["vega", 16, "lg"],
-			["lyra", 10, "none"],
-		] as const) {
+		for (const [style, padding, radius] of [["valar", 10, "lg"]] as const) {
 			expect(parseHoverCardSource(registryFiles("hover-card", style)).values).toMatchObject({
 				padding,
 				radius,
@@ -3259,7 +3140,7 @@ describe("Hover Card write-back", () => {
 		]) {
 			expect(
 				styleOverridePayloadSchema.safeParse({
-					style: "nova",
+					style: "valar",
 					classes: { "cn-hover-card-content": value },
 				}).success
 			).toBe(false);
@@ -3269,13 +3150,13 @@ describe("Hover Card write-back", () => {
 
 describe("Context Menu write-back uses its own source and shared menu contract", () => {
 	it("preserves per-style alignment and roundtrips panel and item values", () => {
-		for (const style of ["nova", "vega", "mira", "lyra"]) {
+		for (const style of ["valar"]) {
 			const { values, context } = parseMenuSource(
 				"context-menu",
 				registryFiles("context-menu", style)
 			);
 			expect(values.minWidth).toBe(style === "mira" ? 128 : 144);
-			expect(values.itemPaddingX).toBe(style === "nova" ? 6 : 8);
+			expect(values.itemPaddingX).toBe(style === "valar" ? 6 : 8);
 			const css = applyStyleOverrides(
 				emptyOverrides(style),
 				styleOverridePayloadSchema.parse({
@@ -3347,7 +3228,7 @@ describe("Context Menu write-back uses its own source and shared menu contract",
 			{ "cn-context-menu-label": "py-2" },
 			{ "cn-context-menu-trigger": "p-4" },
 		])
-			expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes }).success).toBe(false);
+			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
 	});
 });
 
@@ -3370,7 +3251,7 @@ describe("E14 development writeback boundary", () => {
 			"cn-marker-variant-separator": "gap-5.5",
 			"cn-marker-variant-border": "gap-6 pb-0",
 		};
-		expect(styleOverridePayloadSchema.safeParse({ style: "nova", classes: allowed }).success).toBe(
+		expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes: allowed }).success).toBe(
 			true
 		);
 		for (const anchor of Object.keys(allowed)) {
@@ -3384,7 +3265,7 @@ describe("E14 development writeback boundary", () => {
 				"sm:gap-2",
 			]) {
 				expect(
-					styleOverridePayloadSchema.safeParse({ style: "nova", classes: { [anchor]: utility } })
+					styleOverridePayloadSchema.safeParse({ style: "valar", classes: { [anchor]: utility } })
 						.success
 				).toBe(false);
 			}

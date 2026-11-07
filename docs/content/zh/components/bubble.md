@@ -17,7 +17,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="bubble-demo" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="bubble-demo" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -101,7 +101,7 @@ Bubble.Group
 
 用 `variant` 属性切换气泡的视觉样式。
 
-<ComponentPreview name="bubble-variants" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="bubble-variants" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -123,7 +123,7 @@ Bubble.Group
 
 在 `Bubble.Root` 上传入 `align`，把气泡对齐到对话的起始或末尾。
 
-<ComponentPreview name="bubble-alignment" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="bubble-alignment" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -148,7 +148,7 @@ Bubble.Group
     └── Bubble.Content
 ```
 
-<ComponentPreview name="bubble-group-demo" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="bubble-group-demo" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -158,7 +158,7 @@ Bubble.Group
 
 在 `Bubble.Content` 上使用 `child` 片段，可把气泡渲染为链接或按钮。
 
-<ComponentPreview name="bubble-link-button" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="bubble-link-button" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -182,7 +182,7 @@ Bubble.Group
 
 `Bubble.Reactions` 用于展示气泡上的表情回应，也可以放快捷操作按钮。用 `side` 和 `align` 控制这一行的位置，`side="top"` 会贴到气泡上边缘。表情回应与气泡边缘重叠，行与行之间要留出垂直间距，下面的示例为此使用了更大的 `gap`。
 
-<ComponentPreview name="bubble-reactions" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="bubble-reactions" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -192,7 +192,7 @@ Bubble.Group
 
 较长的气泡内容可以与 [`Collapsible`](/docs/components/collapsible) 组合，实现展开或收起。用 `Collapsible.Trigger` 触发折叠内容。
 
-<ComponentPreview name="bubble-collapsible" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="bubble-collapsible" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -202,7 +202,7 @@ Bubble.Group
 
 用 [`Tooltip`](/docs/components/tooltip) 包裹气泡，可在悬停时显示元数据，例如消息的已读时间。
 
-<ComponentPreview name="bubble-tooltip" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="bubble-tooltip" previewClassName="h-auto theme-blue">
 
 <div></div>
 
@@ -212,7 +212,7 @@ Bubble.Group
 
 把气泡与 [`Popover`](/docs/components/popover) 搭配，可按需展示更多信息，例如失败操作的完整错误信息。
 
-<ComponentPreview name="bubble-popover" previewStyle="rhea" previewClassName="h-auto theme-blue">
+<ComponentPreview name="bubble-popover" previewClassName="h-auto theme-blue">
 
 <div></div>
 

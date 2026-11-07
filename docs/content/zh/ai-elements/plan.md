@@ -8,7 +8,7 @@ description: 显示智能体计划执行的步骤，以及当前进度。
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="plan-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="plan-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -76,7 +76,7 @@ description: 显示智能体计划执行的步骤，以及当前进度。
 
 在 `Trace.CollapsibleContent` 内、步骤上方放置说明文字。
 
-<ComponentPreview name="plan-description" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="plan-description" previewClassName="h-auto min-h-0">
 
 <div></div>
 

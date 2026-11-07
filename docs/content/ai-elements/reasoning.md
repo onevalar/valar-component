@@ -8,7 +8,7 @@ description: Displays the agent's thinking as it streams.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="reasoning-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="reasoning-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
@@ -54,7 +54,7 @@ Reasoning is built with the [Trace](/docs/components/trace) component.
 
 The AI SDK does not time reasoning. Measure it on the server, send it as message metadata, and show it in a `Trace.Description` after the title.
 
-<ComponentPreview name="reasoning-duration" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="reasoning-duration" previewClassName="h-auto min-h-0">
 
 <div></div>
 

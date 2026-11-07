@@ -14,16 +14,8 @@ import { keys } from "../utils/utils.js";
 //   4. Stay under 53 bits total (JS safe integer limit).
 
 // Value arrays — order matters for backward compat. Never reorder, only append.
-export const PRESET_STYLES = [
-	"nova",
-	"vega",
-	"maia",
-	"lyra",
-	"mira",
-	"luma",
-	"sera",
-	"rhea",
-] as const;
+// Valar ships a single style. The list stays an array so presets keep their bit-packed layout.
+export const PRESET_STYLES = ["valar"] as const;
 
 export const PRESET_BASE_COLORS = {
 	neutral: { name: "Neutral", color: "#737373" },

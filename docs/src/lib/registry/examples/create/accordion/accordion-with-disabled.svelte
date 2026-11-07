@@ -30,7 +30,7 @@
 <Example title="With Disabled">
 	<Accordion.Root
 		type="single"
-		class="mx-auto max-w-lg overflow-hidden border style-vega:rounded-lg style-nova:rounded-lg style-lyra:rounded-none style-maia:rounded-lg style-mira:rounded-lg"
+		class="mx-auto max-w-lg overflow-hidden border style-valar:rounded-lg"
 	>
 		{#each items as item (item.value)}
 			<Accordion.Item
@@ -38,10 +38,10 @@
 				disabled={item.disabled}
 				class="p-1 data-[state=open]:bg-muted/50"
 			>
-				<Accordion.Trigger class="style-vega:px-4 style-nova:px-2.5 style-lyra:px-2">
+				<Accordion.Trigger class="style-valar:px-2.5">
 					{item.trigger}
 				</Accordion.Trigger>
-				<Accordion.Content class="style-vega:px-4 style-nova:px-2.5 style-lyra:px-2">
+				<Accordion.Content class="style-valar:px-2.5">
 					{item.content}
 				</Accordion.Content>
 			</Accordion.Item>

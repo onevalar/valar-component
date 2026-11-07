@@ -360,7 +360,7 @@ describe("runtime-equivalent tokens", () => {
 
 describe("parseItemArg", () => {
 	it("splits style/item when the style is a preset", () => {
-		expect(parseItemArg("mira/empty")).toEqual({ style: "mira", item: "empty" });
+		expect(parseItemArg("valar/empty")).toEqual({ style: "valar", item: "empty" });
 		expect(parseItemArg("empty")).toEqual({ item: "empty" });
 		expect(parseItemArg("not-a-style/empty")).toEqual({ item: "not-a-style/empty" });
 	});

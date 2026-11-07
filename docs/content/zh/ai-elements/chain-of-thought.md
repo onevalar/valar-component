@@ -8,7 +8,7 @@ description: 显示一行摘要，展开后是智能体执行的各个步骤。
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="chain-of-thought-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="chain-of-thought-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

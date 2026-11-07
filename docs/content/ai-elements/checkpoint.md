@@ -8,7 +8,7 @@ description: Marks a point in the conversation you can return to.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="checkpoint-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="checkpoint-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

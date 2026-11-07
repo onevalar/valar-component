@@ -21,7 +21,7 @@ import {
 } from "../src/lib/features/workbench/scroll-area-tuning.js";
 import { RADIUS_LEVELS, versionSchemas } from "../src/lib/features/workbench/tuner.js";
 
-const styles = ["nova", "vega", "maia", "lyra", "mira", "rhea", "luma", "sera"] as const;
+const styles = ["valar"] as const;
 const read = (path: string) => readFileSync(resolve(import.meta.dirname, "..", path), "utf8");
 type File = { target: string; content: string };
 const registryFiles = (component: string, style: string): File[] =>
@@ -62,7 +62,7 @@ describe("Resizable / Scroll Area finite geometry editors", () => {
 			expect(parseScrollAreaSource(scroll).values).toEqual({
 				verticalThickness: 10,
 				horizontalThickness: 10,
-				thumbRadius: ["lyra", "sera"].includes(style) ? "none" : "full",
+				thumbRadius: "full",
 			});
 			const probe = document.createElement("div");
 			expect(await RESIZABLE_SPEC.readBaseline(probe, `style-${style}`)).toEqual(
@@ -191,7 +191,7 @@ describe("Resizable / Scroll Area finite geometry editors", () => {
 						install(
 							"resizable",
 							"resizable-handle.svelte",
-							mergeStyleMaps(styleMap("nova"), resizableOverrideClasses(values))
+							mergeStyleMaps(styleMap("valar"), resizableOverrideClasses(values))
 						)
 					).values
 				).toEqual(values);
@@ -209,7 +209,7 @@ describe("Resizable / Scroll Area finite geometry editors", () => {
 						install(
 							"scroll-area",
 							"scroll-area-scrollbar.svelte",
-							mergeStyleMaps(styleMap("nova"), scrollAreaOverrideClasses(values))
+							mergeStyleMaps(styleMap("valar"), scrollAreaOverrideClasses(values))
 						)
 					).values
 				).toEqual(values);
@@ -218,7 +218,7 @@ describe("Resizable / Scroll Area finite geometry editors", () => {
 	});
 
 	it("aggregates later class literals and treats unrepresented radius as style-owned", () => {
-		const files = registryFiles("scroll-area", "nova").map((file) => ({
+		const files = registryFiles("scroll-area", "valar").map((file) => ({
 			...file,
 			content: file.content
 				.replace("className\n", '"data-vertical:w-4 data-horizontal:h-3",\n\t\tclassName\n')
@@ -241,7 +241,7 @@ describe("Resizable / Scroll Area finite geometry editors", () => {
 			expect(() => parse([])).toThrow();
 		expect(() =>
 			parseResizableSource(
-				registryFiles("resizable", "nova").map((file) => ({
+				registryFiles("resizable", "valar").map((file) => ({
 					...file,
 					content: file.content.replace("w-px", ""),
 				}))
@@ -249,7 +249,7 @@ describe("Resizable / Scroll Area finite geometry editors", () => {
 		).toThrow();
 		expect(() =>
 			parseScrollAreaSource(
-				registryFiles("scroll-area", "nova").map((file) => ({
+				registryFiles("scroll-area", "valar").map((file) => ({
 					...file,
 					content: file.content.replace("data-vertical:w-2.5", ""),
 				}))
@@ -257,7 +257,7 @@ describe("Resizable / Scroll Area finite geometry editors", () => {
 		).toThrow();
 		expect(() =>
 			parseScrollAreaSource(
-				registryFiles("scroll-area", "nova").map((file) => ({
+				registryFiles("scroll-area", "valar").map((file) => ({
 					...file,
 					content: file.content.replace('data-slot="scroll-area-thumb"', ""),
 				}))
@@ -303,7 +303,7 @@ describe("Resizable / Scroll Area finite geometry editors", () => {
 						id: "4b346fcb-663d-4f2c-8f6b-a879f96f72c6",
 						name: "Geometry",
 						createdAt: "2026-11-03T00:00:00.000Z",
-						source: { style: "style-nova" },
+						source: { style: "style-valar" },
 						baseline,
 						overrides: { [key]: 20 },
 					}).success

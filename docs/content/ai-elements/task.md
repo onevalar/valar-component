@@ -8,7 +8,7 @@ description: Displays the steps the agent takes, as it takes them.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="task-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="task-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 

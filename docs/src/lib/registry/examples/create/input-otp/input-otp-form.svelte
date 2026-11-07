@@ -36,7 +36,7 @@
 					<InputOTP.Root maxlength={6} id="otp-verification" required>
 						{#snippet children({ cells })}
 							<InputOTP.Group
-								class="*:data-[slot=input-otp-slot]:text-xl style-vega:*:data-[slot=input-otp-slot]:h-16 style-vega:*:data-[slot=input-otp-slot]:w-12 style-nova:*:data-[slot=input-otp-slot]:h-12 style-nova:*:data-[slot=input-otp-slot]:w-11 style-lyra:*:data-[slot=input-otp-slot]:h-12 style-lyra:*:data-[slot=input-otp-slot]:w-11 style-maia:*:data-[slot=input-otp-slot]:h-16 style-maia:*:data-[slot=input-otp-slot]:w-12 style-mira:*:data-[slot=input-otp-slot]:h-12 style-mira:*:data-[slot=input-otp-slot]:w-11"
+								class="*:data-[slot=input-otp-slot]:text-xl style-valar:*:data-[slot=input-otp-slot]:h-12 style-valar:*:data-[slot=input-otp-slot]:w-11"
 							>
 								{#each cells.slice(0, 3) as cell (cell)}
 									<InputOTP.Slot {cell} />
@@ -44,7 +44,7 @@
 							</InputOTP.Group>
 							<InputOTP.Separator />
 							<InputOTP.Group
-								class="*:data-[slot=input-otp-slot]:text-xl style-vega:*:data-[slot=input-otp-slot]:h-16 style-vega:*:data-[slot=input-otp-slot]:w-12 style-nova:*:data-[slot=input-otp-slot]:h-12 style-nova:*:data-[slot=input-otp-slot]:w-11 style-lyra:*:data-[slot=input-otp-slot]:h-12 style-lyra:*:data-[slot=input-otp-slot]:w-11 style-maia:*:data-[slot=input-otp-slot]:h-16 style-maia:*:data-[slot=input-otp-slot]:w-12 style-mira:*:data-[slot=input-otp-slot]:h-12 style-mira:*:data-[slot=input-otp-slot]:w-11"
+								class="*:data-[slot=input-otp-slot]:text-xl style-valar:*:data-[slot=input-otp-slot]:h-12 style-valar:*:data-[slot=input-otp-slot]:w-11"
 							>
 								{#each cells.slice(3, 6) as cell (cell)}
 									<InputOTP.Slot {cell} />

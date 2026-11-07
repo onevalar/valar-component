@@ -23,7 +23,7 @@ pnpm --filter docs exec vite dev --host 127.0.0.1 --port 5186 --strictPort
 
 - `docs/src/lib/registry/ui/`：68 个基础组件目录（含新增 Slider Field、Color Picker）。
 - `docs/src/lib/registry/examples/`、`blocks/`：示例与组合区块。
-- `docs/src/lib/registry/styles/`：8 套现有组件样式。
+- `docs/src/lib/registry/styles/`：唯一的组件风格 `valar`（2026-11-07 起，原上游 Nova；其余七套已移除）。
 - `docs/content/`：Valar 文档与组件用法。
 - `packages/cli/`：`@valar/svelte-cli`，命令名 `valar-svelte`。
 - `packages/primitives/`：`@valar/svelte-primitives`。
@@ -40,7 +40,7 @@ pnpm --filter docs exec vite dev --host 127.0.0.1 --port 5186 --strictPort
 pnpm dev:playground
 ```
 
-该命令同时监听组件生成、样式／token 与底层原语，启动独立消费应用。组件编辑器须“写回组件库”后才影响应用；浏览器草稿不会同步。八套组件样式均有包导出，默认 Nova／neutral／Lucide。热更新可能重置临时交互状态，已部署项目仍须重新构建发布。
+该命令同时监听组件生成、样式／token 与底层原语，启动独立消费应用。组件编辑器须“写回组件库”后才影响应用；浏览器草稿不会同步。组件风格只有 `valar`（原 Nova），默认 neutral／Lucide。热更新可能重置临时交互状态，已部署项目仍须重新构建发布。
 
 接入步骤、导入示例与验证边界见[共享 UI 工作区说明](standards/SHARED_UI.md)。自有包仍 private，未发布 npm，也未部署。
 
@@ -106,4 +106,4 @@ pnpm --filter docs test:e2e
 - 本地 CLI 从 Valar registry 向临时目标项目成功安装 Button。
 - 首页、文档、Button、Dialog、更新记录和配置页抽查通过；Dialog 开关、手机宽度和深色切换通过。
 - 抽查网络请求未发现上游广告、统计或 registry 请求。
-- 462 个基础组件文件除内部包命名空间替换外未变化，8 套组件样式 CSS 与导入基线一致，许可证文件保持原样。
+- 462 个基础组件文件除内部包命名空间替换外未变化，导入基线为 8 套组件样式 CSS（现仅保留 `valar`，即原 Nova），许可证文件保持原样。

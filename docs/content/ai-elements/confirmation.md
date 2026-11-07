@@ -8,7 +8,7 @@ description: Asks for approval before a tool runs.
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-<ComponentPreview name="confirmation-demo" previewStyle="rhea" previewClassName="h-auto min-h-0">
+<ComponentPreview name="confirmation-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
 
