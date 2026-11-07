@@ -80,6 +80,7 @@
 						<Button
 							size="xs"
 							variant="outline"
+							class="text-foreground"
 							aria-label="Restore to {checkpoint.data.label}"
 							onclick={() => restore(message.id)}
 						>

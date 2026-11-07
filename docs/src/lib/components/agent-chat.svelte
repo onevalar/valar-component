@@ -11,7 +11,6 @@
 	import WrenchIcon from "@lucide/svelte/icons/wrench";
 	import * as Alert from "$lib/registry/ui/alert/index.js";
 	import * as Bubble from "$lib/registry/ui/bubble/index.js";
-	import * as Card from "$lib/registry/ui/card/index.js";
 	import * as Empty from "$lib/registry/ui/empty/index.js";
 	import * as MessageScroller from "$lib/registry/ui/message-scroller/index.js";
 	import * as Message from "$lib/registry/ui/message/index.js";
@@ -345,16 +344,13 @@
 																</Button>
 															{/each}
 														{:else if segment.kind === "ui"}
-															<Card.Root size="sm" class="w-full">
+															<!-- No frame of its own: the tree usually starts with a Card, and a frame around that would clip its border. -->
+															<div class="flex w-full flex-col gap-2 p-px">
 																{#if segment.title}
-																	<Card.Header>
-																		<Card.Title>{segment.title}</Card.Title>
-																	</Card.Header>
+																	<p class="text-sm font-medium">{segment.title}</p>
 																{/if}
-																<Card.Content>
-																	<UiRenderer root={segment.root} />
-																</Card.Content>
-															</Card.Root>
+																<UiRenderer root={segment.root} />
+															</div>
 														{:else}
 															<Markdown content={segment.text} />
 														{/if}

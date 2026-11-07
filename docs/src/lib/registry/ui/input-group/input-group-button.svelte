@@ -42,7 +42,13 @@
 	{type}
 	data-size={size}
 	{variant}
-	class={cn(inputGroupButtonVariants({ size }), className)}
+	class={cn(
+		inputGroupButtonVariants({ size }),
+		// The addon around the button is muted text, which outline and ghost buttons would
+		// inherit. Buttons must read as clickable, so they take the normal text colour.
+		(variant === "outline" || variant === "ghost") && "text-foreground",
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}

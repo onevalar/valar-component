@@ -30,7 +30,7 @@ Render a marker after the turn, with a button that restores it.
 <Marker.Root variant="separator">
   <Marker.Content class="inline-flex items-center gap-2">
     {label}
-    <Button size="xs" variant="outline" onclick={restore}>Restore</Button>
+    <Button size="xs" variant="outline" class="text-foreground" onclick={restore}>Restore</Button>
   </Marker.Content>
 </Marker.Root>
 ```

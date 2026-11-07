@@ -4,3 +4,4 @@
 - Marker 默认没有角色，按用途选择：进行中的状态（“正在思考…”）设 `role="status"`；带文字的分隔（日期）不要加 `role="separator"`，否则文字不会被读出。
 - `Marker.Icon` 对读屏器隐藏，含义写在 `Marker.Content` 里；只有图标时给 `Marker.Root` 设 `aria-label`。
 - 可点击时用 `child` snippet 渲染为 Button 或链接。
+- Marker 的文字是弱化色，放在里面的 outline、ghost 按钮会继承这个颜色而显得不可点击；给按钮加 `class="text-foreground"`。

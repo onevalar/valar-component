@@ -30,7 +30,7 @@ description: 标记对话中可以返回的位置。
 <Marker.Root variant="separator">
   <Marker.Content class="inline-flex items-center gap-2">
     {label}
-    <Button size="xs" variant="outline" onclick={restore}>Restore</Button>
+    <Button size="xs" variant="outline" class="text-foreground" onclick={restore}>Restore</Button>
   </Marker.Content>
 </Marker.Root>
 ```
