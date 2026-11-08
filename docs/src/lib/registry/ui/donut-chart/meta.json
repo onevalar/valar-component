@@ -1,0 +1,17 @@
+{
+	"name": "donut-chart",
+	"type": "registry:ui",
+	"title": "Static Donut 静态环图",
+	"description": "保留固定总量分母的装饰性 SVG 环图，不对隐藏类别重新归一化。",
+	"categories": ["展示"],
+	"meta": {
+		"valar": {
+			"keywords": ["donut", "环图", "占比", "static"],
+			"whenToUse": ["已有可访问精确图例，需要固定分母的静态环图"],
+			"whenNotToUse": [{ "case": "需要交互提示或复杂坐标轴", "use": "chart" }],
+			"accessibility": ["SVG 为装饰；调用方必须提供类别名称和精确数据"],
+			"responsive": ["208 单位 viewBox 由外层宽高控制"],
+			"related": ["waffle-chart", "table"]
+		}
+	}
+}

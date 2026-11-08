@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@import "../../../packages/ui/dist/valar/theme.css";
+@source "../../../packages/ui/dist/valar";
+@source "./migrated.svelte";
+body {
+	margin: 16px;
+	font: 14px system-ui;
+}
+h3 {
+	margin: 18px 0 8px;
+	font-size: 14px;
+}
+input {
+	max-width: 80px;
+	border: 1px solid var(--border);
+}
+pre {
+	white-space: pre-wrap;
+}

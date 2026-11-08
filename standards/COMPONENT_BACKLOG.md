@@ -30,6 +30,17 @@
 
 VCOMP-005／006 不是跨框架转换，而是为替代 DialKit 控件新增的 Valar 组件，验收以文档页“行为合同”和 `docs/tests/slider-field.test.ts` 为准。
 
+### VCOMP-008 · TokenPlan 所需仪表与组合控件（2026-11-07）
+
+- 本地新增 `gauge`、`waffle-chart`、`donut-chart`、`sparkline`、`ruler-slider`、`segmented-control`、`confirm-action`、`tick-meter`、`texture-fill` 九个公共子路径；原生 Svelte 5，复用 ToggleGroup、Button；现有 Slider 补齐键盘合同。RulerSlider 的移动尺带由组件内 RAF 实现，不引入 React/Motion/Arc 运行时。
+- 来源为固定 TokenPlan 提交中的免费 MIT 组件及 DitherFill，保留各目录 LICENSE。TickMeter 仅按产品需求独立编写，60 条径向 SVG 线，未读取或搬运 Arc Pro 源码。
+- 状态：本地实现及有限运行时验证已交付，**不声明完整来源能力等价**。此前静态尺带方案已被否决并替换：现保留移动尺带、惯性、边界回弹、轻点弹簧、横向滚轮、截住惯性与取消，正常／减少动态效果双侧验证。仅滚动数字不提供，应用明确使用 animateReadout=false。ConfirmAction 已补充独立编写的原生尺寸／圆角／内容反馈，不复制 Arc 动画代码或参数；实测和差异见转换记录 §8。
+- 按集成回归补齐 fullWidth 空闲按钮的整行／44px 点击区域、原生 Spinner（减少动态效果时停止）、Confirm 初始焦点与 Shift+Tab 到 Cancel、Space 长按，以及 Slider 全方向／Shift／Page／Home／End 和修饰键穿透。TickMeter 按澄清后的要求夹紧 ARIA 数值，保留超限文字。
+- 已通过共享包构建／类型（0 错误及警告）、共享包 2 项测试、docs 205 项测试（相关 49 项）、parity 111 项测试及类型检查、registry 801 项生成与九个组件的许可／依赖闭包断言，以及真实 React/Svelte 双侧 Chromium 147 的 7 个扩展场景（无运行时／资源错误）。应用侧 tarball 安装由主任务独立报告，最新修复需刷新 tarball，未在此重复集成。
+- 新增控件未配置工作台调参面板，库存显式列出但不标为调参已覆盖。SSR/hydration、真实触屏与读屏尚未验证；完整记录及复现见[转换记录](porting-records/tokenplan-meters-react-to-svelte.md)。未提交、推送或发布。
+- 后续补齐根容器零内缩的 fullWidth 空闲按钮（与区域宽差 <2px）、生成器不再裁掉普通字符串内的 Space，以及 WebKit 默认键盘偏好下 Button 显式 tabindex=0（覆盖值／禁用保持正确）。新一轮 22 项双侧尺带浏览器场景和 16 项确认／焦点组合详见转换记录；来源的滚动中外部重置竞争与 WebKit Cancel 跳过单独记录，不冒充目标回归。
+- 2026-11-08 独立 ConfirmAction 形变续作：共享包先构建／类型通过，保留双侧 176 条实际状态时间线，44 项正常动效预算均不慢于未改来源，另有 4 项快速取消／实时减少动态效果验证。容器 120ms、内容进入 80ms／退出 60ms；实测总时长紧凑 121–142ms、整行 121–149ms，来源分别 242–449ms／162–240ms。该项明确为有意视觉适配，**不是等价通过**；保持焦点、单一播报与操作即时响应，证据见转换记录 §8。
+
 前三项优先参考此前讨论的 Vue 版对应组件行为，最终使用适合 Svelte 的原生实现。Direction／RTL 作为跨组件能力评估，不因缺少同名目录就认定完全不支持 RTL，也不机械复制其他框架的 Provider。
 
 ### VCOMP-001 · Number Field

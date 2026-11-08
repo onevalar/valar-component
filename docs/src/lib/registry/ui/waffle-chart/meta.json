@@ -1,0 +1,17 @@
+{
+	"name": "waffle-chart",
+	"type": "registry:ui",
+	"title": "Waffle Chart 百格图",
+	"description": "最大余数法分配固定一百个格子的只读占比图。",
+	"categories": ["展示"],
+	"meta": {
+		"valar": {
+			"keywords": ["waffle", "百格图", "占比", "chart"],
+			"whenToUse": ["用一百个格子展示类别构成，旁边保留精确图例"],
+			"whenNotToUse": [{ "case": "需要准确读取每个类别的数值", "use": "table" }],
+			"accessibility": ["调用方提供整体 label 和精确文字图例，不依赖颜色区分"],
+			"responsive": ["正方形网格随容器缩放，固定十行十列"],
+			"related": ["donut-chart", "chart"]
+		}
+	}
+}

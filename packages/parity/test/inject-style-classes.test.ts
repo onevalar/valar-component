@@ -56,6 +56,13 @@ describe("parseStyleCss", () => {
 });
 
 describe("injectStyleClasses", () => {
+	it("preserves Space keys and other non-class literals while normalizing injected classes", () => {
+		const input = `<div class="cn-attachment-action p-2" onkeydown={(event) => [" ", "Enter"].includes(event.key)} data-copy="  keep spacing  "></div>`;
+		expect(injectStyleClasses(input, styleMap)).toBe(
+			`<div class="p-2" onkeydown={(event) => [" ", "Enter"].includes(event.key)} data-copy="  keep spacing  "></div>`
+		);
+	});
+
 	it("replaces cn-* tokens as whole class names, longest first", () => {
 		const input = `class="cn-attachment-media cn-attachment"`;
 		expect(injectStyleClasses(input, styleMap)).toBe(
@@ -231,7 +238,9 @@ describe("applyTokenUtilities", () => {
 				"utf8"
 			)
 		);
-		const out = applyTokenUtilities(`"${valar["cn-dialog-content"]} | ${valar["cn-sheet-content"]}"`);
+		const out = applyTokenUtilities(
+			`"${valar["cn-dialog-content"]} | ${valar["cn-sheet-content"]}"`
+		);
 		expect(out).toContain("duration-fast");
 		expect(out).toContain("duration-normal ease-standard");
 		expect(out).not.toMatch(/duration-(?:100|200|300)\b/);

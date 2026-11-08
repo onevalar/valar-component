@@ -1,0 +1,17 @@
+{
+	"name": "sparkline",
+	"type": "registry:ui",
+	"title": "Static Sparkline 迷你趋势",
+	"description": "保留日历槽位、零基线和缺失断点的装饰性静态趋势线。",
+	"categories": ["展示"],
+	"meta": {
+		"valar": {
+			"keywords": ["sparkline", "趋势", "迷你图", "null"],
+			"whenToUse": ["在精简摘要旁显示不插值的日历序列趋势"],
+			"whenNotToUse": [{ "case": "需要坐标轴和逐点读取", "use": "chart" }],
+			"accessibility": ["SVG 为装饰；相邻文字提供趋势摘要和精确数据"],
+			"responsive": ["可通过原生 SVG 宽高调整，默认 50.4 × 28"],
+			"related": ["chart", "table"]
+		}
+	}
+}

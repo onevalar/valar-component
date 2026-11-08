@@ -248,6 +248,11 @@ function prepareStyleMap(styleMap: Record<string, string>): PreparedStyleMap {
 export function injectStyleClasses(content: string, styleMap: Record<string, string>): string {
 	content = stripParityIgnoreComments(content);
 	const { entries, valuesContainTokens } = prepareStyleMap(styleMap);
+	// Only normalize literals changed by class injection. Whitespace in other strings
+	// is behavior, e.g. KeyboardEvent.key === " " must not become the empty key.
+	const unchangedLiterals = new Set(
+		(content.match(/"[^"\\]*"/g) ?? []).filter((literal) => !/cn-[\w-]+/.test(literal))
+	);
 
 	// `cn-[\w-]+` is greedy, so each match is a whole token: exactly what `tokenRegex`
 	// (bounded by non-word, non-hyphen characters) can match.
@@ -265,8 +270,8 @@ export function injectStyleClasses(content: string, styleMap: Record<string, str
 
 	content = content.replace(
 		/(")([^"\\]*)(")/g,
-		(_match, open: string, body: string, close: string) =>
-			`${open}${body.replace(/ {2,}/g, " ").trim()}${close}`
+		(match, open: string, body: string, close: string) =>
+			unchangedLiterals.has(match) ? match : `${open}${body.replace(/ {2,}/g, " ").trim()}${close}`
 	);
 
 	content = content.replace(/cn\(\s*""\s*,\s*/g, "cn(");

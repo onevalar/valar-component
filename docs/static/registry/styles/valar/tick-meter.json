@@ -1,0 +1,58 @@
+{
+	"$schema": "http://127.0.0.1:5186/schema/registry-item.json",
+	"name": "tick-meter",
+	"title": "Tick Meter 刻度仪表",
+	"type": "registry:ui",
+	"description": "独立原创的六十条径向 SVG 刻度仪表，保留原始超限读数。",
+	"meta": {
+		"valar": {
+			"keywords": [
+				"tick",
+				"meter",
+				"刻度",
+				"百分比"
+			],
+			"whenToUse": [
+				"需要无动效的只读径向配额刻度和原始超限读数"
+			],
+			"whenNotToUse": [
+				{
+					"case": "需要连续弧线而不是离散刻度",
+					"use": "gauge"
+				}
+			],
+			"accessibility": [
+				"调用方提供 label 和原样保留的 valueText；图形与 aria-valuenow 限制在 0–100"
+			],
+			"responsive": [
+				"正方形 SVG 随容器缩放，不使用圆形 CSS mask"
+			],
+			"related": [
+				"gauge",
+				"progress"
+			]
+		}
+	},
+	"files": [
+		{
+			"content": "# Independent Provenance\n\nTickMeter was authored for Valar on 2026-11-07 solely from the product requirements:\n\n- Read-only percentage graphic, visually bounded to 0–100.\n- Preserve raw overflow in visible number and caller-localized valueText; clamp aria-valuenow to 0–100 per the clarified integration requirement on 2026-11-07. Accept caller-localized label.\n- Accent/danger tones using Valar primary/destructive tokens.\n- Exactly 60 radial SVG line elements, calculated at six-degree intervals.\n- No celebration, animation, circular CSS mask or missing-value state (caller handles missing).\n\nNo Arc Pro tick-ring implementation, CSS, assets or source-derived geometry was read, copied or translated. This is not a port of Arc Activity Rings. Valar's repository MIT license applies; no Arc Pro license or source is included in this component.\n",
+			"type": "registry:file",
+			"target": "tick-meter/PROVENANCE.md"
+		},
+		{
+			"content": "# Tick Meter Design Rules\n\n- Independently authored SVG meter, not a redistributed Arc Pro component. Keep PROVENANCE.md with source.\n- Exactly 60 radial lines; filled count and aria-valuenow clamp to 0–100. Visible number retains raw overflow; valueText is preserved exactly as the localized spoken explanation.\n- Caller supplies finite value, label and valueText and handles missing data before mounting. Never turn missing into 0.\n- Accent maps to primary, danger to destructive. Keep the display read-only, without celebration, animation or circular CSS masks.\n",
+			"type": "registry:file",
+			"target": "tick-meter/RULES.md"
+		},
+		{
+			"content": "export { default as TickMeter, type TickMeterProps } from \"./tick-meter.svelte\";\n",
+			"type": "registry:file",
+			"target": "tick-meter/index.ts"
+		},
+		{
+			"content": "<script lang=\"ts\" module>\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\texport type TickMeterProps = Omit<HTMLAttributes<HTMLDivElement>, \"children\"> & {\n\t\t/** A finite percentage; graphic/ARIA clamp, visible number/valueText preserve overflow. */\n\t\tvalue: number;\n\t\tlabel: string;\n\t\tvalueText: string;\n\t\ttone?: \"accent\" | \"danger\";\n\t};\n</script>\n\n<script lang=\"ts\">\n\t// Independently authored from product requirements. Not an Arc/Arc Pro adaptation.\n\timport { cn } from \"$UTILS$.js\";\n\tlet {\n\t\tvalue,\n\t\tlabel,\n\t\tvalueText,\n\t\ttone = \"accent\",\n\t\tclass: className,\n\t\t...rest\n\t}: TickMeterProps = $props();\n\tconst bounded = $derived(Math.min(100, Math.max(0, value)));\n\tconst filled = $derived(Math.round((bounded * 60) / 100));\n\tconst ticks = Array.from({ length: 60 }, (_, index) => {\n\t\tconst angle = ((index * 6 - 90) * Math.PI) / 180;\n\t\treturn {\n\t\t\tx1: 50 + 36 * Math.cos(angle),\n\t\t\ty1: 50 + 36 * Math.sin(angle),\n\t\t\tx2: 50 + 44 * Math.cos(angle),\n\t\t\ty2: 50 + 44 * Math.sin(angle),\n\t\t};\n\t});\n</script>\n\n<div\n\tdata-slot=\"tick-meter\"\n\tdata-tone={tone}\n\trole=\"meter\"\n\taria-label={label}\n\taria-valuemin={0}\n\taria-valuemax={100}\n\taria-valuenow={bounded}\n\taria-valuetext={valueText}\n\tclass={cn(\"relative aspect-square w-full\", className)}\n\t{...rest}\n>\n\t<svg viewBox=\"0 0 100 100\" aria-hidden=\"true\" focusable=\"false\" class=\"block size-full\">\n\t\t{#each ticks as point, index}\n\t\t\t<line\n\t\t\t\t{...point}\n\t\t\t\tdata-filled={index < filled}\n\t\t\t\tstroke-width=\"2.5\"\n\t\t\t\tstroke-linecap=\"round\"\n\t\t\t\tclass={index < filled\n\t\t\t\t\t? tone === \"danger\"\n\t\t\t\t\t\t? \"stroke-destructive\"\n\t\t\t\t\t\t: \"stroke-primary\"\n\t\t\t\t\t: \"stroke-border\"}\n\t\t\t/>\n\t\t{/each}\n\t</svg>\n\t<span\n\t\taria-hidden=\"true\"\n\t\tclass={cn(\n\t\t\t\"pointer-events-none absolute inset-0 grid place-content-center text-2xl font-medium tabular-nums\",\n\t\t\ttone === \"danger\" ? \"text-destructive\" : \"text-foreground\"\n\t\t)}\n\t>\n\t\t{Math.round(value)}%\n\t</span>\n</div>\n",
+			"type": "registry:file",
+			"target": "tick-meter/tick-meter.svelte"
+		}
+	]
+}

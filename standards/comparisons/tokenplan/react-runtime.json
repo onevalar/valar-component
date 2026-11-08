@@ -1,0 +1,11 @@
+{
+	"name": "tokenplan-original-comparison-runtime",
+	"private": true,
+	"type": "module",
+	"dependencies": {
+		"react": "19.3.1",
+		"react-dom": "19.3.1",
+		"motion": "14.4.0",
+		"lucide-react": "1.60.0"
+	}
+}

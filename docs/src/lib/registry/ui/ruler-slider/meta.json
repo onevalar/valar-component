@@ -1,0 +1,17 @@
+{
+	"name": "ruler-slider",
+	"type": "registry:ui",
+	"title": "Ruler Slider 刻度滑块",
+	"description": "支持移动尺带、拖动惯性、边界回弹和横向滚轮的精确数值输入。",
+	"categories": ["表单"],
+	"meta": {
+		"valar": {
+			"keywords": ["ruler", "刻度", "slider", "参考值"],
+			"whenToUse": ["需要在明确范围内调整参考值并显示单位和刻度"],
+			"whenNotToUse": [{ "case": "还需要直接输入精确数字", "use": "slider-field" }],
+			"accessibility": ["label 命名滑块，format 与 unit 同时用于读数和语音值"],
+			"responsive": ["固定中心指针，刻度随尺带移动；纵向滚轮保留页面滚动"],
+			"related": ["slider", "slider-field"]
+		}
+	}
+}

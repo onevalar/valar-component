@@ -85,6 +85,10 @@ links:
 
 按 ARIA 命名优先级，`aria-labelledby` 优先于 `aria-label`。
 
+## 键盘合同
+
+type="single" 且 step 为数字时，四个方向键都按 step 调整。Shift+方向键与 PageUp/PageDown 使用 largeStep（默认 step 的两倍），Home/End 到达边界。Ctrl、Meta、Alt 组合不会改值或阻止应用／浏览器快捷键。每次实际改值先触发一次 onValueChange，再触发一次 onValueCommit。多手柄与非均匀步长保留 Bits UI 的键盘行为。aria-valuetext 转发给实际手柄。
+
 ## 范围
 
 传入 `type="multiple"` 和包含两个值的数组，得到范围滑块。

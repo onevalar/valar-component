@@ -1,0 +1,20 @@
+{
+	"name": "segmented-control",
+	"type": "registry:ui",
+	"title": "Segmented Control 分段选择",
+	"description": "组合现有 ToggleGroup 的单选分段控件，选中项不会被再次点击清空。",
+	"categories": ["操作"],
+	"meta": {
+		"valar": {
+			"keywords": ["segmented", "分段", "单选", "toggle"],
+			"whenToUse": ["切换同一视图的数据口径、尺度等少量互斥选项"],
+			"whenNotToUse": [
+				{ "case": "切换关联的标签面板", "use": "tabs" },
+				{ "case": "选项可以多选或全部取消", "use": "toggle-group" }
+			],
+			"accessibility": ["沿用 Bits UI 单选语义；方向键、Home、End 移动焦点并选择"],
+			"responsive": ["选项超宽时内部横向滚动，不隐藏必要内容"],
+			"related": ["toggle-group", "tabs"]
+		}
+	}
+}

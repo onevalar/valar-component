@@ -1,0 +1,17 @@
+{
+	"name": "texture-fill",
+	"type": "registry:ui",
+	"title": "Texture Fill 纹理填充",
+	"description": "带四种纹理、纯色、弹簧过渡和减少动态效果支持的装饰性百分比画布。",
+	"categories": ["展示"],
+	"meta": {
+		"valar": {
+			"keywords": ["texture", "纹理", "canvas", "dither", "fill"],
+			"whenToUse": ["配额数值已有文字语义，需要装饰性纹理填充背景"],
+			"whenNotToUse": [{ "case": "需要自带可访问百分比语义的完整仪表", "use": "gauge" }],
+			"accessibility": ["画布隐藏于辅助技术；调用方提供 meter 语义和缺失数据处理"],
+			"responsive": ["跟随容器尺寸和设备像素比，减少动态效果时立即同步读数"],
+			"related": ["gauge", "tick-meter"]
+		}
+	}
+}

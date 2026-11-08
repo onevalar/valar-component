@@ -152,6 +152,8 @@ Remember to add the `data-icon="inline-start"` or `data-icon="inline-end"` attri
 
 Button radius follows the global radius token and the radius level set in the Button editor. Change it there instead of adding `rounded-*` classes, which the `valar/button-size-via-prop` lint rule reports.
 
+Button explicitly defaults to `tabindex={0}` so Tab and pointer focus work under macOS WebKit's default keyboard preference. Explicit tabindex overrides are respected; disabled buttons/links use -1 and keep their disabled semantics.
+
 ## Spinner
 
 Render a `<Spinner />` component inside the button to show a loading state. Remember to add the `data-icon="inline-start"` or `data-icon="inline-end"` attribute to the spinner for the correct spacing.

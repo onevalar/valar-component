@@ -1,0 +1,69 @@
+{
+	"$schema": "http://127.0.0.1:5186/schema/registry-item.json",
+	"name": "segmented-control",
+	"title": "Segmented Control 分段选择",
+	"type": "registry:ui",
+	"description": "组合现有 ToggleGroup 的单选分段控件，选中项不会被再次点击清空。",
+	"devDependencies": [
+		"bits-ui@2.20.0",
+		"@internationalized/date@^3.12.0"
+	],
+	"registryDependencies": [
+		"toggle-group"
+	],
+	"meta": {
+		"valar": {
+			"keywords": [
+				"segmented",
+				"分段",
+				"单选",
+				"toggle"
+			],
+			"whenToUse": [
+				"切换同一视图的数据口径、尺度等少量互斥选项"
+			],
+			"whenNotToUse": [
+				{
+					"case": "切换关联的标签面板",
+					"use": "tabs"
+				},
+				{
+					"case": "选项可以多选或全部取消",
+					"use": "toggle-group"
+				}
+			],
+			"accessibility": [
+				"沿用 Bits UI 单选语义；方向键、Home、End 移动焦点并选择"
+			],
+			"responsive": [
+				"选项超宽时内部横向滚动，不隐藏必要内容"
+			],
+			"related": [
+				"toggle-group",
+				"tabs"
+			]
+		}
+	},
+	"files": [
+		{
+			"content": "# Source and License\n\nNative Svelte composition of Valar ToggleGroup based on free Arc SegmentedControl's observable selection contract (`uiarc.dev/r/segmented-control.json`), as used by TokenPlan revision c588b28cc1a19a1bdd5964db5c791e2ec66d5ec4. Svelte snippets replace ReactNode accessories. No Motion layout animation or source CSS is shipped.\n\nMIT License\n\nCopyright (c) 2026 Elia Kuratli\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+			"type": "registry:file",
+			"target": "segmented-control/LICENSE.md"
+		},
+		{
+			"content": "# Segmented Control Design Rules\n\n- Compose ToggleGroup for one nonempty selection; option values must be unique and nonempty. Always provide a localized group label.\n- A second click on the chosen segment does not clear it. Arrows/Home/End select and move focus; disabled options are skipped.\n- Use string labels and optional Svelte accessory snippets, not React children. Supply value or bind:value and onValueChange as needed.\n- It is not a tab-panel or multi-selection API. Existing ToggleGroup handles multiple toggles; Tabs associates panels.\n- Options scroll horizontally in narrow containers; never truncate away the only accessible label.\n",
+			"type": "registry:file",
+			"target": "segmented-control/RULES.md"
+		},
+		{
+			"content": "export {\n\tdefault as SegmentedControl,\n\ttype SegmentedControlProps,\n\ttype Segment,\n} from \"./segmented-control.svelte\";\n",
+			"type": "registry:file",
+			"target": "segmented-control/index.ts"
+		},
+		{
+			"content": "<script lang=\"ts\" module>\n\timport type { ToggleGroup as ToggleGroupPrimitive } from \"bits-ui\";\n\timport type { Snippet } from \"svelte\";\n\texport type Segment = { value: string; label: string; accessory?: Snippet; disabled?: boolean };\n\texport type SegmentedControlProps = Omit<\n\t\tToggleGroupPrimitive.RootProps,\n\t\t\"type\" | \"value\" | \"onValueChange\" | \"children\" | \"child\"\n\t> & {\n\t\toptions: Segment[];\n\t\tvalue?: string;\n\t\tlabel: string;\n\t\tdisabled?: boolean;\n\t\tonValueChange?: (value: string) => void;\n\t\tonOptionIntent?: (value: string) => void;\n\t};\n</script>\n\n<script lang=\"ts\">\n\timport { ToggleGroup, ToggleGroupItem } from \"$UI$/toggle-group/index.js\";\n\timport { cn } from \"$UTILS$.js\";\n\tlet {\n\t\toptions,\n\t\tvalue = $bindable(\"\"),\n\t\tlabel,\n\t\tdisabled = false,\n\t\tonValueChange,\n\t\tonOptionIntent,\n\t\tclass: className,\n\t\t...rest\n\t}: SegmentedControlProps = $props();\n\tfunction select(next: string) {\n\t\tif (!next || disabled || next === value) return;\n\t\tvalue = next;\n\t\tonValueChange?.(next);\n\t}\n\tfunction key(event: KeyboardEvent, current: string) {\n\t\tif ([\"Enter\", \" \"].includes(event.key) && current === value) {\n\t\t\tevent.preventDefault();\n\t\t\treturn;\n\t\t}\n\t\tconst items = options.filter((option) => !option.disabled);\n\t\tconst index = items.findIndex((option) => option.value === current);\n\t\tconst rtl = getComputedStyle(event.currentTarget as HTMLElement).direction === \"rtl\";\n\t\tconst move =\n\t\t\tevent.key === \"ArrowDown\" || event.key === (rtl ? \"ArrowLeft\" : \"ArrowRight\")\n\t\t\t\t? 1\n\t\t\t\t: event.key === \"ArrowUp\" || event.key === (rtl ? \"ArrowRight\" : \"ArrowLeft\")\n\t\t\t\t\t? -1\n\t\t\t\t\t: 0;\n\t\tconst target =\n\t\t\tevent.key === \"Home\"\n\t\t\t\t? 0\n\t\t\t\t: event.key === \"End\"\n\t\t\t\t\t? items.length - 1\n\t\t\t\t\t: move\n\t\t\t\t\t\t? (index + move + items.length) % items.length\n\t\t\t\t\t\t: -1;\n\t\tif (target < 0 || !items[target] || disabled) return;\n\t\tevent.preventDefault();\n\t\tselect(items[target].value);\n\t\tconst group = (event.currentTarget as HTMLElement).closest('[data-slot=\"segmented-control\"]');\n\t\tconst button = Array.from(group?.querySelectorAll<HTMLButtonElement>(\"button\") ?? []).find(\n\t\t\t(button) => button.dataset.value === items[target].value\n\t\t);\n\t\tbutton?.focus({ preventScroll: true });\n\t\tbutton?.scrollIntoView?.({ block: \"nearest\", inline: \"nearest\", behavior: \"instant\" });\n\t}\n</script>\n\n<ToggleGroup\n\ttype=\"single\"\n\t{value}\n\t{disabled}\n\tonValueChange={select}\n\taria-label={label}\n\tclass={cn(\"max-w-full overflow-x-auto rounded-lg bg-muted p-1\", className)}\n\t{...rest}\n\tdata-slot=\"segmented-control\"\n>\n\t{#each options as option (option.value)}\n\t\t<ToggleGroupItem\n\t\t\tvalue={option.value}\n\t\t\tdisabled={option.disabled}\n\t\t\tdata-value={option.value}\n\t\t\ttabindex={value === option.value || (!value && options[0] === option) ? 0 : -1}\n\t\t\tclass=\"shrink-0 rounded-md px-3 data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow-sm\"\n\t\t\tonclick={(event) => {\n\t\t\t\tif (value === option.value) event.preventDefault();\n\t\t\t}}\n\t\t\tonkeydown={(event) => key(event, option.value)}\n\t\t\tonpointerenter={() => {\n\t\t\t\tif (!disabled && !option.disabled) onOptionIntent?.(option.value);\n\t\t\t}}\n\t\t\tonfocus={() => onOptionIntent?.(option.value)}\n\t\t>\n\t\t\t{option.label}{@render option.accessory?.()}\n\t\t</ToggleGroupItem>\n\t{/each}\n</ToggleGroup>\n",
+			"type": "registry:file",
+			"target": "segmented-control/segmented-control.svelte"
+		}
+	]
+}

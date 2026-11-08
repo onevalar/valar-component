@@ -1,0 +1,63 @@
+{
+	"$schema": "http://127.0.0.1:5186/schema/registry-item.json",
+	"name": "donut-chart",
+	"title": "Static Donut 静态环图",
+	"type": "registry:ui",
+	"description": "保留固定总量分母的装饰性 SVG 环图，不对隐藏类别重新归一化。",
+	"meta": {
+		"valar": {
+			"keywords": [
+				"donut",
+				"环图",
+				"占比",
+				"static"
+			],
+			"whenToUse": [
+				"已有可访问精确图例，需要固定分母的静态环图"
+			],
+			"whenNotToUse": [
+				{
+					"case": "需要交互提示或复杂坐标轴",
+					"use": "chart"
+				}
+			],
+			"accessibility": [
+				"SVG 为装饰；调用方必须提供类别名称和精确数据"
+			],
+			"responsive": [
+				"208 单位 viewBox 由外层宽高控制"
+			],
+			"related": [
+				"waffle-chart",
+				"table"
+			]
+		}
+	},
+	"files": [
+		{
+			"content": "# Source and License\n\nSvelte adaptation of TokenPlan's StaticDonut, based on free Arc DonutChart (`uiarc.dev/r/donut-chart.json`). Fixed-denominator annular sectors retained; React replaced with Svelte runes. Source revision: c588b28cc1a19a1bdd5964db5c791e2ec66d5ec4 in onevalar/token-plan.\n\nMIT License\n\nCopyright (c) 2026 Elia Kuratli\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+			"type": "registry:file",
+			"target": "donut-chart/LICENSE.md"
+		},
+		{
+			"content": "# Static Donut Design Rules\n\n- Caller validates unique keys, finite nonnegative parts and a positive fixed total; the sum must not exceed that total.\n- Never renormalize when hiding a legend row. Unallocated space represents the fixed denominator, not a new category.\n- Decorative SVG: supply exact values and names in a nearby accessible legend.\n- No minimum slice enlargement, animation, tooltips or hover resizing.\n",
+			"type": "registry:file",
+			"target": "donut-chart/RULES.md"
+		},
+		{
+			"content": "// Adapted from Arc's free DonutChart, copyright (c) 2026 Elia Kuratli (MIT, LICENSE.md).\nexport type DonutPart = { key: string; value: number; color: string };\nconst coordinate = (value: number) => (Math.round(value * 1e6) / 1e6).toString();\n\nexport function sector(\n\tc: number,\n\touter: number,\n\tinner: number,\n\tstart: number,\n\tend: number\n): string {\n\tconst turns = end - start;\n\tif (turns <= 0) return \"\";\n\tconst at = (radius: number, angle: number) =>\n\t\t`${coordinate(c + radius * Math.cos(angle))} ${coordinate(c + radius * Math.sin(angle))}`;\n\tif (turns >= 1)\n\t\treturn `M${at(outer, -Math.PI / 2)}A${outer} ${outer} 0 1 1 ${at(outer, Math.PI / 2)}A${outer} ${outer} 0 1 1 ${at(outer, -Math.PI / 2)}ZM${at(inner, -Math.PI / 2)}A${inner} ${inner} 0 1 0 ${at(inner, Math.PI / 2)}A${inner} ${inner} 0 1 0 ${at(inner, -Math.PI / 2)}Z`;\n\tconst a0 = start * Math.PI * 2 - Math.PI / 2;\n\tconst a1 = end * Math.PI * 2 - Math.PI / 2;\n\tconst big = a1 - a0 > Math.PI ? 1 : 0;\n\treturn `M${at(outer, a0)}A${outer} ${outer} 0 ${big} 1 ${at(outer, a1)}L${at(inner, a1)}A${inner} ${inner} 0 ${big} 0 ${at(inner, a0)}Z`;\n}\n",
+			"type": "registry:file",
+			"target": "donut-chart/geometry.ts"
+		},
+		{
+			"content": "export { default as StaticDonut, type StaticDonutProps } from \"./static-donut.svelte\";\nexport type { DonutPart } from \"./geometry.js\";\n",
+			"type": "registry:file",
+			"target": "donut-chart/index.ts"
+		},
+		{
+			"content": "<script lang=\"ts\" module>\n\timport type { DonutPart } from \"./geometry.js\";\n\timport type { SVGAttributes } from \"svelte/elements\";\n\texport type StaticDonutProps = Omit<SVGAttributes<SVGSVGElement>, \"children\"> & {\n\t\tparts: DonutPart[];\n\t\ttotal: number;\n\t};\n</script>\n\n<script lang=\"ts\">\n\timport { sector } from \"./geometry.js\";\n\tlet { parts, total, ...rest }: StaticDonutProps = $props();\n\tconst slices = $derived.by(() => {\n\t\tlet used = 0;\n\t\treturn parts.map((part) => {\n\t\t\tconst start = used / total;\n\t\t\tused += part.value;\n\t\t\treturn { ...part, start, end: used / total };\n\t\t});\n\t});\n</script>\n\n<svg data-slot=\"static-donut\" viewBox=\"0 0 208 208\" aria-hidden=\"true\" focusable=\"false\" {...rest}>\n\t{#each slices as part (part.key)}\n\t\t<path\n\t\t\tdata-part={part.key}\n\t\t\tdata-start={part.start}\n\t\t\tdata-end={part.end}\n\t\t\tdata-value={part.value}\n\t\t\td={sector(104, 97, 73, part.start, part.end)}\n\t\t\tfill={part.color}\n\t\t/>\n\t{/each}\n</svg>\n",
+			"type": "registry:file",
+			"target": "donut-chart/static-donut.svelte"
+		}
+	]
+}

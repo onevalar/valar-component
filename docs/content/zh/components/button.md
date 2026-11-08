@@ -152,6 +152,8 @@ Tailwind v4 把按钮组件的 `cursor: pointer` 改成了 `cursor: default`，�
 
 按钮圆角由全局圆角 token 和 Button 编辑器中的圆角级别控制。请在这些位置调整，不要添加 `rounded-*` 类名；`valar/button-size-via-prop` 检查会报告这类覆盖。
 
+Button 默认显式设置 `tabindex={0}`，使 macOS WebKit 默认键盘偏好下的 Tab 和指针焦点正常工作。尊重调用方的 tabindex；禁用按钮与链接使用 -1，并保留禁用语义。
+
 ## 加载
 
 在按钮内渲染 `<Spinner />` 组件即可显示加载状态。同样要为加载指示器加上 `data-icon="inline-start"` 或 `data-icon="inline-end"` 属性，间距才会正确。

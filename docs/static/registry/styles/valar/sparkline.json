@@ -1,0 +1,58 @@
+{
+	"$schema": "http://127.0.0.1:5186/schema/registry-item.json",
+	"name": "sparkline",
+	"title": "Static Sparkline 迷你趋势",
+	"type": "registry:ui",
+	"description": "保留日历槽位、零基线和缺失断点的装饰性静态趋势线。",
+	"meta": {
+		"valar": {
+			"keywords": [
+				"sparkline",
+				"趋势",
+				"迷你图",
+				"null"
+			],
+			"whenToUse": [
+				"在精简摘要旁显示不插值的日历序列趋势"
+			],
+			"whenNotToUse": [
+				{
+					"case": "需要坐标轴和逐点读取",
+					"use": "chart"
+				}
+			],
+			"accessibility": [
+				"SVG 为装饰；相邻文字提供趋势摘要和精确数据"
+			],
+			"responsive": [
+				"可通过原生 SVG 宽高调整，默认 50.4 × 28"
+			],
+			"related": [
+				"chart",
+				"table"
+			]
+		}
+	},
+	"files": [
+		{
+			"content": "# Source and License\n\nSvelte adaptation of TokenPlan's StaticSparkline, based on free Arc Sparkline (`uiarc.dev/r/sparkline.json`). Zero baseline, calendar slots and null gaps retained; React replaced with Svelte runes. Source revision: c588b28cc1a19a1bdd5964db5c791e2ec66d5ec4 in onevalar/token-plan.\n\nMIT License\n\nCopyright (c) 2026 Elia Kuratli\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+			"type": "registry:file",
+			"target": "sparkline/LICENSE.md"
+		},
+		{
+			"content": "# Static Sparkline Design Rules\n\n- Supply ordered calendar slots as finite nonnegative numbers or null. Null breaks the path; zero is an actual baseline point.\n- Decorative only: provide an adjacent text summary and exact data when needed.\n- Do not synthesize samples, smooth gaps, forecast or animate readings.\n- Default viewBox is 72 × 40 and display size 50.4 × 28; native SVG attributes can override size.\n",
+			"type": "registry:file",
+			"target": "sparkline/RULES.md"
+		},
+		{
+			"content": "export { default as StaticSparkline, type StaticSparklineProps } from \"./static-sparkline.svelte\";\n",
+			"type": "registry:file",
+			"target": "sparkline/index.ts"
+		},
+		{
+			"content": "<script lang=\"ts\" module>\n\timport type { SVGAttributes } from \"svelte/elements\";\n\texport type StaticSparklineProps = Omit<SVGAttributes<SVGSVGElement>, \"children\" | \"values\"> & {\n\t\tvalues: (number | null)[];\n\t};\n</script>\n\n<script lang=\"ts\">\n\t// Arc free Sparkline geometry adaptation; copyright (c) 2026 Elia Kuratli, MIT (LICENSE.md).\n\timport { cn } from \"$UTILS$.js\";\n\tlet { values, class: className, ...rest }: StaticSparklineProps = $props();\n\tconst maximum = $derived(Math.max(1, ...values.filter((n): n is number => n !== null)));\n\tconst points = $derived(\n\t\tvalues.map((value, index) =>\n\t\t\tvalue === null\n\t\t\t\t? null\n\t\t\t\t: {\n\t\t\t\t\t\tx: 4 + (index / Math.max(1, values.length - 1)) * 64,\n\t\t\t\t\t\ty: 36 - (value / maximum) * 32,\n\t\t\t\t\t}\n\t\t)\n\t);\n\tconst path = $derived(\n\t\tpoints\n\t\t\t.map((point, index) =>\n\t\t\t\tpoint\n\t\t\t\t\t? `${index > 0 && points[index - 1] ? \"L\" : \"M\"}${point.x.toFixed(2)},${point.y.toFixed(2)}`\n\t\t\t\t\t: \"\"\n\t\t\t)\n\t\t\t.join(\" \")\n\t);\n</script>\n\n<svg\n\tdata-slot=\"static-sparkline\"\n\tviewBox=\"0 0 72 40\"\n\twidth=\"50.4\"\n\theight=\"28\"\n\taria-hidden=\"true\"\n\tfocusable=\"false\"\n\tclass={cn(\"text-primary\", className)}\n\t{...rest}\n>\n\t<path\n\t\td={path}\n\t\tfill=\"none\"\n\t\tstroke=\"currentColor\"\n\t\tstroke-width=\"2.5\"\n\t\tstroke-linecap=\"round\"\n\t\tstroke-linejoin=\"round\"\n\t/>\n\t{#each points as point, index}\n\t\t{#if point}\n\t\t\t<circle\n\t\t\t\tcx={point.x}\n\t\t\t\tcy={point.y}\n\t\t\t\tr={index === points.length - 1 || (!points[index - 1] && !points[index + 1]) ? 2 : 1.25}\n\t\t\t\tfill=\"currentColor\"\n\t\t\t/>\n\t\t{/if}\n\t{/each}\n</svg>\n",
+			"type": "registry:file",
+			"target": "sparkline/static-sparkline.svelte"
+		}
+	]
+}

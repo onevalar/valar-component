@@ -8,10 +8,64 @@
 		orientation = "horizontal",
 		"aria-label": ariaLabel,
 		"aria-labelledby": ariaLabelledby,
+		"aria-valuetext": ariaValueText,
 		thumbLabels,
+		largeStep,
 		class: className,
 		...restProps
-	}: WithoutChildrenOrChild<SliderPrimitive.RootProps> & { thumbLabels?: string[] } = $props();
+	}: WithoutChildrenOrChild<SliderPrimitive.RootProps> & {
+		thumbLabels?: string[];
+		/** Scalar keyboard Page/Shift step; defaults to twice the numeric step. */
+		largeStep?: number;
+	} = $props();
+
+	function keyboard(event: KeyboardEvent, fallback: unknown) {
+		// Leave app/browser shortcuts untouched, including their defaultPrevented state.
+		if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+		if (restProps.type !== "single" || Array.isArray(restProps.step)) {
+			if (typeof fallback === "function") fallback(event);
+			return;
+		}
+		if (restProps.disabled || typeof value !== "number") return;
+		const min = restProps.min ?? 0,
+			max = restProps.max ?? 100,
+			step = restProps.step ?? 1;
+		const large = largeStep ?? step * 2;
+		const delta = ["ArrowRight", "ArrowUp"].includes(event.key)
+			? event.shiftKey
+				? large
+				: step
+			: ["ArrowLeft", "ArrowDown"].includes(event.key)
+				? -(event.shiftKey ? large : step)
+				: event.key === "PageUp"
+					? large
+					: event.key === "PageDown"
+						? -large
+						: undefined;
+		const wanted =
+			event.key === "Home"
+				? min
+				: event.key === "End"
+					? max
+					: delta === undefined
+						? undefined
+						: value + delta;
+		if (wanted === undefined) return;
+		event.preventDefault();
+		const next =
+			event.key === "Home"
+				? min
+				: event.key === "End"
+					? max
+					: Math.min(
+							max,
+							Math.max(min, Number((min + Math.round((wanted - min) / step) * step).toFixed(10)))
+						);
+		if (Object.is(next, value)) return;
+		value = next;
+		restProps.onValueChange?.(next);
+		restProps.onValueCommit?.(next);
+	}
 </script>
 
 <!--
@@ -50,8 +104,13 @@ get along, so we shut typescript up by casting `value` to `never`.
 				index={thumb.index}
 				aria-label={thumbLabels?.[thumb.index] ?? ariaLabel}
 				aria-labelledby={ariaLabelledby}
+				aria-valuetext={ariaValueText}
 				class="cn-slider-thumb block shrink-0 select-none disabled:pointer-events-none disabled:opacity-50"
-			/>
+			>
+				{#snippet child({ props })}
+					<span {...props} onkeydown={(event) => keyboard(event, props.onkeydown)}></span>
+				{/snippet}
+			</SliderPrimitive.Thumb>
 		{/each}
 	{/snippet}
 </SliderPrimitive.Root>

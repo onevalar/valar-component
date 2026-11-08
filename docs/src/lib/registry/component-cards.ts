@@ -84,6 +84,15 @@ export const REQUIRED_CARDS = [
 	"table",
 	"trace",
 	"code-block",
+	"gauge",
+	"waffle-chart",
+	"donut-chart",
+	"sparkline",
+	"ruler-slider",
+	"segmented-control",
+	"confirm-action",
+	"tick-meter",
+	"texture-fill",
 ] as const;
 
 const line = z.string().min(2).max(200);

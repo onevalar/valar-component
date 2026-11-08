@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+	<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>TokenPlan → Valar: Real Component Comparison</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 20px;
+			font: 14px system-ui;
+			background: #f6f6f6;
+			color: #202020;
+		}
+		h1 {
+			font-size: 22px;
+		}
+		label {
+			display: inline-flex;
+			gap: 6px;
+			margin: 8px;
+		}
+		button,
+		select,
+		input {
+			font: inherit;
+		}
+		main {
+			display: flex;
+			gap: 20px;
+			overflow: auto;
+		}
+		section {
+			flex: none;
+			min-width: 0;
+		}
+		h2 {
+			font-size: 16px;
+		}
+		iframe {
+			display: block;
+			border: 1px solid #aaa;
+			background: white;
+			width: 480px;
+			height: 1800px;
+		}
+		output {
+			display: block;
+			margin: 12px 0;
+		}
+		@media (max-width: 800px) {
+			main {
+				flex-direction: column;
+			}
+		}
+	</style>
+	<h1>TokenPlan React → Valar Svelte</h1>
+	<p>
+		Real unchanged free/MIT source on the left, actual public Svelte package exports on the right.
+		Isolated documents, independent interactions. TickMeter is independent: no Pro reference pane.
+	</p>
+	<label
+		>Scenario
+		<select id="scenario">
+			<option>normal</option>
+			<option>zero</option>
+			<option>overflow</option>
+			<option>missing</option>
+			<option>disabled</option>
+			<option>failure</option>
+		</select></label
+	>
+	<label
+		>Theme
+		<select id="theme">
+			<option>light</option>
+			<option>dark</option>
+		</select></label
+	>
+	<label
+		>Direction
+		<select id="direction">
+			<option>ltr</option>
+			<option>rtl</option>
+		</select></label
+	>
+	<label
+		>Viewport
+		<select id="width">
+			<option value="480">480px</option>
+			<option value="320">320px</option>
+			<option value="720">720px</option>
+		</select></label
+	>
+	<label>Reduced Motion <input id="motion" type="checkbox" checked /></label>
+	<button id="reset" type="button">Apply / Reset Both</button>
+	<output id="status">Loading actual implementations…</output>
+	<main>
+		<section>
+			<h2>Original · React 19 · TokenPlan</h2>
+			<iframe title="Original React free MIT components" id="original"></iframe>
+		</section>
+		<section>
+			<h2>Migrated · Svelte 5 · Valar</h2>
+			<iframe title="Migrated public Valar Svelte components" id="migrated"></iframe>
+		</section>
+	</main>
+	<script type="module">
+		const original = document.querySelector("#original"),
+			migrated = document.querySelector("#migrated");
+		const controls = ["scenario", "theme", "direction", "width"];
+		function reset() {
+			const query = new URLSearchParams(
+				controls.map((id) => [id, document.getElementById(id).value])
+			);
+			query.set("motion", document.querySelector("#motion").checked ? "reduce" : "no-preference");
+			for (const [frame, name] of [
+				[original, "original"],
+				[migrated, "migrated"],
+			]) {
+				frame.style.width = `${query.get("width")}px`;
+				frame.src = `${name}.html?${query}`;
+			}
+			document.querySelector("#status").textContent = "Loading actual implementations…";
+		}
+		document.querySelector("#reset").onclick = reset;
+		reset();
+		setInterval(() => {
+			const states = [original, migrated].map(
+				(frame) => frame.contentDocument?.body.dataset.ready ?? "loading"
+			);
+			document.querySelector("#status").textContent =
+				`Original: ${states[0]} · Migrated: ${states[1]}`;
+		}, 250);
+	</script>
+</html>

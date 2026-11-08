@@ -1,0 +1,64 @@
+{
+	"$schema": "http://127.0.0.1:5186/schema/registry-item.json",
+	"name": "texture-fill",
+	"title": "Texture Fill 纹理填充",
+	"type": "registry:ui",
+	"description": "带四种纹理、纯色、弹簧过渡和减少动态效果支持的装饰性百分比画布。",
+	"meta": {
+		"valar": {
+			"keywords": [
+				"texture",
+				"纹理",
+				"canvas",
+				"dither",
+				"fill"
+			],
+			"whenToUse": [
+				"配额数值已有文字语义，需要装饰性纹理填充背景"
+			],
+			"whenNotToUse": [
+				{
+					"case": "需要自带可访问百分比语义的完整仪表",
+					"use": "gauge"
+				}
+			],
+			"accessibility": [
+				"画布隐藏于辅助技术；调用方提供 meter 语义和缺失数据处理"
+			],
+			"responsive": [
+				"跟随容器尺寸和设备像素比，减少动态效果时立即同步读数"
+			],
+			"related": [
+				"gauge",
+				"tick-meter"
+			]
+		}
+	},
+	"files": [
+		{
+			"content": "# Source and License\n\nAdapted from `onevalar/token-plan`, `platforms/tauri/src/DitherFill.tsx`, revision c588b28cc1a19a1bdd5964db5c791e2ec66d5ec4. Also reviewed the in-progress native `src/svelte/usage/DitherFill.svelte` on 2026-11-07. Svelte effects replace React hooks; live reduced-motion changes, ancestor recoloring and explicit Canvas errors are retained/added. Application texture-choice/tint preferences are deliberately not part of this generic library primitive. No Arc source is involved.\n\nMIT License\n\nCopyright (c) 2026 Robin Ebers (original OpenUsage)\nCopyright (c) 2026 onevalar (TokenPlan modifications)\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+			"type": "registry:file",
+			"target": "texture-fill/LICENSE.md"
+		},
+		{
+			"content": "# Texture Fill Design Rules\n\n- Decorative percentage texture, not a meter: the caller supplies accessible quota semantics and missing-data handling.\n- value is finite and clamps graphically to 0–100. texture is dither, lines, halftone, hatch or solid.\n- Set an explicit container size; canvas follows ResizeObserver and device pixel ratio (capped at 3).\n- intro starts at zero only when motion is allowed. Reduced motion snaps immediately, including preference changes while mounted.\n- Color follows currentColor and semantic Valar tokens; do not hardcode provider palettes into the primitive.\n- Every resize/theme/media observer and animation frame must be disposed on teardown or texture replacement. Canvas 2D is required; absence raises an explicit error.\n",
+			"type": "registry:file",
+			"target": "texture-fill/RULES.md"
+		},
+		{
+			"content": "// Native adaptation of TokenPlan DitherFill.tsx. Copyright (c) 2026 onevalar.\n// MIT: see LICENSE.md. This file has no Arc Pro provenance or dependency.\nexport const textures = [\"dither\", \"lines\", \"halftone\", \"hatch\"] as const;\nexport type Texture = (typeof textures)[number];\nexport type FillTexture = Texture | \"solid\";\nconst BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];\nconst BAND = 46,\n\tSTIFFNESS = 140,\n\tTRACK = 0.55;\nconst clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));\nconst lerp = (a: number, b: number, t: number) => a + (b - a) * t;\nconst smooth = (a: number, b: number, x: number) => {\n\tconst t = clamp((x - a) / (b - a), 0, 1);\n\treturn t * t * (3 - 2 * t);\n};\nconst cover: Record<FillTexture, (x: number, y: number, fill: number, px: number) => number> = {\n\tdither(x, y, fill) {\n\t\tconst size = 3.5,\n\t\t\ti = Math.floor(x / size),\n\t\t\tj = Math.floor(y / size);\n\t\tif (BAYER[(j & 3) * 4 + (i & 3)] >= lerp(4.5, 16.5, fill)) return 0;\n\t\tconst dot = size * lerp(0.62, 1.01, smooth(0.55, 0.95, fill));\n\t\treturn x - i * size < dot && y - j * size < dot ? 1 : 0;\n\t},\n\tlines(x, _y, fill, px) {\n\t\treturn clamp((lerp(1, 4.2, Math.pow(fill, 1.6)) - Math.abs((x % 8) - 4)) / px + 0.5, 0, 1);\n\t},\n\thalftone(x, y, fill, px) {\n\t\tconst pitch = 5,\n\t\t\tradius = lerp(1.05, 3.4, fill),\n\t\t\trow = Math.floor(y / pitch);\n\t\tlet distance = 1e9;\n\t\tfor (let j = row - 1; j <= row + 1; j++) {\n\t\t\tconst offset = j & 1 ? pitch / 2 : 0;\n\t\t\tconst cx = Math.round((x - offset - pitch / 2) / pitch) * pitch + offset + pitch / 2;\n\t\t\tconst cy = j * pitch + pitch / 2;\n\t\t\tfor (const dx of [-pitch, 0, pitch])\n\t\t\t\tdistance = Math.min(distance, Math.hypot(x - cx - dx, y - cy));\n\t\t}\n\t\treturn clamp((radius - distance) / px + 0.5, 0, 1);\n\t},\n\tsolid(_x, _y, fill) {\n\t\treturn fill >= 0.5 ? 1 : 0;\n\t},\n\thatch(x, y, fill, px) {\n\t\tconst u = (((x + y) % 8) + 8) % 8;\n\t\treturn clamp(\n\t\t\t(lerp(0.7, 3, Math.pow(fill, 1.4)) - Math.abs(u - 4) / Math.SQRT2) / px + 0.5,\n\t\t\t0,\n\t\t\t1\n\t\t);\n\t},\n};\n\n/** Browser-only lifecycle owned by the component effect. No work survives destroy(). */\nexport function createTextureFill(\n\tel: HTMLSpanElement,\n\tcanvas: HTMLCanvasElement,\n\ttexture: FillTexture,\n\tvalue: number,\n\tintro: boolean\n) {\n\tconst ctx = canvas.getContext(\"2d\");\n\tif (!ctx) throw new Error(\"TextureFill requires a Canvas 2D context\");\n\tconst motion = matchMedia(\"(prefers-reduced-motion: reduce)\");\n\tconst colorCanvas = document.createElement(\"canvas\");\n\tcolorCanvas.width = colorCanvas.height = 1;\n\tconst colorContext = colorCanvas.getContext(\"2d\");\n\tif (!colorContext) throw new Error(\"TextureFill requires a Canvas 2D color context\");\n\tconst s = {\n\t\tpos: intro && !motion.matches ? 0 : clamp(value / 100, 0, 1),\n\t\ttarget: clamp(value / 100, 0, 1),\n\t\tvel: 0,\n\t\tspread: 0,\n\t\tw: 0,\n\t\tdpr: 1,\n\t\traf: 0,\n\t\tlast: 0,\n\t\tcolor: \"\",\n\t\trgb: [0, 0, 0],\n\t};\n\tlet image: ImageData | null = null;\n\tlet disposed = false;\n\tfunction draw() {\n\t\tif (!image || disposed) return;\n\t\tconst color = getComputedStyle(el).color;\n\t\tif (color !== s.color) {\n\t\t\ts.color = color;\n\t\t\tcolorContext!.fillStyle = color;\n\t\t\tcolorContext!.fillRect(0, 0, 1, 1);\n\t\t\ts.rgb = [...colorContext!.getImageData(0, 0, 1, 1).data.slice(0, 3)];\n\t\t}\n\t\tconst width = image.width,\n\t\t\theight = image.height,\n\t\t\tdata = image.data,\n\t\t\tpx = 1 / s.dpr,\n\t\t\tedge = s.pos * s.w;\n\t\tconst band = Math.min(BAND, edge * 2, (s.w - edge) * 2) + s.spread;\n\t\tconst center = edge - Math.sign(s.vel) * s.spread * 0.18;\n\t\tconst lo = Math.max(center - band / 2, edge * 0.45),\n\t\t\thi = Math.max(lo + 1e-3, center + band / 2);\n\t\tconst fill = new Float32Array(width),\n\t\t\talpha = new Float32Array(width);\n\t\tfor (let i = 0; i < width; i++) {\n\t\t\tconst amount = edge <= 0 ? 0 : 1 - smooth(lo, hi, (i + 0.5) * px);\n\t\t\tfill[i] = amount;\n\t\t\talpha[i] = lerp(TRACK, 1, smooth(0.15, 0.85, amount)) * 255;\n\t\t}\n\t\tfor (let y = 0, offset = 0; y < height; y++) {\n\t\t\tfor (let x = 0; x < width; x++, offset += 4) {\n\t\t\t\tconst amount = fill[x];\n\t\t\t\tdata[offset] = s.rgb[0];\n\t\t\t\tdata[offset + 1] = s.rgb[1];\n\t\t\t\tdata[offset + 2] = s.rgb[2];\n\t\t\t\tdata[offset + 3] =\n\t\t\t\t\t(amount > 0.995 ? 1 : cover[texture]((x + 0.5) * px, (y + 0.5) * px, amount, px)) *\n\t\t\t\t\talpha[x];\n\t\t\t}\n\t\t}\n\t\tctx!.putImageData(image, 0, 0);\n\t}\n\tfunction frame(now: number) {\n\t\tif (disposed) return;\n\t\tconst dt = Math.min(0.033, (now - s.last) / 1000);\n\t\ts.last = now;\n\t\tif (motion.matches || !s.w) {\n\t\t\ts.pos = s.target;\n\t\t\ts.vel = 0;\n\t\t\ts.spread = 0;\n\t\t} else {\n\t\t\ts.vel +=\n\t\t\t\t(STIFFNESS * (s.target - s.pos) - (2 * Math.sqrt(STIFFNESS) * s.vel) / s.w) * s.w * dt;\n\t\t\ts.pos += (s.vel / s.w) * dt;\n\t\t\tif (Math.abs(s.target - s.pos) < 1e-4 && Math.abs(s.vel) < 0.5) {\n\t\t\t\ts.pos = s.target;\n\t\t\t\ts.vel = 0;\n\t\t\t}\n\t\t\tconst want = Math.min(170, Math.abs(s.vel) * 0.4);\n\t\t\ts.spread += (want - s.spread) * (1 - Math.exp(-dt * (want > s.spread ? 18 : 5)));\n\t\t\tif (!want && s.spread < 0.05) s.spread = 0;\n\t\t}\n\t\tdraw();\n\t\ts.raf = s.pos !== s.target || s.spread > 0 ? requestAnimationFrame(frame) : 0;\n\t}\n\tfunction kick() {\n\t\tif (disposed) return;\n\t\tif (motion.matches) {\n\t\t\tcancelAnimationFrame(s.raf);\n\t\t\ts.raf = 0;\n\t\t\ts.pos = s.target;\n\t\t\ts.vel = 0;\n\t\t\ts.spread = 0;\n\t\t\tdraw();\n\t\t} else if (!s.raf) {\n\t\t\ts.last = performance.now();\n\t\t\ts.raf = requestAnimationFrame(frame);\n\t\t}\n\t}\n\tfunction resize() {\n\t\tconst rect = el.getBoundingClientRect();\n\t\ts.dpr = Math.min(devicePixelRatio || 1, 3);\n\t\ts.w = rect.width;\n\t\tcanvas.width = Math.max(1, Math.round(rect.width * s.dpr));\n\t\tcanvas.height = Math.max(1, Math.round(rect.height * s.dpr));\n\t\timage = ctx!.createImageData(canvas.width, canvas.height);\n\t\tdraw();\n\t\tkick();\n\t}\n\tconst recolor = new MutationObserver(() => {\n\t\tif (!s.raf) draw();\n\t});\n\tfor (let node: Element | null = el; node; node = node.parentElement)\n\t\trecolor.observe(node, { attributes: true });\n\tconst observer = new ResizeObserver(resize);\n\tobserver.observe(el);\n\tmotion.addEventListener(\"change\", kick);\n\tresize();\n\treturn {\n\t\tupdate(next: number) {\n\t\t\ts.target = clamp(next / 100, 0, 1);\n\t\t\tkick();\n\t\t},\n\t\tdestroy() {\n\t\t\tdisposed = true;\n\t\t\tobserver.disconnect();\n\t\t\trecolor.disconnect();\n\t\t\tmotion.removeEventListener(\"change\", kick);\n\t\t\tcancelAnimationFrame(s.raf);\n\t\t},\n\t};\n}\n",
+			"type": "registry:file",
+			"target": "texture-fill/canvas.ts"
+		},
+		{
+			"content": "export { default as TextureFill, type TextureFillProps } from \"./texture-fill.svelte\";\nexport { textures, type Texture, type FillTexture } from \"./canvas.js\";\n",
+			"type": "registry:file",
+			"target": "texture-fill/index.ts"
+		},
+		{
+			"content": "<script lang=\"ts\" module>\n\timport type { FillTexture } from \"./canvas.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\texport type TextureFillProps = Omit<HTMLAttributes<HTMLSpanElement>, \"children\"> & {\n\t\tvalue: number;\n\t\ttexture: FillTexture;\n\t\tintro?: boolean;\n\t};\n</script>\n\n<script lang=\"ts\">\n\timport { untrack } from \"svelte\";\n\timport { cn } from \"$UTILS$.js\";\n\timport { createTextureFill } from \"./canvas.js\";\n\tlet { value, texture, intro = false, class: className, ...rest }: TextureFillProps = $props();\n\tlet wrap: HTMLSpanElement;\n\tlet canvas: HTMLCanvasElement;\n\tlet renderer: ReturnType<typeof createTextureFill> | undefined;\n\t$effect(() => {\n\t\tconst initial = untrack(() => ({ value, intro }));\n\t\trenderer = createTextureFill(wrap, canvas, texture, initial.value, initial.intro);\n\t\treturn () => {\n\t\t\trenderer?.destroy();\n\t\t\trenderer = undefined;\n\t\t};\n\t});\n\t$effect(() => {\n\t\trenderer?.update(value);\n\t});\n</script>\n\n<span\n\tbind:this={wrap}\n\tdata-slot=\"texture-fill\"\n\taria-hidden=\"true\"\n\tclass={cn(\"block size-full overflow-hidden text-primary\", className)}\n\t{...rest}\n>\n\t<canvas bind:this={canvas} class=\"block size-full\"></canvas>\n</span>\n",
+			"type": "registry:file",
+			"target": "texture-fill/texture-fill.svelte"
+		}
+	]
+}

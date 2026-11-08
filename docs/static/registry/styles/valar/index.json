@@ -940,6 +940,47 @@
 		"relativeUrl": "command.json"
 	},
 	{
+		"name": "confirm-action",
+		"title": "Confirm Action 行内确认",
+		"type": "registry:ui",
+		"description": "支持异步等待、失败重试、撤销和本地化文案的行内操作确认。",
+		"registryDependencies": [
+			"button",
+			"spinner"
+		],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"confirm",
+					"确认",
+					"删除",
+					"retry",
+					"undo"
+				],
+				"whenToUse": [
+					"简单重要或破坏性操作需要在原位确认和反馈结果"
+				],
+				"whenNotToUse": [
+					{
+						"case": "复杂说明、表单或必须阻塞的确认",
+						"use": "alert-dialog"
+					}
+				],
+				"accessibility": [
+					"原生按钮、Escape 取消、焦点连续性和可本地化的状态播报"
+				],
+				"responsive": [
+					"fullWidth 充满行宽，长提示和按钮可换行"
+				],
+				"related": [
+					"button",
+					"alert-dialog"
+				]
+			}
+		},
+		"relativeUrl": "confirm-action.json"
+	},
+	{
 		"name": "context-menu",
 		"title": "Context Menu 右键菜单",
 		"type": "registry:ui",
@@ -1039,6 +1080,43 @@
 			}
 		},
 		"relativeUrl": "dialog.json"
+	},
+	{
+		"name": "donut-chart",
+		"title": "Static Donut 静态环图",
+		"type": "registry:ui",
+		"description": "保留固定总量分母的装饰性 SVG 环图，不对隐藏类别重新归一化。",
+		"registryDependencies": [],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"donut",
+					"环图",
+					"占比",
+					"static"
+				],
+				"whenToUse": [
+					"已有可访问精确图例，需要固定分母的静态环图"
+				],
+				"whenNotToUse": [
+					{
+						"case": "需要交互提示或复杂坐标轴",
+						"use": "chart"
+					}
+				],
+				"accessibility": [
+					"SVG 为装饰；调用方必须提供类别名称和精确数据"
+				],
+				"responsive": [
+					"208 单位 viewBox 由外层宽高控制"
+				],
+				"related": [
+					"waffle-chart",
+					"table"
+				]
+			}
+		},
+		"relativeUrl": "donut-chart.json"
 	},
 	{
 		"name": "drawer",
@@ -1277,6 +1355,43 @@
 			}
 		},
 		"relativeUrl": "form.json"
+	},
+	{
+		"name": "gauge",
+		"title": "Gauge 仪表",
+		"type": "registry:ui",
+		"description": "静态百分比仪表和可组合的 SVG 弧线，保留超限读数。",
+		"registryDependencies": [],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"gauge",
+					"仪表",
+					"百分比",
+					"quota"
+				],
+				"whenToUse": [
+					"显示一个只读配额百分比或组合独立同心弧线"
+				],
+				"whenNotToUse": [
+					{
+						"case": "需要让用户调整数值",
+						"use": "slider"
+					}
+				],
+				"accessibility": [
+					"label 和 valueText 由调用方本地化；超限读数保留在文字中"
+				],
+				"responsive": [
+					"宽度由容器控制，保持 100:90 比例"
+				],
+				"related": [
+					"tick-meter",
+					"progress"
+				]
+			}
+		},
+		"relativeUrl": "gauge.json"
 	},
 	{
 		"name": "hover-card",
@@ -2302,6 +2417,43 @@
 		"relativeUrl": "resizable.json"
 	},
 	{
+		"name": "ruler-slider",
+		"title": "Ruler Slider 刻度滑块",
+		"type": "registry:ui",
+		"description": "支持移动尺带、拖动惯性、边界回弹和横向滚轮的精确数值输入。",
+		"registryDependencies": [],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"ruler",
+					"刻度",
+					"slider",
+					"参考值"
+				],
+				"whenToUse": [
+					"需要在明确范围内调整参考值并显示单位和刻度"
+				],
+				"whenNotToUse": [
+					{
+						"case": "还需要直接输入精确数字",
+						"use": "slider-field"
+					}
+				],
+				"accessibility": [
+					"label 命名滑块，format 与 unit 同时用于读数和语音值"
+				],
+				"responsive": [
+					"固定中心指针，刻度随尺带移动；纵向滚轮保留页面滚动"
+				],
+				"related": [
+					"slider",
+					"slider-field"
+				]
+			}
+		},
+		"relativeUrl": "ruler-slider.json"
+	},
+	{
 		"name": "scroll-area",
 		"title": "Scroll Area 滚动区域",
 		"type": "registry:ui",
@@ -2345,6 +2497,49 @@
 			}
 		},
 		"relativeUrl": "scroll-area.json"
+	},
+	{
+		"name": "segmented-control",
+		"title": "Segmented Control 分段选择",
+		"type": "registry:ui",
+		"description": "组合现有 ToggleGroup 的单选分段控件，选中项不会被再次点击清空。",
+		"registryDependencies": [
+			"toggle-group"
+		],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"segmented",
+					"分段",
+					"单选",
+					"toggle"
+				],
+				"whenToUse": [
+					"切换同一视图的数据口径、尺度等少量互斥选项"
+				],
+				"whenNotToUse": [
+					{
+						"case": "切换关联的标签面板",
+						"use": "tabs"
+					},
+					{
+						"case": "选项可以多选或全部取消",
+						"use": "toggle-group"
+					}
+				],
+				"accessibility": [
+					"沿用 Bits UI 单选语义；方向键、Home、End 移动焦点并选择"
+				],
+				"responsive": [
+					"选项超宽时内部横向滚动，不隐藏必要内容"
+				],
+				"related": [
+					"toggle-group",
+					"tabs"
+				]
+			}
+		},
+		"relativeUrl": "segmented-control.json"
 	},
 	{
 		"name": "select",
@@ -2729,6 +2924,43 @@
 		"relativeUrl": "sonner.json"
 	},
 	{
+		"name": "sparkline",
+		"title": "Static Sparkline 迷你趋势",
+		"type": "registry:ui",
+		"description": "保留日历槽位、零基线和缺失断点的装饰性静态趋势线。",
+		"registryDependencies": [],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"sparkline",
+					"趋势",
+					"迷你图",
+					"null"
+				],
+				"whenToUse": [
+					"在精简摘要旁显示不插值的日历序列趋势"
+				],
+				"whenNotToUse": [
+					{
+						"case": "需要坐标轴和逐点读取",
+						"use": "chart"
+					}
+				],
+				"accessibility": [
+					"SVG 为装饰；相邻文字提供趋势摘要和精确数据"
+				],
+				"responsive": [
+					"可通过原生 SVG 宽高调整，默认 50.4 × 28"
+				],
+				"related": [
+					"chart",
+					"table"
+				]
+			}
+		},
+		"relativeUrl": "sparkline.json"
+	},
+	{
 		"name": "spinner",
 		"title": "Spinner 加载指示",
 		"type": "registry:ui",
@@ -3048,6 +3280,81 @@
 		"relativeUrl": "textarea.json"
 	},
 	{
+		"name": "texture-fill",
+		"title": "Texture Fill 纹理填充",
+		"type": "registry:ui",
+		"description": "带四种纹理、纯色、弹簧过渡和减少动态效果支持的装饰性百分比画布。",
+		"registryDependencies": [],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"texture",
+					"纹理",
+					"canvas",
+					"dither",
+					"fill"
+				],
+				"whenToUse": [
+					"配额数值已有文字语义，需要装饰性纹理填充背景"
+				],
+				"whenNotToUse": [
+					{
+						"case": "需要自带可访问百分比语义的完整仪表",
+						"use": "gauge"
+					}
+				],
+				"accessibility": [
+					"画布隐藏于辅助技术；调用方提供 meter 语义和缺失数据处理"
+				],
+				"responsive": [
+					"跟随容器尺寸和设备像素比，减少动态效果时立即同步读数"
+				],
+				"related": [
+					"gauge",
+					"tick-meter"
+				]
+			}
+		},
+		"relativeUrl": "texture-fill.json"
+	},
+	{
+		"name": "tick-meter",
+		"title": "Tick Meter 刻度仪表",
+		"type": "registry:ui",
+		"description": "独立原创的六十条径向 SVG 刻度仪表，保留原始超限读数。",
+		"registryDependencies": [],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"tick",
+					"meter",
+					"刻度",
+					"百分比"
+				],
+				"whenToUse": [
+					"需要无动效的只读径向配额刻度和原始超限读数"
+				],
+				"whenNotToUse": [
+					{
+						"case": "需要连续弧线而不是离散刻度",
+						"use": "gauge"
+					}
+				],
+				"accessibility": [
+					"调用方提供 label 和原样保留的 valueText；图形与 aria-valuenow 限制在 0–100"
+				],
+				"responsive": [
+					"正方形 SVG 随容器缩放，不使用圆形 CSS mask"
+				],
+				"related": [
+					"gauge",
+					"progress"
+				]
+			}
+		},
+		"relativeUrl": "tick-meter.json"
+	},
+	{
 		"name": "toggle",
 		"title": "Toggle 切换按钮",
 		"type": "registry:ui",
@@ -3235,6 +3542,43 @@
 			}
 		},
 		"relativeUrl": "trace.json"
+	},
+	{
+		"name": "waffle-chart",
+		"title": "Waffle Chart 百格图",
+		"type": "registry:ui",
+		"description": "最大余数法分配固定一百个格子的只读占比图。",
+		"registryDependencies": [],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"waffle",
+					"百格图",
+					"占比",
+					"chart"
+				],
+				"whenToUse": [
+					"用一百个格子展示类别构成，旁边保留精确图例"
+				],
+				"whenNotToUse": [
+					{
+						"case": "需要准确读取每个类别的数值",
+						"use": "table"
+					}
+				],
+				"accessibility": [
+					"调用方提供整体 label 和精确文字图例，不依赖颜色区分"
+				],
+				"responsive": [
+					"正方形网格随容器缩放，固定十行十列"
+				],
+				"related": [
+					"donut-chart",
+					"chart"
+				]
+			}
+		},
+		"relativeUrl": "waffle-chart.json"
 	},
 	{
 		"name": "calendar-01",

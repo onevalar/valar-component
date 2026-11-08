@@ -1,0 +1,63 @@
+{
+	"$schema": "http://127.0.0.1:5186/schema/registry-item.json",
+	"name": "waffle-chart",
+	"title": "Waffle Chart 百格图",
+	"type": "registry:ui",
+	"description": "最大余数法分配固定一百个格子的只读占比图。",
+	"meta": {
+		"valar": {
+			"keywords": [
+				"waffle",
+				"百格图",
+				"占比",
+				"chart"
+			],
+			"whenToUse": [
+				"用一百个格子展示类别构成，旁边保留精确图例"
+			],
+			"whenNotToUse": [
+				{
+					"case": "需要准确读取每个类别的数值",
+					"use": "table"
+				}
+			],
+			"accessibility": [
+				"调用方提供整体 label 和精确文字图例，不依赖颜色区分"
+			],
+			"responsive": [
+				"正方形网格随容器缩放，固定十行十列"
+			],
+			"related": [
+				"donut-chart",
+				"chart"
+			]
+		}
+	},
+	"files": [
+		{
+			"content": "# Source and License\n\nSvelte adaptation of TokenPlan's read-only Arc WaffleChart (`uiarc.dev/r/waffle-chart.json`). Largest-remainder allocation and bottom-left cell order retained. Native runes and Valar tokens replace React/CSS modules. Source revision: c588b28cc1a19a1bdd5964db5c791e2ec66d5ec4 in onevalar/token-plan.\n\nMIT License\n\nCopyright (c) 2026 Elia Kuratli\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+			"type": "registry:file",
+			"target": "waffle-chart/LICENSE.md"
+		},
+		{
+			"content": "# Waffle Chart Design Rules\n\n- Supply finite data and an accessible label. Positive totals allocate exactly 100 whole cells; zero/empty data draws no cells.\n- Largest-remainder cells are approximate; keep exact values in a nearby accessible legend.\n- Colors come from caller-owned semantic series tokens; never use color as the only explanation.\n- Read-only: do not imply that cells are buttons or add hover-only information.\n",
+			"type": "registry:file",
+			"target": "waffle-chart/RULES.md"
+		},
+		{
+			"content": "// Adapted from Arc's free WaffleChart, copyright (c) 2026 Elia Kuratli (MIT, LICENSE.md).\nexport type WaffleCategory = { key: string; value: number; color: string };\n\n/** Largest remainders; equal shares preserve source order. Zero total has no cells. */\nexport function allocate(data: WaffleCategory[]): number[] {\n\tconst total = data.reduce((sum, item) => sum + Math.max(0, item.value), 0);\n\tif (total <= 0) return data.map(() => 0);\n\tconst exact = data.map((item) => (Math.max(0, item.value) / total) * 100);\n\tconst counts = exact.map(Math.floor);\n\tconst left = 100 - counts.reduce((sum, count) => sum + count, 0);\n\tconst order = exact\n\t\t.map((value, index) => ({ index, rest: value - Math.floor(value) }))\n\t\t.sort((a, b) => b.rest - a.rest);\n\tfor (let k = 0; k < left && k < order.length; k++) counts[order[k].index]++;\n\treturn counts;\n}\n",
+			"type": "registry:file",
+			"target": "waffle-chart/allocation.ts"
+		},
+		{
+			"content": "export { default as WaffleChart, type WaffleChartProps } from \"./waffle-chart.svelte\";\nexport type { WaffleCategory } from \"./allocation.js\";\n",
+			"type": "registry:file",
+			"target": "waffle-chart/index.ts"
+		},
+		{
+			"content": "<script lang=\"ts\" module>\n\timport type { WaffleCategory } from \"./allocation.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\texport type WaffleChartProps = Omit<HTMLAttributes<HTMLDivElement>, \"children\"> & {\n\t\tdata: WaffleCategory[];\n\t\tlabel: string;\n\t};\n</script>\n\n<script lang=\"ts\">\n\timport { cn } from \"$UTILS$.js\";\n\timport { allocate } from \"./allocation.js\";\n\tlet { data, label, class: className, ...rest }: WaffleChartProps = $props();\n\tconst cells = $derived.by(() => {\n\t\tconst counts = allocate(data);\n\t\treturn data.flatMap((item, index) => Array.from({ length: counts[index] }, () => item));\n\t});\n</script>\n\n<div\n\tdata-slot=\"waffle-chart\"\n\trole=\"img\"\n\taria-label={label}\n\tclass={cn(\"grid aspect-square w-full grid-cols-10 grid-rows-10 gap-[3px]\", className)}\n\t{...rest}\n>\n\t{#each cells as cell, index}\n\t\t<span\n\t\t\taria-hidden=\"true\"\n\t\t\tdata-category={cell.key}\n\t\t\tclass=\"min-h-0 min-w-0 rounded-[22%]\"\n\t\t\tstyle:grid-column={Math.floor(index / 10) + 1}\n\t\t\tstyle:grid-row={10 - (index % 10)}\n\t\t\tstyle:background={cell.color}\n\t\t></span>\n\t{/each}\n</div>\n",
+			"type": "registry:file",
+			"target": "waffle-chart/waffle-chart.svelte"
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"name": "tick-meter",
+	"type": "registry:ui",
+	"title": "Tick Meter 刻度仪表",
+	"description": "独立原创的六十条径向 SVG 刻度仪表，保留原始超限读数。",
+	"categories": ["展示"],
+	"meta": {
+		"valar": {
+			"keywords": ["tick", "meter", "刻度", "百分比"],
+			"whenToUse": ["需要无动效的只读径向配额刻度和原始超限读数"],
+			"whenNotToUse": [{ "case": "需要连续弧线而不是离散刻度", "use": "gauge" }],
+			"accessibility": [
+				"调用方提供 label 和原样保留的 valueText；图形与 aria-valuenow 限制在 0–100"
+			],
+			"responsive": ["正方形 SVG 随容器缩放，不使用圆形 CSS mask"],
+			"related": ["gauge", "progress"]
+		}
+	}
+}

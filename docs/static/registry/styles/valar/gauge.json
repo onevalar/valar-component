@@ -1,0 +1,68 @@
+{
+	"$schema": "http://127.0.0.1:5186/schema/registry-item.json",
+	"name": "gauge",
+	"title": "Gauge 仪表",
+	"type": "registry:ui",
+	"description": "静态百分比仪表和可组合的 SVG 弧线，保留超限读数。",
+	"meta": {
+		"valar": {
+			"keywords": [
+				"gauge",
+				"仪表",
+				"百分比",
+				"quota"
+			],
+			"whenToUse": [
+				"显示一个只读配额百分比或组合独立同心弧线"
+			],
+			"whenNotToUse": [
+				{
+					"case": "需要让用户调整数值",
+					"use": "slider"
+				}
+			],
+			"accessibility": [
+				"label 和 valueText 由调用方本地化；超限读数保留在文字中"
+			],
+			"responsive": [
+				"宽度由容器控制，保持 100:90 比例"
+			],
+			"related": [
+				"tick-meter",
+				"progress"
+			]
+		}
+	},
+	"files": [
+		{
+			"content": "# Source and License\n\nSvelte adaptation of TokenPlan's read-only Arc Gauge (`uiarc.dev/r/gauge.json`). Source revision and changes: standards/porting-records/tokenplan-meters-react-to-svelte.md. Native Svelte runes and Valar tokens replace React/CSS modules.\n\nMIT License\n\nCopyright (c) 2026 Elia Kuratli\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+			"type": "registry:file",
+			"target": "gauge/LICENSE.md"
+		},
+		{
+			"content": "# Gauge Design Rules\n\n- Read-only percentage, not a completion target; never add confetti or goal states.\n- Supply localized label and valueText. Only the arc and numeric ARIA range clamp; the displayed number/valueText retain overflow.\n- GaugeArc belongs inside an SVG; radius defaults to 42 in a 100-unit viewBox. Null draws a dashed missing track and no value arc.\n- Accent uses primary, danger uses destructive. Size through class; use a separate legend for comparisons.\n",
+			"type": "registry:file",
+			"target": "gauge/RULES.md"
+		},
+		{
+			"content": "<script lang=\"ts\" module>\n\timport type { SVGAttributes } from \"svelte/elements\";\n\texport type GaugeArcProps = Omit<SVGAttributes<SVGGElement>, \"children\"> & {\n\t\tvalue: number | null;\n\t\tradius?: number;\n\t\ttone?: \"accent\" | \"danger\";\n\t};\n</script>\n\n<script lang=\"ts\">\n\timport { cn } from \"$UTILS$.js\";\n\timport { arcFor } from \"./geometry.js\";\n\tlet { value, radius = 42, tone = \"accent\", class: className, ...rest }: GaugeArcProps = $props();\n\tconst percentage = $derived(value === null ? 0 : Math.min(1, Math.max(0, value / 100)));\n</script>\n\n<g\n\tdata-slot=\"gauge-arc\"\n\tdata-tone={tone}\n\tdata-missing={value === null}\n\tclass={cn(\"fill-none stroke-9 [stroke-linecap:round]\", className)}\n\t{...rest}\n>\n\t<path\n\t\td={arcFor(1, radius)}\n\t\tclass=\"stroke-border\"\n\t\tstroke-dasharray={value === null ? \"3 6\" : undefined}\n\t\tstroke-linecap={value === null ? \"butt\" : undefined}\n\t/>\n\t{#if percentage > 0}\n\t\t<path\n\t\t\td={arcFor(percentage, radius)}\n\t\t\topacity={Math.min(1, percentage / 0.02)}\n\t\t\tclass={tone === \"danger\" ? \"stroke-destructive\" : \"stroke-primary\"}\n\t\t/>\n\t{/if}\n</g>\n",
+			"type": "registry:file",
+			"target": "gauge/gauge-arc.svelte"
+		},
+		{
+			"content": "<script lang=\"ts\" module>\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\texport type GaugeProps = Omit<HTMLAttributes<HTMLDivElement>, \"children\"> & {\n\t\tvalue: number;\n\t\tlabel: string;\n\t\tvalueText: string;\n\t\ttone?: \"accent\" | \"danger\";\n\t};\n</script>\n\n<script lang=\"ts\">\n\timport { cn } from \"$UTILS$.js\";\n\timport GaugeArc from \"./gauge-arc.svelte\";\n\tlet {\n\t\tvalue,\n\t\tlabel,\n\t\tvalueText,\n\t\ttone = \"accent\",\n\t\tclass: className,\n\t\t...rest\n\t}: GaugeProps = $props();\n</script>\n\n<div\n\tdata-slot=\"gauge\"\n\tdata-tone={tone}\n\trole=\"meter\"\n\taria-label={label}\n\taria-valuemin={0}\n\taria-valuemax={100}\n\taria-valuenow={Math.min(100, Math.max(0, value))}\n\taria-valuetext={valueText}\n\tclass={cn(\"relative aspect-[100/90] w-full\", className)}\n\t{...rest}\n>\n\t<svg\n\t\tviewBox=\"0 0 100 90\"\n\t\taria-hidden=\"true\"\n\t\tfocusable=\"false\"\n\t\tclass=\"block size-full overflow-visible\"\n\t>\n\t\t<GaugeArc {value} {tone} />\n\t</svg>\n\t<div\n\t\taria-hidden=\"true\"\n\t\tclass=\"pointer-events-none absolute inset-x-0 top-0 grid aspect-square place-content-center\"\n\t>\n\t\t<span\n\t\t\tclass={cn(\n\t\t\t\t\"text-2xl font-medium tabular-nums\",\n\t\t\t\ttone === \"danger\" ? \"text-destructive\" : \"text-foreground\"\n\t\t\t)}\n\t\t>\n\t\t\t{Math.round(value)}<span class=\"ms-px text-[0.5em]\">%</span>\n\t\t</span>\n\t</div>\n</div>\n",
+			"type": "registry:file",
+			"target": "gauge/gauge.svelte"
+		},
+		{
+			"content": "// Adapted from Arc's free Gauge, copyright (c) 2026 Elia Kuratli (MIT, LICENSE.md).\nexport function arcFor(sweep: number, radius = 42): string {\n\tconst start = -135;\n\tconst end = start + 270 * Math.min(1, Math.max(0, sweep));\n\tconst at = (angle: number) =>\n\t\t`${(50 + radius * Math.sin((angle * Math.PI) / 180)).toFixed(3)} ${(50 - radius * Math.cos((angle * Math.PI) / 180)).toFixed(3)}`;\n\treturn `M ${at(start)} A ${radius} ${radius} 0 ${end - start > 180 ? 1 : 0} 1 ${at(end)}`;\n}\n",
+			"type": "registry:file",
+			"target": "gauge/geometry.ts"
+		},
+		{
+			"content": "export { default as Gauge, type GaugeProps } from \"./gauge.svelte\";\nexport { default as GaugeArc, type GaugeArcProps } from \"./gauge-arc.svelte\";\n",
+			"type": "registry:file",
+			"target": "gauge/index.ts"
+		}
+	]
+}

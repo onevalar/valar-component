@@ -516,7 +516,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/button",
 			"install": "pnpm exec valar-svelte add button",
 			"markdown": "# Button 按钮\n\n触发一个操作或跳转，是界面里最常见的可点击元素。\n\n- 分类：操作\n- 关键词：按钮、button、提交、CTA、操作、点击\n- 安装：`pnpm exec valar-svelte add button`\n\n## 何时使用\n\n- 提交表单、确认、保存等明确操作\n- 需要像按钮一样的链接（传 href）\n\n## 何时不用\n\n- 在一组互斥选项间切换：改用 `toggle-group`\n- 开关某个设置：改用 `switch`\n- 一行内的纯文字链接\n\n## 无障碍\n\n- 只有图标时必须加 aria-label\n- 禁用时用 disabled，不要只改颜色\n\n## 响应式\n\n- 触屏场景至少使用 default 尺寸，避免误触\n- 窄屏下主操作可占满整行\n\n## 相关组件\n\n- `button-group`\n- `toggle`\n- `alert-dialog`\n",
-			"rules": "# Button 设计规范\n\n- 一个区域（卡片、弹窗底部、表单）最多一个 `variant=\"default\"` 实心主按钮；其余操作用 `outline`、`secondary` 或 `ghost`。\n- 不可撤销的危险操作用 `variant=\"destructive\"`，并先用 Alert Dialog 确认。\n- 尺寸只用 `size` 属性（`xs`、`sm`、`default`、`lg`，图标按钮用 `icon`、`icon-sm` 等）；不要用 `class` 写高度、内边距或圆角（检查规则 `valar/button-size-via-prop`）。\n- 只有图标的按钮必须有 `aria-label`（检查规则 `valar/icon-button-label`）。\n- 跳转用 `href`，不要在按钮里再包一个链接；表单提交用 `type=\"submit\"`。\n- 不要用原生 `<button>` 或自己写样式的元素冒充按钮（检查规则 `valar/use-button-component`）。\n- 形状用 `shape` 属性：只有图标的按钮默认是圆形；需要胶囊（如输入框里的模型、思考强度选择）设 `shape=\"pill\"`；要保持圆角方块设 `shape=\"square\"`。文字按钮、图标加文字按钮保持默认圆角，不要全部做成胶囊。\n- 同心圆角：按钮放进有圆角的容器时，按钮圆角约等于容器圆角减去两者间距；圆形和胶囊按钮不得顶出容器的圆角。在 ButtonGroup 内圆角由按钮组决定，`shape` 不生效。\n"
+			"rules": "# Button 设计规范\n\n- 一个区域（卡片、弹窗底部、表单）最多一个 `variant=\"default\"` 实心主按钮；其余操作用 `outline`、`secondary` 或 `ghost`。\n- 不可撤销的危险操作用 `variant=\"destructive\"`，并先用 Alert Dialog 确认。\n- 尺寸只用 `size` 属性（`xs`、`sm`、`default`、`lg`，图标按钮用 `icon`、`icon-sm` 等）；不要用 `class` 写高度、内边距或圆角（检查规则 `valar/button-size-via-prop`）。\n- 只有图标的按钮必须有 `aria-label`（检查规则 `valar/icon-button-label`）。\n- 跳转用 `href`，不要在按钮里再包一个链接；表单提交用 `type=\"submit\"`。\n- 默认显式 `tabindex=0`，保证 macOS WebKit 在系统默认键盘偏好下可通过 Tab 和指针获得焦点；尊重调用方 `tabindex`，禁用时为 -1 且保持原生 disabled／链接禁用语义。\n- 不要用原生 `<button>` 或自己写样式的元素冒充按钮（检查规则 `valar/use-button-component`）。\n- 形状用 `shape` 属性：只有图标的按钮默认是圆形；需要胶囊（如输入框里的模型、思考强度选择）设 `shape=\"pill\"`；要保持圆角方块设 `shape=\"square\"`。文字按钮、图标加文字按钮保持默认圆角，不要全部做成胶囊。\n- 同心圆角：按钮放进有圆角的容器时，按钮圆角约等于容器圆角减去两者间距；圆形和胶囊按钮不得顶出容器的圆角。在 ButtonGroup 内圆角由按钮组决定，`shape` 不生效。\n"
 		},
 		{
 			"name": "button-group",
@@ -1027,6 +1027,49 @@
 			"rules": "# Command 设计规范\n\n- 用于可搜索的命令或选项列表：命令面板用 `Command.Dialog`，可搜索的下拉选择（Combobox）用 Popover + `Command.Root`。选项少、不需要搜索时用 Select。\n- 列表必须有 `Command.Empty`，写明没有结果时该怎么做（如“没有匹配的项目，换个关键词试试”）。\n- `Command.Input` 的 `placeholder` 说明能搜什么；它不是标签，需要时用 `aria-label` 命名。\n- 每个 `Command.Item` 设稳定的 `value`，搜索不到的同义词放在 `keywords`；选中后的动作写在 `onSelect`。跳转页面用 `Command.LinkItem`。\n- `Command.Dialog` 的 `title`、`description` 只给读屏器读，默认是“命令面板”“搜索要执行的命令”；能更具体时传自己的值。打开面板的快捷键要自己绑定，`Command.Shortcut` 只显示文字。\n- 用分组 `Command.Group`（设 `heading`）和 `Command.Separator` 组织长列表；异步加载时用 `Command.Loading`。\n"
 		},
 		{
+			"name": "confirm-action",
+			"type": "registry:ui",
+			"title": "Confirm Action 行内确认",
+			"description": "支持异步等待、失败重试、撤销和本地化文案的行内操作确认。",
+			"categories": [
+				"操作"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"confirm",
+						"确认",
+						"删除",
+						"retry",
+						"undo"
+					],
+					"whenToUse": [
+						"简单重要或破坏性操作需要在原位确认和反馈结果"
+					],
+					"whenNotToUse": [
+						{
+							"case": "复杂说明、表单或必须阻塞的确认",
+							"use": "alert-dialog"
+						}
+					],
+					"accessibility": [
+						"原生按钮、Escape 取消、焦点连续性和可本地化的状态播报"
+					],
+					"responsive": [
+						"fullWidth 充满行宽，长提示和按钮可换行"
+					],
+					"related": [
+						"button",
+						"alert-dialog"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/confirm-action",
+			"install": "pnpm exec valar-svelte add confirm-action",
+			"markdown": "# Confirm Action 行内确认\n\n支持异步等待、失败重试、撤销和本地化文案的行内操作确认。\n\n- 分类：操作\n- 关键词：confirm、确认、删除、retry、undo\n- 安装：`pnpm exec valar-svelte add confirm-action`\n\n## 何时使用\n\n- 简单重要或破坏性操作需要在原位确认和反馈结果\n\n## 何时不用\n\n- 复杂说明、表单或必须阻塞的确认：改用 `alert-dialog`\n\n## 无障碍\n\n- 原生按钮、Escape 取消、焦点连续性和可本地化的状态播报\n\n## 响应式\n\n- fullWidth 充满行宽，长提示和按钮可换行\n\n## 相关组件\n\n- `button`\n- `alert-dialog`\n",
+			"rules": "# Confirm Action Design Rules\n\n- Inline confirmation is for focused reversible/destructive actions; complex consent belongs in AlertDialog.\n- Localize label, prompt, confirmLabel, cancelLabel, pendingLabel, doneLabel, errorLabel, retryLabel and optional undo/countdown/hold/status labels.\n- State: idle → confirming → pending (promise) → done/error. Retry repeats the failed operation. Pending cannot submit twice; Undo is offered only when onUndo exists.\n- Cancel, Escape and outside press dismiss the question. Disabled applies to every face, not only the initial button.\n- Timeouts pause on hover, focus within or hidden document; zero disables them. Controlled state requires acknowledging onStateChange; control mode must not change while mounted.\n- Existing Valar Button supplies native onclick semantics; no modal focus trap or source motion runtime is introduced.\n- Independently authored state-shape feedback uses measured native Web Animations: 120ms size/physical-radius envelope, 80ms incoming content and 60ms outgoing visual. Retarget interrupted paint; actions/events/focus never await animation. Real controls remain unscaled and unclipped. Outgoing visuals are inert/aria-hidden, never extra live regions or focus targets. This is a Valar visual adaptation, not a copy or equivalence claim.\n- Reduced motion switches directly, including a preference change during flight. Resize/unmount cancel and clean up the envelope, content styles and outgoing visual. Equal natural state geometry is not artificially pulsed; content still transitions normally.\n- fullWidth idle has no root border/padding inset: the actual button spans the containing zone (<2px width difference) and is at least 44px tall. Confirmation keeps Confirm-first focus; Shift+Tab reaches Cancel. Pending retains a visible Spinner that stops under reduced motion. Hold uses the real Space key (\" \"), never the empty string; early release cancels.\n"
+		},
+		{
 			"name": "context-menu",
 			"type": "registry:ui",
 			"title": "Context Menu 右键菜单",
@@ -1134,6 +1177,48 @@
 			"install": "pnpm exec valar-svelte add dialog",
 			"markdown": "# Dialog 对话框\n\n覆盖在页面上的窗口，用于需要专注完成的内容或表单，背后内容不可操作。\n\n- 分类：弹层\n- 关键词：对话框、dialog、弹窗、modal、模态\n- 安装：`pnpm exec valar-svelte add dialog`\n\n## 何时使用\n\n- 需要用户专注完成的短流程或表单\n\n## 何时不用\n\n- 确认危险操作：改用 `alert-dialog`\n- 从边缘滑出的辅助面板：改用 `sheet`\n- 轻量的附加信息：改用 `popover`\n\n## 无障碍\n\n- 必须有标题（Dialog.Title）\n- Esc 关闭，关闭后焦点回到触发按钮\n\n## 响应式\n\n- 移动端可改用 drawer\n- 内容超出时对话框内部滚动\n\n## 相关组件\n\n- `alert-dialog`\n- `sheet`\n- `drawer`\n",
 			"rules": "# Dialog 设计规范\n\n- 每个 `Dialog.Content` 都要有 `Dialog.Title`；界面上不想显示标题时给它加 `class=\"sr-only\"`，不要删掉（检查规则 `valar/overlay-title`）。需要补充说明时加 `Dialog.Description`。\n- 打开对话框的按钮通过 `Dialog.Trigger` 的 `{#snippet child({ props })}` 把 `props` 传给 `Button`；不要在 Trigger 里再放一个 Button（检查规则 `valar/trigger-child-snippet`）。\n- 内边距、内容间距、圆角档位、遮罩不透明度、动效档位和出现时缩放都是组件参数，在 Dialog 文档页的编辑器中调整并写回组件库；不要在 `Dialog.Content` 上用 `class` 改 `p-*`、`gap-*`、`rounded-*`、`duration-*`、`zoom-*`。\n- 宽度默认取组件参数的宽度档；个别对话框确需更宽时只加 `sm:max-w-*` 档位类，不写像素任意值。\n- 操作按钮放在 `Dialog.Footer`，最多一个主按钮（见 Button 规范）。取消按钮用 `Dialog.Close` 的 `child` snippet 包一个 `variant=\"outline\"` 的 Button。\n- 右上角关闭按钮（`showCloseButton`，默认开启）和 `Dialog.Footer` 的 `showCloseButton` 自带的文字默认是“关闭”，其他语言用各自的 `closeLabel` 改。\n- 内容可能超出屏幕高度时，给正文区域设 `max-h-*` 档位（可用 `vh` 单位）和 `overflow-y-auto`，或包一层 Scroll Area，让对话框内部滚动。\n- 需要在代码中开关时用 `bind:open`；关闭后焦点会自动回到触发按钮，不要手动把焦点移到别处。\n- 确认危险操作改用 Alert Dialog；从屏幕边缘滑出的辅助面板用 Sheet；移动端底部面板用 Drawer。\n"
+		},
+		{
+			"name": "donut-chart",
+			"type": "registry:ui",
+			"title": "Static Donut 静态环图",
+			"description": "保留固定总量分母的装饰性 SVG 环图，不对隐藏类别重新归一化。",
+			"categories": [
+				"展示"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"donut",
+						"环图",
+						"占比",
+						"static"
+					],
+					"whenToUse": [
+						"已有可访问精确图例，需要固定分母的静态环图"
+					],
+					"whenNotToUse": [
+						{
+							"case": "需要交互提示或复杂坐标轴",
+							"use": "chart"
+						}
+					],
+					"accessibility": [
+						"SVG 为装饰；调用方必须提供类别名称和精确数据"
+					],
+					"responsive": [
+						"208 单位 viewBox 由外层宽高控制"
+					],
+					"related": [
+						"waffle-chart",
+						"table"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/donut-chart",
+			"install": "pnpm exec valar-svelte add donut-chart",
+			"markdown": "# Static Donut 静态环图\n\n保留固定总量分母的装饰性 SVG 环图，不对隐藏类别重新归一化。\n\n- 分类：展示\n- 关键词：donut、环图、占比、static\n- 安装：`pnpm exec valar-svelte add donut-chart`\n\n## 何时使用\n\n- 已有可访问精确图例，需要固定分母的静态环图\n\n## 何时不用\n\n- 需要交互提示或复杂坐标轴：改用 `chart`\n\n## 无障碍\n\n- SVG 为装饰；调用方必须提供类别名称和精确数据\n\n## 响应式\n\n- 208 单位 viewBox 由外层宽高控制\n\n## 相关组件\n\n- `waffle-chart`\n- `table`\n",
+			"rules": "# Static Donut Design Rules\n\n- Caller validates unique keys, finite nonnegative parts and a positive fixed total; the sum must not exceed that total.\n- Never renormalize when hiding a legend row. Unallocated space represents the fixed denominator, not a new category.\n- Decorative SVG: supply exact values and names in a nearby accessible legend.\n- No minimum slice enlargement, animation, tooltips or hover resizing.\n"
 		},
 		{
 			"name": "drawer",
@@ -1391,6 +1476,48 @@
 			"install": "pnpm exec valar-svelte add form",
 			"markdown": "# Form 表单（Formsnap）\n\n基于 Formsnap 与 sveltekit-superforms 的表单组件，按字段管理状态与校验错误。\n\n- 分类：表单\n- 关键词：表单、form、formsnap、superforms、zod、表单校验\n- 安装：`pnpm exec valar-svelte add form`\n\n## 何时使用\n\n- SvelteKit 中用 sveltekit-superforms 与 Zod 等做客户端和服务端校验的表单\n\n## 何时不用\n\n- 不使用 superforms，只需字段布局与错误展示：改用 `field`\n- 分步骤填写的流程：改用 `stepper`\n- 多题型问卷：改用 `questionnaire`\n\n## 无障碍\n\n- Form.Control 根据字段状态为控件设置 id、aria-describedby、aria-invalid\n- 错误用 Form.FieldErrors 显示，说明用 Form.Description\n\n## 响应式\n\n- 布局由内部控件决定，窄屏下单列排列\n\n## 相关组件\n\n- `field`\n- `input`\n- `label`\n",
 			"rules": "# Form 设计规范\n\n- 用于基于 Formsnap 和 sveltekit-superforms 的表单：校验 schema 写在 superforms 中，每个字段用 `Form.Field {form} name=\"…\"` 绑定，不要自己维护错误状态。\n- 控件放进 `Form.Control` 的 `{#snippet children({ props })}`，并把 `props` 展开到控件上（`<Input {...props} />`），这样 `id`、`name`、`aria-invalid` 和说明文字关联会自动生成；不要自己写这些属性。\n- 标签用 `Form.Label`（放在 Control 里），说明用 `Form.Description`，错误用 `Form.FieldErrors`；一组字段用 `Form.Fieldset` + `Form.Legend`。\n- 提交按钮用 `Form.Button`（等同 `type=\"submit\"` 的 Button），一个表单只有一个主提交按钮；提交期间禁用并显示进度。\n- 不使用 superforms 的简单表单不需要 Form，直接用 Field 组件。\n"
+		},
+		{
+			"name": "gauge",
+			"type": "registry:ui",
+			"title": "Gauge 仪表",
+			"description": "静态百分比仪表和可组合的 SVG 弧线，保留超限读数。",
+			"categories": [
+				"展示"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"gauge",
+						"仪表",
+						"百分比",
+						"quota"
+					],
+					"whenToUse": [
+						"显示一个只读配额百分比或组合独立同心弧线"
+					],
+					"whenNotToUse": [
+						{
+							"case": "需要让用户调整数值",
+							"use": "slider"
+						}
+					],
+					"accessibility": [
+						"label 和 valueText 由调用方本地化；超限读数保留在文字中"
+					],
+					"responsive": [
+						"宽度由容器控制，保持 100:90 比例"
+					],
+					"related": [
+						"tick-meter",
+						"progress"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/gauge",
+			"install": "pnpm exec valar-svelte add gauge",
+			"markdown": "# Gauge 仪表\n\n静态百分比仪表和可组合的 SVG 弧线，保留超限读数。\n\n- 分类：展示\n- 关键词：gauge、仪表、百分比、quota\n- 安装：`pnpm exec valar-svelte add gauge`\n\n## 何时使用\n\n- 显示一个只读配额百分比或组合独立同心弧线\n\n## 何时不用\n\n- 需要让用户调整数值：改用 `slider`\n\n## 无障碍\n\n- label 和 valueText 由调用方本地化；超限读数保留在文字中\n\n## 响应式\n\n- 宽度由容器控制，保持 100:90 比例\n\n## 相关组件\n\n- `tick-meter`\n- `progress`\n",
+			"rules": "# Gauge Design Rules\n\n- Read-only percentage, not a completion target; never add confetti or goal states.\n- Supply localized label and valueText. Only the arc and numeric ARIA range clamp; the displayed number/valueText retain overflow.\n- GaugeArc belongs inside an SVG; radius defaults to 42 in a 100-unit viewBox. Null draws a dashed missing track and no value arc.\n- Accent uses primary, danger uses destructive. Size through class; use a separate legend for comparisons.\n"
 		},
 		{
 			"name": "hover-card",
@@ -2506,6 +2633,48 @@
 			"rules": "# Resizable 设计规范\n\n- 结构为 `Resizable.PaneGroup`（`direction` 设 `horizontal` 或 `vertical`）> `Resizable.Pane` 和 `Resizable.Handle`；不要自己写拖拽调整宽度。\n- 每个 Pane 设 `defaultSize`，并用 `minSize` 保证内容不会被拖到不可用；可以收起的面板设 `collapsible`。\n- 需要让拖动结果在刷新后保留时，给 PaneGroup 设唯一的 `autoSaveId`。\n- 分隔条可以用键盘方向键调整，需要明显的拖拽提示时设 `withHandle`；窄屏下考虑改为上下堆叠或用 Tabs 切换。\n"
 		},
 		{
+			"name": "ruler-slider",
+			"type": "registry:ui",
+			"title": "Ruler Slider 刻度滑块",
+			"description": "支持移动尺带、拖动惯性、边界回弹和横向滚轮的精确数值输入。",
+			"categories": [
+				"表单"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"ruler",
+						"刻度",
+						"slider",
+						"参考值"
+					],
+					"whenToUse": [
+						"需要在明确范围内调整参考值并显示单位和刻度"
+					],
+					"whenNotToUse": [
+						{
+							"case": "还需要直接输入精确数字",
+							"use": "slider-field"
+						}
+					],
+					"accessibility": [
+						"label 命名滑块，format 与 unit 同时用于读数和语音值"
+					],
+					"responsive": [
+						"固定中心指针，刻度随尺带移动；纵向滚轮保留页面滚动"
+					],
+					"related": [
+						"slider",
+						"slider-field"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/ruler-slider",
+			"install": "pnpm exec valar-svelte add ruler-slider",
+			"markdown": "# Ruler Slider 刻度滑块\n\n支持移动尺带、拖动惯性、边界回弹和横向滚轮的精确数值输入。\n\n- 分类：表单\n- 关键词：ruler、刻度、slider、参考值\n- 安装：`pnpm exec valar-svelte add ruler-slider`\n\n## 何时使用\n\n- 需要在明确范围内调整参考值并显示单位和刻度\n\n## 何时不用\n\n- 还需要直接输入精确数字：改用 `slider-field`\n\n## 无障碍\n\n- label 命名滑块，format 与 unit 同时用于读数和语音值\n\n## 响应式\n\n- 固定中心指针，刻度随尺带移动；纵向滚轮保留页面滚动\n\n## 相关组件\n\n- `slider`\n- `slider-field`\n",
+			"rules": "# Ruler Slider Design Rules\n\n- A fixed needle over a native translated tape. Provide label, finite min/max (max > min), positive step/spacing/majorEvery and a synchronous numeric value. Existing Slider cannot express this moving-tape interaction.\n- value/bind:value/onValueChange adjusts during drag/coast. onValueCommit runs once on drag settlement, immediately for a tap/key target, or after 120ms of horizontal-wheel inactivity. External updates do not emit callbacks.\n- format localizes both the readout and spoken value; unit is visual/spoken, name submits the plain numeric hidden input.\n- Drag inversely by spacing/step; catch an in-flight tape, flick to coast, pull past an end to rubber-band and settle. Cancel/lost capture settles without a flick. Vertical wheel input scrolls the page untouched.\n- All arrows step; Shift+arrows and PageUp/Down use largeStep (default labelled interval); Home/End reach bounds. Alt/Ctrl/Meta combinations pass through.\n- Reduced motion removes inertia/elastic extension/springs but keeps input, snapping and commit semantics. Only animateReadout=false is supported: rolling digits are not provided.\n- Disabled controls cannot change or submit. Native form reset is not a value-reset API: reset through the bound value.\n"
+		},
+		{
 			"name": "scroll-area",
 			"type": "registry:ui",
 			"title": "Scroll Area 滚动区域",
@@ -2554,6 +2723,52 @@
 			"install": "pnpm exec valar-svelte add scroll-area",
 			"markdown": "# Scroll Area 滚动区域\n\n固定尺寸区域内的滚动，各浏览器滚动条样式一致。\n\n- 分类：展示\n- 关键词：滚动区域、scroll area、滚动条、scrollbar、溢出\n- 安装：`pnpm exec valar-svelte add scroll-area`\n\n## 何时使用\n\n- 固定高度或宽度的区域内滚动，需要统一的滚动条外观\n- orientation=horizontal 横向滚动\n\n## 何时不用\n\n- 聊天记录：改用 `message-scroller`\n- 逐项滑动浏览的内容：改用 `carousel`\n\n## 无障碍\n\n- 保留原生滚动和键盘滚动\n- 区域内没有可聚焦元素时，确保键盘用户仍能滚动查看内容\n\n## 响应式\n\n- 必须给出高度或宽度，否则不会滚动\n\n## 相关组件\n\n- `message-scroller`\n- `carousel`\n- `table`\n",
 			"rules": "# Scroll Area 设计规范\n\n- 用于固定区域内的自定义滚动条（侧栏列表、弹层中的长内容）；整页滚动保持浏览器原生滚动。\n- Scroll Area 必须有确定的高度或最大高度（`h-*`、`max-h-*` 档位类，或在 flex 布局中 `flex-1 min-h-0`），否则不会出现滚动。\n- 横向滚动设 `orientation=\"horizontal\"`，两个方向都需要时设 `both`。\n- 视口可以被键盘聚焦并滚动；区域内容没有标题时给 Scroll Area 设 `aria-label` 说明内容。\n- 滚动条不能改变版面：出现或消失时，内容不能左右晃动。整页滚动条库里已统一处理：位置预留（根元素 `scrollbar-gutter: stable`），轨道透明，只露出细滑块，没有滚动槽；不要在页面或布局上再写 `overflow-y: scroll`、`overflow-y: overlay` 之类的补丁。\n- 纵向滚动的原生区域（`overflow-auto`、`overflow-y-auto`）加 `scrollbar-stable`：细滑块、透明轨道（没有滚动槽），位置始终预留。不要只写光秃秃的 `overflow-auto`。\n- 横向滚动，或内容会动态变长变短的区域，用 Scroll Area（`orientation=\"horizontal\"` 或 `both`）：滚动条浮在内容上方，只显示滑块、不占位，并按内容比例自动伸缩。原生横向滚动条占的是高度，无法预留，所以不要用在内容会变化的地方。\n- 滚动条默认常显（只有细滑块，没有滚动槽）。需要“停止滚动约 1 秒后淡出、再滚动时出现”的地方，显式开启：整页在 `<html>` 上写 `data-scrollbar=\"autohide\"`，某个滚动区域在该元素上写 `data-scrollbar=\"autohide\"` 或加类 `scrollbar-autohide`（鼠标停在区域上时仍会显示）。它依赖根布局里调用一次 `useScrollbarAutohide()`；不调用时不会隐藏任何滚动条。不要自己写滚动条显示隐藏的脚本。\n"
+		},
+		{
+			"name": "segmented-control",
+			"type": "registry:ui",
+			"title": "Segmented Control 分段选择",
+			"description": "组合现有 ToggleGroup 的单选分段控件，选中项不会被再次点击清空。",
+			"categories": [
+				"操作"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"segmented",
+						"分段",
+						"单选",
+						"toggle"
+					],
+					"whenToUse": [
+						"切换同一视图的数据口径、尺度等少量互斥选项"
+					],
+					"whenNotToUse": [
+						{
+							"case": "切换关联的标签面板",
+							"use": "tabs"
+						},
+						{
+							"case": "选项可以多选或全部取消",
+							"use": "toggle-group"
+						}
+					],
+					"accessibility": [
+						"沿用 Bits UI 单选语义；方向键、Home、End 移动焦点并选择"
+					],
+					"responsive": [
+						"选项超宽时内部横向滚动，不隐藏必要内容"
+					],
+					"related": [
+						"toggle-group",
+						"tabs"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/segmented-control",
+			"install": "pnpm exec valar-svelte add segmented-control",
+			"markdown": "# Segmented Control 分段选择\n\n组合现有 ToggleGroup 的单选分段控件，选中项不会被再次点击清空。\n\n- 分类：操作\n- 关键词：segmented、分段、单选、toggle\n- 安装：`pnpm exec valar-svelte add segmented-control`\n\n## 何时使用\n\n- 切换同一视图的数据口径、尺度等少量互斥选项\n\n## 何时不用\n\n- 切换关联的标签面板：改用 `tabs`\n- 选项可以多选或全部取消：改用 `toggle-group`\n\n## 无障碍\n\n- 沿用 Bits UI 单选语义；方向键、Home、End 移动焦点并选择\n\n## 响应式\n\n- 选项超宽时内部横向滚动，不隐藏必要内容\n\n## 相关组件\n\n- `toggle-group`\n- `tabs`\n",
+			"rules": "# Segmented Control Design Rules\n\n- Compose ToggleGroup for one nonempty selection; option values must be unique and nonempty. Always provide a localized group label.\n- A second click on the chosen segment does not clear it. Arrows/Home/End select and move focus; disabled options are skipped.\n- Use string labels and optional Svelte accessory snippets, not React children. Supply value or bind:value and onValueChange as needed.\n- It is not a tab-panel or multi-selection API. Existing ToggleGroup handles multiple toggles; Tabs associates panels.\n- Options scroll horizontally in narrow containers; never truncate away the only accessible label.\n"
 		},
 		{
 			"name": "select",
@@ -2963,6 +3178,48 @@
 			"rules": "# Sonner 设计规范\n\n- 在根布局放一次 `<Toaster />`，在任意位置用 `svelte-sonner` 的 `toast()` 发通知；不要在多个页面各放一个 Toaster。\n- Toaster 的浅色／深色跟随 mode-watcher；项目的深色模式也应由 mode-watcher 管理，否则通知不会随之切换。\n- 只用于操作完成后的简短反馈（“已保存”“已复制链接”）；需要用户处理的错误用 Alert 或表单内的 Field.Error，需要确认的操作用 Alert Dialog。\n- 按结果选择 `toast.success`、`toast.error`、`toast.info`、`toast.warning`，等待中的操作用 `toast.promise` 或 `toast.loading`；不要用自定义颜色区分类型。\n- 文案写结果本身，不写“操作成功”这类空话；可撤销的操作通过 `action: { label: \"撤销\", onClick }` 提供撤销，并保证停留时间足够点击。\n- 不要每次输入、每次自动保存都弹通知；同一结果连续触发时复用同一个 `id` 更新已有通知。\n"
 		},
 		{
+			"name": "sparkline",
+			"type": "registry:ui",
+			"title": "Static Sparkline 迷你趋势",
+			"description": "保留日历槽位、零基线和缺失断点的装饰性静态趋势线。",
+			"categories": [
+				"展示"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"sparkline",
+						"趋势",
+						"迷你图",
+						"null"
+					],
+					"whenToUse": [
+						"在精简摘要旁显示不插值的日历序列趋势"
+					],
+					"whenNotToUse": [
+						{
+							"case": "需要坐标轴和逐点读取",
+							"use": "chart"
+						}
+					],
+					"accessibility": [
+						"SVG 为装饰；相邻文字提供趋势摘要和精确数据"
+					],
+					"responsive": [
+						"可通过原生 SVG 宽高调整，默认 50.4 × 28"
+					],
+					"related": [
+						"chart",
+						"table"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/sparkline",
+			"install": "pnpm exec valar-svelte add sparkline",
+			"markdown": "# Static Sparkline 迷你趋势\n\n保留日历槽位、零基线和缺失断点的装饰性静态趋势线。\n\n- 分类：展示\n- 关键词：sparkline、趋势、迷你图、null\n- 安装：`pnpm exec valar-svelte add sparkline`\n\n## 何时使用\n\n- 在精简摘要旁显示不插值的日历序列趋势\n\n## 何时不用\n\n- 需要坐标轴和逐点读取：改用 `chart`\n\n## 无障碍\n\n- SVG 为装饰；相邻文字提供趋势摘要和精确数据\n\n## 响应式\n\n- 可通过原生 SVG 宽高调整，默认 50.4 × 28\n\n## 相关组件\n\n- `chart`\n- `table`\n",
+			"rules": "# Static Sparkline Design Rules\n\n- Supply ordered calendar slots as finite nonnegative numbers or null. Null breaks the path; zero is an actual baseline point.\n- Decorative only: provide an adjacent text summary and exact data when needed.\n- Do not synthesize samples, smooth gaps, forecast or animate readings.\n- Default viewBox is 72 × 40 and display size 50.4 × 28; native SVG attributes can override size.\n"
+		},
+		{
 			"name": "spinner",
 			"type": "registry:ui",
 			"title": "Spinner 加载指示",
@@ -3317,6 +3574,91 @@
 			"rules": "# Textarea 设计规范\n\n- 与 Input 一样需要可见标签：放在 `Field.Field` 中，用 `Field.Label for={id}` 关联 `id`（检查规则 `valar/input-label`）。\n- 错误状态用 `aria-invalid=\"true\"` 加 `Field.Error`，不要用 `class` 改边框颜色（检查规则 `valar/invalid-via-aria`）。\n- 高度默认随内容增长（`field-sizing-content`）；可能输入很长内容时，加 `max-h-*` 档位类限制高度，超出部分在框内滚动。\n- 有字数上限时同时设 `maxlength` 并用 `Field.Description` 显示剩余字数。\n- 一行即可的短文本用 Input；需要格式化的富文本不要用 Textarea 模拟。\n- 前后要加按钮或提示文字时用 Input Group 的 `InputGroup.Textarea`。\n"
 		},
 		{
+			"name": "texture-fill",
+			"type": "registry:ui",
+			"title": "Texture Fill 纹理填充",
+			"description": "带四种纹理、纯色、弹簧过渡和减少动态效果支持的装饰性百分比画布。",
+			"categories": [
+				"展示"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"texture",
+						"纹理",
+						"canvas",
+						"dither",
+						"fill"
+					],
+					"whenToUse": [
+						"配额数值已有文字语义，需要装饰性纹理填充背景"
+					],
+					"whenNotToUse": [
+						{
+							"case": "需要自带可访问百分比语义的完整仪表",
+							"use": "gauge"
+						}
+					],
+					"accessibility": [
+						"画布隐藏于辅助技术；调用方提供 meter 语义和缺失数据处理"
+					],
+					"responsive": [
+						"跟随容器尺寸和设备像素比，减少动态效果时立即同步读数"
+					],
+					"related": [
+						"gauge",
+						"tick-meter"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/texture-fill",
+			"install": "pnpm exec valar-svelte add texture-fill",
+			"markdown": "# Texture Fill 纹理填充\n\n带四种纹理、纯色、弹簧过渡和减少动态效果支持的装饰性百分比画布。\n\n- 分类：展示\n- 关键词：texture、纹理、canvas、dither、fill\n- 安装：`pnpm exec valar-svelte add texture-fill`\n\n## 何时使用\n\n- 配额数值已有文字语义，需要装饰性纹理填充背景\n\n## 何时不用\n\n- 需要自带可访问百分比语义的完整仪表：改用 `gauge`\n\n## 无障碍\n\n- 画布隐藏于辅助技术；调用方提供 meter 语义和缺失数据处理\n\n## 响应式\n\n- 跟随容器尺寸和设备像素比，减少动态效果时立即同步读数\n\n## 相关组件\n\n- `gauge`\n- `tick-meter`\n",
+			"rules": "# Texture Fill Design Rules\n\n- Decorative percentage texture, not a meter: the caller supplies accessible quota semantics and missing-data handling.\n- value is finite and clamps graphically to 0–100. texture is dither, lines, halftone, hatch or solid.\n- Set an explicit container size; canvas follows ResizeObserver and device pixel ratio (capped at 3).\n- intro starts at zero only when motion is allowed. Reduced motion snaps immediately, including preference changes while mounted.\n- Color follows currentColor and semantic Valar tokens; do not hardcode provider palettes into the primitive.\n- Every resize/theme/media observer and animation frame must be disposed on teardown or texture replacement. Canvas 2D is required; absence raises an explicit error.\n"
+		},
+		{
+			"name": "tick-meter",
+			"type": "registry:ui",
+			"title": "Tick Meter 刻度仪表",
+			"description": "独立原创的六十条径向 SVG 刻度仪表，保留原始超限读数。",
+			"categories": [
+				"展示"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"tick",
+						"meter",
+						"刻度",
+						"百分比"
+					],
+					"whenToUse": [
+						"需要无动效的只读径向配额刻度和原始超限读数"
+					],
+					"whenNotToUse": [
+						{
+							"case": "需要连续弧线而不是离散刻度",
+							"use": "gauge"
+						}
+					],
+					"accessibility": [
+						"调用方提供 label 和原样保留的 valueText；图形与 aria-valuenow 限制在 0–100"
+					],
+					"responsive": [
+						"正方形 SVG 随容器缩放，不使用圆形 CSS mask"
+					],
+					"related": [
+						"gauge",
+						"progress"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/tick-meter",
+			"install": "pnpm exec valar-svelte add tick-meter",
+			"markdown": "# Tick Meter 刻度仪表\n\n独立原创的六十条径向 SVG 刻度仪表，保留原始超限读数。\n\n- 分类：展示\n- 关键词：tick、meter、刻度、百分比\n- 安装：`pnpm exec valar-svelte add tick-meter`\n\n## 何时使用\n\n- 需要无动效的只读径向配额刻度和原始超限读数\n\n## 何时不用\n\n- 需要连续弧线而不是离散刻度：改用 `gauge`\n\n## 无障碍\n\n- 调用方提供 label 和原样保留的 valueText；图形与 aria-valuenow 限制在 0–100\n\n## 响应式\n\n- 正方形 SVG 随容器缩放，不使用圆形 CSS mask\n\n## 相关组件\n\n- `gauge`\n- `progress`\n",
+			"rules": "# Tick Meter Design Rules\n\n- Independently authored SVG meter, not a redistributed Arc Pro component. Keep PROVENANCE.md with source.\n- Exactly 60 radial lines; filled count and aria-valuenow clamp to 0–100. Visible number retains raw overflow; valueText is preserved exactly as the localized spoken explanation.\n- Caller supplies finite value, label and valueText and handles missing data before mounting. Never turn missing into 0.\n- Accent maps to primary, danger to destructive. Keep the display read-only, without celebration, animation or circular CSS masks.\n"
+		},
+		{
 			"name": "toggle",
 			"type": "registry:ui",
 			"title": "Toggle 切换按钮",
@@ -3520,6 +3862,48 @@
 			"install": "pnpm exec valar-svelte add trace",
 			"markdown": "# Trace 执行轨迹\n\n展示 agent 推理、工具调用、来源等步骤的行列表。\n\n- 分类：展示\n- 关键词：执行轨迹、trace、工具调用、推理、agent、步骤\n- 安装：`pnpm exec valar-svelte add trace`\n\n## 何时使用\n\n- 展示 agent 的推理、工具调用、子任务、来源\n- 步骤可展开详情、链接，或打开 dialog、sheet\n\n## 何时不用\n\n- agent 的回复内容：改用 `message`\n- 回合之间的提示和分隔：改用 `marker`\n\n## 无障碍\n\n- 本身不加角色，语义来自包裹它的触发器（如 Trace.CollapsibleTrigger 带 aria-expanded）\n- Trace.Title 是可访问名称，要写成完整的一句话，状态也写进标题\n- 运行中的闪烁效果在“减少动态效果”时停止\n\n## 响应式\n\n- 支持嵌套，摘要可展开为步骤\n\n## 相关组件\n\n- `message`\n- `marker`\n- `collapsible`\n",
 			"rules": "# Trace 设计规范\n\n- 用于展示代理执行的步骤（调用工具、运行命令、编辑文件）；代理的回复用 Message，轮次之间的提示和分隔用 Marker。\n- `Trace.Title` 是这一步的名称，写成说明发生了什么的完整短句（“已编辑 trace.svelte”），不要只写文件名；`Trace.Icon` 对读屏器隐藏。\n- 状态用 `Trace.Line` 的 `status`（`running`、`error`、`pending`，完成的步骤不设），并同时写进标题：进行中用“正在运行 pnpm build”，失败用“运行 pnpm build 失败”。\n- 有细节时用 `Trace.Collapsible` + `Trace.CollapsibleTrigger` + `Trace.CollapsibleContent`；也可以把 Line 包在链接或 Dialog、Sheet 的触发按钮中，它会获得对应的键盘行为。\n- 链接在新标签页打开时，在标题后加 `sr-only` 的“（在新标签页打开）”；CollapsibleContent 中带背景色的块要设 `text-foreground` 保持对比度。\n"
+		},
+		{
+			"name": "waffle-chart",
+			"type": "registry:ui",
+			"title": "Waffle Chart 百格图",
+			"description": "最大余数法分配固定一百个格子的只读占比图。",
+			"categories": [
+				"展示"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"waffle",
+						"百格图",
+						"占比",
+						"chart"
+					],
+					"whenToUse": [
+						"用一百个格子展示类别构成，旁边保留精确图例"
+					],
+					"whenNotToUse": [
+						{
+							"case": "需要准确读取每个类别的数值",
+							"use": "table"
+						}
+					],
+					"accessibility": [
+						"调用方提供整体 label 和精确文字图例，不依赖颜色区分"
+					],
+					"responsive": [
+						"正方形网格随容器缩放，固定十行十列"
+					],
+					"related": [
+						"donut-chart",
+						"chart"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/waffle-chart",
+			"install": "pnpm exec valar-svelte add waffle-chart",
+			"markdown": "# Waffle Chart 百格图\n\n最大余数法分配固定一百个格子的只读占比图。\n\n- 分类：展示\n- 关键词：waffle、百格图、占比、chart\n- 安装：`pnpm exec valar-svelte add waffle-chart`\n\n## 何时使用\n\n- 用一百个格子展示类别构成，旁边保留精确图例\n\n## 何时不用\n\n- 需要准确读取每个类别的数值：改用 `table`\n\n## 无障碍\n\n- 调用方提供整体 label 和精确文字图例，不依赖颜色区分\n\n## 响应式\n\n- 正方形网格随容器缩放，固定十行十列\n\n## 相关组件\n\n- `donut-chart`\n- `chart`\n",
+			"rules": "# Waffle Chart Design Rules\n\n- Supply finite data and an accessible label. Positive totals allocate exactly 100 whole cells; zero/empty data draws no cells.\n- Largest-remainder cells are approximate; keep exact values in a nearby accessible legend.\n- Colors come from caller-owned semantic series tokens; never use color as the only explanation.\n- Read-only: do not imply that cells are buttons or add hover-only information.\n"
 		}
 	],
 	"missingCards": []
