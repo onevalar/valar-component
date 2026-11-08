@@ -10,6 +10,7 @@ allowBuilds:
   sharp: true
   workerd: true
   "@tailwindcss/oxide": true
+  vue-demi: false
 
 catalog:
   "@sveltejs/kit": ^2.60.1
