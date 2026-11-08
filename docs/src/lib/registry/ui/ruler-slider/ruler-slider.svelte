@@ -117,7 +117,7 @@
 	data-disabled={disabled || undefined}
 	data-dragging={dragging || undefined}
 	class={cn(
-		"ruler grid w-full min-w-0 justify-items-center gap-1 text-sm text-foreground select-none data-disabled:opacity-50",
+		"grid w-full min-w-0 justify-items-center gap-1 text-sm text-foreground select-none data-disabled:opacity-50",
 		className
 	)}
 	{...rest}
@@ -141,7 +141,7 @@
 		aria-valuetext={unit ? `${readout} ${unit}` : readout}
 		aria-orientation="horizontal"
 		aria-disabled={disabled || undefined}
-		class="relative h-18 w-full touch-pan-y overflow-hidden rounded-lg border bg-background outline-none focus-visible:ring-2 focus-visible:ring-ring"
+		class="relative h-18 w-full cursor-grab touch-pan-y overflow-hidden rounded-lg border bg-background outline-none [-webkit-tap-highlight-color:transparent] focus-visible:ring-2 focus-visible:ring-ring in-data-[disabled]:cursor-not-allowed in-data-[dragging]:cursor-grabbing"
 	>
 		<div
 			aria-hidden="true"
@@ -156,7 +156,11 @@
 				style:--major={`${spacing * majorEvery}px`}
 				style:--half={majorEvery % 2 === 0 ? `${(spacing * majorEvery) / 2}px` : "0px"}
 			>
-				<span class="ticks absolute inset-x-0 top-0 h-7"></span>
+				<!-- Inline, not a <style> block: this component is installed on its own and its CSS must travel with it. -->
+				<span
+					class="absolute inset-x-0 top-0 h-7"
+					style="--tick: color-mix(in oklab, var(--foreground) 20%, transparent); --tick-major: color-mix(in oklab, var(--foreground) 48%, transparent); background-image: linear-gradient(to right, var(--tick-major) 0 1px, transparent 1px), linear-gradient(to right, var(--tick) 0 1px, transparent 1px), linear-gradient(to right, var(--tick) 0 1px, transparent 1px); background-repeat: repeat-x; background-size: var(--major) 1.75rem, var(--half) 1.25rem, var(--spacing) 0.75rem;"
+				></span>
 				{#each marks as mark, index}
 					<span
 						class="absolute top-9 -translate-x-1/2 text-xs whitespace-nowrap text-muted-foreground tabular-nums"
@@ -173,33 +177,3 @@
 	</div>
 	{#if name}<input type="hidden" {name} value={current} {disabled} />{/if}
 </div>
-
-<style>
-	.ruler {
-		user-select: none;
-		-webkit-user-select: none;
-	}
-	[role="slider"] {
-		cursor: grab;
-		-webkit-tap-highlight-color: transparent;
-	}
-	[data-dragging] [role="slider"] {
-		cursor: grabbing;
-	}
-	[data-disabled] [role="slider"] {
-		cursor: not-allowed;
-	}
-	.ticks {
-		--tick: color-mix(in oklab, var(--foreground) 20%, transparent);
-		--tick-major: color-mix(in oklab, var(--foreground) 48%, transparent);
-		background-image:
-			linear-gradient(to right, var(--tick-major) 0 1px, transparent 1px),
-			linear-gradient(to right, var(--tick) 0 1px, transparent 1px),
-			linear-gradient(to right, var(--tick) 0 1px, transparent 1px);
-		background-repeat: repeat-x;
-		background-size:
-			var(--major) 1.75rem,
-			var(--half) 1.25rem,
-			var(--spacing) 0.75rem;
-	}
-</style>
