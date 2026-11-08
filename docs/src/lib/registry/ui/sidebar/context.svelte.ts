@@ -12,6 +12,9 @@ export type SidebarStateProps = {
 	 */
 	open: Getter<boolean>;
 
+	/** Whether the Provider currently enables the global Cmd/Ctrl+B shortcut. */
+	keyboardShortcut: Getter<boolean>;
+
 	/**
 	 * A function that sets the open state of the sidebar. To support `bind:open`, we need
 	 * a source of truth for changing the open state to ensure it will be synced throughout
@@ -42,6 +45,13 @@ class SidebarState {
 
 	// Event handler to apply to the `<svelte:window>`
 	handleShortcutKeydown = (e: KeyboardEvent) => {
+		if (!this.props.keyboardShortcut()) return;
+		if (
+			e.target instanceof Element &&
+			e.target.closest('input, textarea, [contenteditable]:not([contenteditable="false" i])')
+		) {
+			return;
+		}
 		if (e.key === SIDEBAR_KEYBOARD_SHORTCUT && (e.metaKey || e.ctrlKey)) {
 			e.preventDefault();
 			this.toggle();

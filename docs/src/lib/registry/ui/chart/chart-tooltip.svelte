@@ -50,10 +50,10 @@
 	const chart = useChart();
 	const chartCtx = getChartContext();
 
-	// Filter to series with defined values (important for item-based charts like Pie/Arc
-	// where only the hovered item has a value)
+	// Missing values have no numeric tooltip row; zero is still a real value.
+	// Item-based charts like Pie/Arc also omit series without a hovered value.
 	const visibleSeries = $derived(
-		chartCtx.tooltip.series.filter((s: TooltipPayload) => s.value !== undefined)
+		chartCtx.tooltip.series.filter((s: TooltipPayload) => s.value != null)
 	);
 
 	const formattedLabel = $derived.by(() => {

@@ -15,6 +15,7 @@
 		open = $bindable(true),
 		onOpenChange = () => {},
 		persistState = true,
+		keyboardShortcut = true,
 		class: className,
 		style,
 		children,
@@ -24,10 +25,13 @@
 		onOpenChange?: (open: boolean) => void;
 		/** Disable cookie writes for temporary or embedded application shells. */
 		persistState?: boolean;
+		/** Enable Cmd/Ctrl+B outside editable elements. Defaults to true. */
+		keyboardShortcut?: boolean;
 	} = $props();
 
 	const sidebar = setSidebar({
 		open: () => open,
+		keyboardShortcut: () => keyboardShortcut,
 		setOpen: (value: boolean) => {
 			open = value;
 			onOpenChange(value);

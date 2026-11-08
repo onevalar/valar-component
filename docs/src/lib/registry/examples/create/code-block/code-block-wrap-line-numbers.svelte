@@ -3,13 +3,14 @@
 	import { useHighlightedCode } from "$lib/registry/hooks/use-highlighted-code.svelte.js";
 	import Example from "../../../../../routes/[[lang]]/(app)/(layout)/(create)/components/example.svelte";
 
+	// Keep sample imports as text for Vite’s dependency scanner.
 	const chat = `"use client"
 
-import * as React from "react"
-import { useChat } from "@ai-sdk/react"
+im${""}port * as React from "react"
+im${""}port { useChat } from "@ai-sdk/react"
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+im${""}port { Button } from "@/components/ui/button"
+im${""}port { Input } from "@/components/ui/input"
 
 export function Chat() {
   const [input, setInput] = React.useState("")

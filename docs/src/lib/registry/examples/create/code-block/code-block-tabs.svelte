@@ -17,13 +17,14 @@ export async function POST(request: Request) {
   return result.toUIMessageStreamResponse()
 }`;
 
+	// Keep sample imports as text for Vite’s dependency scanner.
 	const chat = `"use client"
 
-import * as React from "react"
-import { useChat } from "@ai-sdk/react"
+im${""}port * as React from "react"
+im${""}port { useChat } from "@ai-sdk/react"
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+im${""}port { Button } from "@/components/ui/button"
+im${""}port { Input } from "@/components/ui/input"
 
 export function Chat() {
   const [input, setInput] = React.useState("")

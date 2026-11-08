@@ -21,6 +21,7 @@ const languages = {
 	svelte: () => import("shiki/langs/svelte.mjs"),
 	tsx: () => import("shiki/langs/tsx.mjs"),
 	typescript: () => import("shiki/langs/typescript.mjs"),
+	vue: () => import("shiki/langs/vue.mjs"),
 	yaml: () => import("shiki/langs/yaml.mjs"),
 };
 
