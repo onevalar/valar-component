@@ -1,0 +1,32 @@
+<script setup lang="ts">
+import IconPlaceholder from "@/registry/bases/reka/components/icon-placeholder/IconPlaceholder.vue";
+import { reactiveOmit } from "@vueuse/core";
+import { cn } from "cn";
+import { SelectScrollUpButton, useForwardProps } from "reka-ui";
+import type { SelectScrollUpButtonProps } from "reka-ui";
+import type { HTMLAttributes } from "vue";
+
+const props = defineProps<SelectScrollUpButtonProps & { class?: HTMLAttributes["class"] }>();
+
+const delegatedProps = reactiveOmit(props, "class");
+
+const forwardedProps = useForwardProps(delegatedProps);
+</script>
+
+<template>
+	<SelectScrollUpButton
+		data-slot="select-scroll-up-button"
+		v-bind="forwardedProps"
+		:class="cn('cn-select-scroll-up-button', props.class)"
+	>
+		<slot>
+			<IconPlaceholder
+				lucide="ChevronUpIcon"
+				tabler="IconChevronUp"
+				hugeicons="ArrowUp01Icon"
+				phosphor="CaretUpIcon"
+				remixicon="RiArrowUpSLine"
+			/>
+		</slot>
+	</SelectScrollUpButton>
+</template>

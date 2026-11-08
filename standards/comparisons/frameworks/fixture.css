@@ -1,0 +1,33 @@
+/* Consumer layout only. Native components obtain their appearance from their SDK. */
+@theme inline {
+	--font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+	font-family: var(--font-sans);
+	font-size: 16px;
+	color-scheme: light;
+}
+
+html.dark { color-scheme: dark; }
+body { margin: 0; min-width: 0; }
+*, *::before, *::after { box-sizing: border-box; }
+.first-batch-demo {
+	width: 100%;
+	max-width: 720px;
+	margin-inline: auto;
+	padding: 24px;
+	display: grid;
+	gap: 24px;
+	font-size: 14px;
+	line-height: 1.5;
+}
+.first-batch-demo h1 { margin: 0; font-size: 24px; line-height: 32px; font-weight: 600; }
+.first-batch-demo h2 { margin: 0 0 12px; font-size: 16px; line-height: 24px; font-weight: 600; }
+.demo-section { min-width: 0; }
+.demo-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.demo-field { display: grid; gap: 8px; }
+.demo-result { display: block; margin-top: 8px; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.demo-description { margin: 0; color: var(--muted-foreground); }
+.demo-chart { width: 100%; height: 220px; }
+.demo-form-actions { display: flex; gap: 12px; flex-wrap: wrap; }

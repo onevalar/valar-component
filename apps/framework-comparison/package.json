@@ -1,0 +1,32 @@
+{
+	"name": "@valar/framework-comparison",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "vite --host 127.0.0.1 --port 5212 --strictPort",
+		"check": "svelte-check --fail-on-warnings --tsconfig tsconfig.json",
+		"build": "vite build",
+		"preview": "vite preview --host 127.0.0.1 --port 5212 --strictPort",
+		"test": "playwright test"
+	},
+	"dependencies": {
+		"@fontsource-variable/geist": "^5.2.8",
+		"@internationalized/date": "^3.12.0",
+		"@valar/svelte-ui": "workspace:*",
+		"d3-shape": "^3.2.0",
+		"layerchart": "^2.0.3",
+		"svelte": "catalog:"
+	},
+	"devDependencies": {
+		"@playwright/test": "1.62.0",
+		"@sveltejs/vite-plugin-svelte": "^7.3.1",
+		"@tailwindcss/vite": "^4.3.3",
+		"@types/d3-shape": "^3.1.7",
+		"@types/node": "^24",
+		"svelte-check": "catalog:",
+		"tailwindcss": "^4.3.3",
+		"typescript": "^5.9.3",
+		"vite": "^8.1.5"
+	}
+}

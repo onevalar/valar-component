@@ -1,6 +1,6 @@
 # Valar / Svelte
 
-Valar 是个人组件库系列品牌，Svelte 是当前的框架实现。React、Vue 实现尚未提供。
+Valar 是个人组件库系列品牌，Svelte 是当前完整的框架实现。React、Vue 已有本地第一批九组原生组件，尚非完整库，也未发布。
 
 本项目在完整技术基线上独立维护组件、文档、CLI 和 registry。组件样式目前保持导入时的基线；本轮完成品牌、内容和分发配置的独立化。
 
@@ -43,6 +43,22 @@ pnpm dev:playground
 该命令同时监听组件生成、样式／token 与底层原语，启动独立消费应用。组件编辑器须“写回组件库”后才影响应用；浏览器草稿不会同步。组件风格只有 `valar`（原 Nova），默认 neutral／Lucide。热更新可能重置临时交互状态，已部署项目仍须重新构建发布。
 
 接入步骤、导入示例与验证边界见[共享 UI 工作区说明](standards/SHARED_UI.md)。自有包仍 private，未发布 npm，也未部署。
+
+## 三框架使用入口
+
+本地 `packages/react-ui`、`packages/vue-ui` 复用原生 shadcn/Radix、shadcn-vue/Reka 源码，统一读取既有 Valar 样式维护源；不是重新实现所有底层，也不在 React/Vue 中运行 Svelte。
+
+**继续使用原来的 5186 文档站，不需要另开网站。** 组件页默认仍展示 Svelte 的「状态与调节」；打开「使用组件」，选择 Svelte、React 或 Vue，查看对应的安装、主题和可复制代码。链接里的 `?framework=react` / `vue` / `svelte` 可保留选择，刷新后仍有效。Svelte 使用原有文档。
+
+React/Vue 第一批为 Button、Input、Checkbox、Select、Dialog、Calendar、RangeCalendar、Slider、Chart，共九组。其他组件明确显示「尚未提供」，不会把 Svelte 示例当作 React/Vue 用法。React/Vue 目前仍是 private、未发布包，页面提供本地 tarball 安装步骤，不表示可从 npm 直接下载。
+
+原生接口、真实验收结果、安装和未验证边界见[第一批集成记录](standards/porting-records/first-batch-frameworks.md)。三框架对比应用仅保留为内部验收工具，当前额外的5212/5213/5214服务已关闭，不是使用入口；需要维护者复现时才运行 `build:frameworks` / `preview:frameworks` / `test:frameworks`。不代表全库77组或SSR、触屏、屏幕阅读器已对齐。
+
+仅检查现有文档站的框架选择入口，不启动任何额外服务：
+
+```sh
+pnpm --filter docs exec playwright test --config playwright.usage.config.ts
+```
 
 ## 设计师调参工作台
 

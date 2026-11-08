@@ -9,21 +9,14 @@ import {
 	transformMenu,
 	transformFont,
 } from "@valar/svelte-cli/transformers";
-import {
-	applyTokenUtilities,
-	injectStyleClasses,
-	mergeStyleMaps,
-	parseStyleCss,
-} from "@valar/svelte-parity/inject-style-classes";
-import { BASE_THEMES } from "../../../docs/src/lib/registry/themes.ts";
+import { applyTokenUtilities, injectStyleClasses } from "@valar/svelte-parity/inject-style-classes";
+import { createThemeCss, getValarStyleMap } from "../../../scripts/valar-style.ts";
 import { DEFAULT_CONFIG } from "../../cli/src/utils/config/schema.ts";
-import { transformCss } from "../../cli/src/utils/transform-css.ts";
 
 const script = fileURLToPath(import.meta.url);
 const root = path.resolve(path.dirname(script), "../../..");
 const registry = path.join(root, "docs/src/lib/registry");
 const output = path.join(root, "packages/ui/dist");
-const styles = path.join(registry, "styles");
 const utilities = path.join(root, "packages/cli/src/tailwind.css");
 
 function files(directory: string): string[] {
@@ -62,28 +55,10 @@ async function build() {
 			] as const;
 		})
 	);
-	const theme = BASE_THEMES.find((theme) => theme.name === "neutral")!;
-	const themeCss =
-		transformCss(
-			'@import "tw-animate-css";\n@custom-variant dark (&:is(.dark *));\n@source "./ui";\n@source "./hooks";\n@source "./lib";\n@theme inline { --font-heading: var(--font-sans); }\n',
-			{
-				cssVars: theme.cssVars,
-				css: {
-					"@layer base": {
-						"*": { "@apply border-border outline-ring/50": {} },
-						body: { "@apply bg-background text-foreground": {} },
-					},
-				},
-			}
-		) +
-		"\n" +
-		fs.readFileSync(utilities, "utf8");
+	const themeCss = createThemeCss(root);
 
 	for (const style of PRESET_STYLES) {
-		const styleMap = mergeStyleMaps(
-			parseStyleCss(fs.readFileSync(path.join(styles, `style-${style}.css`), "utf8")),
-			parseStyleCss(fs.readFileSync(path.join(styles, "valar", `style-${style}.css`), "utf8"))
-		);
+		const styleMap = getValarStyleMap(root, style);
 		for (const [file, source] of prepared) {
 			const relative = path.relative(registry, file);
 			const target = path.join(output, style, relative);
@@ -167,6 +142,7 @@ if (process.argv.includes("--watch")) {
 		...[
 			path.join(registry, "themes.ts"),
 			utilities,
+			path.join(root, "scripts/valar-style.ts"),
 			path.join(root, "docs/src/lib/features/workbench/token-overrides.ts"),
 		].map((file) =>
 			fs.watch(path.dirname(file), (_, name) => {

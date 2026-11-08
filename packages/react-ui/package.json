@@ -1,0 +1,54 @@
+{
+	"name": "@valar/react-ui",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Native React first-batch components adapted from pinned shadcn/ui sources",
+	"license": "MIT",
+	"type": "module",
+	"files": [
+		"dist",
+		"LICENSE",
+		"NOTICE.md"
+	],
+	"sideEffects": [
+		"**/*.css"
+	],
+	"exports": {
+		".": "./dist/index.ts",
+		"./theme.css": "./dist/theme.css",
+		"./*": "./dist/*.tsx"
+	},
+	"scripts": {
+		"build": "node --import tsx scripts/build.ts",
+		"check": "node --import tsx scripts/build.ts && tsc --noEmit",
+		"test": "node --import tsx scripts/build.ts && node --import tsx --test test/*.test.ts",
+		"test:browser": "node --import tsx scripts/build.ts && node --import tsx --test test/public-regression.browser.ts"
+	},
+	"peerDependencies": {
+		"react": "^19.2.3",
+		"react-dom": "^19.2.3",
+		"tailwindcss": "^4.3.3"
+	},
+	"dependencies": {
+		"class-variance-authority": "^0.7.1",
+		"cn": "^0.5.0",
+		"lucide-react": "0.474.0",
+		"radix-ui": "^1.4.3",
+		"react-day-picker": "^9.14.0",
+		"recharts": "3.8.0",
+		"tw-animate-css": "^1.4.0"
+	},
+	"devDependencies": {
+		"@playwright/test": "1.62.0",
+		"@types/node": "^24",
+		"@types/react": "^19.2.2",
+		"@types/react-dom": "^19.2.2",
+		"@valar/svelte-cli": "workspace:*",
+		"@valar/svelte-parity": "workspace:*",
+		"react": "19.2.3",
+		"react-dom": "19.2.3",
+		"tailwindcss": "^4.3.3",
+		"tsx": "^4.21.0",
+		"typescript": "catalog:"
+	}
+}

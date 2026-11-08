@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from "$app/environment";
 	import { page } from "$app/state";
 	import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
 	import ArrowRightIcon from "@lucide/svelte/icons/arrow-right";
@@ -9,6 +10,7 @@
 	import ComponentState from "$lib/components/component-state.svelte";
 	import DocsCopyPage from "$lib/components/docs-copy-page.svelte";
 	import DocsToc from "$lib/components/docs-toc.svelte";
+	import FrameworkUsage from "$lib/components/framework-usage.svelte";
 	import Metadata from "$lib/components/metadata.svelte";
 	import { categoryOf } from "$lib/component-categories.js";
 	import { localeFromPathname, localizeHref } from "$lib/i18n/config.js";
@@ -41,10 +43,15 @@
 		isComponent ? categoryOf(slug, isBasic ? "basic" : "advanced") : undefined
 	);
 	const showStates = $derived(isComponent && previews.length > 0);
+	const requestedFramework = $derived(browser ? page.url.searchParams.get("framework") : null);
+	const hasFramework = $derived(["svelte", "react", "vue"].includes(requestedFramework ?? ""));
 	let tab = $state("states");
+	const showSvelteLinks = $derived(
+		tab !== "usage" || !["react", "vue"].includes(requestedFramework ?? "")
+	);
 	$effect(() => {
 		path;
-		tab = showStates ? "states" : "guide";
+		tab = hasFramework ? "usage" : showStates ? "states" : "guide";
 	});
 	const showToc = $derived(!wide && !isComponent);
 	const isChangelog = $derived(page.url.pathname.startsWith("/docs/changelog"));
@@ -100,9 +107,10 @@
 							<Tabs.Trigger value="states">{t("components.states")}</Tabs.Trigger>
 						{/if}
 						<Tabs.Trigger value="guide">{t("components.docsAndCode")}</Tabs.Trigger>
+						<Tabs.Trigger value="usage">{t("usage.tab")}</Tabs.Trigger>
 					</Tabs.List>
 				</div>
-				{#if apiLink || docLink || source}
+				{#if showSvelteLinks && (apiLink || docLink || source)}
 					<div class="flex flex-wrap items-center gap-2">
 						{#if docLink}
 							<Badge href={docLink} variant="secondary" target="_blank" rel="noreferrer">
@@ -145,6 +153,13 @@
 					{#key path}
 						<ComponentGuide {slug} section={isBasic ? "basic" : "advanced"} {locale} />
 					{/key}
+				{/if}
+			</Tabs.Content>
+			<Tabs.Content value="usage">
+				{#if tab === "usage"}
+					<FrameworkUsage {slug}>
+						<Markdown viewerData={data.viewerData} />
+					</FrameworkUsage>
 				{/if}
 			</Tabs.Content>
 		</Tabs.Root>

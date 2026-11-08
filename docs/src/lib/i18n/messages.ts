@@ -37,6 +37,29 @@ export const en = {
 	"components.states": "States & tuning",
 	"components.default": "Default",
 	"components.docsAndCode": "Guide & rules",
+	"usage.tab": "Use",
+	"usage.framework": "Framework",
+	"usage.preview":
+		"The states and tuning views use Svelte. Choose the implementation for your project here.",
+	"usage.available": "Available locally · first batch",
+	"usage.pending": "Not available yet",
+	"usage.unavailable":
+		"This component has not been added to Valar {framework} yet. Its Svelte version is available; no {framework} install command or code is provided here.",
+	"usage.native": "Native {framework} implementation. Its API is not interchangeable with Svelte.",
+	"usage.local":
+		"Private, unpublished package. Build and pack inside the Valar repository, then install the local tarball in your project. These are not npm registry install commands.",
+	"usage.requirements":
+		"Use {framework} with TypeScript-capable tooling and Tailwind CSS 4. Import the theme in your Tailwind entry and load that CSS from your application entry.",
+	"usage.pack": "1. Build and pack · Valar repository",
+	"usage.install": "2. Install · your project",
+	"usage.path":
+		"Replace /absolute/path/to/valar with your local Valar repository path. The output directory is dist/packages at the repository root.",
+	"usage.theme": "3. Theme · app.css",
+	"usage.example": "4. Usage example",
+	"usage.svelteSource": "Svelte installation and usage",
+	"usage.svelteOnly": "These instructions and examples use Svelte.",
+	"usage.copy": "Copy code",
+	"usage.copied": "Copied",
 	"components.basic": "Basic components",
 	"components.backTo": "Back to {name}",
 	"components.complex": "Advanced components",
@@ -262,6 +285,28 @@ export const zh: Record<MessageKey, string> = {
 	"components.states": "状态与调节",
 	"components.default": "默认",
 	"components.docsAndCode": "说明与准则",
+	"usage.tab": "使用组件",
+	"usage.framework": "使用框架",
+	"usage.preview": "状态与调节页面默认展示 Svelte；在这里选择你的项目要使用的框架版本。",
+	"usage.available": "本地可用 · 第一批",
+	"usage.pending": "尚未提供",
+	"usage.unavailable":
+		"这个组件尚未加入 Valar {framework}。目前可使用 Svelte 版本；这里不会提供不存在的 {framework} 安装命令或代码。",
+	"usage.native": "这是原生 {framework} 实现，调用方式不与 Svelte 直接互换。",
+	"usage.local":
+		"当前为私有、未发布组件包。先在 Valar 仓库构建并打包，再在你的项目中安装本地文件；不能直接从 npm 安装这些包名。",
+	"usage.requirements":
+		"项目需使用 {framework}、支持 TypeScript 的构建工具和 Tailwind CSS 4。在 Tailwind 入口导入主题，并从应用入口加载该 CSS。",
+	"usage.pack": "1. 构建并打包 · 在 Valar 仓库执行",
+	"usage.install": "2. 安装 · 在你的项目执行",
+	"usage.path":
+		"将 /absolute/path/to/valar 替换为本机 Valar 仓库路径。打包结果位于仓库根目录的 dist/packages。",
+	"usage.theme": "3. 导入主题 · app.css",
+	"usage.example": "4. 使用代码",
+	"usage.svelteSource": "Svelte 安装与用法",
+	"usage.svelteOnly": "以下安装说明和示例使用 Svelte。",
+	"usage.copy": "复制代码",
+	"usage.copied": "已复制",
 	"components.basic": "基础组件",
 	"components.backTo": "返回{name}",
 	"components.complex": "高级组件",

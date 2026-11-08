@@ -76,6 +76,11 @@ test(
 		fs.copyFileSync(path.join(ui, "scripts/build.ts"), path.join(fixtureUi, "scripts/build.ts"));
 		fs.copyFileSync(path.join(ui, "package.json"), path.join(fixtureUi, "package.json"));
 		fs.symlinkSync(path.join(ui, "node_modules"), path.join(fixtureUi, "node_modules"), "dir");
+		fs.mkdirSync(path.join(temporary, "scripts"), { recursive: true });
+		fs.copyFileSync(
+			path.join(root, "scripts/valar-style.ts"),
+			path.join(temporary, "scripts/valar-style.ts")
+		);
 		for (const name of ["cli", "parity"])
 			fs.symlinkSync(
 				path.join(root, "packages", name),
@@ -130,7 +135,10 @@ test(
 			);
 			await until(() => read(output).includes('data-live-probe="updated"'));
 			const style = path.join(fixtureRegistry, "styles/valar/style-valar.css");
-			fs.appendFileSync(style, "\n.style-valar { .cn-button-size-default { @apply h-14 px-7; } }\n");
+			fs.appendFileSync(
+				style,
+				"\n.style-valar { .cn-button-size-default { @apply h-14 px-7; } }\n"
+			);
 			await until(
 				() => /default: "[^"]*h-14/.test(read(output)) && /default: "[^"]*px-7/.test(read(output))
 			);
