@@ -116,6 +116,7 @@ links:
 | `open`         | `boolean`                 | 侧边栏的展开状态，可绑定。                                                                                         |
 | `onOpenChange` | `(open: boolean) => void` | 回调。非受控时在侧边栏展开状态变化之后触发，受控时在侧边栏展开或关闭之前触发。                                     |
 | `persistState` | `boolean`                 | 默认为 `true`。临时或嵌入式预览可设为 `false`，禁止写入 `sidebar_state` cookie；绑定、回调与键盘快捷键仍保持有效。 |
+| `keyboardShortcut` | `boolean`             | 默认为 `true`，在编辑区域外启用 Cmd/Ctrl+B；设为 `false` 时将该快捷键完全交还应用或浏览器。 |
 
 ### 宽度
 
@@ -140,7 +141,16 @@ export const SIDEBAR_WIDTH_MOBILE = "18rem";
 
 ### 键盘快捷键
 
-Mac 上用 `cmd+b`、Windows 上用 `ctrl+b` 快捷键触发侧边栏。
+默认可用 Mac 上的 `cmd+b`、Windows 上的 `ctrl+b` 切换侧边栏。在 `input`、`textarea`、可编辑的 `contenteditable` 区域及其子元素内，两种快捷键都不会触发侧边栏，也不会阻止原生编辑行为。
+
+当应用或浏览器需要占用该快捷键时，设置 `keyboardShortcut={false}`。此时 Provider 不调用 `preventDefault`，不改变展开状态、写入 cookie 或触发 `onOpenChange`（包括由该回调驱动的播报）。`Sidebar.Trigger`、`Sidebar.Rail` 与 `useSidebar().toggle()` 仍正常工作；此属性与 `persistState` 相互独立。
+
+```svelte showLineNumbers
+<Sidebar.Provider keyboardShortcut={false}>
+  <Sidebar.Root />
+  <Sidebar.Trigger />
+</Sidebar.Provider>
+```
 
 ```ts showLineNumbers title="src/lib/components/ui/sidebar/constants.ts"
 export const SIDEBAR_KEYBOARD_SHORTCUT = "b";

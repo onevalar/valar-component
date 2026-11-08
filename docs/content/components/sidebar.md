@@ -116,6 +116,7 @@ The `Sidebar.Provider` component is used to provide the sidebar context to the `
 | `open`         | `boolean`                 | Open state of the sidebar (bindable).                                                                                                                                     |
 | `onOpenChange` | `(open: boolean) => void` | A callback fired _after_ the open state of the sidebar changes if uncontrolled, and _before_ the sidebar opens or closes if controlled.                                   |
 | `persistState` | `boolean`                 | Defaults to `true`. Set to `false` to disable `sidebar_state` cookie writes in temporary or embedded previews; bindings, callbacks, and keyboard shortcuts remain active. |
+| `keyboardShortcut` | `boolean`             | Defaults to `true`. Enable Cmd/Ctrl+B outside editable elements; set to `false` to leave the shortcut entirely to the application or browser. |
 
 ### Width
 
@@ -140,7 +141,16 @@ For multiple sidebars in your application, you can use the `--sidebar-width` and
 
 ### Keyboard Shortcut
 
-To trigger the sidebar, you use the `cmd+b` keyboard shortcut on Mac and `ctrl+b` on Windows.
+By default, `cmd+b` on Mac and `ctrl+b` on Windows toggle the sidebar. Neither shortcut is handled inside an `input`, `textarea`, editable `contenteditable` area, or any descendant of these elements, so native editing shortcuts remain available.
+
+Set `keyboardShortcut={false}` when the application or browser should own the shortcut. The Provider then does not call `preventDefault`, change state, write its cookie, or invoke `onOpenChange` (including any announcements driven by that callback). `Sidebar.Trigger`, `Sidebar.Rail`, and `useSidebar().toggle()` still work; this setting is independent of `persistState`.
+
+```svelte showLineNumbers
+<Sidebar.Provider keyboardShortcut={false}>
+  <Sidebar.Root />
+  <Sidebar.Trigger />
+</Sidebar.Provider>
+```
 
 ```ts showLineNumbers title="src/lib/components/ui/sidebar/constants.ts"
 export const SIDEBAR_KEYBOARD_SHORTCUT = "b";
