@@ -89,8 +89,6 @@ export const REQUIRED_CARDS = [
 	"donut-chart",
 	"sparkline",
 	"ruler-slider",
-	"segmented-control",
-	"confirm-action",
 	"tick-meter",
 	"texture-fill",
 ] as const;

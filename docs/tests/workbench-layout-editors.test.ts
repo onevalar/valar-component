@@ -1,7 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import {
-	applyTokenUtilities,
 	injectStyleClasses,
 	mergeStyleMaps,
 	parseStyleCss,
@@ -42,9 +41,7 @@ const installed = (component: string, style: string, css: string) => {
 	);
 	return readdirSync(resolve(`src/lib/registry/ui/${component}`)).map((target) => ({
 		target,
-		content: applyTokenUtilities(
-			injectStyleClasses(read(`src/lib/registry/ui/${component}/${target}`), map)
-		),
+		content: injectStyleClasses(read(`src/lib/registry/ui/${component}/${target}`), map),
 	}));
 };
 const classArgs = (source: string) => {

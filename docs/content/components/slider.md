@@ -89,7 +89,7 @@ For multiple thumbs, use `thumbLabels` in value order to distinguish each contro
 
 ## Keyboard Contract
 
-For `type="single"` with a numeric step, all four arrows change by step. Shift+arrows and PageUp/PageDown use `largeStep` (default twice step); Home/End reach the bounds. Ctrl, Meta and Alt combinations do not change the value or prevent application/browser shortcuts. Each changed value emits one onValueChange followed by one onValueCommit. Multiple-thumb and irregular-step keyboard movement stays with Bits UI. `aria-valuetext` is forwarded to each actual thumb.
+The default keyboard behavior comes from Bits UI. For a numeric single slider with an explicit `largeStep`, all four arrows change by step. Shift+arrows and PageUp/PageDown use `largeStep`; Home/End reach the bounds. Ctrl, Meta and Alt combinations do not change the value or prevent application/browser shortcuts. Each changed value emits one onValueChange followed by one onValueCommit. Multiple-thumb and irregular-step keyboard movement stays with Bits UI. `aria-valuetext` is forwarded to each actual thumb.
 
 ## Range
 

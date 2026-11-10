@@ -6,6 +6,4 @@
 - 附加内容放进 `InputGroup.Addon`，用 `align`（`inline-start`、`inline-end`、`block-start`、`block-end`）定位；纯文字用 `InputGroup.Text`。
 - 框内按钮用 `InputGroup.Button`，尺寸只用它的 `size`（`xs`、`sm`、`icon-xs`、`icon-sm`）；只有图标的按钮要有 `aria-label`（检查规则 `valar/button-size-via-prop`、`valar/icon-button-label`）。
 - 错误状态设在输入控件上（`aria-invalid="true"`），整个组合会显示错误边框。
-- `InputGroup.Button` 的 `outline`、`ghost` 样式文字用正常文字色，不会继承附加区的弱化色；不要为了“更淡”再给它加弱化色的 class，否则像不可点击。
-- 框内只有输入控件本身被禁用时整组才会变淡；发送按钮等其他按钮禁用（如消息为空）不会让整组变淡。
-- 框内图标按钮默认是圆形，需要胶囊用 `shape="pill"`；文字按钮保持默认圆角。上下两侧有附加栏（`block-start`、`block-end`）的多行输入框（如提示词输入框）会自动加大外框圆角，栏内按钮成为圆形或胶囊，与外框保持同心；不要自己用 class 改外框或按钮圆角。
+- 输入组合与按钮使用样式自带的圆角。需要胶囊按钮时显式设置 `shape="pill"`。

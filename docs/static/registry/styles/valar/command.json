@@ -94,7 +94,7 @@
 			"target": "command/command-link-item.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { Command as CommandPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\t...restProps\n\t}: CommandPrimitive.ListProps = $props();\n</script>\n\n<CommandPrimitive.List\n\tbind:ref\n\tdata-slot=\"command-list\"\n\tclass={cn(\"no-scrollbar max-h-72 scroll-py-1 outline-none scrollbar-stable overflow-x-hidden overflow-y-auto\", className)}\n\t{...restProps}\n/>\n",
+			"content": "<script lang=\"ts\">\n\timport { Command as CommandPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\t...restProps\n\t}: CommandPrimitive.ListProps = $props();\n</script>\n\n<CommandPrimitive.List\n\tbind:ref\n\tdata-slot=\"command-list\"\n\tclass={cn(\"no-scrollbar max-h-72 scroll-py-1 outline-none overflow-x-hidden overflow-y-auto\", className)}\n\t{...restProps}\n/>\n",
 			"type": "registry:file",
 			"target": "command/command-list.svelte"
 		},

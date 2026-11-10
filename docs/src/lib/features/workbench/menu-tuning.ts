@@ -36,7 +36,7 @@ const valuesSchema = z
 		itemPaddingY: z.number().int().min(2).max(12).multipleOf(2),
 		itemGap: z.number().int().min(4).max(16).multipleOf(2),
 		itemRadius: z.enum(RADIUS_CHOICES),
-		duration: z.enum(MOTION_TIERS),
+		duration: z.enum([STYLE_VALUE, ...MOTION_TIERS]),
 		zoom: z.enum(ZOOM_LEVELS),
 		slide: z.enum(SLIDE_DISTANCES),
 	})
@@ -125,7 +125,7 @@ export function parseMenuSource(
 			itemGap,
 			itemRadius: radius(item),
 			duration: (sourceWord("duration-(fast|normal|slow)", content) ??
-				"fast") as MenuValues["duration"],
+				STYLE_VALUE) as MenuValues["duration"],
 			zoom: (/data-open:zoom-in-(\d+)/.exec(content)?.[1] ?? "100") as MenuValues["zoom"],
 			slide: readSlide(content),
 		},
@@ -153,7 +153,7 @@ type Derived = {
 	panel: {
 		padding?: number;
 		radius?: RadiusLevel;
-		duration?: MenuValues["duration"];
+		duration?: Exclude<MenuValues["duration"], typeof STYLE_VALUE>;
 		zoom?: MenuValues["zoom"];
 		slide?: MenuValues["slide"];
 	};
@@ -182,7 +182,7 @@ function derive(overrides: MenuOverrides, context: MenuContext): Derived {
 		panel: {
 			padding: safe.padding,
 			radius: level(safe.radius),
-			duration: safe.duration,
+			duration: safe.duration === STYLE_VALUE ? undefined : safe.duration,
 			zoom: safe.zoom,
 			slide: safe.slide,
 		},
@@ -385,7 +385,10 @@ export function createMenuSpec<K extends keyof MenuValues = keyof MenuValues>(
 				kind: "select",
 				key: "duration",
 				label: "动效档位",
-				options: MOTION_TIERS.map((value) => ({ value, label: MOTION_TIER_LABELS[value] })),
+				options: [
+					{ value: STYLE_VALUE, label: "样式自带" },
+					...MOTION_TIERS.map((value) => ({ value, label: MOTION_TIER_LABELS[value] })),
+				],
 			},
 			{
 				kind: "select",

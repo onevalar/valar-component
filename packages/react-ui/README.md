@@ -43,7 +43,7 @@ Native primitives' full props and upstream component compositions are retained.
 ## Intentional Valar Adaptations
 
 - `Button`: native button/ref/`asChild` plus native anchor props via `href`;
-  `shape="auto" | "pill" | "square"`. Icon sizes are circular by default.
+  `shape="auto" | "pill" | "square"`. Icon sizes use the style’s default radius.
   Real buttons default to `type="button"`. Disabled href/asChild anchors lose
   their href, get `aria-disabled`, and leave the tab order.
 - `DialogContent` and `DialogFooter` accept `closeLabel` (default `关闭`).

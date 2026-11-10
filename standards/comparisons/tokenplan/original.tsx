@@ -1,6 +1,5 @@
 import SegmentedControl from "@source/components/arc/segmented-control/segmented-control";
 import { Button } from "@source/components/arc/button/button";
-import { ConfirmMorph } from "@source/components/arc/confirm-morph/confirm-morph";
 import { Gauge, GaugeArc } from "@source/components/arc/gauge/gauge";
 import { RulerSlider } from "@source/components/arc/ruler-slider/ruler-slider";
 import { StaticSparkline } from "@source/components/arc/sparkline/static-sparkline";
@@ -12,20 +11,7 @@ import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "@source/components/arc/foundation.css";
 import "./original.css";
-import {
-	seed,
-	ruler,
-	missing,
-	disabled,
-	fullWidth,
-	parts,
-	values,
-	options,
-	copy,
-	confirm,
-	undo,
-	log,
-} from "./fixtures";
+import { seed, ruler, missing, disabled, parts, values, options, log } from "./fixtures";
 
 function App() {
 	const [value, setValue] = useState(seed);
@@ -103,15 +89,6 @@ function App() {
 					setChoice(next);
 					log("selection", next);
 				}}
-			/>
-			<h3>ConfirmMorph</h3>
-			<ConfirmMorph
-				{...copy}
-				disabled={disabled}
-				fullWidth={fullWidth}
-				onConfirm={confirm}
-				onUndo={undo}
-				onStateChange={(next) => log("state", next)}
 			/>
 			<h3>Texture Fill</h3>
 			{(["dither", "lines", "halftone", "hatch", "solid"] as const).map((texture) => (

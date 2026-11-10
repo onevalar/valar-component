@@ -32,7 +32,7 @@ const valuesSchema = z
 		padding: z.number().int().min(4).max(32).multipleOf(2),
 		gap: z.number().int().min(4).max(32).multipleOf(2),
 		radius: z.enum(RADIUS_CHOICES),
-		duration: z.enum(MOTION_TIERS),
+		duration: z.enum([STYLE_VALUE, ...MOTION_TIERS]),
 		zoom: z.enum(ZOOM_LEVELS),
 		slide: z.enum(SLIDE_DISTANCES),
 	})
@@ -59,7 +59,7 @@ export function parsePopoverSource(files: { target: string; content: string }[])
 			gap: px(String.raw`gap-(\d+(?:\.5)?)`, 16),
 			radius: radius ?? STYLE_VALUE,
 			duration: (sourceWord("duration-(fast|normal|slow)", content) ??
-				"fast") as PopoverValues["duration"],
+				STYLE_VALUE) as PopoverValues["duration"],
 			zoom: (/data-open:zoom-in-(\d+)/.exec(content)?.[1] ?? "100") as PopoverValues["zoom"],
 			slide: readSlide(content),
 		},
@@ -80,7 +80,8 @@ function popoverCss(select: string, overrides: PopoverOverrides): string {
 	if (safe.gap !== undefined) content.push(`gap: ${safe.gap}px;`);
 	if (safe.radius !== undefined && safe.radius !== STYLE_VALUE)
 		content.push(`border-radius: ${radiusCss(safe.radius)};`);
-	if (safe.duration !== undefined) content.push(`animation-duration: ${tierVar(safe.duration)};`);
+	if (safe.duration !== undefined && safe.duration !== STYLE_VALUE)
+		content.push(`animation-duration: ${tierVar(safe.duration)};`);
 	if (safe.zoom !== undefined)
 		content.push(
 			`--tw-enter-scale: ${Number(safe.zoom) / 100}; --tw-exit-scale: ${Number(safe.zoom) / 100};`
@@ -99,7 +100,8 @@ export function popoverOverrideClasses(overrides: PopoverOverrides): Record<stri
 	if (safe.gap !== undefined) content.push(`gap-${spacing(safe.gap)}`);
 	if (safe.radius !== undefined && safe.radius !== STYLE_VALUE)
 		content.push(`rounded-${safe.radius}`);
-	if (safe.duration !== undefined) content.push(`duration-${safe.duration}`);
+	if (safe.duration !== undefined && safe.duration !== STYLE_VALUE)
+		content.push(`duration-${safe.duration}`);
 	if (safe.zoom !== undefined)
 		content.push(`data-open:zoom-in-${safe.zoom}`, `data-closed:zoom-out-${safe.zoom}`);
 	if (safe.slide !== undefined) content.push(...slideClasses(safe.slide));
@@ -145,10 +147,13 @@ export const POPOVER_SPEC: TunerSpec<PopoverValues, null> = {
 			kind: "select",
 			key: "duration",
 			label: "动效档位",
-			options: MOTION_TIERS.map((value) => ({
-				value,
-				label: MOTION_TIER_LABELS[value],
-			})),
+			options: [
+				{ value: STYLE_VALUE, label: "样式自带" },
+				...MOTION_TIERS.map((value) => ({
+					value,
+					label: MOTION_TIER_LABELS[value],
+				})),
+			],
 		},
 		{
 			kind: "select",

@@ -24,7 +24,7 @@
 				"icon-sm": "cn-button-size-icon-sm",
 				"icon-lg": "cn-button-size-icon-lg",
 			},
-			// Icon-only buttons are circles; `pill` makes any button a capsule and `square` keeps the
+			// The default uses the base radius; `pill` makes a button a capsule and `square` keeps the
 			// rounded square. Inside a ButtonGroup the group decides the corners, so none apply there.
 			shape: {
 				auto: "",
@@ -32,13 +32,6 @@
 				square: "",
 			},
 		},
-		compoundVariants: [
-			{
-				size: ["icon", "icon-xs", "icon-sm", "icon-lg"],
-				shape: "auto",
-				class: "not-in-data-[slot=button-group]:rounded-full",
-			},
-		],
 		defaultVariants: {
 			variant: "default",
 			size: "default",
@@ -54,7 +47,7 @@
 		WithElementRef<HTMLAnchorAttributes> & {
 			variant?: ButtonVariant;
 			size?: ButtonSize;
-			/** Icon-only buttons are circles by default; `pill` is a capsule, `square` a rounded square. */
+			/** `pill` is a capsule; `auto` and `square` use the base radius. */
 			shape?: ButtonShape;
 		};
 </script>
@@ -69,7 +62,7 @@
 		href = undefined,
 		type = "button",
 		disabled,
-		tabindex = 0,
+		tabindex,
 		children,
 		...restProps
 	}: ButtonProps = $props();

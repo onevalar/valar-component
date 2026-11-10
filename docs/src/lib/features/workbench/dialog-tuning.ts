@@ -36,7 +36,7 @@ const valuesSchema = z
 		gap: z.number().int().min(4).max(40).multipleOf(2),
 		radius: z.enum(RADIUS_CHOICES),
 		overlay: z.number().int().min(0).max(80).multipleOf(10),
-		duration: z.enum(MOTION_TIERS),
+		duration: z.enum([STYLE_VALUE, ...MOTION_TIERS]),
 		zoom: z.enum(ZOOM_LEVELS),
 	})
 	.strict();
@@ -70,7 +70,7 @@ export function parseDialogSource(files: { target: string; content: string }[]):
 			radius: radius ?? STYLE_VALUE,
 			overlay: Number(/bg-black\/(\d+)/.exec(overlay)?.[1] ?? 0),
 			duration: (sourceWord("duration-(fast|normal|slow)", content) ??
-				"fast") as DialogValues["duration"],
+				STYLE_VALUE) as DialogValues["duration"],
 			zoom: (/data-open:zoom-in-(\d+)/.exec(content)?.[1] ?? "100") as DialogValues["zoom"],
 		},
 		context: { footerBleed: /(?:^|\s)-mx-/.test(footer), footerRounded: /rounded-b-/.test(footer) },
@@ -115,7 +115,7 @@ function dialogCss(
 		if (context?.footerRounded)
 			footer.push(`border-bottom-left-radius: ${radius}; border-bottom-right-radius: ${radius};`);
 	}
-	if (safe.duration !== undefined) {
+	if (safe.duration !== undefined && safe.duration !== STYLE_VALUE) {
 		content.push(`animation-duration: ${tierVar(safe.duration)};`);
 		overlay.push(`animation-duration: ${tierVar(safe.duration)};`);
 	}
@@ -155,7 +155,7 @@ export function dialogOverrideClasses(
 		content.push(`rounded-${safe.radius}`);
 		if (context.footerRounded) footer.push(`rounded-b-${safe.radius}`);
 	}
-	if (safe.duration !== undefined) {
+	if (safe.duration !== undefined && safe.duration !== STYLE_VALUE) {
 		content.push(`duration-${safe.duration}`);
 		overlay.push(`duration-${safe.duration}`);
 	}
@@ -205,7 +205,10 @@ export const DIALOG_SPEC: TunerSpec<DialogValues, DialogContext> = {
 			kind: "select",
 			key: "duration",
 			label: "动效档位",
-			options: MOTION_TIERS.map((value) => ({ value, label: MOTION_TIER_LABELS[value] })),
+			options: [
+				{ value: STYLE_VALUE, label: "样式自带" },
+				...MOTION_TIERS.map((value) => ({ value, label: MOTION_TIER_LABELS[value] })),
+			],
 		},
 		{
 			kind: "select",

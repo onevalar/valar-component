@@ -31,13 +31,6 @@ const buttonVariants = cva(
 				square: "",
 			},
 		},
-		compoundVariants: [
-			{
-				size: ["icon", "icon-xs", "icon-sm", "icon-lg"],
-				shape: "auto",
-				className: "not-in-data-[slot=button-group]:rounded-full",
-			},
-		],
 		defaultVariants: {
 			variant: "default",
 			size: "default",

@@ -9,7 +9,7 @@ import {
 	transformMenu,
 	transformFont,
 } from "@valar/svelte-cli/transformers";
-import { applyTokenUtilities, injectStyleClasses } from "@valar/svelte-parity/inject-style-classes";
+import { injectStyleClasses } from "@valar/svelte-parity/inject-style-classes";
 import { createThemeCss, getValarStyleMap } from "../../../scripts/valar-style.ts";
 import { DEFAULT_CONFIG } from "../../cli/src/utils/config/schema.ts";
 
@@ -64,7 +64,7 @@ async function build() {
 			const target = path.join(output, style, relative);
 			let content = source;
 			if (/\.(svelte|ts)$/.test(file)) {
-				content = applyTokenUtilities(injectStyleClasses(content, styleMap));
+				content = injectStyleClasses(content, styleMap);
 				content = (
 					await transform(
 						{ content, filePath: file, config, supportedFontMarkers: ["cn-font-heading"] },

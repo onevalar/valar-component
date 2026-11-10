@@ -522,7 +522,6 @@
 		"type": "registry:ui",
 		"description": "在页面上展示月历并选择日期。",
 		"registryDependencies": [
-			"popover",
 			"button"
 		],
 		"meta": {
@@ -938,47 +937,6 @@
 			}
 		},
 		"relativeUrl": "command.json"
-	},
-	{
-		"name": "confirm-action",
-		"title": "Confirm Action 行内确认",
-		"type": "registry:ui",
-		"description": "支持异步等待、失败重试、撤销和本地化文案的行内操作确认。",
-		"registryDependencies": [
-			"button",
-			"spinner"
-		],
-		"meta": {
-			"valar": {
-				"keywords": [
-					"confirm",
-					"确认",
-					"删除",
-					"retry",
-					"undo"
-				],
-				"whenToUse": [
-					"简单重要或破坏性操作需要在原位确认和反馈结果"
-				],
-				"whenNotToUse": [
-					{
-						"case": "复杂说明、表单或必须阻塞的确认",
-						"use": "alert-dialog"
-					}
-				],
-				"accessibility": [
-					"原生按钮、Escape 取消、焦点连续性和可本地化的状态播报"
-				],
-				"responsive": [
-					"fullWidth 充满行宽，长提示和按钮可换行"
-				],
-				"related": [
-					"button",
-					"alert-dialog"
-				]
-			}
-		},
-		"relativeUrl": "confirm-action.json"
 	},
 	{
 		"name": "context-menu",
@@ -2330,7 +2288,6 @@
 		"type": "registry:ui",
 		"description": "在月历上选择开始和结束日期。",
 		"registryDependencies": [
-			"popover",
 			"button"
 		],
 		"meta": {
@@ -2497,49 +2454,6 @@
 			}
 		},
 		"relativeUrl": "scroll-area.json"
-	},
-	{
-		"name": "segmented-control",
-		"title": "Segmented Control 分段选择",
-		"type": "registry:ui",
-		"description": "组合现有 ToggleGroup 的单选分段控件，选中项不会被再次点击清空。",
-		"registryDependencies": [
-			"toggle-group"
-		],
-		"meta": {
-			"valar": {
-				"keywords": [
-					"segmented",
-					"分段",
-					"单选",
-					"toggle"
-				],
-				"whenToUse": [
-					"切换同一视图的数据口径、尺度等少量互斥选项"
-				],
-				"whenNotToUse": [
-					{
-						"case": "切换关联的标签面板",
-						"use": "tabs"
-					},
-					{
-						"case": "选项可以多选或全部取消",
-						"use": "toggle-group"
-					}
-				],
-				"accessibility": [
-					"沿用 Bits UI 单选语义；方向键、Home、End 移动焦点并选择"
-				],
-				"responsive": [
-					"选项超宽时内部横向滚动，不隐藏必要内容"
-				],
-				"related": [
-					"toggle-group",
-					"tabs"
-				]
-			}
-		},
-		"relativeUrl": "segmented-control.json"
 	},
 	{
 		"name": "select",

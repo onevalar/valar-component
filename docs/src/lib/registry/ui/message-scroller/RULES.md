@@ -5,4 +5,3 @@
 - `MessageScroller.Content` 的每个直接子元素都包一层 `MessageScroller.Item`，并设稳定的 `messageId`（消息 id，不要用数组下标）。
 - 用 `scrollAnchor` 标记开启新一轮对话的行（通常是用户的消息），新一轮会停在视口上方并保留上一轮的一部分；输入提示、加载更多等行不要设为锚点。
 - 不要自动滚到底部打断阅读；跳到指定消息用 `useMessageScroller` 提供的方法。
-- 视口已用 `scrollbar-stable`：滚动条出现或消失时消息不会左右移动；不要给 `MessageScroller.Viewport` 另加 `overflow-*` 或 `scrollbar-*` 类。

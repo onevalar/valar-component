@@ -15,22 +15,22 @@
 		...restProps
 	}: WithoutChildrenOrChild<SliderPrimitive.RootProps> & {
 		thumbLabels?: string[];
-		/** Scalar keyboard Page/Shift step; defaults to twice the numeric step. */
+		/** Opt in to custom scalar keyboard navigation with this Page/Shift step. */
 		largeStep?: number;
 	} = $props();
 
 	function keyboard(event: KeyboardEvent, fallback: unknown) {
 		// Leave app/browser shortcuts untouched, including their defaultPrevented state.
-		if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
-		if (restProps.type !== "single" || Array.isArray(restProps.step)) {
+		if (largeStep === undefined || restProps.type !== "single" || Array.isArray(restProps.step)) {
 			if (typeof fallback === "function") fallback(event);
 			return;
 		}
+		if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
 		if (restProps.disabled || typeof value !== "number") return;
 		const min = restProps.min ?? 0,
 			max = restProps.max ?? 100,
 			step = restProps.step ?? 1;
-		const large = largeStep ?? step * 2;
+		const large = largeStep;
 		const delta = ["ArrowRight", "ArrowUp"].includes(event.key)
 			? event.shiftKey
 				? large

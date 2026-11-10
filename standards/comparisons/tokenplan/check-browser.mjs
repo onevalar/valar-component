@@ -34,7 +34,6 @@ try {
 		["overflow", "dark", "320", "rtl"],
 		["missing", "light", "480", "ltr"],
 		["disabled", "dark", "320", "ltr"],
-		["failure", "light", "480", "ltr"],
 	];
 	for (const [scenario, theme, width, direction] of cases) {
 		for (const [id, value] of Object.entries({ scenario, theme, width, direction }))
@@ -90,47 +89,8 @@ try {
 			scenario === "missing" ? 1 : 0
 		);
 		if (scenario === "disabled") {
-			assert.ok(await target.getByRole("radio", { name: "Cost" }).isDisabled());
-			assert.ok(await target.getByRole("button", { name: "Remove", exact: true }).isDisabled());
+			assert.ok(await target.getByRole("tab", { name: "Cost" }).isDisabled());
 		} else if (scenario === "normal" && theme === "light") {
-			const idle = target.getByRole("button", { name: "Remove", exact: true });
-			const hit = await idle.boundingBox();
-			const group = await target.locator('[data-slot="confirm-action"]').boundingBox();
-			assert.ok(
-				hit.height >= 44 && Math.abs(hit.width - group.width) < 2,
-				`Full-width hit area: ${JSON.stringify({ hit, group })}`
-			);
-			const transparency = target.getByRole("slider", { name: "Transparency" });
-			await transparency.focus();
-			for (const [key, next] of [
-				["ArrowRight", 65],
-				["ArrowUp", 70],
-				["ArrowLeft", 65],
-				["ArrowDown", 60],
-				["Shift+ArrowRight", 70],
-				["Shift+ArrowLeft", 60],
-				["PageUp", 70],
-				["PageDown", 60],
-				["Home", 20],
-				["End", 100],
-			]) {
-				await transparency.press(key);
-				assert.equal(await transparency.getAttribute("aria-valuenow"), String(next));
-			}
-			assert.ok(
-				await transparency.evaluate((node) =>
-					["altKey", "ctrlKey", "metaKey"].every((modifier) => {
-						const event = new KeyboardEvent("keydown", {
-							key: "ArrowLeft",
-							[modifier]: true,
-							bubbles: true,
-							cancelable: true,
-						});
-						node.dispatchEvent(event);
-						return !event.defaultPrevented && node.getAttribute("aria-valuenow") === "100";
-					})
-				)
-			);
 			for (const frame of [original, target]) {
 				const reference = frame.getByRole("slider", { name: "Reference", exact: true });
 				await reference.focus();
@@ -138,46 +98,10 @@ try {
 				assert.equal(await reference.getAttribute("aria-valuenow"), "66");
 				await frame.getByLabel("External Value").fill("82");
 				assert.equal(await reference.getAttribute("aria-valuenow"), "82");
-				await frame.getByText("Cost", { exact: true }).click();
-				await frame.getByText("Cost", { exact: true }).click();
-				assert.ok((await frame.locator("#events").textContent()).includes('selection: "cost"'));
-				await frame.getByRole("button", { name: "Remove", exact: true }).click();
-				assert.ok(
-					await frame
-						.getByRole("button", { name: "Yes", exact: true })
-						.evaluate((node) => node === document.activeElement)
-				);
-				await frame.getByRole("button", { name: "Yes", exact: true }).press("Shift+Tab");
-				assert.ok(
-					await frame
-						.getByRole("button", { name: "Cancel", exact: true })
-						.evaluate((node) => node === document.activeElement)
-				);
-				await page.waitForTimeout(350);
-				await frame.getByRole("button", { name: "Yes", exact: true }).click();
-				if (frame === target) {
-					const spinner = frame.locator('[data-slot="spinner"]');
-					await spinner.waitFor();
-					assert.equal(
-						await spinner.evaluate((node) => getComputedStyle(node).animationName),
-						"none"
-					);
-					assert.equal(await frame.getByRole("status").textContent(), "Removing…");
-				}
-				await frame.getByRole("button", { name: "Undo", exact: true }).waitFor();
-				await frame.getByRole("button", { name: "Undo", exact: true }).click();
-				await frame.getByRole("button", { name: "Remove", exact: true }).waitFor();
 			}
-		} else if (scenario === "failure") {
-			for (const frame of [original, target]) {
-				await frame.getByRole("button", { name: "Remove", exact: true }).click();
-				await page.waitForTimeout(350);
-				await frame.getByRole("button", { name: "Yes", exact: true }).click();
-				await frame.getByRole("button", { name: "Retry", exact: true }).waitFor();
-				assert.ok((await frame.locator("#events").textContent()).includes('state: "error"'));
-				await frame.getByRole("button", { name: "Retry", exact: true }).press("Escape");
-				await frame.getByRole("button", { name: "Remove", exact: true }).waitFor();
-			}
+			const cost = target.getByRole("tab", { name: "Cost", exact: true });
+			await cost.click();
+			assert.equal(await cost.getAttribute("aria-selected"), "true");
 		}
 		if (scenario === "overflow" || (scenario === "normal" && theme === "light")) {
 			for (const frame of [original, target]) await frame.evaluate(() => window.scrollTo(0, 0));
@@ -194,7 +118,7 @@ try {
 		checks: results,
 		errors,
 		scope:
-			"Real original and target mounts, five canvas textures, clamped meter ARIA with overflow valueText, 60 independent SVG ticks, boundary/disabled states, external updates, selection, scalar all-arrow/Shift/Page/Home/End keys and modifier pass-through, fullWidth idle >=44px hit area, Confirm-first/Shift+Tab Cancel focus, stopped reduced-motion pending Spinner, async success/undo/failure/Escape. No pixel-equivalence or screen-reader claim.",
+			"Original and target graphics, textures, ruler keyboard and external updates, independent tick meter, and native target Tabs selection.",
 	};
 	await writeFile(`${artifacts}/tokenplan-browser.json`, `${JSON.stringify(report, null, 2)}\n`);
 	console.log(JSON.stringify(report, null, 2));

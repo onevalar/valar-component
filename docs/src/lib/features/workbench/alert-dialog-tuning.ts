@@ -22,7 +22,7 @@ const valuesSchema = z
 		gap: z.number().int().min(4).max(40).multipleOf(2),
 		radius: z.enum(RADIUS_CHOICES),
 		overlay: z.number().int().min(0).max(80).multipleOf(10),
-		duration: z.enum(MOTION_TIERS),
+		duration: z.enum([STYLE_VALUE, ...MOTION_TIERS]),
 		zoom: z.enum(ZOOM_LEVELS),
 	})
 	.strict();
@@ -54,7 +54,7 @@ export function parseAlertDialogSource(files: { target: string; content: string 
 			gap: pixels("gap"),
 			radius: sourceWord(`rounded-(${RADIUS_LEVELS.join("|")})`, content) ?? STYLE_VALUE,
 			overlay: Number(/bg-black\/(\d+)/.exec(overlay)?.[1]),
-			duration: sourceWord("duration-(fast|normal|slow)", content),
+			duration: sourceWord("duration-(fast|normal|slow)", content) ?? STYLE_VALUE,
 			zoom: /data-open:zoom-in-(\d+)/.exec(content)?.[1],
 		}),
 		context: { footerBleed: /(?:^|\s)-mx-/.test(footer), footerRounded: /rounded-b-/.test(footer) },
@@ -84,7 +84,7 @@ export function alertDialogOverrideClasses(
 		content.push(`rounded-${safe.radius}`);
 		if (context?.footerRounded) footer.push(`rounded-b-${safe.radius}`);
 	}
-	if (safe.duration !== undefined) {
+	if (safe.duration !== undefined && safe.duration !== STYLE_VALUE) {
 		content.push(`duration-${safe.duration}`);
 		overlay.push(`duration-${safe.duration}`);
 	}
@@ -131,7 +131,7 @@ function alertDialogCss(
 				`border-bottom-left-radius: ${radiusCss(safe.radius)}; border-bottom-right-radius: ${radiusCss(safe.radius)};`
 			);
 	}
-	if (safe.duration !== undefined) {
+	if (safe.duration !== undefined && safe.duration !== STYLE_VALUE) {
 		content.push(`animation-duration: ${tierVar(safe.duration)};`);
 		overlay.push(`animation-duration: ${tierVar(safe.duration)};`);
 	}
@@ -186,7 +186,10 @@ export const ALERT_DIALOG_SPEC: TunerSpec<AlertDialogValues, AlertDialogContext>
 			kind: "select",
 			key: "duration",
 			label: "动效档位",
-			options: MOTION_TIERS.map((value) => ({ value, label: MOTION_TIER_LABELS[value] })),
+			options: [
+				{ value: STYLE_VALUE, label: "样式自带" },
+				...MOTION_TIERS.map((value) => ({ value, label: MOTION_TIER_LABELS[value] })),
+			],
 		},
 		{
 			kind: "select",

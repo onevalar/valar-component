@@ -29,8 +29,6 @@ const freeInputs = [
 	"components/arc/ruler-slider/ruler-slider.module.css",
 	"components/arc/segmented-control/segmented-control.tsx",
 	"components/arc/segmented-control/segmented-control.module.css",
-	"components/arc/confirm-morph/confirm-morph.tsx",
-	"components/arc/confirm-morph/confirm-morph.module.css",
 ];
 for (const input of freeInputs) {
 	const content = execFileSync("git", ["show", `${revision}:platforms/tauri/src/${input}`], {

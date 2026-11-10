@@ -3,7 +3,6 @@ import path from "node:path";
 import { BASE_THEMES } from "../docs/src/lib/registry/themes.ts";
 import { transformCss } from "../packages/cli/src/utils/transform-css.ts";
 import {
-	applyTokenUtilities,
 	injectStyleClasses,
 	mergeStyleMaps,
 	parseStyleCss,
@@ -19,7 +18,7 @@ export function getValarStyleMap(root: string, style = "valar"): Record<string, 
 }
 
 export function styleSource(source: string, styleMap: Record<string, string>): string {
-	return applyTokenUtilities(injectStyleClasses(source, styleMap))
+	return injectStyleClasses(source, styleMap)
 		.replace(/\bcn-font-heading\b/g, "font-heading")
 		.replace(/\bcn-menu-(?:target|translucent)\b/g, "");
 }

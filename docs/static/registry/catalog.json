@@ -516,7 +516,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/button",
 			"install": "pnpm exec valar-svelte add button",
 			"markdown": "# Button 按钮\n\n触发一个操作或跳转，是界面里最常见的可点击元素。\n\n- 分类：操作\n- 关键词：按钮、button、提交、CTA、操作、点击\n- 安装：`pnpm exec valar-svelte add button`\n\n## 何时使用\n\n- 提交表单、确认、保存等明确操作\n- 需要像按钮一样的链接（传 href）\n\n## 何时不用\n\n- 在一组互斥选项间切换：改用 `toggle-group`\n- 开关某个设置：改用 `switch`\n- 一行内的纯文字链接\n\n## 无障碍\n\n- 只有图标时必须加 aria-label\n- 禁用时用 disabled，不要只改颜色\n\n## 响应式\n\n- 触屏场景至少使用 default 尺寸，避免误触\n- 窄屏下主操作可占满整行\n\n## 相关组件\n\n- `button-group`\n- `toggle`\n- `alert-dialog`\n",
-			"rules": "# Button 设计规范\n\n- 一个区域（卡片、弹窗底部、表单）最多一个 `variant=\"default\"` 实心主按钮；其余操作用 `outline`、`secondary` 或 `ghost`。\n- 不可撤销的危险操作用 `variant=\"destructive\"`，并先用 Alert Dialog 确认。\n- 尺寸只用 `size` 属性（`xs`、`sm`、`default`、`lg`，图标按钮用 `icon`、`icon-sm` 等）；不要用 `class` 写高度、内边距或圆角（检查规则 `valar/button-size-via-prop`）。\n- 只有图标的按钮必须有 `aria-label`（检查规则 `valar/icon-button-label`）。\n- 跳转用 `href`，不要在按钮里再包一个链接；表单提交用 `type=\"submit\"`。\n- 默认显式 `tabindex=0`，保证 macOS WebKit 在系统默认键盘偏好下可通过 Tab 和指针获得焦点；尊重调用方 `tabindex`，禁用时为 -1 且保持原生 disabled／链接禁用语义。\n- 不要用原生 `<button>` 或自己写样式的元素冒充按钮（检查规则 `valar/use-button-component`）。\n- 形状用 `shape` 属性：只有图标的按钮默认是圆形；需要胶囊（如输入框里的模型、思考强度选择）设 `shape=\"pill\"`；要保持圆角方块设 `shape=\"square\"`。文字按钮、图标加文字按钮保持默认圆角，不要全部做成胶囊。\n- 同心圆角：按钮放进有圆角的容器时，按钮圆角约等于容器圆角减去两者间距；圆形和胶囊按钮不得顶出容器的圆角。在 ButtonGroup 内圆角由按钮组决定，`shape` 不生效。\n"
+			"rules": "# Button 设计规范\n\n- 一个区域（卡片、弹窗底部、表单）最多一个 `variant=\"default\"` 实心主按钮；其余操作用 `outline`、`secondary` 或 `ghost`。\n- 不可撤销的危险操作用 `variant=\"destructive\"`，并先用 Alert Dialog 确认。\n- 尺寸只用 `size` 属性（`xs`、`sm`、`default`、`lg`，图标按钮用 `icon`、`icon-sm` 等）；不要用 `class` 写高度、内边距或圆角（检查规则 `valar/button-size-via-prop`）。\n- 只有图标的按钮必须有 `aria-label`（检查规则 `valar/icon-button-label`）。\n- 跳转用 `href`，不要在按钮里再包一个链接；表单提交用 `type=\"submit\"`。\n- 不要用原生 `<button>` 或自己写样式的元素冒充按钮（检查规则 `valar/use-button-component`）。\n- 图标按钮使用原有默认圆角。需要胶囊形时显式设置 `shape=\"pill\"`。\n- 同心圆角：按钮放进有圆角的容器时，按钮圆角约等于容器圆角减去两者间距；圆形和胶囊按钮不得顶出容器的圆角。在 ButtonGroup 内圆角由按钮组决定，`shape` 不生效。\n"
 		},
 		{
 			"name": "button-group",
@@ -618,7 +618,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/calendar",
 			"install": "pnpm exec valar-svelte add calendar",
 			"markdown": "# Calendar 日历\n\n在页面上展示月历并选择日期。\n\n- 分类：表单\n- 关键词：日历、calendar、日期选择、date picker、选择日期\n- 安装：`pnpm exec valar-svelte add calendar`\n\n## 何时使用\n\n- 直接在页面上选择一个或多个日期\n- 与 popover 组合成日期选择器\n- captionLayout=dropdown 用下拉选择月份和年份\n\n## 何时不用\n\n- 选择开始和结束日期：改用 `range-calendar`\n- 页面空间有限，点击后再弹出日历：改用 `popover`\n\n## 无障碍\n\n- 保留 Bits UI 的键盘操作（方向键移动日期、回车选择）\n- locale 默认 zh-CN，其他语言要设置 locale，日期使用 @internationalized/date\n\n## 响应式\n\n- 用 --cell-size 控制格子大小，可按断点设置不同值\n- 显示多个月份时窄屏应减少月数\n\n## 相关组件\n\n- `range-calendar`\n- `popover`\n- `input`\n",
-			"rules": "# Calendar 设计规范\n\n- 值是 `@internationalized/date` 的日期对象（如 `CalendarDate`、`today(getLocalTimeZone())`），不是 JavaScript `Date`；用 `bind:value` 绑定，并设 `type=\"single\"` 或 `type=\"multiple\"`。\n- 默认 `locale=\"zh-CN\"`，月份和星期显示中文；其他语言的界面传对应 `locale`（如 `en-US`）；需要周一开始时设 `weekStartsOn={1}`。\n- 可选范围用 `minValue`、`maxValue`，不可选的日期用 `isDateDisabled`；不要只在提交时才拒绝。\n- 生日等跨度很大的日期用 `captionLayout=\"dropdown\"` 提供年月下拉，不要让用户一个月一个月翻。\n- 日期选择框（Date Picker）用 Popover + Calendar，触发按钮显示已选日期，照日期选择器文档的组合写法；选择日期区间用 Range Calendar。\n- 不要用 `class` 改日期格子的尺寸和圆角，它们跟随组件样式。\n- `captionLayout=\"dropdown\"` 的月份和年份是弹出的网格（月份 3×4，年份一次 12 个、可翻页），不是浏览器自带的长列表；年份跨度很大时用 `minValue`、`maxValue` 或 `years` 限定范围（如生日设为 1920 年到今年），翻页才不会太多。\n- 格子默认 36px、整体约 270px 宽，不要为了省空间缩小它；放进窄容器时用 `--cell-size` 按断点调整，而不是让日历被压扁。\n- 选中日期是实心主色底、反色数字；不要给日期格子加会改文字颜色的悬停样式，否则选中后鼠标停在上面会变成一个黑块。\n"
+			"rules": "# Calendar 设计规范\n\n- 值是 `@internationalized/date` 的日期对象（如 `CalendarDate`、`today(getLocalTimeZone())`），不是 JavaScript `Date`；用 `bind:value` 绑定，并设 `type=\"single\"` 或 `type=\"multiple\"`。\n- 默认 `locale=\"zh-CN\"`，月份和星期显示中文；其他语言的界面传对应 `locale`（如 `en-US`）；需要周一开始时设 `weekStartsOn={1}`。\n- 可选范围用 `minValue`、`maxValue`，不可选的日期用 `isDateDisabled`；不要只在提交时才拒绝。\n- 生日等跨度很大的日期用 `captionLayout=\"dropdown\"` 提供年月下拉，不要让用户一个月一个月翻。\n- 日期选择框（Date Picker）用 Popover + Calendar，触发按钮显示已选日期，照日期选择器文档的组合写法；选择日期区间用 Range Calendar。\n- 不要用 `class` 改日期格子的尺寸和圆角，它们跟随组件样式。\n- `captionLayout=\"dropdown\"` 使用原有月份和年份选择器。用 `minValue`、`maxValue` 或 `years` 限定范围。\n- 使用样式自带的格子尺寸。需要调整时通过 `--cell-size` 显式设置。\n- 选中日期是实心主色底、反色数字；不要给日期格子加会改文字颜色的悬停样式，否则选中后鼠标停在上面会变成一个黑块。\n"
 		},
 		{
 			"name": "card",
@@ -875,7 +875,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/code-block",
 			"install": "pnpm exec valar-svelte add code-block",
 			"markdown": "# Code Block 代码块\n\n展示代码、终端输出和 diff，可带标题栏、行号和复制按钮。\n\n- 分类：展示\n- 关键词：代码块、code block、代码、终端输出、diff、语法高亮\n- 安装：`pnpm exec valar-svelte add code-block`\n\n## 何时使用\n\n- 展示代码片段、终端输出、日志或 diff\n- 在消息或 trace 中显示工具输出（流式追加时只高亮新行）\n\n## 何时不用\n\n- 显示键盘按键或快捷键：改用 `kbd`\n- 行列结构化数据：改用 `table`\n\n## 无障碍\n\n- 内容区可聚焦，键盘可滚动；浮动操作在获得焦点时也会显示\n- 复制按钮默认名称“复制”／“已复制”，其他语言用 copyLabel、copiedLabel 改\n- diff 行带 +／− 标记，不只靠颜色；换行切换按钮要设 aria-pressed\n\n## 响应式\n\n- 默认不换行、横向滚动；窄屏可开启 wrap\n- 内容始终从左到右显示，标题栏跟随页面方向\n\n## 相关组件\n\n- `trace`\n- `message`\n- `kbd`\n",
-			"rules": "# Code Block 设计规范\n\n- 用于展示代码和命令；行内的短代码用 `<code>`，键盘按键用 Kbd。\n- 代码文本传给 `CodeBlock.Content` 的 `code` 属性，需要行号时设 `lineNumbers`（可配合 `startLine`），长行需要换行时设 `wrap`；不要手写行号。\n- 复制按钮用 `CodeBlock.CopyButton` 并传 `value`；读屏名称和复制后的提示默认是中文（“复制”“已复制”），其他语言用 `copyLabel`、`copiedLabel` 改。\n- 文件名或语言写在 `CodeBlock.Header` 的 `CodeBlock.Title` 中；出错的输出用 `variant=\"destructive\"`，同时在文字中说明错误。\n- 紧凑场景用 `size=\"sm\"`；代码内容固定从左到右排版，不要改 `dir`。\n- 代码区已用 `scrollbar-stable`（纵向位置预留）；很长的单行代码会出现原生横向滚动条，它只在内容超宽时出现，不要自己再包一层 `overflow-x-*`。\n"
+			"rules": "# Code Block 设计规范\n\n- 用于展示代码和命令；行内的短代码用 `<code>`，键盘按键用 Kbd。\n- 代码文本传给 `CodeBlock.Content` 的 `code` 属性，需要行号时设 `lineNumbers`（可配合 `startLine`），长行需要换行时设 `wrap`；不要手写行号。\n- 复制按钮用 `CodeBlock.CopyButton` 并传 `value`；读屏名称和复制后的提示默认是中文（“复制”“已复制”），其他语言用 `copyLabel`、`copiedLabel` 改。\n- 文件名或语言写在 `CodeBlock.Header` 的 `CodeBlock.Title` 中；出错的输出用 `variant=\"destructive\"`，同时在文字中说明错误。\n- 紧凑场景用 `size=\"sm\"`；代码内容固定从左到右排版，不要改 `dir`。\n"
 		},
 		{
 			"name": "collapsible",
@@ -1025,49 +1025,6 @@
 			"install": "pnpm exec valar-svelte add command",
 			"markdown": "# Command 命令菜单\n\n可输入筛选的命令列表，用于命令面板（⌘K）和快速搜索选择。\n\n- 分类：操作\n- 关键词：命令面板、command、command palette、cmdk、搜索、快速操作、combobox\n- 安装：`pnpm exec valar-svelte add command`\n\n## 何时使用\n\n- 命令面板：搜索并执行操作或跳转页面（Command.Dialog）\n- 在大量选项中按关键字筛选，可放进 popover 组成可搜索的选择框\n\n## 何时不用\n\n- 选项不多、不需要搜索的选择：改用 `select`\n- 少量固定操作：改用 `dropdown-menu`\n- 页面主导航：改用 `navigation-menu`\n\n## 无障碍\n\n- 保留 Bits UI 的键盘操作（上下键移动、回车选择）和输入过滤\n- Command.Dialog 自带视觉隐藏的标题和描述，默认中文，可传入 title、description 改\n- 用 Command.Empty 告知没有匹配结果\n\n## 响应式\n\n- 列表在固定高度内滚动\n- ⌘K 快捷键在触屏设备上不可用，要提供可见的打开按钮\n\n## 相关组件\n\n- `dialog`\n- `popover`\n- `select`\n",
 			"rules": "# Command 设计规范\n\n- 用于可搜索的命令或选项列表：命令面板用 `Command.Dialog`，可搜索的下拉选择（Combobox）用 Popover + `Command.Root`。选项少、不需要搜索时用 Select。\n- 列表必须有 `Command.Empty`，写明没有结果时该怎么做（如“没有匹配的项目，换个关键词试试”）。\n- `Command.Input` 的 `placeholder` 说明能搜什么；它不是标签，需要时用 `aria-label` 命名。\n- 每个 `Command.Item` 设稳定的 `value`，搜索不到的同义词放在 `keywords`；选中后的动作写在 `onSelect`。跳转页面用 `Command.LinkItem`。\n- `Command.Dialog` 的 `title`、`description` 只给读屏器读，默认是“命令面板”“搜索要执行的命令”；能更具体时传自己的值。打开面板的快捷键要自己绑定，`Command.Shortcut` 只显示文字。\n- 用分组 `Command.Group`（设 `heading`）和 `Command.Separator` 组织长列表；异步加载时用 `Command.Loading`。\n"
-		},
-		{
-			"name": "confirm-action",
-			"type": "registry:ui",
-			"title": "Confirm Action 行内确认",
-			"description": "支持异步等待、失败重试、撤销和本地化文案的行内操作确认。",
-			"categories": [
-				"操作"
-			],
-			"meta": {
-				"valar": {
-					"keywords": [
-						"confirm",
-						"确认",
-						"删除",
-						"retry",
-						"undo"
-					],
-					"whenToUse": [
-						"简单重要或破坏性操作需要在原位确认和反馈结果"
-					],
-					"whenNotToUse": [
-						{
-							"case": "复杂说明、表单或必须阻塞的确认",
-							"use": "alert-dialog"
-						}
-					],
-					"accessibility": [
-						"原生按钮、Escape 取消、焦点连续性和可本地化的状态播报"
-					],
-					"responsive": [
-						"fullWidth 充满行宽，长提示和按钮可换行"
-					],
-					"related": [
-						"button",
-						"alert-dialog"
-					]
-				}
-			},
-			"docs": "http://127.0.0.1:5186/docs/components/confirm-action",
-			"install": "pnpm exec valar-svelte add confirm-action",
-			"markdown": "# Confirm Action 行内确认\n\n支持异步等待、失败重试、撤销和本地化文案的行内操作确认。\n\n- 分类：操作\n- 关键词：confirm、确认、删除、retry、undo\n- 安装：`pnpm exec valar-svelte add confirm-action`\n\n## 何时使用\n\n- 简单重要或破坏性操作需要在原位确认和反馈结果\n\n## 何时不用\n\n- 复杂说明、表单或必须阻塞的确认：改用 `alert-dialog`\n\n## 无障碍\n\n- 原生按钮、Escape 取消、焦点连续性和可本地化的状态播报\n\n## 响应式\n\n- fullWidth 充满行宽，长提示和按钮可换行\n\n## 相关组件\n\n- `button`\n- `alert-dialog`\n",
-			"rules": "# Confirm Action Design Rules\n\n- Inline confirmation is for focused reversible/destructive actions; complex consent belongs in AlertDialog.\n- Localize label, prompt, confirmLabel, cancelLabel, pendingLabel, doneLabel, errorLabel, retryLabel and optional undo/countdown/hold/status labels.\n- State: idle → confirming → pending (promise) → done/error. Retry repeats the failed operation. Pending cannot submit twice; Undo is offered only when onUndo exists.\n- Cancel, Escape and outside press dismiss the question. Disabled applies to every face, not only the initial button.\n- Timeouts pause on hover, focus within or hidden document; zero disables them. Controlled state requires acknowledging onStateChange; control mode must not change while mounted.\n- Existing Valar Button supplies native onclick semantics; no modal focus trap or source motion runtime is introduced.\n- Independently authored state-shape feedback uses measured native Web Animations: 120ms size/physical-radius envelope, 80ms incoming content and 60ms outgoing visual. Retarget interrupted paint; actions/events/focus never await animation. Real controls remain unscaled and unclipped. Outgoing visuals are inert/aria-hidden, never extra live regions or focus targets. This is a Valar visual adaptation, not a copy or equivalence claim.\n- Reduced motion switches directly, including a preference change during flight. Resize/unmount cancel and clean up the envelope, content styles and outgoing visual. Equal natural state geometry is not artificially pulsed; content still transitions normally.\n- fullWidth idle has no root border/padding inset: the actual button spans the containing zone (<2px width difference) and is at least 44px tall. Confirmation keeps Confirm-first focus; Shift+Tab reaches Cancel. Pending retains a visible Spinner that stops under reduced motion. Hold uses the real Space key (\" \"), never the empty string; early release cancels.\n"
 		},
 		{
 			"name": "context-menu",
@@ -1683,7 +1640,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/input-group",
 			"install": "pnpm exec valar-svelte add input-group",
 			"markdown": "# Input Group 输入组\n\n给输入框或多行文本框加上图标、文字、按钮等前后缀内容。\n\n- 分类：表单\n- 关键词：输入组、input group、前缀、后缀、addon、搜索框\n- 安装：`pnpm exec valar-svelte add input-group`\n\n## 何时使用\n\n- 输入框带前后缀图标、单位、按钮或快捷键提示，如搜索框、复制链接\n- 多行文本框带底部操作栏（InputGroup.Textarea）\n\n## 何时不用\n\n- 没有附加内容的普通输入：改用 `input`\n- 几个按钮拼在一起：改用 `button-group`\n- 标签、说明和错误信息：改用 `field`\n\n## 无障碍\n\n- InputGroup.Addon 在 DOM 中放在 Input／Textarea 之后，用 align 调整视觉位置，保证焦点顺序\n- 只有图标的 InputGroup.Button 要加 aria-label\n- 仍需用 Field 提供可见标签\n\n## 响应式\n\n- 整组占满容器宽度，附加内容过多会在窄屏挤压输入区\n- align=block-start／block-end 把附加内容放到输入区上方或下方\n\n## 相关组件\n\n- `input`\n- `textarea`\n- `button-group`\n",
-			"rules": "# Input Group 设计规范\n\n- 输入框前后需要图标、文字、按钮或快捷键提示时，用 `InputGroup.Root` 组合，不要用绝对定位把元素压在 Input 上。\n- 框内的输入控件必须用 `InputGroup.Input` 或 `InputGroup.Textarea`，不要放普通 Input；组合的边框、焦点环和错误状态都按这两个控件计算。\n- 输入控件同样需要标签：设 `id` 并用 `Field.Label for={id}` 关联，或提供 `aria-label`；搜索框也不例外（检查规则 `valar/input-label`）。\n- 附加内容放进 `InputGroup.Addon`，用 `align`（`inline-start`、`inline-end`、`block-start`、`block-end`）定位；纯文字用 `InputGroup.Text`。\n- 框内按钮用 `InputGroup.Button`，尺寸只用它的 `size`（`xs`、`sm`、`icon-xs`、`icon-sm`）；只有图标的按钮要有 `aria-label`（检查规则 `valar/button-size-via-prop`、`valar/icon-button-label`）。\n- 错误状态设在输入控件上（`aria-invalid=\"true\"`），整个组合会显示错误边框。\n- `InputGroup.Button` 的 `outline`、`ghost` 样式文字用正常文字色，不会继承附加区的弱化色；不要为了“更淡”再给它加弱化色的 class，否则像不可点击。\n- 框内只有输入控件本身被禁用时整组才会变淡；发送按钮等其他按钮禁用（如消息为空）不会让整组变淡。\n- 框内图标按钮默认是圆形，需要胶囊用 `shape=\"pill\"`；文字按钮保持默认圆角。上下两侧有附加栏（`block-start`、`block-end`）的多行输入框（如提示词输入框）会自动加大外框圆角，栏内按钮成为圆形或胶囊，与外框保持同心；不要自己用 class 改外框或按钮圆角。\n"
+			"rules": "# Input Group 设计规范\n\n- 输入框前后需要图标、文字、按钮或快捷键提示时，用 `InputGroup.Root` 组合，不要用绝对定位把元素压在 Input 上。\n- 框内的输入控件必须用 `InputGroup.Input` 或 `InputGroup.Textarea`，不要放普通 Input；组合的边框、焦点环和错误状态都按这两个控件计算。\n- 输入控件同样需要标签：设 `id` 并用 `Field.Label for={id}` 关联，或提供 `aria-label`；搜索框也不例外（检查规则 `valar/input-label`）。\n- 附加内容放进 `InputGroup.Addon`，用 `align`（`inline-start`、`inline-end`、`block-start`、`block-end`）定位；纯文字用 `InputGroup.Text`。\n- 框内按钮用 `InputGroup.Button`，尺寸只用它的 `size`（`xs`、`sm`、`icon-xs`、`icon-sm`）；只有图标的按钮要有 `aria-label`（检查规则 `valar/button-size-via-prop`、`valar/icon-button-label`）。\n- 错误状态设在输入控件上（`aria-invalid=\"true\"`），整个组合会显示错误边框。\n- 输入组合与按钮使用样式自带的圆角。需要胶囊按钮时显式设置 `shape=\"pill\"`。\n"
 		},
 		{
 			"name": "input-otp",
@@ -2095,7 +2052,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/message-scroller",
 			"install": "pnpm exec valar-svelte add message-scroller",
 			"markdown": "# Message Scroller 消息滚动区\n\n聊天记录滚动容器：跟随流式回复、加载历史不跳动、可跳转到任意消息。\n\n- 分类：展示\n- 关键词：消息滚动、message scroller、聊天记录、chat scroll、流式、transcript\n- 安装：`pnpm exec valar-svelte add message-scroller`\n\n## 何时使用\n\n- 聊天记录：新回合锚定、跟随流式回复、加载更早消息时保持位置\n- 打开保存的会话时定位到合适位置\n\n## 何时不用\n\n- 普通内容的滚动区域：改用 `scroll-area`\n\n## 无障碍\n\n- Viewport 默认 role=region、aria-label=消息、可聚焦；其他语言要改 aria-label\n- Content 为 role=log，新行会被朗读；流式输出时可传 aria-busy\n- MessageScroller.Button 无内容可滚时设为 inert，不占焦点\n\n## 响应式\n\n- 填满父元素，必须放在有确定高度的容器内\n\n## 相关组件\n\n- `message`\n- `scroll-area`\n- `marker`\n",
-			"rules": "# Message Scroller 设计规范\n\n- 结构为 `MessageScroller.Provider` > `MessageScroller.Root` > `MessageScroller.Viewport` > `MessageScroller.Content`，`MessageScroller.Button` 放在 Root 内；不要自己写聊天滚动逻辑。\n- 它会填满父元素：放在高度受限的容器中（如 `flex h-screen flex-col` 里设 `flex-1`），否则无法滚动。\n- `MessageScroller.Content` 的每个直接子元素都包一层 `MessageScroller.Item`，并设稳定的 `messageId`（消息 id，不要用数组下标）。\n- 用 `scrollAnchor` 标记开启新一轮对话的行（通常是用户的消息），新一轮会停在视口上方并保留上一轮的一部分；输入提示、加载更多等行不要设为锚点。\n- 不要自动滚到底部打断阅读；跳到指定消息用 `useMessageScroller` 提供的方法。\n- 视口已用 `scrollbar-stable`：滚动条出现或消失时消息不会左右移动；不要给 `MessageScroller.Viewport` 另加 `overflow-*` 或 `scrollbar-*` 类。\n"
+			"rules": "# Message Scroller 设计规范\n\n- 结构为 `MessageScroller.Provider` > `MessageScroller.Root` > `MessageScroller.Viewport` > `MessageScroller.Content`，`MessageScroller.Button` 放在 Root 内；不要自己写聊天滚动逻辑。\n- 它会填满父元素：放在高度受限的容器中（如 `flex h-screen flex-col` 里设 `flex-1`），否则无法滚动。\n- `MessageScroller.Content` 的每个直接子元素都包一层 `MessageScroller.Item`，并设稳定的 `messageId`（消息 id，不要用数组下标）。\n- 用 `scrollAnchor` 标记开启新一轮对话的行（通常是用户的消息），新一轮会停在视口上方并保留上一轮的一部分；输入提示、加载更多等行不要设为锚点。\n- 不要自动滚到底部打断阅读；跳到指定消息用 `useMessageScroller` 提供的方法。\n"
 		},
 		{
 			"name": "native-select",
@@ -2581,7 +2538,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/range-calendar",
 			"install": "pnpm exec valar-svelte add range-calendar",
 			"markdown": "# Range Calendar 日期范围\n\n在月历上选择开始和结束日期。\n\n- 分类：表单\n- 关键词：日期范围、range calendar、起止日期、date range、时间段\n- 安装：`pnpm exec valar-svelte add range-calendar`\n\n## 何时使用\n\n- 选择预订、报表等的起止日期\n\n## 何时不用\n\n- 只选一个日期：改用 `calendar`\n- 页面空间有限，点击后再弹出：改用 `popover`\n\n## 无障碍\n\n- 保留 Bits UI 的键盘操作（方向键移动日期、回车选择起止）\n- locale 默认 zh-CN，其他语言要设置 locale\n\n## 响应式\n\n- 显示多个月份时窄屏应减少月数\n- 用 --cell-size 控制格子大小，可按断点设置不同值\n\n## 相关组件\n\n- `calendar`\n- `popover`\n- `input`\n",
-			"rules": "# Range Calendar 设计规范\n\n- 只用于选择起止日期区间；选择单个或多个独立日期用 Calendar。\n- 值是 `{ start, end }`，两端都是 `@internationalized/date` 的日期对象；用 `bind:value` 绑定，处理时注意用户只选了起点（`end` 为空）的状态。\n- 默认 `locale=\"zh-CN\"`；其他语言的界面传对应 `locale`；需要周一开始时设 `weekStartsOn={1}`。\n- 可选范围用 `minValue`、`maxValue`，不可选的日期用 `isDateDisabled`；区间较长时用 `numberOfMonths={2}` 并排显示两个月。\n- 放在 Popover 中作为日期区间选择器时，触发按钮显示已选区间，未选完时提示“选择结束日期”。\n- `captionLayout=\"dropdown\"` 的月份和年份是弹出的网格（月份 3×4，年份一次 12 个、可翻页）；年份跨度大时用 `minValue`、`maxValue` 或 `years` 限定范围。\n- 格子默认 36px，不要为了省空间缩小；窄容器里用 `--cell-size` 按断点调整。\n- 区间起止日期是实心主色底、反色数字，不要加会改文字颜色的悬停样式，否则鼠标停在上面会变成黑块。\n"
+			"rules": "# Range Calendar 设计规范\n\n- 只用于选择起止日期区间；选择单个或多个独立日期用 Calendar。\n- 值是 `{ start, end }`，两端都是 `@internationalized/date` 的日期对象；用 `bind:value` 绑定，处理时注意用户只选了起点（`end` 为空）的状态。\n- 默认 `locale=\"zh-CN\"`；其他语言的界面传对应 `locale`；需要周一开始时设 `weekStartsOn={1}`。\n- 可选范围用 `minValue`、`maxValue`，不可选的日期用 `isDateDisabled`；区间较长时用 `numberOfMonths={2}` 并排显示两个月。\n- 放在 Popover 中作为日期区间选择器时，触发按钮显示已选区间，未选完时提示“选择结束日期”。\n- `captionLayout=\"dropdown\"` 使用原有月份和年份选择器。用 `minValue`、`maxValue` 或 `years` 限定范围。\n- 使用样式自带的格子尺寸。需要调整时通过 `--cell-size` 显式设置。\n- 区间起止日期是实心主色底、反色数字，不要加会改文字颜色的悬停样式，否则鼠标停在上面会变成黑块。\n"
 		},
 		{
 			"name": "resizable",
@@ -2722,53 +2679,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/scroll-area",
 			"install": "pnpm exec valar-svelte add scroll-area",
 			"markdown": "# Scroll Area 滚动区域\n\n固定尺寸区域内的滚动，各浏览器滚动条样式一致。\n\n- 分类：展示\n- 关键词：滚动区域、scroll area、滚动条、scrollbar、溢出\n- 安装：`pnpm exec valar-svelte add scroll-area`\n\n## 何时使用\n\n- 固定高度或宽度的区域内滚动，需要统一的滚动条外观\n- orientation=horizontal 横向滚动\n\n## 何时不用\n\n- 聊天记录：改用 `message-scroller`\n- 逐项滑动浏览的内容：改用 `carousel`\n\n## 无障碍\n\n- 保留原生滚动和键盘滚动\n- 区域内没有可聚焦元素时，确保键盘用户仍能滚动查看内容\n\n## 响应式\n\n- 必须给出高度或宽度，否则不会滚动\n\n## 相关组件\n\n- `message-scroller`\n- `carousel`\n- `table`\n",
-			"rules": "# Scroll Area 设计规范\n\n- 用于固定区域内的自定义滚动条（侧栏列表、弹层中的长内容）；整页滚动保持浏览器原生滚动。\n- Scroll Area 必须有确定的高度或最大高度（`h-*`、`max-h-*` 档位类，或在 flex 布局中 `flex-1 min-h-0`），否则不会出现滚动。\n- 横向滚动设 `orientation=\"horizontal\"`，两个方向都需要时设 `both`。\n- 视口可以被键盘聚焦并滚动；区域内容没有标题时给 Scroll Area 设 `aria-label` 说明内容。\n- 滚动条不能改变版面：出现或消失时，内容不能左右晃动。整页滚动条库里已统一处理：位置预留（根元素 `scrollbar-gutter: stable`），轨道透明，只露出细滑块，没有滚动槽；不要在页面或布局上再写 `overflow-y: scroll`、`overflow-y: overlay` 之类的补丁。\n- 纵向滚动的原生区域（`overflow-auto`、`overflow-y-auto`）加 `scrollbar-stable`：细滑块、透明轨道（没有滚动槽），位置始终预留。不要只写光秃秃的 `overflow-auto`。\n- 横向滚动，或内容会动态变长变短的区域，用 Scroll Area（`orientation=\"horizontal\"` 或 `both`）：滚动条浮在内容上方，只显示滑块、不占位，并按内容比例自动伸缩。原生横向滚动条占的是高度，无法预留，所以不要用在内容会变化的地方。\n- 滚动条默认常显（只有细滑块，没有滚动槽）。需要“停止滚动约 1 秒后淡出、再滚动时出现”的地方，显式开启：整页在 `<html>` 上写 `data-scrollbar=\"autohide\"`，某个滚动区域在该元素上写 `data-scrollbar=\"autohide\"` 或加类 `scrollbar-autohide`（鼠标停在区域上时仍会显示）。它依赖根布局里调用一次 `useScrollbarAutohide()`；不调用时不会隐藏任何滚动条。不要自己写滚动条显示隐藏的脚本。\n"
-		},
-		{
-			"name": "segmented-control",
-			"type": "registry:ui",
-			"title": "Segmented Control 分段选择",
-			"description": "组合现有 ToggleGroup 的单选分段控件，选中项不会被再次点击清空。",
-			"categories": [
-				"操作"
-			],
-			"meta": {
-				"valar": {
-					"keywords": [
-						"segmented",
-						"分段",
-						"单选",
-						"toggle"
-					],
-					"whenToUse": [
-						"切换同一视图的数据口径、尺度等少量互斥选项"
-					],
-					"whenNotToUse": [
-						{
-							"case": "切换关联的标签面板",
-							"use": "tabs"
-						},
-						{
-							"case": "选项可以多选或全部取消",
-							"use": "toggle-group"
-						}
-					],
-					"accessibility": [
-						"沿用 Bits UI 单选语义；方向键、Home、End 移动焦点并选择"
-					],
-					"responsive": [
-						"选项超宽时内部横向滚动，不隐藏必要内容"
-					],
-					"related": [
-						"toggle-group",
-						"tabs"
-					]
-				}
-			},
-			"docs": "http://127.0.0.1:5186/docs/components/segmented-control",
-			"install": "pnpm exec valar-svelte add segmented-control",
-			"markdown": "# Segmented Control 分段选择\n\n组合现有 ToggleGroup 的单选分段控件，选中项不会被再次点击清空。\n\n- 分类：操作\n- 关键词：segmented、分段、单选、toggle\n- 安装：`pnpm exec valar-svelte add segmented-control`\n\n## 何时使用\n\n- 切换同一视图的数据口径、尺度等少量互斥选项\n\n## 何时不用\n\n- 切换关联的标签面板：改用 `tabs`\n- 选项可以多选或全部取消：改用 `toggle-group`\n\n## 无障碍\n\n- 沿用 Bits UI 单选语义；方向键、Home、End 移动焦点并选择\n\n## 响应式\n\n- 选项超宽时内部横向滚动，不隐藏必要内容\n\n## 相关组件\n\n- `toggle-group`\n- `tabs`\n",
-			"rules": "# Segmented Control Design Rules\n\n- Compose ToggleGroup for one nonempty selection; option values must be unique and nonempty. Always provide a localized group label.\n- A second click on the chosen segment does not clear it. Arrows/Home/End select and move focus; disabled options are skipped.\n- Use string labels and optional Svelte accessory snippets, not React children. Supply value or bind:value and onValueChange as needed.\n- It is not a tab-panel or multi-selection API. Existing ToggleGroup handles multiple toggles; Tabs associates panels.\n- Options scroll horizontally in narrow containers; never truncate away the only accessible label.\n"
+			"rules": "# Scroll Area 设计规范\n\n- 用于固定区域内的自定义滚动条（侧栏列表、弹层中的长内容）；整页滚动保持浏览器原生滚动。\n- Scroll Area 必须有确定的高度或最大高度（`h-*`、`max-h-*` 档位类，或在 flex 布局中 `flex-1 min-h-0`），否则不会出现滚动。\n- 横向滚动设 `orientation=\"horizontal\"`，两个方向都需要时设 `both`。\n- 视口可以被键盘聚焦并滚动；区域内容没有标题时给 Scroll Area 设 `aria-label` 说明内容。\n- 滚动条不能改变版面：出现或消失时，内容不能左右晃动。整页滚动条库里已统一处理：位置预留（根元素 `scrollbar-gutter: stable`），轨道透明，只露出细滑块，没有滚动槽；不要在页面或布局上再写 `overflow-y: scroll`、`overflow-y: overlay` 之类的补丁。\n- 横向滚动，或内容会动态变长变短的区域，用 Scroll Area（`orientation=\"horizontal\"` 或 `both`）：滚动条浮在内容上方，只显示滑块、不占位，并按内容比例自动伸缩。原生横向滚动条占的是高度，无法预留，所以不要用在内容会变化的地方。\n"
 		},
 		{
 			"name": "select",

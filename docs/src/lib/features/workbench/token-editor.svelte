@@ -303,7 +303,7 @@
 		<section class="grid gap-3" aria-labelledby="token-motion">
 			<h2 id="token-motion" class="text-sm font-semibold">动效与边框</h2>
 			<p class="text-xs text-muted-foreground">
-				组件只选用档位；这里决定每档多快、按什么曲线变化。系统开启“减少动态效果”时，快、中、慢三档自动变为瞬时。
+				显式使用动效档位或 token 的位置会读取这些值。组件的默认动效和边框继续使用原有样式。
 			</p>
 			{#each DURATION_TOKENS as token (token)}
 				<SliderField

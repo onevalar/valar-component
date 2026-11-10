@@ -73,8 +73,7 @@ variables map to Valar tokens within ChartContainer; no consumer selector patch.
   the scalar adapter is used. The shared preview intentionally leaves that name
   unset and supplies a hidden `quota` input for its scalar form contract.
 - Button retains Primitive `as`/`asChild`, plus `href`, `disabled`, `type` (default
-  `button`), `shape=auto|pill|square`. Icon sizes are circular in auto shape unless
-  in a button group. Disabled direct links lose href, get role=link,
+  `button`), `shape=auto|pill|square`. Icon sizes use the style’s default radius. Disabled direct links lose href, get role=link,
   aria-disabled=true and tabindex=-1. With `asChild` the child determines the real
   element: supply matching link semantics on the child, not a hidden fake API.
 - Dialog content/footer/scroll content accept `closeLabel` (default `关闭`). Native

@@ -4,16 +4,10 @@
 		base: "cn-input-group-addon flex cursor-text items-center justify-center select-none",
 		variants: {
 			align: {
-				// Concentric corners: a button's radius is its container's radius minus the gap
-				// between them. Inline buttons keep their own shape (icon-only = circle). The
-				// multi-line prompt box has a larger radius (see input-group.svelte) and 8px gaps,
-				// so its buttons are circles and capsules.
 				"inline-start": "cn-input-group-addon-align-inline-start order-first",
 				"inline-end": "cn-input-group-addon-align-inline-end order-last",
-				"block-start":
-					"cn-input-group-addon-align-block-start order-first w-full justify-start px-2 pt-2 [&>button]:rounded-full",
-				"block-end":
-					"cn-input-group-addon-align-block-end order-last w-full justify-start px-2 pb-2 [&>button]:rounded-full",
+				"block-start": "cn-input-group-addon-align-block-start order-first w-full justify-start",
+				"block-end": "cn-input-group-addon-align-block-end order-last w-full justify-start",
 			},
 		},
 		defaultVariants: {

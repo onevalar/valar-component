@@ -32,6 +32,8 @@ VCOMP-005／006 不是跨框架转换，而是为替代 DialKit 控件新增的 
 
 ### VCOMP-008 · TokenPlan 所需仪表与组合控件（2026-11-07）
 
+2026-11-10：按用户决定移除 Confirm Action 和 Segmented Control。Valar 的框架用法和迁移对照改用现有 Tabs。保留 Gauge、Waffle Chart、Donut Chart、Sparkline、Ruler Slider。以下保留初次迁移记录。
+
 - 本地新增 `gauge`、`waffle-chart`、`donut-chart`、`sparkline`、`ruler-slider`、`segmented-control`、`confirm-action`、`tick-meter`、`texture-fill` 九个公共子路径；原生 Svelte 5，复用 ToggleGroup、Button；现有 Slider 补齐键盘合同。RulerSlider 的移动尺带由组件内 RAF 实现，不引入 React/Motion/Arc 运行时。
 - 来源为固定 TokenPlan 提交中的免费 MIT 组件及 DitherFill，保留各目录 LICENSE。TickMeter 仅按产品需求独立编写，60 条径向 SVG 线，未读取或搬运 Arc Pro 源码。
 - 状态：本地实现及有限运行时验证已交付，**不声明完整来源能力等价**。此前静态尺带方案已被否决并替换：现保留移动尺带、惯性、边界回弹、轻点弹簧、横向滚轮、截住惯性与取消，正常／减少动态效果双侧验证。仅滚动数字不提供，应用明确使用 animateReadout=false。ConfirmAction 已补充独立编写的原生尺寸／圆角／内容反馈，不复制 Arc 动画代码或参数；实测和差异见转换记录 §8。

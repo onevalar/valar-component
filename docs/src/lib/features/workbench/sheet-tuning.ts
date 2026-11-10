@@ -4,6 +4,7 @@ import {
 	MOTION_TIERS,
 	sourceWord,
 	spacing,
+	STYLE_VALUE,
 	tierVar,
 	type TunerSpec,
 } from "./tuner.js";
@@ -44,7 +45,7 @@ const valuesSchema = z
 		padding: z.number().int().min(8).max(48).multipleOf(2),
 		gap: z.number().int().min(0).max(40).multipleOf(2),
 		overlay: z.number().int().min(0).max(80).multipleOf(10),
-		duration: z.enum(MOTION_TIERS),
+		duration: z.enum([STYLE_VALUE, ...MOTION_TIERS]),
 		slide: z.enum(SHEET_SLIDES),
 	})
 	.strict();
@@ -77,7 +78,7 @@ export function parseSheetSource(files: { target: string; content: string }[]): 
 			gap: px(String.raw`gap-(\d+(?:\.5)?)`, content, 0),
 			overlay: Number(/bg-black\/(\d+)/.exec(overlay)?.[1] ?? 0),
 			duration: (sourceWord("duration-(fast|normal|slow)", content) ??
-				"normal") as SheetValues["duration"],
+				STYLE_VALUE) as SheetValues["duration"],
 			slide: (slide
 				? slide[1] === undefined
 					? "full"
@@ -111,7 +112,7 @@ function sheetCss(select: (slot: string) => string, overrides: SheetOverrides): 
 			`${select("sheet-header")}, ${select("sheet-footer")} { padding: ${safe.padding}px; }`
 		);
 	if (safe.gap !== undefined) content.push(`gap: ${safe.gap}px;`);
-	if (safe.duration !== undefined) {
+	if (safe.duration !== undefined && safe.duration !== STYLE_VALUE) {
 		content.push(`animation-duration: ${tierVar(safe.duration)};`);
 		overlay.push(`animation-duration: ${tierVar(safe.duration)};`);
 	}
@@ -145,7 +146,7 @@ export function sheetOverrideClasses(overrides: SheetOverrides): Record<string, 
 		);
 	if (safe.padding !== undefined) header.push(`p-${spacing(safe.padding)}`);
 	if (safe.gap !== undefined) content.push(`gap-${spacing(safe.gap)}`);
-	if (safe.duration !== undefined) {
+	if (safe.duration !== undefined && safe.duration !== STYLE_VALUE) {
 		content.push(`duration-${safe.duration}`);
 		overlay.push(`duration-${safe.duration}!`);
 	}
@@ -214,10 +215,13 @@ export const SHEET_SPEC: TunerSpec<SheetValues, null> = {
 			kind: "select",
 			key: "duration",
 			label: "动效档位",
-			options: MOTION_TIERS.map((value) => ({
-				value,
-				label: MOTION_TIER_LABELS[value],
-			})),
+			options: [
+				{ value: STYLE_VALUE, label: "样式自带" },
+				...MOTION_TIERS.map((value) => ({
+					value,
+					label: MOTION_TIER_LABELS[value],
+				})),
+			],
 		},
 		{
 			kind: "select",

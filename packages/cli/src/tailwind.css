@@ -89,10 +89,7 @@
 }
 
 /*
- * Scrollbars never move the layout and never draw a groove.
- * - The page keeps the scrollbar's width in reserve, so a long page and a short one line up and
- *   nothing slides sideways.
- * - The track is transparent, so only the thumb shows, resting on the page background.
+ * Optional stable and auto-hiding scrollbars for explicitly marked elements.
  * - Hiding is opt-in. Put `data-scrollbar="autohide"` on the page (the <html> tag) or on any
  *   scrolling element, or the `scrollbar-autohide` class on an element, and its thumb fades out a
  *   moment after scrolling stops and returns when scrolling starts. An element is also shown while
@@ -100,16 +97,6 @@
  *   (it sets `data-scrollbar-ready`); without it nothing is ever hidden, so a forgotten hook
  *   never leaves a page without a scrollbar.
  */
-@layer base {
-	html {
-		scrollbar-width: thin;
-		scrollbar-gutter: stable;
-		scrollbar-color: color-mix(in oklab, var(--foreground, currentColor) 30%, transparent)
-			transparent;
-		transition: scrollbar-color 0.3s ease;
-	}
-}
-
 /* Outside any layer on purpose: it has to beat the colour a utility such as `scrollbar-stable` sets. */
 :root[data-scrollbar-ready][data-scrollbar="autohide"]:not([data-scrolling]),
 :root[data-scrollbar-ready] [data-scrollbar="autohide"]:not([data-scrolling]):not(:hover) {
@@ -671,20 +658,16 @@
 
 /*
  * Valar global tokens: motion and border width.
- * Components use `duration-fast|normal|slow`, `ease-enter|exit|standard` and plain `border`.
- * The values live in `:root` (written by `init` from the theme, edited on the docs `/themes`
- * page); the fallbacks keep projects initialized before these tokens unchanged.
+ * Use these classes to opt into the theme values. Default component utilities
+ * keep their original timings, curves and border widths.
  */
 @theme inline {
 	--transition-duration-fast: var(--motion-duration-fast, 100ms);
 	--transition-duration-normal: var(--motion-duration-normal, 200ms);
 	--transition-duration-slow: var(--motion-duration-slow, 300ms);
-	--default-transition-duration: var(--motion-duration-interaction, 150ms);
 	--ease-enter: var(--motion-ease-enter, cubic-bezier(0.22, 1, 0.36, 1));
 	--ease-exit: var(--motion-ease-exit, cubic-bezier(0.7, 0, 0.84, 0));
 	--ease-standard: var(--motion-ease-standard, cubic-bezier(0.4, 0, 0.2, 1));
-	--default-transition-timing-function: var(--motion-ease-standard, cubic-bezier(0.4, 0, 0.2, 1));
-	--default-border-width: var(--border-width, 1px);
 }
 
 /* Reduced motion: overlays and panels appear without moving. Hover feedback stays. */

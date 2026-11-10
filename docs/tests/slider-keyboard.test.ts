@@ -23,7 +23,7 @@ function key(key: string, options: KeyboardEventInit = {}) {
 	return event;
 }
 
-it("scalar sliders support every arrow, Shift/Page double steps, Home/End and one callback per edit", () => {
+it("opt-in scalar sliders support every arrow, Shift/Page double steps, Home/End and one callback per edit", () => {
 	const change = vi.fn(),
 		commit = vi.fn();
 	app = mount(Slider, {
@@ -34,6 +34,7 @@ it("scalar sliders support every arrow, Shift/Page double steps, Home/End and on
 			min: 20,
 			max: 100,
 			step: 5,
+			largeStep: 10,
 			"aria-label": "Transparency",
 			onValueChange: change,
 			onValueCommit: commit,
@@ -64,12 +65,12 @@ it("scalar sliders support every arrow, Shift/Page double steps, Home/End and on
 	expect(change).toHaveBeenCalledTimes(10);
 });
 
-it("modified slider navigation bubbles unchanged for application/browser shortcuts", () => {
+it("opt-in modified slider navigation bubbles unchanged for application/browser shortcuts", () => {
 	const change = vi.fn(),
 		observed: boolean[] = [];
 	app = mount(Slider, {
 		target: document.body,
-		props: { type: "single", value: 60, step: 5, onValueChange: change },
+		props: { type: "single", value: 60, step: 5, largeStep: 10, onValueChange: change },
 	});
 	flushSync();
 	const listener = (event: KeyboardEvent) => observed.push(event.defaultPrevented);
@@ -105,6 +106,18 @@ it("custom scalar largeStep is honored while multiple-thumb keyboard logic remai
 	flushSync();
 	key("ArrowRight");
 	expect(change).toHaveBeenLastCalledWith([21, 80]);
-	expect(key("ArrowLeft", { altKey: true }).defaultPrevented).toBe(false);
 	expect(change).toHaveBeenCalledTimes(1);
+});
+
+it("default scalar navigation retains Bits UI keyboard behavior", () => {
+	const change = vi.fn();
+	app = mount(Slider, {
+		target: document.body,
+		props: { type: "single", value: 60, min: 20, max: 100, step: 5, onValueChange: change },
+	});
+	flushSync();
+	expect(key("PageUp").defaultPrevented).toBe(false);
+	expect(change).not.toHaveBeenCalled();
+	key("ArrowRight", { shiftKey: true });
+	expect(change).toHaveBeenLastCalledWith(65);
 });

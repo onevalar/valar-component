@@ -87,7 +87,7 @@ links:
 
 ## 键盘合同
 
-type="single" 且 step 为数字时，四个方向键都按 step 调整。Shift+方向键与 PageUp/PageDown 使用 largeStep（默认 step 的两倍），Home/End 到达边界。Ctrl、Meta、Alt 组合不会改值或阻止应用／浏览器快捷键。每次实际改值先触发一次 onValueChange，再触发一次 onValueCommit。多手柄与非均匀步长保留 Bits UI 的键盘行为。aria-valuetext 转发给实际手柄。
+默认键盘行为由 Bits UI 提供。数值单滑块显式设置 `largeStep` 后，四个方向键按 step 调整。Shift+方向键与 PageUp/PageDown 使用 `largeStep`，Home/End 到达边界。Ctrl、Meta、Alt 组合不会改值或阻止应用／浏览器快捷键。每次实际改值先触发一次 onValueChange，再触发一次 onValueCommit。多手柄与非均匀步长保留 Bits UI 的键盘行为。aria-valuetext 转发给实际手柄。
 
 ## 范围
 

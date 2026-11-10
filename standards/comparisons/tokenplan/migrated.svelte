@@ -1,30 +1,16 @@
 <script lang="ts">
+	import * as Tabs from "@valar/svelte-ui/tabs";
 	import { Button } from "@valar/svelte-ui/button";
-	import { ConfirmAction } from "@valar/svelte-ui/confirm-action";
 	import { StaticDonut } from "@valar/svelte-ui/donut-chart";
 	import { Gauge, GaugeArc } from "@valar/svelte-ui/gauge";
 	import { RulerSlider } from "@valar/svelte-ui/ruler-slider";
-	import { SegmentedControl } from "@valar/svelte-ui/segmented-control";
 	import { Slider } from "@valar/svelte-ui/slider";
 	import { StaticSparkline } from "@valar/svelte-ui/sparkline";
 	import { TextureFill } from "@valar/svelte-ui/texture-fill";
 	import { TickMeter } from "@valar/svelte-ui/tick-meter";
 	import { WaffleChart } from "@valar/svelte-ui/waffle-chart";
 	import { onMount } from "svelte";
-	import {
-		seed,
-		ruler,
-		missing,
-		disabled,
-		fullWidth,
-		parts,
-		values,
-		options,
-		copy,
-		confirm,
-		undo,
-		log,
-	} from "./fixtures";
+	import { seed, ruler, missing, disabled, parts, values, options, log } from "./fixtures";
 	let value = $state(seed);
 	let choice = $state("tokens");
 	let transparency = $state(60);
@@ -73,23 +59,17 @@
 	}}
 	onValueCommit={(next) => log("commit", next)}
 />
-<h3>SegmentedControl</h3>
-<SegmentedControl
-	label="Measure"
-	bind:value={choice}
-	{options}
-	{disabled}
-	onValueChange={(next) => log("selection", next)}
-/>
-<h3>ConfirmAction</h3>
-<ConfirmAction
-	{...copy}
-	{disabled}
-	{fullWidth}
-	onConfirm={confirm}
-	onUndo={undo}
-	onStateChange={(next) => log("state", next)}
-/>
+<h3>Measure tabs</h3>
+<Tabs.Root bind:value={choice} onValueChange={(next) => log("selection", next)}>
+	<Tabs.List aria-label="Measure">
+		{#each options as option (option.value)}
+			<Tabs.Trigger value={option.value} {disabled}>{option.label}</Tabs.Trigger>
+		{/each}
+	</Tabs.List>
+	{#each options as option (option.value)}
+		<Tabs.Content value={option.value}>Selected measure: {option.label}</Tabs.Content>
+	{/each}
+</Tabs.Root>
 <h3>Texture Fill</h3>
 {#each ["dither", "lines", "halftone", "hatch", "solid"] as texture}
 	<TextureFill

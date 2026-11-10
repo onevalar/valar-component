@@ -4,7 +4,6 @@ import postcss from "postcss";
 import ts from "typescript";
 import { registryItemSchema, type CssSchema, type RegistryItem } from "@valar/svelte-cli/schema";
 import {
-	applyTokenUtilities,
 	injectStyleClasses,
 	mergeStyleMaps,
 	parseStyleCss,
@@ -838,7 +837,7 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 		const dir = resolve(`src/lib/registry/ui/${component}`);
 		return readdirSync(dir).map((name) => ({
 			target: name,
-			content: applyTokenUtilities(injectStyleClasses(readFileSync(`${dir}/${name}`, "utf8"), map)),
+			content: injectStyleClasses(readFileSync(`${dir}/${name}`, "utf8"), map),
 		}));
 	};
 	const classes = (files: { target: string; content: string }[], name: string) =>
@@ -856,7 +855,7 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 			padding: 10,
 			gap: 10,
 			radius: "lg",
-			duration: "fast",
+			duration: "style",
 			zoom: "95",
 			slide: "8",
 		});
@@ -865,7 +864,7 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 			padding: 16,
 			gap: 16,
 			overlay: 10,
-			duration: "normal",
+			duration: "style",
 			slide: "40",
 		});
 	});
@@ -1745,7 +1744,7 @@ describe("Alert Dialog editor installation contracts", () => {
 				gap: style === "mira" ? 12 : ["valar"].includes(style) ? 16 : 24,
 				radius: radii[index],
 				overlay: [10, 10, 10, 80, 80, 30, 30, 20][index],
-				duration: "fast",
+				duration: "style",
 				zoom: "95",
 			});
 			expect(baseline.context).toEqual({
@@ -1782,7 +1781,7 @@ describe("Alert Dialog editor installation contracts", () => {
 				);
 				const files = readdirSync(resolve("src/lib/registry/ui/alert-dialog")).map((target) => ({
 					target,
-					content: applyTokenUtilities(installed("alert-dialog", style, css, target)),
+					content: installed("alert-dialog", style, css, target),
 				}));
 				expect(parseAlertDialogSource(files)).toEqual({
 					values: change,
@@ -2828,7 +2827,7 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 			itemPaddingY: 4,
 			itemGap: 6,
 			itemRadius: "md",
-			duration: "fast",
+			duration: "style",
 			zoom: "95",
 			slide: "8",
 		});
@@ -3090,7 +3089,7 @@ describe("Hover Card write-back", () => {
 				padding,
 				radius,
 				slide: "8",
-				duration: "fast",
+				duration: "style",
 			});
 			const write = (css: string, overrides: Parameters<typeof hoverCardOverrideClasses>[0]) =>
 				applyStyleOverrides(
@@ -3104,9 +3103,7 @@ describe("Hover Card write-back", () => {
 				zoom: "90",
 				slide: "16",
 			});
-			const content = applyTokenUtilities(
-				installed("hover-card", style, css, "hover-card-content.svelte")
-			);
+			const content = installed("hover-card", style, css, "hover-card-content.svelte");
 			expect(
 				parseHoverCardSource([{ target: "hover-card-content.svelte", content }]).values
 			).toEqual({ padding: 22, radius: "sm", duration: "slow", zoom: "90", slide: "16" });
@@ -3119,8 +3116,11 @@ describe("Hover Card write-back", () => {
 				"data-[side=right]:slide-in-from-left-2",
 			])
 				expect(classes).not.toContain(stale);
-			const second = applyTokenUtilities(
-				installed("hover-card", style, write(css, { slide: "0" }), "hover-card-content.svelte")
+			const second = installed(
+				"hover-card",
+				style,
+				write(css, { slide: "0" }),
+				"hover-card-content.svelte"
 			);
 			expect(classList(second)).not.toContain("data-[side=right]:slide-in-from-left-4");
 			expect(
@@ -3187,9 +3187,7 @@ describe("Context Menu write-back uses its own source and shared menu contract",
 				"separator",
 			].map((part) => ({
 				target: `context-menu-${part}.svelte`,
-				content: applyTokenUtilities(
-					installed("context-menu", style, css, `context-menu-${part}.svelte`)
-				),
+				content: installed("context-menu", style, css, `context-menu-${part}.svelte`),
 			}));
 			expect(parseMenuSource("context-menu", files).values).toMatchObject({
 				padding: 8,

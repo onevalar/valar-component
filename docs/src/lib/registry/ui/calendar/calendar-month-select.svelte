@@ -1,65 +1,55 @@
 <script lang="ts">
 	import { Calendar as CalendarPrimitive } from "bits-ui";
-	import * as Popover from "$lib/registry/ui/popover/index.js";
 	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
-	import { Button } from "$lib/registry/ui/button/index.js";
 	import { cn, type WithoutChildrenOrChild } from "$lib/utils.js";
 
 	let {
+		ref = $bindable(null),
 		class: className,
 		value,
-		onValueChange,
+		onchange,
 		...restProps
-	}: WithoutChildrenOrChild<CalendarPrimitive.MonthSelectProps> & {
-		/** Called with the chosen month number (1–12). */
-		onValueChange?: (month: number) => void;
-	} = $props();
-
-	let open = $state(false);
+	}: WithoutChildrenOrChild<CalendarPrimitive.MonthSelectProps> = $props();
 </script>
 
-<!-- A grid of months in a popover instead of the browser's own list, so the choice is always one short, readable screen. -->
-<CalendarPrimitive.MonthSelect {...restProps}>
-	{#snippet child({ monthItems, selectedMonthItem })}
-		<Popover.Root bind:open>
-			<Popover.Trigger>
-				{#snippet child({ props })}
-					<Button
-						{...props}
-						variant="outline"
-						size="sm"
-						aria-label="选择月份"
-						class={cn("relative h-(--cell-size) gap-1 ps-2 pe-1.5 font-medium", className)}
+<span
+	class={cn(
+		"relative flex rounded-md border border-input shadow-xs has-focus:border-ring has-focus:ring-[3px] has-focus:ring-ring/50",
+		className
+	)}
+>
+	<CalendarPrimitive.MonthSelect
+		bind:ref
+		class="absolute inset-0 bg-background opacity-0 dark:bg-popover dark:text-popover-foreground"
+		{...restProps}
+	>
+		{#snippet child({ props, monthItems, selectedMonthItem })}
+			<select {...props} {value} {onchange}>
+				{#each monthItems as monthItem (monthItem.value)}
+					<option
+						value={monthItem.value}
+						selected={value !== undefined
+							? monthItem.value === value
+							: monthItem.value === selectedMonthItem?.value}
 					>
-						{monthItems.find((item) => item.value === value)?.label || selectedMonthItem?.label}
-						<IconPlaceholder
-							lucide="ChevronDownIcon"
-							tabler="IconChevronDown"
-							hugeicons="ArrowDownIcon"
-							phosphor="CaretDownIcon"
-							remixicon="RiArrowDownSLine"
-							class="size-3.5 text-muted-foreground"
-						/>
-					</Button>
-				{/snippet}
-			</Popover.Trigger>
-			<Popover.Content align="start" class="w-52 p-2">
-				<div class="grid grid-cols-3 gap-1">
-					{#each monthItems as item (item.value)}
-						<Button
-							variant={item.value === (value ?? selectedMonthItem?.value) ? "default" : "ghost"}
-							size="sm"
-							aria-pressed={item.value === (value ?? selectedMonthItem?.value)}
-							onclick={() => {
-								onValueChange?.(item.value);
-								open = false;
-							}}
-						>
-							{item.label}
-						</Button>
-					{/each}
-				</div>
-			</Popover.Content>
-		</Popover.Root>
-	{/snippet}
-</CalendarPrimitive.MonthSelect>
+						{monthItem.label}
+					</option>
+				{/each}
+			</select>
+			<span
+				class="flex h-(--cell-size) items-center gap-1 rounded-md ps-2 pe-1 text-sm font-medium select-none [&>svg]:size-3.5 [&>svg]:text-muted-foreground"
+				aria-hidden="true"
+			>
+				{monthItems.find((item) => item.value === value)?.label || selectedMonthItem?.label}
+				<IconPlaceholder
+					lucide="ChevronDownIcon"
+					tabler="IconChevronDown"
+					hugeicons="ArrowDownIcon"
+					phosphor="CaretDownIcon"
+					remixicon="RiArrowDownSLine"
+					class={cn("size-4", className)}
+				/>
+			</span>
+		{/snippet}
+	</CalendarPrimitive.MonthSelect>
+</span>
