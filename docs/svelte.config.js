@@ -1,5 +1,10 @@
 // @ts-check
-import adapter from "@sveltejs/adapter-cloudflare";
+// DEPLOY_TARGET=nginx builds a Node server under the /valar-component base path
+// for hosting behind the onevalar.com nginx; anything else keeps Cloudflare.
+const isNginxTarget = process.env.DEPLOY_TARGET === "nginx";
+const { default: adapter } = await import(
+	isNginxTarget ? "@sveltejs/adapter-node" : "@sveltejs/adapter-cloudflare"
+);
 import MagicString from "magic-string";
 import { mdsx } from "mdsx";
 import { PRESET_STYLES } from "@valar/svelte-cli/preset";
@@ -13,7 +18,13 @@ const config = {
 	kit: {
 		// https://kit.svelte.dev/docs/adapter-cloudflare#options
 		adapter: adapter(),
+		paths: isNginxTarget ? { base: "" } : {},
 		prerender: {
+			// The block API URL is built at runtime, so the crawler never sees it;
+			// the running Node server handles it per request in this mode.
+			handleUnseenRoutes: isNginxTarget
+				? (details) => console.warn(details.message)
+				: undefined,
 			handleMissingId: (details) => {
 				if (details.id === "#") return;
 				console.warn(details.message);
