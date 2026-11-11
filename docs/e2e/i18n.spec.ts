@@ -21,9 +21,11 @@ test("language switching preserves the document and URL state", async ({ page })
 	await expect(page).toHaveURL(/\/zh\/docs\/components\/button\?ref=locale#usage$/);
 	await expect(page.locator("html")).toHaveAttribute("lang", "zh-CN");
 	await expect(page.locator("header nav").first().getByRole("link")).toHaveText([
-		"组件",
-		"设计 token",
+		"组件助手",
+		"基础组件",
+		"高级组件",
 		"文档",
+		"设计 token",
 	]);
 	await expect(page.getByRole("heading", { level: 1, name: "按钮", exact: true })).toBeVisible();
 	await page.getByRole("button", { name: "切换到English", exact: true }).first().click();
@@ -35,12 +37,13 @@ test("Chinese changelog retains its entries and localized direction navigation",
 	page,
 }) => {
 	await page.goto("/zh/docs/changelog");
-	await expect(page.locator('a[href="/zh/docs/changelog/2026-10"]').first()).toBeVisible();
+	await expect(page.getByRole("heading", { name: "2026-10 - Valar Svelte" })).toBeVisible();
 	await page.goto("/zh/docs/components/number-field");
 	await expect(
 		page.getByRole("heading", { level: 1, name: "数值输入", exact: true })
 	).toBeVisible();
-	await page.locator('a[href="/zh/docs/direction"]').first().click();
+	await page.getByRole("link", { name: "文档", exact: true }).first().click();
+	await page.getByRole("link", { name: "方向 / RTL", exact: true }).first().click();
 	await expect(page).toHaveURL(/\/zh\/docs\/direction$/);
 	await expect(
 		page.getByRole("heading", { level: 1, name: "方向 / RTL", exact: true })

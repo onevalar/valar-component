@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { test, expect, type Page } from "@playwright/test";
+import { tunerButton } from "./tuner.js";
 import { applyStyleOverrides } from "../src/lib/features/workbench/style-overrides.js";
 
 async function setNumber(page: Page, label: string, value: number) {
@@ -36,7 +37,7 @@ for (const [slug, title, label, value, slot, property, result] of components) {
 	}) => {
 		test.setTimeout(60_000);
 		await page.goto(`/docs/components/${slug}`, { waitUntil: "networkidle" });
-		const opener = page.getByRole("button", { name: `微调 ${title}`, exact: true });
+		const opener = tunerButton(page, title);
 		await opener.click();
 		const editor = page.getByRole("dialog", { name: `${title} · 组件参数`, exact: true });
 		await expect(editor.getByTestId(`${slug}-dials`)).toBeVisible();
@@ -130,7 +131,7 @@ for (const [slug, title, label, value, slot, property, result] of components) {
 
 test("Spinner default-size previews never replace explicit same-size callers", async ({ page }) => {
 	await page.goto("/docs/components/spinner", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Spinner", exact: true }).click();
+	await tunerButton(page, "Spinner").click();
 	const editor = page.getByRole("dialog", { name: "Spinner · 组件参数", exact: true });
 	const current = editor.locator("[data-tuning-current]");
 	await editor.getByRole("button", { name: /^默认尺寸（px）/ }).click();
@@ -150,7 +151,7 @@ test("Spinner default-size previews never replace explicit same-size callers", a
 
 test("Skeleton adjusts only radius and keeps loading state isolated", async ({ page }) => {
 	await page.goto("/docs/components/skeleton", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Skeleton", exact: true }).click();
+	await tunerButton(page, "Skeleton").click();
 	const editor = page.getByRole("dialog", { name: "Skeleton · 组件参数", exact: true });
 	const current = editor.locator("[data-tuning-current]");
 	await editor.getByRole("button", { name: /^圆角档位/ }).click();
@@ -174,7 +175,7 @@ test("Menubar retains keyboard switching, choices, submenu and narrow Sheet acti
 	test.setTimeout(90_000);
 	await page.setViewportSize({ width: 1920, height: 1080 });
 	await page.goto("/docs/components/menubar", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Menubar", exact: true }).click();
+	await tunerButton(page, "Menubar").click();
 	const editor = page.getByRole("dialog", { name: "Menubar · 组件参数", exact: true });
 	const current = editor.locator("[data-tuning-current]");
 	await setNumber(page, "菜单项横向内边距（px）", 20);
@@ -222,7 +223,7 @@ test("Navigation Menu preserves viewport modes, local links and narrow site navi
 	test.setTimeout(60_000);
 	await page.setViewportSize({ width: 1920, height: 1080 });
 	await page.goto("/docs/components/navigation-menu", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Navigation Menu", exact: true }).click();
+	await tunerButton(page, "Navigation Menu").click();
 	const editor = page.getByRole("dialog", { name: "Navigation Menu · 组件参数", exact: true });
 	const current = editor.locator("[data-tuning-current]");
 	await setNumber(page, "面板内边距（px）", 22);
@@ -265,7 +266,7 @@ test("Tags Input writeback renders installed geometry in the reopened editor, no
 	});
 	try {
 		await page.goto("/docs/components/tags-input", { waitUntil: "networkidle" });
-		const opener = page.getByRole("button", { name: "微调 Tags Input", exact: true });
+		const opener = tunerButton(page, "Tags Input");
 		await opener.click();
 		await setNumber(page, "外层留白（px）", 14);
 		await page.getByRole("button", { name: "写回组件库…", exact: true }).click();

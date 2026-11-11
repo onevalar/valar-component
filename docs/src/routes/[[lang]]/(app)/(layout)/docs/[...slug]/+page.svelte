@@ -136,7 +136,7 @@
 			{#if showStates}
 				<Tabs.Content value="states">
 					<div class="flex flex-col gap-8">
-						{#each previews as preview (preview.name)}
+						{#each previews as preview (preview)}
 							<section class="flex flex-col gap-2">
 								<h2 class="text-lg font-semibold">{preview.title || t("components.default")}</h2>
 								{#if preview.text}

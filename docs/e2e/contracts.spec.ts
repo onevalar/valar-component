@@ -174,15 +174,19 @@ test("local CLI tarball installs into an independent, checked and built consumer
 	});
 });
 
-test("homepage promotes only components, tokens and docs and fits one desktop screen", async ({
+test("homepage opens the assistant and its navigation fits one desktop screen", async ({
 	page,
 }) => {
 	await page.setViewportSize({ width: 1440, height: 900 });
 	await page.goto("/", { waitUntil: "networkidle" });
 	const nav = page.locator("header nav").first();
-	await expect(nav.getByRole("link")).toHaveText(["Components", "Design tokens", "Docs"]);
-	await expect(page.getByRole("link", { name: "New" })).toHaveCount(0);
-	for (const name of ["全局 token", "组件", "调参"])
-		await expect(page.getByRole("heading", { level: 2, name, exact: true })).toBeVisible();
+	await expect(nav.getByRole("link")).toHaveText([
+		"Assistant",
+		"Basic components",
+		"Advanced components",
+		"Docs",
+		"Design tokens",
+	]);
+	await expect(page.getByRole("heading", { level: 1, name: "想设计点什么？" })).toBeVisible();
 	expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThan(1300);
 });

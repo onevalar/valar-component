@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { test, expect, devices, type Page } from "@playwright/test";
+import { tunerButton } from "./tuner.js";
 import { applyStyleOverrides } from "../src/lib/features/workbench/style-overrides.js";
 
 async function setNumber(page: Page, label: string, value: number) {
@@ -84,7 +85,7 @@ for (const sample of [
 		value: 46,
 		selector: '[data-slot="message-scroller-content"]',
 		property: "row-gap",
-		baseline: "32px",
+		baseline: "24px",
 	},
 	{
 		slug: "marker",
@@ -104,7 +105,7 @@ for (const sample of [
 		page.on("pageerror", (error) => errors.push(error.message));
 		const route = sample.slug === "form" ? "/docs/forms" : `/docs/components/${sample.slug}`;
 		await page.goto(route, { waitUntil: "networkidle" });
-		const opener = page.getByRole("button", { name: `微调 ${sample.title}`, exact: true }).first();
+		const opener = tunerButton(page, sample.title).first();
 		await opener.click();
 		const editor = page.getByRole("dialog", { name: `${sample.title} · 组件参数`, exact: true });
 		await expect(editor.getByTestId(`${sample.slug}-dials`)).toBeVisible();
@@ -154,7 +155,7 @@ test("E14 Aspect Ratio separates saved boundaries from temporary aspect ratios",
 	page,
 }) => {
 	await page.goto("/docs/components/aspect-ratio", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Aspect Ratio", exact: true });
+	const opener = tunerButton(page, "Aspect Ratio");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Aspect Ratio · 组件参数", exact: true });
 	const current = editor.locator("[data-tuning-current]");
@@ -194,7 +195,7 @@ test("E14 Form uses real local validation, accessible errors and independent res
 	page,
 }) => {
 	await page.goto("/docs/forms", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Form", exact: true }).click();
+	await tunerButton(page, "Form").click();
 	const editor = page.getByRole("dialog", { name: "Form · 组件参数", exact: true });
 	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
 	const current = editor.locator("[data-tuning-current]");
@@ -224,7 +225,7 @@ test("E14 labels, collapsible state and separator semantics remain real and isol
 	page,
 }) => {
 	await page.goto("/docs/components/label", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Label", exact: true }).click();
+	await tunerButton(page, "Label").click();
 	let editor = page.getByRole("dialog", { name: "Label · 组件参数", exact: true });
 	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
 	let current = editor.locator("[data-tuning-current]");
@@ -239,7 +240,7 @@ test("E14 labels, collapsible state and separator semantics remain real and isol
 	).not.toBeChecked();
 	await page.keyboard.press("Escape");
 	await page.goto("/docs/components/collapsible", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Collapsible", exact: true }).click();
+	await tunerButton(page, "Collapsible").click();
 	editor = page.getByRole("dialog", { name: "Collapsible · 组件参数", exact: true });
 	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
 	current = editor.locator("[data-tuning-current]");
@@ -257,7 +258,7 @@ test("E14 labels, collapsible state and separator semantics remain real and isol
 	await expect(current.getByRole("button", { name: "展开高级设置", exact: true })).toBeDisabled();
 	await page.keyboard.press("Escape");
 	await page.goto("/docs/components/separator", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Separator", exact: true }).click();
+	await tunerButton(page, "Separator").click();
 	editor = page.getByRole("dialog", { name: "Separator · 组件参数", exact: true });
 	current = editor.locator("[data-tuning-current]");
 	await expect(current.getByRole("separator")).toHaveCount(2);
@@ -270,7 +271,7 @@ test("E14 Resizable and Scroll Area preserve native keyboard interaction across 
 	page,
 }) => {
 	await page.goto("/docs/components/resizable", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Resizable", exact: true }).click();
+	await tunerButton(page, "Resizable").click();
 	let editor = page.getByRole("dialog", { name: "Resizable · 组件参数", exact: true });
 	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
 	let current = editor.locator("[data-tuning-current]");
@@ -289,7 +290,7 @@ test("E14 Resizable and Scroll Area preserve native keyboard interaction across 
 	await expect(handle).toHaveCSS("height", "4px");
 	await page.keyboard.press("Escape");
 	await page.goto("/docs/components/scroll-area", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Scroll Area", exact: true }).click();
+	await tunerButton(page, "Scroll Area").click();
 	editor = page.getByRole("dialog", { name: "Scroll Area · 组件参数", exact: true });
 	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
 	current = editor.locator("[data-tuning-current]");
@@ -304,7 +305,7 @@ test("E14 Resizable and Scroll Area preserve native keyboard interaction across 
 
 test("E14 message previews isolate history, streams, statuses and teardown", async ({ page }) => {
 	await page.goto("/docs/components/message-scroller", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Message Scroller", exact: true });
+	const opener = tunerButton(page, "Message Scroller");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Message Scroller · 组件参数", exact: true });
 	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
@@ -323,7 +324,7 @@ test("E14 message previews isolate history, streams, statuses and teardown", asy
 	await page.keyboard.press("Escape");
 	await expect(opener).toBeFocused();
 	await page.goto("/docs/components/marker", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Marker", exact: true }).click();
+	await tunerButton(page, "Marker").click();
 	const marker = page.getByRole("dialog", { name: "Marker · 组件参数", exact: true });
 	await marker.getByRole("radio", { name: "并排对比", exact: true }).click();
 	await marker
@@ -468,7 +469,7 @@ for (const sample of [
 		const errors: string[] = [];
 		page.on("pageerror", (error) => errors.push(error.message));
 		await page.goto(`/docs/components/${sample.slug}`, { waitUntil: "networkidle" });
-		const opener = page.getByRole("button", { name: `微调 ${sample.title}`, exact: true });
+		const opener = tunerButton(page, sample.title);
 		await opener.click();
 		const editor = page.getByRole("dialog", { name: `${sample.title} · 组件参数`, exact: true });
 		await expect(editor.getByTestId(`${sample.slug}-dials`)).toBeVisible();
@@ -522,7 +523,7 @@ test("Questionnaire editor preserves answers while tuning and isolates compariso
 	page,
 }) => {
 	await page.goto("/docs/components/questionnaire", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Questionnaire", exact: true }).click();
+	await tunerButton(page, "Questionnaire").click();
 	const editor = page.getByRole("dialog", { name: "Questionnaire · 组件参数", exact: true });
 	const current = editor.locator("[data-tuning-current]");
 	const form = current.getByRole("form", { name: "草稿本地问卷" });
@@ -574,7 +575,8 @@ test("Chart editor scopes real portaled tooltips and preserves accessible data",
 	page,
 }) => {
 	await page.goto("/docs/components/chart", { waitUntil: "networkidle" });
-	await page.getByRole("button", { name: "微调 Chart", exact: true }).click();
+	await page.getByRole("tab", { name: "Use", exact: true }).click();
+	await tunerButton(page, "Chart").click();
 	const editor = page.getByRole("dialog", { name: "Chart · 组件参数", exact: true });
 	const current = editor.locator("[data-tuning-current]");
 	await expect(editor.getByTestId("chart-dials")).toBeVisible();
@@ -602,10 +604,11 @@ test("Chart editor scopes real portaled tooltips and preserves accessible data",
 	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
 	await page.keyboard.press("Escape");
 	await page.reload({ waitUntil: "networkidle" });
+	await page.getByRole("tab", { name: "Use", exact: true }).click();
 	await page
 		.getByRole("combobox", { name: "Chart 使用版本", exact: true })
 		.selectOption({ label: "图表提示留白" });
-	await page.getByRole("button", { name: "微调 Chart", exact: true }).click();
+	await tunerButton(page, "Chart").click();
 	await expect(
 		page.getByRole("slider", { name: "横向留白（基准 px）", exact: true })
 	).toHaveAttribute("aria-valuenow", "24");
@@ -624,7 +627,8 @@ test("Sidebar editor isolates cookies, breakpoint portals and nested Escape", as
 		},
 	]);
 	await page.goto("/docs/components/sidebar", { waitUntil: "domcontentloaded" });
-	const opener = page.getByRole("button", { name: "微调 Sidebar", exact: true });
+	await page.getByRole("tab", { name: "Use", exact: true }).click();
+	const opener = tunerButton(page, "Sidebar");
 	const sample = page.frameLocator('iframe[data-preview-frame="sidebar"]');
 	await expect(sample.locator("[data-preview-ready]")).toBeVisible();
 	await opener.click();
@@ -668,6 +672,7 @@ test("Sidebar editor isolates cookies, breakpoint portals and nested Escape", as
 	await expect(editor).toHaveCount(0);
 	await expect(opener).toBeFocused();
 	await page.reload({ waitUntil: "domcontentloaded" });
+	await page.getByRole("tab", { name: "Use", exact: true }).click();
 	await page
 		.getByRole("combobox", { name: "Sidebar 使用版本", exact: true })
 		.selectOption({ label: "侧栏密度" });
@@ -683,11 +688,11 @@ test("Sonner editor isolates notification stores and leaves unstyled layout unto
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/sonner", { waitUntil: "networkidle" });
 	const showToast = page
-		.getByRole("region", { name: "Sonner 样式微调", exact: true })
+		.getByRole("region", { name: "Sonner 样式调节", exact: true })
 		.getByRole("button", { name: "Show Toast", exact: true });
 	await showToast.click();
 	await expect(page.locator("[data-sonner-toast]")).toHaveCount(1);
-	const opener = page.getByRole("button", { name: "微调 Sonner", exact: true });
+	const opener = tunerButton(page, "Sonner");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Sonner · 组件参数", exact: true });
 	await expect(editor.getByTestId("sonner-dials")).toBeVisible();
@@ -742,7 +747,7 @@ test("Color Picker editor contains independent panels and applies saved width to
 	page,
 }) => {
 	await page.goto("/docs/components/color-picker", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Color Picker", exact: true });
+	const opener = tunerButton(page, "Color Picker");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Color Picker · 组件参数", exact: true });
 	await expect(editor.getByTestId("color-picker-dials")).toBeVisible();
@@ -818,7 +823,7 @@ test("Avatar editor dev writeback refreshes the registry baseline and subsequent
 	});
 	try {
 		await page.goto("/docs/components/avatar", { waitUntil: "networkidle" });
-		await page.getByRole("button", { name: "微调 Avatar", exact: true }).click();
+		await tunerButton(page, "Avatar").click();
 		await setNumber(page, "小 · 尺寸（px）", 28);
 		await setNumber(page, "默认 · 尺寸（px）", 44);
 		await page.getByRole("button", { name: "写回组件库…", exact: true }).click();
@@ -829,11 +834,11 @@ test("Avatar editor dev writeback refreshes the registry baseline and subsequent
 		const result = await response;
 		expect(result.status()).toBe(200);
 		expect(readFileSync(file, "utf8")).toBe(written);
-		await expect(page.getByRole("button", { name: "微调 Avatar", exact: true })).toBeEnabled({
+		await expect(tunerButton(page, "Avatar")).toBeEnabled({
 			timeout: 30_000,
 		});
 		await expect(page.locator('.sample [data-slot="avatar"]').first()).toHaveCSS("width", "44px");
-		await page.getByRole("button", { name: "微调 Avatar", exact: true }).click();
+		await tunerButton(page, "Avatar").click();
 		await expect(
 			page.getByRole("slider", { name: "默认 · 尺寸（px）", exact: true })
 		).toHaveAttribute("aria-valuenow", "44");
@@ -858,7 +863,7 @@ test("Number Field editor links outer height and buttons while preserving locali
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/number-field", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Number Field", exact: true });
+	const opener = tunerButton(page, "Number Field");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Number Field · 组件参数", exact: true });
 	await expect(editor.getByTestId("number-field-dials")).toBeVisible();
@@ -928,7 +933,7 @@ test("Slider Field editor changes layout without changing child geometry or nume
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/slider-field", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Slider Field", exact: true });
+	const opener = tunerButton(page, "Slider Field");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Slider Field · 组件参数", exact: true });
 	await expect(editor.getByTestId("slider-field-dials")).toBeVisible();
@@ -987,7 +992,7 @@ test("Avatar editor links asymmetric sizes to badges and mixed group counts and 
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/avatar", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Avatar", exact: true });
+	const opener = tunerButton(page, "Avatar");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Avatar · 组件参数" });
 	await expect(editor.getByTestId("avatar-dials")).toBeVisible();
@@ -1055,7 +1060,7 @@ test("Item editor keeps independent size density and native list actions while c
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/item", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Item", exact: true });
+	const opener = tunerButton(page, "Item");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Item · 组件参数" });
 	await expect(editor.getByTestId("item-dials")).toBeVisible();
@@ -1114,7 +1119,7 @@ test("Accordion editor keeps single and multiple keyboard behavior while alignin
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/accordion", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Accordion", exact: true });
+	const opener = tunerButton(page, "Accordion");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Accordion · 组件参数" });
 	await expect(editor.getByTestId("accordion-dials")).toBeVisible();
@@ -1180,7 +1185,7 @@ test("Alert Dialog editor preserves size variants and real confirmation focus, c
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/alert-dialog", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Alert Dialog", exact: true });
+	const opener = tunerButton(page, "Alert Dialog");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Alert Dialog · 组件参数" });
 	await expect(editor.getByTestId("alert-dialog-dials")).toBeVisible();
@@ -1256,7 +1261,7 @@ test("Alert Dialog editor preserves size variants and real confirmation focus, c
 	await expect(editor).toHaveCount(0);
 	await expect(opener).toBeFocused();
 	await page
-		.getByRole("region", { name: "Alert Dialog 样式微调", exact: true })
+		.getByRole("region", { name: "Alert Dialog 样式调节", exact: true })
 		.getByRole("button", { name: "Show Dialog", exact: true })
 		.click();
 	await expect(page.getByRole("alertdialog")).toHaveCSS("padding", "48px");
@@ -1268,7 +1273,7 @@ test("Alert editor preserves icon columns and action reserves without replaying 
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/alert", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Alert", exact: true });
+	const opener = tunerButton(page, "Alert");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Alert · 组件参数" });
 	await expect(editor.getByTestId("alert-dials")).toBeVisible();
@@ -1323,7 +1328,7 @@ test("Empty editor tunes only the root while keeping media, buttons and demo act
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/empty", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Empty", exact: true });
+	const opener = tunerButton(page, "Empty");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Empty · 组件参数" });
 	await expect(editor.getByTestId("empty-dials")).toBeVisible();
@@ -1379,7 +1384,7 @@ test("Badge editor preserves icon insets and native links while saving isolated 
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/badge", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Badge", exact: true });
+	const opener = tunerButton(page, "Badge");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Badge · 组件参数" });
 	await expect(editor.getByTestId("badge-dials")).toBeVisible();
@@ -1429,7 +1434,7 @@ test("Table editor retains semantic tables, embedded controls and local narrow s
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/table", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Table", exact: true });
+	const opener = tunerButton(page, "Table");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Table · 组件参数" });
 	await expect(editor.getByTestId("table-dials")).toBeVisible();
@@ -1494,7 +1499,7 @@ test("Native Select editor preserves native selection, size alignment and isolat
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/native-select", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Native Select", exact: true });
+	const opener = tunerButton(page, "Native Select");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Native Select · 组件参数" });
 	await expect(editor.getByTestId("native-select-dials")).toBeVisible();
@@ -1502,10 +1507,16 @@ test("Native Select editor preserves native selection, size alignment and isolat
 	const control = current.getByRole("combobox", { name: "默认尺寸 · 未选择", exact: true });
 	await current.getByText("默认尺寸 · 未选择", { exact: true }).click();
 	await expect(control).toBeFocused();
-	await control.press("Home");
-	await control.press("ArrowDown");
-	await expect(control).toHaveValue("apple");
-	await control.press("End");
+	if (process.platform === "darwin") {
+		// Chromium on macOS hands select menus to the OS. Test their DOM selection
+		// here and exercise keyboard navigation on the Linux CI runner.
+		await control.selectOption("grapes");
+	} else {
+		await control.press("Home");
+		await control.press("ArrowDown");
+		await expect(control).toHaveValue("apple");
+		await control.press("End");
+	}
 	await expect(control).toHaveValue("grapes"); // Skip the disabled final option.
 	await expect(
 		current.getByRole("combobox", { name: "默认尺寸 · 禁用", exact: true })
@@ -1551,7 +1562,7 @@ test("Input Group editor changes inline geometry without compressing block addon
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/input-group", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Input Group", exact: true });
+	const opener = tunerButton(page, "Input Group");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Input Group · 组件参数" });
 	await expect(editor.getByTestId("input-group-dials")).toBeVisible();
@@ -1628,7 +1639,7 @@ test("Input OTP editor retains actual paste, deletion, grouped endpoints and iso
 	test.setTimeout(60_000);
 	await context.grantPermissions(["clipboard-read", "clipboard-write"]);
 	await page.goto("/docs/components/input-otp", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Input OTP", exact: true });
+	const opener = tunerButton(page, "Input OTP");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Input OTP · 组件参数" });
 	await expect(editor.getByTestId("input-otp-dials")).toBeVisible();
@@ -1637,12 +1648,12 @@ test("Input OTP editor retains actual paste, deletion, grouped endpoints and iso
 	await current.getByText("连续六位", { exact: true }).click();
 	await expect(control).toBeFocused();
 	await page.evaluate(() => navigator.clipboard.writeText("583027"));
-	await control.press("Control+V");
+	await control.press("ControlOrMeta+V");
 	await expect(control).toHaveValue("583027");
-	await control.press("End");
+	await control.press(process.platform === "darwin" ? "Meta+ArrowRight" : "End");
 	await control.press("Backspace");
 	await expect(control).toHaveValue("58302");
-	await control.press("Home");
+	await control.press(process.platform === "darwin" ? "Meta+ArrowLeft" : "Home");
 	await control.press("Delete");
 	await expect(control).toHaveValue("8302");
 	await expect(current.getByRole("textbox", { name: "禁用验证码", exact: true })).toBeDisabled();
@@ -1682,7 +1693,7 @@ test("Toggle Group editor preserves joined endpoints, selection and shared Toggl
 }) => {
 	test.setTimeout(60_000);
 	await page.goto("/docs/components/toggle-group", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Toggle Group", exact: true });
+	const opener = tunerButton(page, "Toggle Group");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Toggle Group · 组件参数" });
 	await expect(editor.getByTestId("toggle-group-dials")).toBeVisible();
@@ -1759,7 +1770,7 @@ test("Toggle editor shares geometry with Group while preserving joined and icon 
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/toggle", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Toggle", exact: true });
+	const opener = tunerButton(page, "Toggle");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Toggle · 组件参数" });
 	await expect(editor.getByTestId("toggle-dials")).toBeVisible();
@@ -1830,7 +1841,7 @@ test("Slider editor preserves real directional ranges and keeps comparison value
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/slider", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Slider", exact: true });
+	const opener = tunerButton(page, "Slider");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Slider · 组件参数" });
 	await expect(editor.getByTestId("slider-dials")).toBeVisible();
@@ -1909,7 +1920,7 @@ test("Checkbox editor preserves mixed state, labels, keyboard focus and comparis
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/checkbox", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Checkbox", exact: true });
+	const opener = tunerButton(page, "Checkbox");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Checkbox · 组件参数" });
 	const current = editor.locator("[data-tuning-current]");
@@ -1968,7 +1979,7 @@ test("Radio Group editor keeps roving keyboard focus and dark dots with independ
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/radio-group", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Radio Group", exact: true });
+	const opener = tunerButton(page, "Radio Group");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Radio Group · 组件参数" });
 	const current = editor.locator("[data-tuning-current]");
@@ -2029,7 +2040,7 @@ test("Switch editor links track and thumb dimensions while preserving small size
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/switch", { waitUntil: "networkidle" });
-	const opener = page.getByRole("button", { name: "微调 Switch", exact: true });
+	const opener = tunerButton(page, "Switch");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Switch · 组件参数" });
 	const current = editor.locator("[data-tuning-current]");
@@ -2094,7 +2105,7 @@ test("Tabs editor tunes both orientations and variants without changing keyboard
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/tabs", { waitUntil: "networkidle" });
-	const openButton = page.getByRole("button", { name: "微调 Tabs", exact: true });
+	const openButton = tunerButton(page, "Tabs");
 	await openButton.click();
 	const editor = page.getByRole("dialog", { name: "Tabs · 组件参数" });
 	await expect(editor).toBeVisible();
@@ -2170,7 +2181,7 @@ test("Card editor keeps both sizes, shared spacing, edge content and versions al
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/card", { waitUntil: "networkidle" });
-	const openButton = page.getByRole("button", { name: "微调 Card", exact: true });
+	const openButton = tunerButton(page, "Card");
 	await openButton.click();
 	const editor = page.getByRole("dialog", { name: "Card · 组件参数" });
 	await expect(editor).toBeVisible();
@@ -2338,12 +2349,12 @@ test("Button editor tunes every variant full screen, compares and restores versi
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/button", { waitUntil: "networkidle" });
-	const tuner = page.getByRole("region", { name: "Button 样式微调", exact: true });
+	const tuner = page.getByRole("region", { name: "Button 样式调节", exact: true });
 	const pageSample = tuner.locator('[data-tuning-current] [data-size="default"]').first();
 	const editor = page.getByRole("dialog", { name: "Button · 组件参数" });
 	const cell = (pane: string, variant: string, size: string) =>
 		editor.locator(`[data-tuning-${pane}] [data-variant="${variant}"][data-size="${size}"]`);
-	const openButton = tuner.getByRole("button", { name: "微调 Button", exact: true });
+	const openButton = tuner.getByRole("button", { name: "样式调节器", exact: true });
 	await expect(page.getByTestId("button-dials")).toHaveCount(0);
 	await expect(pageSample).toHaveCSS("height", "32px");
 	await openButton.click();
@@ -2421,21 +2432,27 @@ test("Button editor tunes every variant full screen, compares and restores versi
 		await restored.goto(new URL("/docs/components/button", page.url()).href, {
 			waitUntil: "networkidle",
 		});
-		await restored
+		await tunerButton(restored, "Button").click();
+		const restoredEditor = restored.getByRole("dialog", { name: "Button · 组件参数" });
+		await restoredEditor
 			.getByLabel("导入 Button 版本", { exact: true })
 			.setInputFiles((await download.path())!);
+		await expect(restoredEditor.getByRole("status")).toContainText("已导入「宽松 v1」");
+		await restoredEditor.getByRole("button", { name: "关闭", exact: true }).click();
 		const restoredButton = restored.locator('[data-tuning-current] [data-size="default"]').first();
 		await expect(restoredButton).toHaveCSS("height", "44px");
 		await expect(restoredButton).toHaveCSS("padding-left", "16px");
 	} finally {
 		await context.close();
 	}
-	await tuner.getByLabel("导入 Button 版本", { exact: true }).setInputFiles({
+	await openButton.click();
+	await editor.getByLabel("导入 Button 版本", { exact: true }).setInputFiles({
 		name: "bad.json",
 		mimeType: "application/json",
 		buffer: Buffer.from('{"format":999}'),
 	});
-	await expect(tuner.getByRole("status")).toContainText("导入失败");
+	await expect(editor.getByRole("status")).toContainText("导入失败");
+	await editor.getByRole("button", { name: "关闭", exact: true }).click();
 	await expect(pageSample).toHaveCSS("height", "44px");
 	expect(errors).toEqual([]);
 });
@@ -2445,12 +2462,12 @@ test("Button radius level follows the global radius and drafts survive storage f
 }) => {
 	await page.emulateMedia({ colorScheme: "dark" });
 	await page.goto("/docs/components/button", { waitUntil: "networkidle" });
-	const tuner = page.getByRole("region", { name: "Button 样式微调", exact: true });
+	const tuner = page.getByRole("region", { name: "Button 样式调节", exact: true });
 	const editor = page.getByRole("dialog", { name: "Button · 组件参数" });
 	const current = editor.locator(
 		'[data-tuning-current] [data-variant="outline"][data-size="default"]'
 	);
-	await tuner.getByRole("button", { name: "微调 Button", exact: true }).click();
+	await tuner.getByRole("button", { name: "样式调节器", exact: true }).click();
 	await editor.getByRole("button", { name: "圆角档位 lg · 1 × 基数" }).click();
 	await page.getByRole("option", { name: "xl · 1.4 × 基数", exact: true }).click();
 	// xl is 1.4 × the theme radius (0.625rem = 10px), not a fixed pixel value.
@@ -2486,11 +2503,11 @@ test("Dialog editor reuses the shared shell and previews layout, overlay and mot
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/dialog", { waitUntil: "networkidle" });
-	const tuner = page.getByRole("region", { name: "Dialog 样式微调", exact: true });
+	const tuner = page.getByRole("region", { name: "Dialog 样式调节", exact: true });
 	const editor = page.getByRole("dialog", { name: "Dialog · 组件参数" });
 	const part = (pane: string, slot: string) =>
 		editor.locator(`[data-tuning-${pane}] [data-slot="dialog-${slot}"]`);
-	const openButton = tuner.getByRole("button", { name: "微调 Dialog", exact: true });
+	const openButton = tuner.getByRole("button", { name: "样式调节器", exact: true });
 	await openButton.click();
 	await expect(editor.getByTestId("dialog-dials")).toBeVisible();
 	// Baseline comes from the installed valar source.
@@ -2537,7 +2554,7 @@ test("Popover editor previews padding, slide distance and motion tier on a real 
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/popover", { waitUntil: "networkidle" });
 	const tuner = page.getByRole("region", {
-		name: "Popover 样式微调",
+		name: "Popover 样式调节",
 		exact: true,
 	});
 	const editor = page.getByRole("dialog", { name: "Popover · 组件参数" });
@@ -2549,7 +2566,7 @@ test("Popover editor previews padding, slide distance and motion tier on a real 
 			name
 		);
 	const openButton = tuner.getByRole("button", {
-		name: "微调 Popover",
+		name: "样式调节器",
 		exact: true,
 	});
 	await openButton.click();
@@ -2600,14 +2617,14 @@ test("Sheet editor previews width, padding, overlay, slide distance and motion t
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/sheet", { waitUntil: "networkidle" });
 	const tuner = page.getByRole("region", {
-		name: "Sheet 样式微调",
+		name: "Sheet 样式调节",
 		exact: true,
 	});
 	const editor = page.getByRole("dialog", { name: "Sheet · 组件参数" });
 	const part = (pane: string, slot: string) =>
 		editor.locator(`[data-tuning-${pane}] [data-slot="sheet-${slot}"]`);
 	const openButton = tuner.getByRole("button", {
-		name: "微调 Sheet",
+		name: "样式调节器",
 		exact: true,
 	});
 	await openButton.click();
@@ -2669,10 +2686,10 @@ test("Input editor picks Button's height tier and radius level, compares and sav
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/input", { waitUntil: "networkidle" });
-	const tuner = page.getByRole("region", { name: "Input 样式微调", exact: true });
+	const tuner = page.getByRole("region", { name: "Input 样式调节", exact: true });
 	const editor = page.getByRole("dialog", { name: "Input · 组件参数" });
 	const input = (pane: string) => editor.locator(`[data-tuning-${pane}] [data-slot="input"]`);
-	const openButton = tuner.getByRole("button", { name: "微调 Input", exact: true });
+	const openButton = tuner.getByRole("button", { name: "样式调节器", exact: true });
 	const pageSample = tuner.locator('[data-tuning-current] [data-slot="input"]');
 	await expect(pageSample).toHaveCSS("height", "32px");
 	await openButton.click();
@@ -2721,13 +2738,13 @@ test("Select and Textarea editors share the shell and Button's levels", async ({
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/select", { waitUntil: "networkidle" });
-	let tuner = page.getByRole("region", { name: "Select 样式微调", exact: true });
+	let tuner = page.getByRole("region", { name: "Select 样式调节", exact: true });
 	let editor = page.getByRole("dialog", { name: "Select · 组件参数" });
 	const trigger = (pane: string, size: string) =>
 		editor
 			.locator(`[data-tuning-${pane}] [data-slot="select-trigger"][data-size="${size}"]`)
 			.first();
-	let openButton = tuner.getByRole("button", { name: "微调 Select", exact: true });
+	let openButton = tuner.getByRole("button", { name: "样式调节器", exact: true });
 	await openButton.click();
 	await expect(editor.getByTestId("select-dials")).toBeVisible();
 	await expect(editor.getByRole("button", { name: "默认尺寸高度 同 Button 默认" })).toBeVisible();
@@ -2747,11 +2764,11 @@ test("Select and Textarea editors share the shell and Button's levels", async ({
 	await expect(openButton).toBeFocused();
 
 	await page.goto("/docs/components/textarea", { waitUntil: "networkidle" });
-	tuner = page.getByRole("region", { name: "Textarea 样式微调", exact: true });
+	tuner = page.getByRole("region", { name: "Textarea 样式调节", exact: true });
 	editor = page.getByRole("dialog", { name: "Textarea · 组件参数" });
 	const textarea = (pane: string) =>
 		editor.locator(`[data-tuning-${pane}] [data-slot="textarea"]`).first();
-	openButton = tuner.getByRole("button", { name: "微调 Textarea", exact: true });
+	openButton = tuner.getByRole("button", { name: "样式调节器", exact: true });
 	await openButton.click();
 	await expect(
 		editor.getByRole("slider", { name: "纵向内边距（px）", exact: true })
@@ -2780,11 +2797,11 @@ test("Dropdown Menu editor previews panel, item spacing and motion tier on a rea
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/dropdown-menu", { waitUntil: "networkidle" });
-	const tuner = page.getByRole("region", { name: "Dropdown Menu 样式微调", exact: true });
+	const tuner = page.getByRole("region", { name: "Dropdown Menu 样式调节", exact: true });
 	const editor = page.getByRole("dialog", { name: "Dropdown Menu · 组件参数" });
 	const part = (pane: string, slot: string) =>
 		editor.locator(`[data-tuning-${pane}] [data-slot="dropdown-menu-${slot}"]`);
-	const openButton = tuner.getByRole("button", { name: "微调 Dropdown Menu", exact: true });
+	const openButton = tuner.getByRole("button", { name: "样式调节器", exact: true });
 	await openButton.click();
 	await expect(editor.getByTestId("dropdown-menu-dials")).toBeVisible();
 	// Baseline comes from the installed valar source.
@@ -2844,14 +2861,14 @@ test("Tooltip editor previews padding, motion tier and the real show delay", asy
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/tooltip", { waitUntil: "networkidle" });
-	const tuner = page.getByRole("region", { name: "Tooltip 样式微调", exact: true });
+	const tuner = page.getByRole("region", { name: "Tooltip 样式调节", exact: true });
 	const editor = page.getByRole("dialog", { name: "Tooltip · 组件参数" });
 	const pinned = (pane: string) =>
 		editor.locator(`[data-tuning-${pane}] [data-tooltip-pinned] [data-slot="tooltip-content"]`);
 	const hovered = editor.locator(
 		'[data-tuning-current] [data-tooltip-hover] [data-slot="tooltip-content"]'
 	);
-	const openButton = tuner.getByRole("button", { name: "微调 Tooltip", exact: true });
+	const openButton = tuner.getByRole("button", { name: "样式调节器", exact: true });
 	await openButton.click();
 	await expect(editor.getByTestId("tooltip-dials")).toBeVisible();
 	for (const [label, value] of [
@@ -2905,7 +2922,7 @@ test("Drawer editor previews real directional surfaces, drag, comparison and sav
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/drawer", { waitUntil: "networkidle" });
-	const openButton = page.getByRole("button", { name: "微调 Drawer", exact: true });
+	const openButton = tunerButton(page, "Drawer");
 	await openButton.click();
 	const editor = page.getByRole("dialog", { name: "Drawer · 组件参数" });
 	await expect(editor.getByTestId("drawer-dials")).toBeVisible();
@@ -2939,13 +2956,20 @@ test("Drawer editor previews real directional surfaces, drag, comparison and sav
 			direction
 		);
 	}
-	await expect(part("current", "content")).toHaveCSS("transform", "none");
-	const box = (await part("current", "header").boundingBox())!;
+	const drawer = part("current", "content");
+	// Vaul ignores vertical drags during the opening animation.
+	await drawer.evaluate(async (element) => {
+		await Promise.all(element.getAnimations().map((animation) => animation.finished));
+	});
+	await expect(drawer).toHaveCSS("transform", "none");
+	const header = part("current", "header");
+	await header.scrollIntoViewIfNeeded();
+	const box = (await header.boundingBox())!;
 	await page.mouse.move(box.x + box.width / 2, box.y + 10);
 	await page.mouse.down();
 	await page.mouse.move(box.x + box.width / 2, box.y + 260, { steps: 20 });
 	await page.mouse.up();
-	await expect(part("current", "content")).toHaveCount(0);
+	await expect(drawer).toHaveCount(0);
 	await editor.getByRole("button", { name: "重播进入与退出" }).click();
 	await expect(part("current", "content")).toBeVisible();
 	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
@@ -2967,7 +2991,8 @@ test("Hover Card editor keeps real hover behavior, previews motion and saves ind
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/hover-card", { waitUntil: "networkidle" });
-	const openButton = page.getByRole("button", { name: "微调 Hover Card", exact: true });
+	await page.getByRole("tab", { name: "Use", exact: true }).click();
+	const openButton = tunerButton(page, "Hover Card");
 	await openButton.click();
 	const editor = page.getByRole("dialog", { name: "Hover Card · 组件参数" });
 	await expect(editor.getByTestId("hover-card-dials")).toBeVisible();
@@ -3025,7 +3050,7 @@ test("Context Menu editor supports real right-click, keyboard submenu and isolat
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/context-menu", { waitUntil: "networkidle" });
-	const openButton = page.getByRole("button", { name: "微调 Context Menu", exact: true });
+	const openButton = tunerButton(page, "Context Menu");
 	await openButton.click();
 	const editor = page.getByRole("dialog", { name: "Context Menu · 组件参数" });
 	await expect(editor.getByTestId("context-menu-dials")).toBeVisible();
