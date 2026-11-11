@@ -43,7 +43,7 @@ test("Button defaults to a non-submit control and keeps deliberate shape overrid
 		renderToStaticMarkup(React.createElement(Button, { type: "submit" }, "提交")),
 		/type="submit"/
 	);
-	assert.match(buttonVariants({ size: "icon" }), /rounded-full/);
+	assert.doesNotMatch(buttonVariants({ size: "icon" }), /rounded-full/);
 	assert.doesNotMatch(buttonVariants({ size: "icon", shape: "square" }), /rounded-full/);
 	assert.match(buttonVariants({ shape: "pill" }), /rounded-full/);
 });
