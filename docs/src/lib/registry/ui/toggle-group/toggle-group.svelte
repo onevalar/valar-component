@@ -5,7 +5,10 @@
 
 	type ToggleVariants = VariantProps<typeof toggleVariants>;
 
+	type ToggleGroupAppearance = "default" | "toolbar";
+
 	interface ToggleGroupContext extends ToggleVariants {
+		appearance?: ToggleGroupAppearance;
 		spacing?: number;
 		orientation?: "horizontal" | "vertical";
 	}
@@ -28,17 +31,24 @@
 		value = $bindable(),
 		class: className,
 		size = "default",
-		spacing = 0,
+		spacing: spacingProp,
+		appearance = "default",
 		orientation = "horizontal",
 		variant = "default",
 		...restProps
 	}: ToggleGroupPrimitive.RootProps &
 		ToggleVariants & {
 			spacing?: number;
+			appearance?: ToggleGroupAppearance;
 			orientation?: "horizontal" | "vertical";
 		} = $props();
 
+	const spacing = $derived(spacingProp ?? (appearance === "toolbar" ? 1.5 : 0));
+
 	setToggleGroupCtx({
+		get appearance() {
+			return appearance;
+		},
 		get variant() {
 			return variant;
 		},
@@ -63,6 +73,7 @@ get along, so we shut typescript up by casting `value` to `never`.
 	bind:ref
 	{orientation}
 	data-slot="toggle-group"
+	data-appearance={appearance}
 	data-variant={variant}
 	data-size={size}
 	data-spacing={spacing}

@@ -147,8 +147,32 @@ export const ADVANCED_CATEGORIES = [
 	},
 ] as const;
 
-/** The example used as a component's picture when `<slug>-demo` does not exist. */
-export const DEMO_OVERRIDES: Record<string, string> = { chart: "chart-bar-demo" };
+/** The example used as a component's picture in place of `<slug>-demo`. */
+export const DEMO_OVERRIDES: Record<string, string> = {
+	alert: "alert-connection",
+	avatar: "avatar-subscriber",
+	breadcrumb: "breadcrumb-workspace",
+	"button-group": "button-group-pill-demo",
+	calendar: "calendar-project-date",
+	chart: "chart-bar-demo",
+	collapsible: "collapsible-properties",
+	command: "command-basic",
+	"context-menu": "context-menu-issue",
+	empty: "empty-issue-list-demo",
+	field: "field-settings-row",
+	"hover-card": "hover-card-profile",
+	"input-group": "input-group-settings-search",
+	item: "item-issue-row",
+	progress: "progress-project",
+	resizable: "resizable-inbox",
+	"scroll-area": "scroll-area-settings",
+	sheet: "sheet-project-details",
+	sidebar: "sidebar-workspace",
+	sonner: "sonner-workspace",
+	table: "table-settings",
+	tabs: "tabs-capsule",
+	"toggle-group": "toggle-group-toolbar",
+};
 
 /** Where a component sits: its section ("basic" or "advanced") and its category key. */
 export function categoryOf(slug: string, section: "basic" | "advanced") {

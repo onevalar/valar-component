@@ -18,6 +18,14 @@ links:
 	import Callout from "$lib/components/callout.svelte";
 </script>
 
+<ComponentPreview name="sidebar-workspace" title="Workspace navigation" previewClassName="p-4">
+
+<div></div>
+
+</ComponentPreview>
+
+Set `appearance="workspace"` on Sidebar.Provider for 28 px navigation rows with compact icons and a separate current-page highlight. Choose a view or toggle the Workspace group to try the Linear navigation states. The preview also demonstrates Valar's desktop icon collapse and mobile Sheet. Use real links with `aria-current="page"` for application routes.
+
 <DocsFigure caption="A sidebar that collapses to icons.">
 <ComponentPreview type="block" name="demo-sidebar-icon" title="Sidebar" class="w-full">
 
@@ -117,6 +125,7 @@ The `Sidebar.Provider` component is used to provide the sidebar context to the `
 | `onOpenChange` | `(open: boolean) => void` | A callback fired _after_ the open state of the sidebar changes if uncontrolled, and _before_ the sidebar opens or closes if controlled.                                   |
 | `persistState` | `boolean`                 | Defaults to `true`. Set to `false` to disable `sidebar_state` cookie writes in temporary or embedded previews; bindings, callbacks, and keyboard shortcuts remain active. |
 | `keyboardShortcut` | `boolean`             | Defaults to `true`. Enable Cmd/Ctrl+B outside editable elements; set to `false` to leave the shortcut entirely to the application or browser. |
+| `appearance` | `"default" \| "workspace"` | Use workspace navigation colors, spacing, and the 192 px desktop width. |
 
 ### Width
 

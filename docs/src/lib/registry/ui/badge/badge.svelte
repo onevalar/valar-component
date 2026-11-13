@@ -2,7 +2,7 @@
 	import { type VariantProps, tv } from "tailwind-variants";
 
 	export const badgeVariants = tv({
-		base: "cn-badge group/badge inline-flex w-fit shrink-0 items-center justify-center overflow-hidden whitespace-nowrap focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none",
+		base: "cn-badge group/badge inline-flex w-fit shrink-0 items-center justify-center overflow-hidden whitespace-nowrap focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none",
 		variants: {
 			variant: {
 				default: "cn-badge-variant-default",
@@ -11,6 +11,7 @@
 				outline: "cn-badge-variant-outline",
 				ghost: "cn-badge-variant-ghost",
 				link: "cn-badge-variant-link",
+				label: "cn-badge-variant-label",
 			},
 		},
 		defaultVariants: {
@@ -30,10 +31,12 @@
 		href,
 		class: className,
 		variant = "default",
+		labelColor,
 		children,
 		...restProps
 	}: WithElementRef<HTMLAnchorAttributes> & {
 		variant?: BadgeVariant;
+		labelColor?: string;
 	} = $props();
 </script>
 
@@ -45,5 +48,13 @@
 	class={cn(badgeVariants({ variant }), className)}
 	{...restProps}
 >
+	{#if variant === "label" && labelColor}
+		<span
+			aria-hidden="true"
+			data-slot="badge-label-marker"
+			class="grid size-3.5 shrink-0 place-items-center before:size-[9px] before:rounded-full before:bg-current"
+			style:color={labelColor}
+		></span>
+	{/if}
 	{@render children?.()}
 </svelte:element>

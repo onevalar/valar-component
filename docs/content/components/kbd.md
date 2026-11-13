@@ -18,7 +18,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="kbd-demo">
+<ComponentPreview name="kbd-demo" title="Keycaps and menu shortcuts">
 
 <div></div>
 
@@ -58,6 +58,12 @@ Copy and paste the following code into your project.
 <Kbd.Root>B</Kbd.Root>
 ```
 
+Pair each keycap with the name of its action. Use the shortcut for the user's platform.
+
+Use `appearance="inline"` for shortcuts at the end of menu rows and
+`appearance="compact"` for small bordered keys. In the preview above, open Help
+to see the menu shortcut, or press Shift+S while Help is focused.
+
 ## Group
 
 Use the `Kbd.Group` component to group keyboard keys together.
@@ -80,7 +86,7 @@ Use the `Kbd.Root` component inside a `Button` component to display a keyboard k
 
 ## Tooltip
 
-You can use the `Kbd.Root` component inside a `Tooltip` component to display a tooltip with a keyboard key.
+Use `Tooltip.Hint` for a tooltip with compact keys. Press Shift+V while the button is focused to toggle its pressed state.
 
 <ComponentPreview name="kbd-tooltip-demo">
 

@@ -1,15 +1,17 @@
 <script lang="ts">
 	import * as Field from "$lib/registry/ui/field/index.js";
 	import { Switch } from "$lib/registry/ui/switch/index.js";
+
+	const id = $props.id();
 </script>
 
-<Field.Group class="w-full max-w-[10rem]">
+<Field.Group class="w-full max-w-xs">
 	<Field.Field orientation="horizontal">
-		<Switch id="switch-size-sm" size="sm" />
-		<Field.Label for="switch-size-sm">Small</Field.Label>
+		<Field.Label for={`${id}-sm`}>Create more</Field.Label>
+		<Switch id={`${id}-sm`} size="sm" />
 	</Field.Field>
 	<Field.Field orientation="horizontal">
-		<Switch id="switch-size-default" size="default" />
-		<Field.Label for="switch-size-default">Default</Field.Label>
+		<Field.Label for={`${id}-default`}>Use pointer cursors</Field.Label>
+		<Switch id={`${id}-default`} size="default" />
 	</Field.Field>
 </Field.Group>

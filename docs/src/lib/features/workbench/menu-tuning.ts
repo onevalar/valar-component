@@ -30,7 +30,7 @@ import {
 const valuesSchema = z
 	.object({
 		padding: z.number().int().min(0).max(12).multipleOf(2),
-		minWidth: z.number().int().min(96).max(320).multipleOf(16),
+		minWidth: z.number().int().min(96).max(320).multipleOf(4),
 		radius: z.enum(RADIUS_CHOICES),
 		itemPaddingX: z.number().int().min(4).max(20).multipleOf(2),
 		itemPaddingY: z.number().int().min(2).max(12).multipleOf(2),
@@ -59,6 +59,7 @@ export type MenuContext = {
 	separatorBleed: boolean;
 	/** Menubar choices reserve their absolute indicator column when item density changes. */
 	choiceUsesInset?: boolean;
+	itemEndOffset?: number;
 	choiceIndicatorLeft?: number;
 };
 
@@ -111,14 +112,21 @@ export function parseMenuSource(
 		(sourceWord(`rounded-(${RADIUS_LEVELS.join("|")})`, source) as RadiusLevel | undefined) ??
 		STYLE_VALUE;
 	const padding = px(`p-${N}`, content, 0);
-	const itemPaddingX = px(`px-${N}`, item, 8);
+	const itemPaddingX = px(`(?:px|ps)-${N}`, item, 8);
+	const end = sourceWord(`pe-${N}`, item);
 	const itemPaddingY = px(`py-${N}`, item, 6);
 	const itemGap = px(`gap-${N}`, item, 8);
-	const inset = /data-inset:pl-(\d+(?:\.\d+)?)/.exec(item)?.[1];
+	const inset = /data-inset:p[ls]-(\d+(?:\.\d+)?)/.exec(item)?.[1];
 	return {
 		values: {
 			padding,
-			minWidth: px(`min-w-${N}`, content, 128),
+			minWidth:
+				component === "context-menu"
+					? Number(
+							sourceWord(`\\[--valar-context-menu-min-width:${N}px\\]`, content) ??
+								px(`min-w-${N}`, content, 180)
+						)
+					: px(`min-w-${N}`, content, 128),
 			radius: radius(content),
 			itemPaddingX,
 			itemPaddingY,
@@ -136,6 +144,7 @@ export function parseMenuSource(
 			inset: inset === undefined ? itemPaddingX + 16 + itemGap : Number(inset) * 4,
 			choicePaddingY: px(`py-${N}`, choice, itemPaddingY),
 			separatorBleed: px(`-mx-${N}`, separator, -1) === padding,
+			...(end === undefined ? {} : { itemEndOffset: Number(end) * 4 - itemPaddingX }),
 			...(component === "menubar"
 				? { choiceUsesInset: true, choiceIndicatorLeft: px(`left-${N}`, indicator, 0) }
 				: {}),
@@ -216,6 +225,7 @@ const PANELS = ["content", "sub-content"];
  * are excluded on the page so tuning never restyles the editor itself.
  */
 function menuCss(
+	component: MenuComponent,
 	select: (slots: string[], suffix?: string) => string,
 	overrides: MenuOverrides,
 	context: MenuContext | undefined
@@ -240,23 +250,35 @@ function menuCss(
 	rule(PANELS, panelDecls);
 	if (panel.slide)
 		for (const slot of PANELS) rules.push(...slideCss((side) => select([slot], side), panel.slide));
-	if (minWidth !== undefined) rule(["content"], [`min-width: ${minWidth}px;`]);
+	if (minWidth !== undefined) {
+		const property = component === "context-menu" ? "--valar-context-menu-min-width" : "min-width";
+		rule(["content"], [`${property}: ${minWidth}px;`]);
+	}
 	if (separator !== undefined) rule(["separator"], [`margin-inline: -${separator}px;`]);
 	const shared: string[] = [];
 	if (item.py !== undefined) shared.push(`padding-block: ${item.py}px;`);
 	if (item.gap !== undefined) shared.push(`gap: ${item.gap}px;`);
 	if (item.radius) shared.push(`border-radius: ${radiusCss(item.radius)};`);
-	rule(ITEMS, [...shared, ...(item.px !== undefined ? [`padding-inline: ${item.px}px;`] : [])]);
+	rule(ITEMS, [
+		...shared,
+		...(item.px !== undefined
+			? [`padding-inline: ${item.px}px ${item.px + (context.itemEndOffset ?? 0)}px;`]
+			: []),
+	]);
 	rule(CHOICES, [
 		...shared.filter((declaration) => !declaration.startsWith("padding-block")),
 		...(choicePy !== undefined ? [`padding-block: ${choicePy}px;`] : []),
-		...(choicePx !== undefined ? [`padding-left: ${choicePx}px;`] : []),
+		...(choicePx !== undefined ? [`padding-inline-start: ${choicePx}px;`] : []),
 	]);
 	if (item.px !== undefined) rule(["label"], [`padding-inline: ${item.px}px;`]);
 	if (indicatorLeft !== undefined)
 		rule(["checkbox-item-indicator", "radio-item-indicator"], [`left: ${indicatorLeft}px;`]);
 	if (item.inset !== undefined)
-		rule([...ITEMS, ...CHOICES, "label"], [`padding-left: ${item.inset}px;`], "[data-inset]");
+		rule(
+			[...ITEMS, ...CHOICES, "label"],
+			[`padding-inline-start: ${item.inset}px;`],
+			"[data-inset]"
+		);
 	return rules.join("\n");
 }
 
@@ -279,28 +301,42 @@ export function menuOverrideClasses(
 		panelClasses.push(`data-open:zoom-in-${panel.zoom}`, `data-closed:zoom-out-${panel.zoom}`);
 	if (panel.slide) panelClasses.push(...slideClasses(panel.slide));
 	const shared: string[] = [];
+	const start = context.itemEndOffset === undefined ? "pl" : "ps";
 	if (item.gap !== undefined) shared.push(`gap-${spacing(item.gap)}`);
 	if (item.radius) shared.push(`rounded-${item.radius}`);
-	if (item.inset !== undefined) shared.push(`data-inset:pl-${spacing(item.inset)}`);
+	if (item.inset !== undefined) shared.push(`data-inset:${start}-${spacing(item.inset)}`);
 	const itemClasses = [
 		...shared,
-		...(item.px !== undefined ? [`px-${spacing(item.px)}`] : []),
+		...(item.px !== undefined
+			? context.itemEndOffset === undefined
+				? [`px-${spacing(item.px)}`]
+				: [`ps-${spacing(item.px)}`, `pe-${spacing(item.px + context.itemEndOffset)}`]
+			: []),
 		...(item.py !== undefined ? [`py-${spacing(item.py)}`] : []),
 	];
 	const choiceClasses = [
 		...shared,
-		...(choicePx !== undefined ? [`pl-${spacing(choicePx)}`] : []),
+		...(choicePx !== undefined ? [`${start}-${spacing(choicePx)}`] : []),
 		...(choicePy !== undefined ? [`py-${spacing(choicePy)}`] : []),
 	];
 	const label = [
 		...(item.px !== undefined ? [`px-${spacing(item.px)}`] : []),
-		...(item.inset !== undefined ? [`data-inset:pl-${spacing(item.inset)}`] : []),
+		...(item.inset !== undefined ? [`data-inset:${start}-${spacing(item.inset)}`] : []),
 	];
 	return Object.fromEntries(
 		[
 			[
 				`cn-${component}-content`,
-				[...panelClasses, ...(minWidth !== undefined ? [`min-w-${spacing(minWidth)}`] : [])],
+				[
+					...panelClasses,
+					...(minWidth !== undefined
+						? [
+								component === "context-menu"
+									? `[--valar-context-menu-min-width:${minWidth}px]`
+									: `min-w-${spacing(minWidth)}`,
+							]
+						: []),
+				],
 			],
 			[`cn-${component}-sub-content`, panelClasses],
 			[`cn-${component}-item`, itemClasses],
@@ -361,7 +397,7 @@ export function createMenuSpec<K extends keyof MenuValues = keyof MenuValues>(
 		group: keys ? "面板与菜单项几何" : "面板、菜单项与动效",
 		parameters: [
 			{ kind: "number", key: "padding", label: "面板内边距（px）", min: 0, max: 12, step: 2 },
-			{ kind: "number", key: "minWidth", label: "最小宽度（px）", min: 96, max: 320, step: 16 },
+			{ kind: "number", key: "minWidth", label: "最小宽度（px）", min: 96, max: 320, step: 4 },
 			{ kind: "select", key: "radius", label: "面板圆角档位", options: radiusOptions },
 			{
 				kind: "number",
@@ -430,6 +466,7 @@ export function createMenuSpec<K extends keyof MenuValues = keyof MenuValues>(
 		},
 		previewCss: (scope, overrides, context) =>
 			menuCss(
+				component,
 				(slots, suffix = "") =>
 					slotsFor(slots)
 						.map((slot) => `${scope} [data-slot="${component}-${slot}"]${suffix}`)
@@ -439,6 +476,7 @@ export function createMenuSpec<K extends keyof MenuValues = keyof MenuValues>(
 			),
 		pageCss: (overrides, context) =>
 			menuCss(
+				component,
 				(slots, suffix = "") =>
 					slotsFor(slots)
 						.map((slot) => `[data-slot="${component}-${slot}"]${suffix}${NOT_EDITOR}`)

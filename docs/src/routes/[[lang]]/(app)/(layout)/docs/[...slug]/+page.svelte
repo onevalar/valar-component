@@ -12,6 +12,7 @@
 	import DocsToc from "$lib/components/docs-toc.svelte";
 	import FrameworkUsage from "$lib/components/framework-usage.svelte";
 	import Metadata from "$lib/components/metadata.svelte";
+	import { basicComponentAlignment } from "$lib/basic-component-visibility.js";
 	import { categoryOf } from "$lib/component-categories.js";
 	import { localeFromPathname, localizeHref } from "$lib/i18n/config.js";
 	import { t } from "$lib/i18n/index.js";
@@ -39,6 +40,7 @@
 	const isComponent = $derived(isBasic || isAdvanced);
 	const previews = $derived(doc.previews ?? []);
 	const slug = $derived(path.split("/").pop() ?? "");
+	const alignment = $derived(isBasic ? basicComponentAlignment(slug) : "aligned");
 	const category = $derived(
 		isComponent ? categoryOf(slug, isBasic ? "basic" : "advanced") : undefined
 	);
@@ -65,6 +67,12 @@
 	}}
 	ogType="article"
 />
+
+<svelte:head>
+	{#if alignment !== "aligned"}
+		<meta name="robots" content="noindex" />
+	{/if}
+</svelte:head>
 
 {#if isComponent}
 	<!--
@@ -100,6 +108,11 @@
 						<h1 class="text-3xl font-semibold tracking-tight">{doc.title}</h1>
 						{#if doc.description}
 							<p class="text-muted-foreground">{doc.description}</p>
+						{/if}
+						{#if alignment !== "aligned"}
+							<Badge variant="outline" data-alignment-status={alignment}>
+								{t(alignment === "partial" ? "components.alignmentPartial" : "components.alignmentPending")}
+							</Badge>
 						{/if}
 					</div>
 					<Tabs.List>

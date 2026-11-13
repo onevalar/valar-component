@@ -130,7 +130,7 @@ export const CALENDAR_SPEC: TunerSpec<CalendarValues, CalendarContext> = {
 		calendarGeometryCss(`${scope} [data-slot="calendar"]`, overrides),
 	pageCss: (overrides) =>
 		calendarGeometryCss(
-			'[data-slot="calendar"]:not([data-component-tuner]):not([data-component-tuner] *)',
+			'[data-slot="calendar"]:not([data-appearance="project-date"]):not([data-component-tuner]):not([data-component-tuner] *)',
 			overrides
 		),
 	overrideClasses: calendarOverrideClasses,

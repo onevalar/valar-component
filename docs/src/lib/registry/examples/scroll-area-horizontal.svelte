@@ -22,15 +22,19 @@
 	];
 </script>
 
-<ScrollArea class="w-96 rounded-md border whitespace-nowrap" orientation="horizontal">
+<ScrollArea
+	class="w-96 max-w-full rounded-md border whitespace-nowrap"
+	orientation="horizontal"
+	viewportLabel="Artwork gallery"
+>
 	<div class="flex w-max space-x-4 p-4">
 		{#each works as artwork (artwork.artist)}
-			<figure class="shrink-0">
+			<figure class="w-[300px] shrink-0">
 				<div class="overflow-hidden rounded-md">
 					<img
 						src={artwork.art}
 						alt="Photo by {artwork.artist}"
-						class="aspect-[3/4] h-fit w-fit object-cover"
+						class="aspect-[3/4] w-full object-cover"
 						width={300}
 						height={400}
 					/>

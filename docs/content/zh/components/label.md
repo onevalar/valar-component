@@ -21,7 +21,7 @@ links:
 	let { viewerData } = $props();
 </script>
 
-<ComponentPreview name="label-demo">
+<ComponentPreview name="label-demo" title="表单与设置标签">
 
 <div></div>
 
@@ -75,7 +75,11 @@ links:
 <Label for="email">Your email address</Label>
 ```
 
+独立设置标签使用 `appearance="settings"`。预览使用 13 px 文字，点击标签可聚焦输入框。
+
 ## 表单字段中的标签
+
+控件本身设置 `required` 后，可在 `Label` 上也设置 `required` 显示星号。独立禁用控件在控件上设置 `disabled`，标签可用 `data-disabled="true"` 减弱文字。
 
 表单中的字段请使用[表单字段](/docs/components/field)组件，它内置 `Field.Label`、`Field.Description` 和 `Field.Error`。
 

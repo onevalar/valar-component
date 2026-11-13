@@ -45,6 +45,7 @@
 		day?: Snippet<[{ day: DateValue; outsideMonth: boolean }]>;
 	} = $props();
 
+	const hasCaptionSelect = $derived(captionLayout !== "label");
 	const monthFormat = $derived.by(() => {
 		if (monthFormatProp) return monthFormatProp;
 		if (captionLayout.startsWith("dropdown")) return "short";
@@ -76,8 +77,19 @@
 				<RangeCalendarNextButton variant={buttonVariant} />
 			</RangeCalendarNav>
 			{#each months as month, monthIndex (month)}
-				<RangeCalendarMonth>
-					<RangeCalendarHeader>
+				<RangeCalendarMonth
+					class={hasCaptionSelect
+						? "@container w-[calc(var(--cell-size)*7)] min-w-0 max-w-full"
+						: undefined}
+				>
+					{#if hasCaptionSelect}
+						<div aria-hidden="true" class="mb-2 h-(--cell-size) @min-[256px]:hidden"></div>
+					{/if}
+					<RangeCalendarHeader
+						class={hasCaptionSelect
+							? "min-w-0 gap-2 px-[calc(var(--cell-size)+0.5rem)] @max-[256px]:px-0"
+							: undefined}
+					>
 						<RangeCalendarCaption
 							{captionLayout}
 							months={monthsProp}
@@ -95,7 +107,7 @@
 						<RangeCalendarGridHead>
 							<RangeCalendarGridRow class="select-none">
 								{#each weekdays as weekday, i (i)}
-									<RangeCalendarHeadCell>
+									<RangeCalendarHeadCell class={hasCaptionSelect ? "min-w-0 flex-1" : undefined}>
 										{weekday.slice(0, 2)}
 									</RangeCalendarHeadCell>
 								{/each}
@@ -105,7 +117,13 @@
 							{#each month.weeks as weekDates (weekDates)}
 								<RangeCalendarGridRow class="mt-2 w-full">
 									{#each weekDates as date (date)}
-										<RangeCalendarCell {date} month={month.value}>
+										<RangeCalendarCell
+											{date}
+											month={month.value}
+											class={hasCaptionSelect
+												? "min-w-0 flex-1 [&_[data-range-calendar-day]]:max-w-full"
+												: undefined}
+										>
 											{#if day}
 												{@render day({
 													day: date,

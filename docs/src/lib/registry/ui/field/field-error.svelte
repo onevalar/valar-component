@@ -14,26 +14,12 @@
 		errors?: { message?: string }[];
 	} = $props();
 
-	const hasContent = $derived.by(() => {
-		// has slotted error
-		if (children) return true;
-
-		// no errors
-		if (!errors || errors.length === 0) return false;
-
-		// has an error but no message
-		if (errors.length === 1 && !errors[0]?.message) {
-			return false;
-		}
-
-		return true;
-	});
-
-	const isMultipleErrors = $derived(errors && errors.length > 1);
-	const singleErrorMessage = $derived(errors && errors.length === 1 && errors[0]?.message);
+	const messages = $derived([
+		...new Set((errors ?? []).map((error) => error?.message?.trim()).filter(Boolean)),
+	]);
 </script>
 
-{#if hasContent}
+{#if children || messages.length}
 	<div
 		bind:this={ref}
 		role="alert"
@@ -43,14 +29,12 @@
 	>
 		{#if children}
 			{@render children()}
-		{:else if singleErrorMessage}
-			{singleErrorMessage}
-		{:else if isMultipleErrors}
+		{:else if messages.length === 1}
+			{messages[0]}
+		{:else}
 			<ul class="ml-4 flex list-disc flex-col gap-1">
-				{#each errors ?? [] as error, index (index)}
-					{#if error?.message}
-						<li>{error.message}</li>
-					{/if}
+				{#each messages as message (message)}
+					<li>{message}</li>
 				{/each}
 			</ul>
 		{/if}

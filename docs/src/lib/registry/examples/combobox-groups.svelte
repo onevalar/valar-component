@@ -1,9 +1,5 @@
 <script lang="ts">
-	import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
-	import { tick } from "svelte";
-	import * as Command from "$lib/registry/ui/command/index.js";
-	import * as Popover from "$lib/registry/ui/popover/index.js";
-	import { Button } from "$lib/registry/ui/button/index.js";
+	import { Combobox } from "$lib/registry/ui/combobox/index.js";
 
 	const timezones = [
 		{
@@ -41,61 +37,15 @@
 		},
 	];
 
-	let open = $state(false);
-	let value = $state("");
-	let triggerRef = $state<HTMLButtonElement>(null!);
-
-	// We want to refocus the trigger button when the user selects
-	// an item from the list so users can continue navigating the
-	// rest of the form with the keyboard.
-	function closeAndFocusTrigger() {
-		open = false;
-		tick().then(() => {
-			triggerRef.focus();
-		});
-	}
+	const options = timezones.flatMap((group) =>
+		group.items.map((label) => ({ id: label, label, group: group.value }))
+	);
 </script>
 
-<Popover.Root bind:open>
-	<Popover.Trigger bind:ref={triggerRef}>
-		{#snippet child({ props })}
-			<Button
-				{...props}
-				variant="outline"
-				class="w-60 justify-between font-normal"
-				role="combobox"
-				aria-expanded={open}
-			>
-				{value || "Select a timezone"}
-				<ChevronDownIcon class="text-muted-foreground" />
-			</Button>
-		{/snippet}
-	</Popover.Trigger>
-	<Popover.Content class="w-60 p-0">
-		<Command.Root>
-			<Command.Input placeholder="Search timezone..." />
-			<Command.List>
-				<Command.Empty>No timezones found.</Command.Empty>
-				{#each timezones as group, index (group.value)}
-					<Command.Group heading={group.value}>
-						{#each group.items as item (item)}
-							<Command.Item
-								value={item}
-								data-checked={value === item}
-								onSelect={() => {
-									value = item;
-									closeAndFocusTrigger();
-								}}
-							>
-								{item}
-							</Command.Item>
-						{/each}
-					</Command.Group>
-					{#if index < timezones.length - 1}
-						<Command.Separator />
-					{/if}
-				{/each}
-			</Command.List>
-		</Command.Root>
-	</Popover.Content>
-</Popover.Root>
+<Combobox
+	label="Select a timezone"
+	placeholder="Search timezones…"
+	empty="No matching timezones."
+	{options}
+	contentClass="w-60"
+/>

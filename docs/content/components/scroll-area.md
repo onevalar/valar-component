@@ -20,11 +20,13 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="scroll-area-demo">
+<ComponentPreview name="scroll-area-settings" title="Settings navigation">
 
 <div></div>
 
 </ComponentPreview>
+
+The settings navigation uses `appearance="settings"` for a slim thumb on a transparent track. Focus the named viewport to scroll with the keyboard, or use the wheel and drag the thumb.
 
 ## Installation
 
@@ -75,11 +77,29 @@ Copy and paste the following code into your project.
 </ScrollArea>
 ```
 
+## Vertical
+
+<ComponentPreview name="scroll-area-demo">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Horizontal
 
 Use `orientation="horizontal"` for horizontal scrolling.
 
 <ComponentPreview name="scroll-area-horizontal">
+
+<div></div>
+
+</ComponentPreview>
+
+## Two-axis scrolling
+
+The viewport scrolls in both directions. Set `overscroll="contain"` to keep scrolling from continuing on the surrounding page.
+
+<ComponentPreview name="scroll-area-both">
 
 <div></div>
 

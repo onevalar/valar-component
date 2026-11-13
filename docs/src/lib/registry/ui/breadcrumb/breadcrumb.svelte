@@ -5,17 +5,21 @@
 
 	let {
 		ref = $bindable(null),
+		appearance = "default",
 		class: className,
 		children,
 		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
+	}: WithElementRef<HTMLAttributes<HTMLElement>> & {
+		appearance?: "default" | "workspace";
+	} = $props();
 </script>
 
 <nav
 	bind:this={ref}
 	data-slot="breadcrumb"
+	data-appearance={appearance}
 	aria-label="面包屑导航"
-	class={cn("cn-breadcrumb", className)}
+	class={cn("cn-breadcrumb", appearance === "workspace" && "cn-breadcrumb-workspace", className)}
 	{...restProps}
 >
 	{@render children?.()}

@@ -19,6 +19,16 @@ links:
 	let { viewerData } = $props();
 </script>
 
+<ComponentPreview name="sonner-workspace">
+
+<div></div>
+
+</ComponentPreview>
+
+在 `Toaster` 上设置 `appearance="workspace"`，使用工作区的紧凑轻提示。预览会复制示例问题编号，在右下角显示短时反馈，可手动关闭。重复复制会更新同一条提示。
+
+## 常规通知与样式调节
+
 <ComponentPreview name="sonner-demo">
 
 <div></div>

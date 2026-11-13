@@ -26,6 +26,8 @@ links:
 
 </ComponentPreview>
 
+当 `captionLayout="dropdown"` 时，年月选择使用和 Calendar 相同的 Valar Select。窄容器中，年月控件会排到翻月按钮下方。
+
 ## 关于
 
 `<RangeCalendar />` 基于 [Bits UI Range Calendar](https://www.bits-ui.com/docs/components/range-calendar) 组件构建，日期处理由 [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/index.html) 包负责。
@@ -53,7 +55,7 @@ links:
 
 <Step>
 
-将以下代码复制到项目中。
+先准备 [Calendar](/docs/components/calendar)，然后将以下代码复制到项目中。CLI 安装会自动添加组件依赖。
 
 </Step>
 {#if viewerData}

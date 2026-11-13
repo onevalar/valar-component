@@ -20,7 +20,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="avatar-demo">
+<ComponentPreview name="avatar-subscriber" title="Subscribers and members">
 
 <div></div>
 
@@ -72,6 +72,16 @@ For Bits UI 2.20.0, apply the [dependency patches](/docs/installation#dependency
   <Avatar.Fallback>CN</Avatar.Fallback>
 </Avatar.Root>
 ```
+
+## Subscriber
+
+Use `appearance="subscriber"` for an 18 px subscriber avatar beside the member name. Set `--valar-avatar-subscriber-color` to supply the member’s initials background. The preview switches between a local photo and initials. Use `appearance="member"` for the 24 px avatar in settings member lists.
+
+<ComponentPreview name="avatar-demo" title="Avatar overview">
+
+<div></div>
+
+</ComponentPreview>
 
 ## Basic
 

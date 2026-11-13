@@ -20,11 +20,13 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="progress-demo">
+<ComponentPreview name="progress-project">
 
 <div></div>
 
 </ComponentPreview>
+
+Use `appearance="project"` for a read-only project completion percentage. Move the slider to preview progress values. Give the indicator an accessible label, and put project status actions in a separate control.
 
 ## Installation
 
@@ -65,8 +67,14 @@ Copy and paste the following code into your project.
 ```
 
 ```svelte showLineNumbers
-<Progress value={33} />
+<Progress value={33} aria-label="Import progress" />
 ```
+
+<ComponentPreview name="progress-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 ## Label
 
@@ -83,6 +91,16 @@ Use a `Field` component to add a label to the progress bar.
 A progress bar that can be controlled by a slider.
 
 <ComponentPreview name="progress-controlled">
+
+<div></div>
+
+</ComponentPreview>
+
+## Progress states
+
+Pass `null` while the total is unknown. Set `min` and `max` to match the task range, and provide an accessible name.
+
+<ComponentPreview name="progress-states">
 
 <div></div>
 

@@ -18,7 +18,7 @@ links:
 	let { viewerData } = $props();
 </script>
 
-<ComponentPreview name="table-demo">
+<ComponentPreview name="table-settings" title="设置表格">
 
 <div></div>
 
@@ -75,6 +75,16 @@ links:
   </Table.Body>
 </Table.Root>
 ```
+
+## 基础表格
+
+紧凑的设置列表使用 `appearance="settings"`。示例可按名称排序，也可以使用复选框选择行。列宽超过可用空间时，表格可横向滚动。 为宽表传入 `scrollLabel`，即可用 Tab 到达滚动区，再用方向键横向滚动。
+
+<ComponentPreview name="table-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 ## 页脚
 

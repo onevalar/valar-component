@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getComponentInfos } from "$lib/agent/knowledge.js";
+	import { isPublishedBasicComponent } from "$lib/basic-component-visibility.js";
 	import { guideSections } from "$lib/doc-guide.js";
 	import { localizeHref, type Locale } from "$lib/i18n/config.js";
 	import { Button } from "$lib/registry/ui/button/index.js";
@@ -24,6 +25,7 @@
 	const info = $derived(
 		section === "basic" ? getComponentInfos(locale).find((item) => item.slug === slug) : undefined
 	);
+	const relatedSlugs = $derived(info?.related.filter(isPublishedBasicComponent) ?? []);
 	const titles = $derived(
 		new Map(getComponentInfos(locale).map((item) => [item.slug, item.title]))
 	);
@@ -89,11 +91,11 @@
 			{:else}
 				<p class="text-sm text-muted-foreground">这个组件还没有说明。</p>
 			{/each}
-			{#if info?.related.length}
+			{#if relatedSlugs.length}
 				<section class="flex flex-col gap-2">
 					<h2 class="text-lg font-semibold">相关组件</h2>
 					<div class="flex flex-wrap gap-2">
-						{#each info.related as related (related)}
+						{#each relatedSlugs as related (related)}
 							<Button
 								variant="outline"
 								size="sm"

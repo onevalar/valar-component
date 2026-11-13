@@ -1,0 +1,20 @@
+{
+	"name": "issue-composer",
+	"type": "registry:ui",
+	"title": "Issue Composer 问题编辑弹窗",
+	"description": "紧凑和展开两种布局的创建表单，包含标题、描述、可搜索的状态与优先级选择，以及连续创建。",
+	"categories": ["弹层"],
+	"meta": {
+		"valar": {
+			"keywords": ["新建问题", "issue", "composer", "展开编辑", "连续创建"],
+			"whenToUse": ["从问题列表、空状态或全局入口创建工作项"],
+			"whenNotToUse": [{ "case": "字段与问题创建无关的表单", "use": "dialog" }],
+			"accessibility": [
+				"打开聚焦标题，关闭恢复到触发器",
+				"状态和优先级可用键盘选择，空标题错误可被读出"
+			],
+			"responsive": ["窄屏保留 12 px 侧边间距，长描述在编辑区滚动"],
+			"related": ["dialog", "command", "popover", "switch", "textarea"]
+		}
+	}
+}

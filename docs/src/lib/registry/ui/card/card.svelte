@@ -8,14 +8,20 @@
 		children,
 		size = "default",
 		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & { size?: "default" | "sm" } = $props();
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
+		size?: "default" | "sm" | "settings";
+	} = $props();
 </script>
 
 <div
 	bind:this={ref}
 	data-slot="card"
 	data-size={size}
-	class={cn("cn-card group/card flex flex-col", className)}
+	class={cn(
+		"cn-card group/card flex min-w-0 flex-col",
+		size === "settings" && "cn-card-settings",
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}

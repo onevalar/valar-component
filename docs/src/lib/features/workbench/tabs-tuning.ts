@@ -30,6 +30,7 @@ export type TabsValues = z.infer<typeof valuesSchema>;
 export type TabsOverrides = Partial<TabsValues>;
 
 const VERTICAL = "group-data-vertical/tabs:";
+const HORIZONTAL = "group-data-horizontal/tabs:";
 const DEFAULT = "data-[variant=default]:";
 
 function sourceClasses(files: { target: string; content: string }[], name: string): string {
@@ -52,7 +53,9 @@ function uniformPadding<T extends string>(classes: string, axis: string, choices
 	const base = new RegExp(`^p${axis}-([^ ]+)$`);
 	const tokens = classes.split(/\s+/);
 	const value = paddingPx(tokens.map((token) => base.exec(token)?.[1]).find(Boolean) ?? "");
-	const variants = new RegExp(`:(?:p${axis}${axis === "x" ? "|pl|pr" : ""})-([^ ]+)$`);
+	const variants = new RegExp(
+		`:(?:p${axis}${axis === "x" ? "|pl|pr" : axis === "" ? "|px|py" : ""})-([^ ]+)$`
+	);
 	const mixed = tokens.some((token) => {
 		const match = variants.exec(token);
 		return match && paddingPx(match[1]) !== value;
@@ -113,7 +116,7 @@ export function tabsOverrideClasses(overrides: TabsOverrides): Record<string, st
 		list.push(`group-data-horizontal/tabs:h-${spacing(Number(safe.listHeight))}`);
 	if (safe.listPadding !== undefined && safe.listPadding !== STYLE_VALUE) {
 		const p = spacing(Number(safe.listPadding));
-		list.push(`p-${p}`, `${VERTICAL}p-${p}`);
+		list.push(`p-${p}`, `${VERTICAL}p-${p}`, `${HORIZONTAL}py-${p}`);
 	}
 	if (safe.listRadius !== undefined && safe.listRadius !== STYLE_VALUE)
 		list.push(

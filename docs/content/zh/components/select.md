@@ -106,7 +106,7 @@ links:
 
 ## 分组
 
-用 `Select.Group`、`Select.Label` 和 `Select.Separator` 组织选项。
+用 `Select.Group`、`Select.GroupHeading` 和装饰性的 `Select.Separator` 组织选项。
 
 <ComponentPreview name="select-groups">
 
@@ -126,6 +126,8 @@ links:
 
 ## 禁用
 
+设置 `Select.Root` 的 `disabled` 可锁定整个字段，设置单个 `Select.Item` 的 `disabled` 仍允许选择其他项。锁定整个字段时提供可读说明。
+
 <ComponentPreview name="select-disabled">
 
 <div></div>
@@ -138,14 +140,35 @@ links:
 
 ```svelte showLineNumbers /data-invalid/ /aria-invalid/
 <Field.Field data-invalid>
-  <Field.Label>Fruit</Field.Label>
-  <Select.Trigger aria-invalid>
+  <Field.Label for="fruit">Fruit</Field.Label>
+  <Select.Trigger id="fruit" aria-invalid aria-describedby="fruit-error">
     <Select.Value />
   </Select.Trigger>
+  <Field.Error id="fruit-error">Please select a fruit.</Field.Error>
 </Field.Field>
 ```
 
 <ComponentPreview name="select-invalid">
+
+<div></div>
+
+</ComponentPreview>
+
+## 设置外观
+
+触发器使用 `size="settings"`，选项面板使用 `appearance="settings"`。方向键移动高亮，勾选图标继续标记当前值。Enter 确认，Escape 关闭。
+
+<ComponentPreview name="select-settings">
+
+<div></div>
+
+</ComponentPreview>
+
+## 多选
+
+使用 `type="multiple"` 绑定数组。按 Enter 切换当前高亮项并保持面板展开。设置 `name` 后，表单以同名字段提交每一个选中值。
+
+<ComponentPreview name="select-multiple">
 
 <div></div>
 

@@ -2,7 +2,7 @@
 	"name": "sheet",
 	"type": "registry:ui",
 	"title": "Sheet 侧边面板",
-	"description": "从屏幕边缘滑出的面板，用于补充主内容的信息或设置。",
+	"description": "在屏幕边缘的模态层或工作区侧栏中展示辅助内容。",
 	"categories": ["弹层"],
 	"meta": {
 		"valar": {
@@ -18,8 +18,12 @@
 					"use": "drawer"
 				}
 			],
-			"accessibility": ["必须有标题", "Esc 关闭并归还焦点"],
-			"responsive": ["窄屏下宽度占满或接近占满"],
+			"accessibility": [
+				"模态面板须有标题",
+				"工作区侧栏须提供区域名称",
+				"面板内按 Escape 可关闭并归焦"
+			],
+			"responsive": ["模态面板在窄屏下占满或接近占满宽度", "工作区侧栏可在窄屏排列到主内容下方"],
 			"related": ["dialog", "drawer", "sidebar"]
 		}
 	}

@@ -55,14 +55,25 @@ links:
 ```
 
 ```svelte
-<Textarea />
+<label for="message">消息</label>
+<Textarea id="message" />
 ```
 
 ## 表单字段
 
-用 `Field.Field`、`Field.Label` 和 `Field.Description` 给多行输入框加上标签与描述。
+用 `Field.Field`、`Field.Label` 和 `Field.Description` 给多行输入框加上标签与描述，并通过 `aria-describedby` 关联说明。
 
 <ComponentPreview name="textarea-field" class="[&_[data-align]>*]:max-w-xs">
+
+<div></div>
+
+</ComponentPreview>
+
+## 团队描述
+
+设置卡片使用 `appearance="settings"`。字段高 120 px，内边距 16 px，字号 13 px，超出时在框内滚动。团队描述示例沿用 Linear 实测的 255 字符上限，并在 Valar 中提供可见计数。默认外观仍随内容增长。
+
+<ComponentPreview name="textarea-team-description" class="[&_[data-align]>*]:max-w-md">
 
 <div></div>
 
@@ -78,9 +89,19 @@ links:
 
 </ComponentPreview>
 
+## 只读
+
+可选取和复制字段内容时，使用 `readonly`。
+
+<ComponentPreview name="textarea-readonly" class="[&_[data-align]>*]:max-w-xs">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 无效
 
-传入 `aria-invalid` 属性把多行输入框标记为无效。要定制无效状态的样式，在 `Field.Field` 组件上添加 `data-invalid` 属性。
+用 `aria-invalid` 标记错误，并通过 `aria-describedby` 关联错误说明。在 `Field.Field` 上使用 `data-invalid` 标记周围区域的状态。输入文字可清除预览中的错误。
 
 <ComponentPreview name="textarea-invalid" class="[&_[data-align]>*]:max-w-xs">
 
@@ -90,7 +111,7 @@ links:
 
 ## 按钮
 
-与 `Button` 搭配，得到带提交按钮的多行输入框。
+与 `Button` 搭配，得到带提交按钮的多行输入框。提交后，预览会清空草稿并显示确认。
 
 <ComponentPreview name="textarea-button" class="[&_[data-align]>*]:max-w-xs">
 

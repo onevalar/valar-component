@@ -123,6 +123,18 @@ describe("transformIcons", () => {
 		expect(result.devDependencies).toEqual(["@lucide/svelte"]);
 	});
 
+	it("lucide: reuses one import when an icon is rendered twice", async () => {
+		const icon = singleIconInput.slice(singleIconInput.indexOf("<IconPlaceholder"));
+		const result = await transformIcons({
+			content: `${singleIconInput}\n${icon}`,
+			filePath: "repeated-icons.svelte",
+			config: getConfig("lucide"),
+		});
+
+		expect(result.content?.match(/import ChevronDownIcon/g)).toHaveLength(1);
+		expect(result.content?.match(/<ChevronDownIcon /g)).toHaveLength(2);
+	});
+
 	it("lucide: correctly adds multiple icons", async () => {
 		const result = await transformIcons({
 			content: multipleIconsInput,

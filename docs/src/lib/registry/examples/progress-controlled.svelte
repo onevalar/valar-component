@@ -6,6 +6,6 @@
 </script>
 
 <div class="flex w-full max-w-sm flex-col gap-4">
-	<Progress {value} />
-	<Slider type="single" bind:value min={0} max={100} step={1} />
+	<Progress {value} aria-label="Import progress" />
+	<Slider type="single" bind:value min={0} max={100} step={1} aria-label="Adjust import progress" />
 </div>

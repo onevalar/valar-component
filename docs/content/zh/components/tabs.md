@@ -65,8 +65,8 @@ links:
 ```
 
 ```svelte showLineNumbers
-<Tabs.Root value="account" class="w-[400px]">
-  <Tabs.List>
+<Tabs.Root value="account" class="w-full max-w-[400px]">
+  <Tabs.List aria-label="账户设置">
     <Tabs.Trigger value="account">Account</Tabs.Trigger>
     <Tabs.Trigger value="password">Password</Tabs.Trigger>
   </Tabs.List>
@@ -77,9 +77,11 @@ links:
 </Tabs.Root>
 ```
 
+为列表提供可访问名称，标签和对应面板使用相同的值。方向键和 Home／End 在可用标签之间移动。默认激活模式会随焦点切换面板。
+
 ## 线条
 
-在 `Tabs.List` 上传入 `variant="line"`，切换为线条样式。
+在 `Tabs.List` 上使用 `variant="line"`。宽度不足时，列表横向滚动，并让获得焦点的标签进入可见范围。可在预览里试用 End 和 Home。
 
 <ComponentPreview name="tabs-line">
 
@@ -87,9 +89,19 @@ links:
 
 </ComponentPreview>
 
+## 胶囊
+
+在项目侧栏等窄面板中，用 `variant="capsule"` 并排显示少量同级标签。示例使用 `activationMode="manual"`，方向键移动焦点，Space 或 Enter 激活选项。
+
+<ComponentPreview name="tabs-capsule">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 垂直
 
-传入 `orientation="vertical"` 使用垂直标签页。
+传入 `orientation="vertical"`，用上、下方向键在垂直列表中移动焦点。
 
 <ComponentPreview name="tabs-vertical">
 

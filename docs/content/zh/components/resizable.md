@@ -20,11 +20,13 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="resizable-demo">
+<ComponentPreview name="resizable-inbox">
 
 <div></div>
 
 </ComponentPreview>
+
+给手柄传入 `appearance="workspace"`，悬停时显出细线。拖动收件箱与详情之间的分隔线，或按 Tab 聚焦后用方向键调整宽度。左右分栏的分隔线本身是竖向，设置 `aria-orientation="vertical"`。
 
 ## 关于
 
@@ -75,6 +77,12 @@ links:
   <Resizable.Pane>Two</Resizable.Pane>
 </Resizable.PaneGroup>
 ```
+
+<ComponentPreview name="resizable-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 ## 垂直
 

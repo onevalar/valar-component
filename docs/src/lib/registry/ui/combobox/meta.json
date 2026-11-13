@@ -1,0 +1,24 @@
+{
+	"name": "combobox",
+	"type": "registry:ui",
+	"title": "Combobox 搜索选择",
+	"description": "在浮层中搜索并选择一个或多个选项，支持分组和异步数据。",
+	"categories": ["表单"],
+	"dependencies": ["bits-ui"],
+	"meta": {
+		"valar": {
+			"keywords": ["搜索选择", "自动完成", "负责人", "标签", "combobox"],
+			"whenToUse": ["选择负责人、项目或多个标签", "通过名称或别名查找选项"],
+			"whenNotToUse": [
+				{ "case": "执行命令或跳转页面", "use": "command" },
+				{ "case": "从少量固定选项中选择", "use": "select" }
+			],
+			"accessibility": [
+				"打开时聚焦搜索，方向键移动高亮，回车选择，Escape 关闭并归焦",
+				"选值使用 aria-selected，键盘高亮使用 aria-activedescendant"
+			],
+			"responsive": ["根据锚点和视口限制浮层尺寸，长列表独立滚动"],
+			"related": ["popover", "command", "select"]
+		}
+	}
+}

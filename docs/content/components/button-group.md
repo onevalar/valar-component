@@ -131,6 +131,16 @@ Create a split button group by adding two buttons separated by a `ButtonGroup.Se
 
 </ComponentPreview>
 
+## Pill split button
+
+Use the horizontal `pill` variant with two small icon buttons and a `ButtonGroup.Separator`. Give each action its own accessible name. The main action in this demo shows a local confirmation for the tool selected in the adjacent menu.
+
+<ComponentPreview name="button-group-pill-demo">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Input
 
 Wrap an `Input` component with buttons.

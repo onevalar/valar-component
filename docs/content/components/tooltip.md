@@ -60,6 +60,9 @@ Copy and paste the following code into your project.
 
 The `Tooltip.Provider` component should be placed once in your root layout, wrapping all content that will contain tooltips. This ensures that only one tooltip within the provider can be open at a time.
 
+The default hover delay is 500 ms. Keyboard focus opens a tooltip immediately.
+Escape dismisses it while keeping focus on the trigger.
+
 ```svelte title="src/routes/+layout.svelte" showLineNumbers
 <script lang="ts">
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
@@ -101,7 +104,7 @@ You can nest providers to create groups with different settings. Tooltips use th
 
 ## Side
 
-Use the `side` prop to change the position of the tooltip.
+Use the `side` prop to choose a preferred position. The tooltip flips to stay in view when space is limited.
 
 <ComponentPreview name="tooltip-sides">
 
@@ -111,6 +114,8 @@ Use the `side` prop to change the position of the tooltip.
 
 ## With Keyboard Shortcut
 
+Use `Tooltip.Hint` when the trigger supports a keyboard shortcut. Focus the save button and press Shift+S to try it.
+
 <ComponentPreview name="tooltip-keyboard">
 
 <div></div>
@@ -119,18 +124,10 @@ Use the `side` prop to change the position of the tooltip.
 
 ## Disabled Button
 
-Show a tooltip on a disabled button by wrapping it with a span.
+Wrap a disabled button in a span for a pointer-only hint. Provide essential explanations in visible text near the button so keyboard and touch users can read them.
 
 <ComponentPreview name="tooltip-disabled">
 
 <div></div>
 
 </ComponentPreview>
-
-## Changelog
-
-### 2025-12 Update tooltip colors
-
-We've updated the tooltip colors to use the foreground color for the background and the background color for the foreground.
-
-Replace `bg-primary text-primary-foreground` with `bg-foreground text-background` for `<Tooltip.Content />`.

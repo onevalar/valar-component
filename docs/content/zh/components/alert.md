@@ -18,11 +18,21 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+<ComponentPreview name="alert-connection">
+
+<div></div>
+
+</ComponentPreview>
+
+给 `Alert.Root` 传入 `appearance="connection"` 可使用紧凑的连接告警。模拟网络离线时，**Reconnect** 会尝试重连。点击 **Simulate recovery** 恢复网络，告警随即消失。点击 **Simulate offline** 可再次进入离线状态。
+
 <ComponentPreview name="alert-demo">
 
 <div></div>
 
 </ComponentPreview>
+
+通用提示支持标题、说明、可选图标和操作。示例采用设置页的常驻提示作为外观参考。
 
 ## 安装
 

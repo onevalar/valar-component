@@ -44,7 +44,7 @@
 	},
 	"files": [
 		{
-			"content": "# Empty 设计规范\n\n- 用于列表、表格、搜索结果为空时的占位：用 `Empty.Header` 包 `Empty.Media`、`Empty.Title`、`Empty.Description`，下一步操作放进 `Empty.Content`。\n- 标题说明当前状态（“还没有项目”），说明文字告诉用户怎么做；尽量提供一个能解决问题的主按钮（如“新建项目”“清除筛选”）。\n- `Empty.Title` 渲染为 `div`：需要进入页面标题层级时在里面放合适级别的标题元素。\n- 图标用 `<Empty.Media variant=\"icon\">`，不要自己写带背景色的图标容器。\n",
+			"content": "# Empty 设计规范\n\n- 用于列表、表格、搜索结果为空时的占位：用 `Empty.Header` 包 `Empty.Media`、`Empty.Title`、`Empty.Description`，下一步操作放进 `Empty.Content`。\n- 标题说明当前状态（“还没有项目”），说明文字告诉用户怎么做；尽量提供一个能解决问题的主按钮（如“新建项目”“清除筛选”）。\n- 问题列表的初始空状态可用 `appearance=\"issue-list\"`，将插图、标题和一个主操作居中排列，纵向间距 20 px。工作区留白由调用方决定；示例使用 Valar 图标呈现插图。\n- `Empty.Title` 渲染为 `div`：需要进入页面标题层级时在里面放合适级别的标题元素。\n- 图标用 `<Empty.Media variant=\"icon\">`，不要自己写带背景色的图标容器。\n- 筛选后没有匹配项使用 `appearance=\"filtered-list\"`，标题 15 px／600，清除筛选用 24 px 胶囊按钮。恢复列表时将焦点移回可操作的筛选入口。\n",
 			"type": "registry:file",
 			"target": "empty/RULES.md"
 		},
@@ -74,7 +74,7 @@
 			"target": "empty/empty-title.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"empty\"\n\tclass={cn(\n\t\t\"gap-4 rounded-xl border-dashed p-6 flex w-full min-w-0 flex-1 flex-col items-center justify-center text-center text-balance\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tappearance = \"default\",\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {\n\t\tappearance?: \"default\" | \"issue-list\" | \"filtered-list\";\n\t} = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"empty\"\n\tdata-appearance={appearance}\n\tclass={cn(\n\t\t\"gap-4 rounded-xl border-dashed p-6 flex w-full min-w-0 flex-1 flex-col items-center justify-center text-center text-balance\",\n\t\tappearance !== \"default\" && \"gap-5 rounded-none border-0 bg-transparent p-0 **:data-[slot=empty-title]:text-[13px] **:data-[slot=empty-title]:font-medium **:data-[slot=empty-title]:tracking-normal **:data-[slot=empty-title]:text-[color:var(--valar-empty-issue-title)] [--valar-empty-issue-title:lch(39.176%_1.25_282)] [--valar-empty-issue-accent:lch(53%_52.26_286.91)] [--valar-empty-issue-accent-foreground:lch(100%_5_286.91)] dark:[--valar-empty-issue-title:lch(61.803%_1.2_272)] dark:[--valar-empty-issue-accent:lch(47.918%_59.303_288.421)] dark:[--valar-empty-issue-accent-foreground:lch(100%_5_288.421)]\",\n\t\tappearance === \"filtered-list\" && \"**:data-[slot=empty-title]:text-[15px]/[23px]! **:data-[slot=empty-title]:font-semibold! [&_[data-slot=empty-content]>[data-slot=button]]:h-6 [&_[data-slot=empty-content]>[data-slot=button]]:rounded-full [&_[data-slot=empty-content]>[data-slot=button]]:px-2 [&_[data-slot=empty-content]>[data-slot=button]]:text-xs\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
 			"type": "registry:file",
 			"target": "empty/empty.svelte"
 		},

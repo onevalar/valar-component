@@ -1,35 +1,39 @@
 <script lang="ts">
-	import IconBrandJavascript from "@tabler/icons-svelte/icons/brand-javascript";
-	import IconCopy from "@tabler/icons-svelte/icons/copy";
 	import IconCornerDownLeft from "@tabler/icons-svelte/icons/corner-down-left";
-	import IconRefresh from "@tabler/icons-svelte/icons/refresh";
+	import * as Field from "$lib/registry/ui/field/index.js";
 	import * as InputGroup from "$lib/registry/ui/input-group/index.js";
+
+	const id = $props.id();
+	let message = $state("");
+	let submitted = $state("");
 </script>
 
-<div class="grid w-full max-w-md gap-4">
-	<InputGroup.Root>
-		<InputGroup.Textarea
-			id="textarea-code-32"
-			placeholder="console.log('Hello, world!');"
-			class="min-h-[200px]"
-		/>
-		<InputGroup.Addon align="block-end" class="border-t">
-			<InputGroup.Text>Line 1, Column 1</InputGroup.Text>
-			<InputGroup.Button size="sm" class="ms-auto" variant="default">
-				Run <IconCornerDownLeft />
-			</InputGroup.Button>
-		</InputGroup.Addon>
-		<InputGroup.Addon align="block-start" class="border-b">
-			<InputGroup.Text class="font-mono font-medium">
-				<IconBrandJavascript />
-				script.js
-			</InputGroup.Text>
-			<InputGroup.Button aria-label="Refresh" class="ms-auto" size="icon-xs">
-				<IconRefresh />
-			</InputGroup.Button>
-			<InputGroup.Button aria-label="Copy" variant="ghost" size="icon-xs">
-				<IconCopy />
-			</InputGroup.Button>
-		</InputGroup.Addon>
-	</InputGroup.Root>
-</div>
+<form
+	class="grid w-full max-w-md gap-3"
+	onsubmit={(event) => {
+		event.preventDefault();
+		if (!message.trim()) return;
+		submitted = message.trim();
+		message = "";
+	}}
+>
+	<Field.Field>
+		<Field.Label for={id}>Message draft</Field.Label>
+		<InputGroup.Root>
+			<InputGroup.Textarea
+				{id}
+				bind:value={message}
+				maxlength={280}
+				aria-describedby={`${id}-limit`}
+				placeholder="Write a message…"
+			/>
+			<InputGroup.Addon align="block-end" class="justify-between">
+				<InputGroup.Text id={`${id}-limit`}>{message.length} / 280 characters</InputGroup.Text>
+				<InputGroup.Button size="sm" type="submit" variant="default" disabled={!message.trim()}>
+					Send <IconCornerDownLeft aria-hidden="true" />
+				</InputGroup.Button>
+			</InputGroup.Addon>
+		</InputGroup.Root>
+	</Field.Field>
+	<p role="status" class="text-sm break-words">{submitted ? `Sent: ${submitted}` : ""}</p>
+</form>

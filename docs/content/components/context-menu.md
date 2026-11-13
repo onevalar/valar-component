@@ -26,6 +26,18 @@ links:
 
 </ComponentPreview>
 
+## Issue row
+
+Right-click or long-press the issue row to open its actions. For a keyboard entry point, focus the row and press Shift+F10 or the menu key. ArrowRight opens a submenu. ArrowLeft or Escape returns to the parent item. Escape from the main menu restores focus to the row.
+
+The Status submenu filters and updates the sample issue. It uses a named dialog panel and Command's search input and listbox. The Copy submenu previews the value, and Delete opens a confirmation. The same actions are available below the row.
+
+<ComponentPreview name="context-menu-issue">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Installation
 
 <InstallTabs>
@@ -88,7 +100,7 @@ A simple context menu with a few actions.
 
 ## Submenu
 
-Use `ContextMenu.Sub` to nest secondary actions.
+Use `ContextMenu.Sub` to nest secondary actions. Its panel flips or scrolls to fit the available space, and prefers opening vertically on narrow screens. Use `elevated` on `ContextMenu.SubContent` for a more prominent panel.
 
 <ComponentPreview name="context-menu-submenu">
 

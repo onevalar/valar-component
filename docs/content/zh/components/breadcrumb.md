@@ -18,7 +18,7 @@ links:
 	let { viewerData } = $props();
 </script>
 
-<ComponentPreview name="breadcrumb-demo">
+<ComponentPreview name="breadcrumb-workspace" title="工作区路径">
 
 <div></div>
 
@@ -71,6 +71,18 @@ links:
   </Breadcrumb.List>
 </Breadcrumb.Root>
 ```
+
+## 工作区路径
+
+问题详情的紧凑标题栏用 `appearance="workspace"`。上一级入口用 `Breadcrumb.Link`，当前问题用 `Breadcrumb.Page`。预览中点击 **My issues** 返回列表，再点击问题可重新打开。
+
+## 带菜单的路径
+
+<ComponentPreview name="breadcrumb-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 ## 基础用法
 

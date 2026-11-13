@@ -165,7 +165,7 @@ export const PARAMETERS: Parameter[] = [
 		{ value: "bottom", label: "下" },
 		{ value: "left", label: "左" },
 	]),
-	number("tooltip", "sideOffset", "气泡间距（px）", 8, 0, 48),
+	number("tooltip", "sideOffset", "气泡间距（px）", 6, 0, 48),
 	number("tooltip", "radius", "独立圆角（px）", 6, 0, 48),
 	number("tooltip", "padding", "气泡内边距（px）", 8, 0, 32),
 	number("tooltip", "fontSize", "独立字号（px）", 12, 10, 24),

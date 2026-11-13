@@ -43,7 +43,7 @@
 						role="combobox"
 						aria-expanded={open}
 						aria-invalid={true}
-						class="flex min-h-9 w-64 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm shadow-xs transition-colors focus-within:ring-[3px] focus-within:ring-offset-2 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
+						class="flex min-h-9 w-64 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm shadow-xs transition-colors focus-within:ring-1 focus-within:ring-inset aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-inset aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
 					>
 						{#each values as framework (framework)}
 							<Badge
@@ -100,7 +100,7 @@
 							aria-expanded={openInvalid}
 							aria-invalid={true}
 							id="combobox-multiple-invalid"
-							class="flex min-h-9 w-64 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm shadow-xs transition-colors focus-within:ring-[3px] focus-within:ring-offset-2 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
+							class="flex min-h-9 w-64 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm shadow-xs transition-colors focus-within:ring-1 focus-within:ring-inset aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-inset aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
 						>
 							{#each valuesInvalid as framework (framework)}
 								<Badge

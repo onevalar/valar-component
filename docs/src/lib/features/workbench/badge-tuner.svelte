@@ -49,7 +49,7 @@
 		<p
 			id={`${id}-${pane}-details`}
 			tabindex="-1"
-			class="rounded-md border p-3 text-xs text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+			class="rounded-md border p-3 text-xs text-muted-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
 		>
 			画布说明：链接仅跳转到本画布；高度、上下留白、图标大小、颜色和字体沿用组件库。
 		</p>

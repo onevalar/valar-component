@@ -64,7 +64,7 @@
 						{...props}
 						role="combobox"
 						aria-expanded={open}
-						class="flex min-h-9 min-w-0 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-sm transition-colors focus-within:ring-2 focus-within:ring-offset-2"
+						class="flex min-h-9 min-w-0 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-sm transition-colors focus-within:ring-1 focus-within:ring-inset "
 					>
 						{#each selected as username (username)}
 							<Badge

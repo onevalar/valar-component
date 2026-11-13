@@ -31,7 +31,7 @@
 					{...props}
 					role="combobox"
 					aria-expanded={open}
-					class="flex min-h-9 w-64 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm shadow-xs transition-colors focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
+					class="flex min-h-9 w-64 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm shadow-xs transition-colors focus-within:ring-1 focus-within:ring-inset focus-within:ring-ring "
 				>
 					{#each values as framework (framework)}
 						<Badge

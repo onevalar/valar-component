@@ -19,8 +19,8 @@ import { radiusCss, spacing, type TunerSpec } from "./tuner.js";
  * radius level applies to both sizes (as on Button). The chevron side keeps upstream padding.
  */
 export const SELECT_SIZES = [
-	{ id: "default", label: "默认" },
-	{ id: "sm", label: "小" },
+	{ id: "default", label: "默认", variants: ["default", "settings"] },
+	{ id: "sm", label: "小", variants: ["sm"] },
 ] as const;
 
 const valuesSchema = z
@@ -45,8 +45,8 @@ export function selectOverrideCss(
 	const rules: string[] = [];
 	for (const size of SELECT_SIZES) {
 		const height = tierHeight(safe[`${size.id}.height`], context);
-		if (height !== undefined)
-			rules.push(`${trigger}[data-size="${size.id}"] { height: ${height}px; }`);
+		if (height === undefined) continue;
+		for (const id of size.variants) rules.push(`${trigger}[data-size="${id}"] { height: ${height}px; }`);
 	}
 	const radius = radiusLevel(safe.radius);
 	if (radius !== undefined) rules.push(`${trigger} { border-radius: ${radiusCss(radius)}; }`);
@@ -63,7 +63,8 @@ export function selectOverrideClasses(
 	const classes: string[] = [];
 	for (const size of SELECT_SIZES) {
 		const height = tierHeight(safe[`${size.id}.height`], context);
-		if (height !== undefined) classes.push(`data-[size=${size.id}]:h-${spacing(height)}`);
+		if (height === undefined) continue;
+		for (const id of size.variants) classes.push(`data-[size=${id}]:h-${spacing(height)}`);
 	}
 	const radius = radiusLevel(safe.radius);
 	// Some styles give the small size its own radius; one level keeps both sizes consistent.

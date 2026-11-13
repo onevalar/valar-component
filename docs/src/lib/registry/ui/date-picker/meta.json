@@ -1,0 +1,23 @@
+{
+	"name": "date-picker",
+	"type": "registry:ui",
+	"title": "Date Picker 日期选择器",
+	"description": "用同一控件输入或选择日、月、季度、半年和年。",
+	"categories": ["表单"],
+	"dependencies": ["@internationalized/date"],
+	"meta": {
+		"valar": {
+			"keywords": ["排期", "日期", "季度", "date", "calendar"],
+			"whenToUse": ["为表单选择具体日期或计划周期", "在有限的空间中提供日历和日期输入"],
+			"accessibility": ["提供可读的 label，保留 Calendar 键盘操作与弹层返回焦点"],
+			"related": ["calendar", "range-calendar", "popover", "input"],
+			"whenNotToUse": [
+				{
+					"case": "在同一份日历连续选择日期区间",
+					"use": "range-calendar"
+				}
+			],
+			"responsive": ["浮层按视口收窄，精度标签可换行"]
+		}
+	}
+}

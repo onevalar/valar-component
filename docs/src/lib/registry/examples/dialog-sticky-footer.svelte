@@ -5,14 +5,14 @@
 
 <Dialog.Root>
 	<Dialog.Trigger class={buttonVariants({ variant: "outline" })}>Sticky Footer</Dialog.Trigger>
-	<Dialog.Content>
+	<Dialog.Content class="grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden">
 		<Dialog.Header>
 			<Dialog.Title>Sticky Footer</Dialog.Title>
 			<Dialog.Description>
 				This dialog has a sticky footer that stays visible while the content scrolls.
 			</Dialog.Description>
 		</Dialog.Header>
-		<div class="-mx-4 no-scrollbar max-h-[50vh] overflow-y-auto px-4">
+		<div class="max-h-[50dvh] overflow-y-auto overscroll-contain pe-2">
 			{#each { length: 10 } as _, i (i)}
 				<p class="mb-4 leading-normal">
 					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt
@@ -25,7 +25,9 @@
 			{/each}
 		</div>
 		<Dialog.Footer>
-			<Dialog.Close class={buttonVariants({ variant: "outline" })}>Close</Dialog.Close>
+			<Dialog.Close class={buttonVariants({ variant: "outline", shape: "pill" })}
+				>Close</Dialog.Close
+			>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

@@ -53,7 +53,7 @@
 						<DropdownMenu.Root bind:open={opened[pane]}>
 							<DropdownMenu.Trigger
 								aria-label="展开中间路径"
-								class="rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+								class="rounded-sm focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
 							>
 								<Breadcrumb.Ellipsis label="展开中间路径" />
 							</DropdownMenu.Trigger>
@@ -81,7 +81,7 @@
 					id={`${id}-${pane}-${destination.key}`}
 					tabindex="-1"
 					aria-label={`${destination.label}画布锚点`}
-					class="min-w-0 rounded-md border p-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+					class="min-w-0 rounded-md border p-3 text-sm focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
 				>
 					<h3 class="font-medium">{destination.label}</h3>
 					<p class="text-xs text-muted-foreground">

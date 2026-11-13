@@ -25,7 +25,7 @@
 			bind:value
 			bind:placeholder
 			fixedWeeks
-			class="p-0 [--cell-size:--spacing(9.5)]"
+			class="p-0 [--cell-size:--spacing(7)] min-[390px]:[--cell-size:--spacing(9.5)]"
 		/>
 	</Card.Content>
 	<Card.Footer class="flex flex-wrap gap-2 border-t">

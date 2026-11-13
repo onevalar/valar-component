@@ -68,7 +68,7 @@ links:
 
 ## 表单字段
 
-用 `Field.Field`、`Field.Label` 和 `Field.Description` 给输入框加上标签与描述。
+用 `Field.Field`、`Field.Label` 和 `Field.Description` 组合标签、输入框与说明。试着输入团队标识符，示例会转为大写、限制为 7 字符，并即时更新说明里的前缀。
 
 <ComponentPreview name="input-field" class="[&_[data-align]>*]:max-w-xs">
 
@@ -88,7 +88,7 @@ links:
 
 ## 禁用
 
-传入 `disabled` 属性禁用输入框。要定制禁用状态的样式，在 `Field.Field` 组件上添加 `data-disabled` 属性。
+使用 `disabled` 可跳过键盘焦点并排除表单提交。给 `Field.Field` 加上 `data-disabled`，可同步调整标签的禁用样式。
 
 <ComponentPreview name="input-disabled" class="[&_[data-align]>*]:max-w-xs">
 
@@ -96,9 +96,19 @@ links:
 
 </ComponentPreview>
 
+## 只读
+
+用 `readonly` 保留聚焦、选取、复制和表单提交，限制编辑。
+
+<ComponentPreview name="input-readonly" class="[&_[data-align]>*]:max-w-xs">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 无效
 
-传入 `aria-invalid` 属性把输入框标记为无效。要定制无效状态的样式，在 `Field.Field` 组件上添加 `data-invalid` 属性。
+校验失败时在输入框设置 `aria-invalid`，在字段设置 `data-invalid`，并用 `aria-describedby` 关联 `Field.Error`。试着修正邮箱地址，错误会随即消失。
 
 <ComponentPreview name="input-invalid" class="[&_[data-align]>*]:max-w-xs">
 
@@ -108,7 +118,7 @@ links:
 
 ## 文件
 
-传入 `type="file"` 属性创建文件输入框。
+使用 `type="file"` 与 `bind:files` 读取浏览器选中的文件。
 
 <ComponentPreview name="input-file" class="[&_[data-align]>*]:max-w-xs">
 
@@ -138,7 +148,7 @@ links:
 
 ## 必填
 
-用 `required` 属性标记必填输入框。
+使用原生 `required` 属性。装饰性的星号使用 `aria-hidden="true"`，避免辅助技术重复播报必填要求。
 
 <ComponentPreview name="input-required" class="[&_[data-align]>*]:max-w-xs">
 

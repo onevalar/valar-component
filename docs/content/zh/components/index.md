@@ -1,6 +1,6 @@
 ---
 title: 基础组件
-description: 这里列出组件库提供的全部组件，新组件仍在持续补充。
+description: 查看已通过 Linear 整体对齐验收的基础组件。
 ---
 
 <script>

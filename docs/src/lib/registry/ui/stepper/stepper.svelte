@@ -268,7 +268,7 @@
 					disabled={disabled || !reachable(index) || (pending && index > currentIndex)}
 					tabindex={(focused || value) === step.id ? 0 : -1}
 					class={cn(
-						"flex w-full items-start gap-3 rounded-md border border-border bg-background p-3 text-start text-sm outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 data-[state=active]:border-primary data-[state=error]:border-destructive",
+						"flex w-full items-start gap-3 rounded-md border border-border bg-background p-3 text-start text-sm outline-none hover:bg-muted focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 data-[state=active]:border-primary data-[state=error]:border-destructive",
 						"cn-stepper-trigger"
 					)}
 					onclick={() => goTo(step.id)}
@@ -308,7 +308,7 @@
 			aria-labelledby={triggerId(step.id)}
 			tabindex="-1"
 			hidden={step.id !== value}
-			class="min-w-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+			class="min-w-0 rounded-md outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring"
 			data-slot="stepper-content"
 		>
 			{@render children?.({

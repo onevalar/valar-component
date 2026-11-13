@@ -118,7 +118,10 @@
 {#snippet Framed()}
 	{#if bare}
 		<div
-			class="flex max-h-[28rem] min-h-32 w-full items-center justify-center overflow-auto rounded-xl border p-6"
+			class={cn(
+				"flex max-h-[28rem] min-h-32 w-full items-center justify-center overflow-auto rounded-xl border p-6",
+				name === "calendar-custom-days" && "max-h-none px-2 py-4"
+			)}
 		>
 			{@render PreviewExample()}
 		</div>

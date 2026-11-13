@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DIALOG_WIDTHS, WIDTH_REM } from "./dialog-tuning.js";
+import { DIALOG_WIDTHS, WIDTH_REM, dialogWidthClass, readDialogWidth } from "./dialog-tuning.js";
 import {
 	MOTION_TIERS,
 	MOTION_TIER_LABELS,
@@ -21,7 +21,7 @@ const valuesSchema = z
 		padding: z.number().int().min(8).max(48).multipleOf(2),
 		gap: z.number().int().min(4).max(40).multipleOf(2),
 		radius: z.enum(RADIUS_CHOICES),
-		overlay: z.number().int().min(0).max(80).multipleOf(10),
+		overlay: z.number().int().min(0).max(80).multipleOf(5),
 		duration: z.enum([STYLE_VALUE, ...MOTION_TIERS]),
 		zoom: z.enum(ZOOM_LEVELS),
 	})
@@ -49,7 +49,7 @@ export function parseAlertDialogSource(files: { target: string; content: string 
 	};
 	return {
 		values: valuesSchema.parse({
-			width: /data-\[size=default\]:sm:max-w-(sm|md|lg|xl|2xl)\b/.exec(content)?.[1],
+			width: readDialogWidth(content),
 			padding: pixels("p"),
 			gap: pixels("gap"),
 			radius: sourceWord(`rounded-(${RADIUS_LEVELS.join("|")})`, content) ?? STYLE_VALUE,
@@ -69,7 +69,8 @@ export function alertDialogOverrideClasses(
 	const content: string[] = [],
 		overlay: string[] = [],
 		footer: string[] = [];
-	if (safe.width !== undefined) content.push(`data-[size=default]:sm:max-w-${safe.width}`);
+	if (safe.width !== undefined)
+		content.push(`data-[size=default]:sm:max-w-${dialogWidthClass(safe.width)}`);
 	if (safe.padding !== undefined) {
 		content.push(`p-${spacing(safe.padding)}`);
 		if (context?.footerBleed)
@@ -90,7 +91,8 @@ export function alertDialogOverrideClasses(
 	}
 	if (safe.zoom !== undefined)
 		content.push(`data-open:zoom-in-${safe.zoom}`, `data-closed:zoom-out-${safe.zoom}`);
-	if (safe.overlay !== undefined) overlay.push(`bg-black/${safe.overlay}`);
+	if (safe.overlay !== undefined)
+		overlay.push(`bg-black/${safe.overlay}`, `dark:bg-black/${safe.overlay}`);
 	return Object.fromEntries(
 		[
 			["cn-alert-dialog-content", content],
@@ -181,7 +183,7 @@ export const ALERT_DIALOG_SPEC: TunerSpec<AlertDialogValues, AlertDialogContext>
 				...RADIUS_LEVELS.map((value) => ({ value, label: RADIUS_LABELS[value] })),
 			],
 		},
-		{ kind: "number", key: "overlay", label: "遮罩不透明度（%）", min: 0, max: 80, step: 10 },
+		{ kind: "number", key: "overlay", label: "遮罩不透明度（%）", min: 0, max: 80, step: 5 },
 		{
 			kind: "select",
 			key: "duration",

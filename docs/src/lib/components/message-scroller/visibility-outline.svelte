@@ -26,7 +26,7 @@
 				{...props}
 				type="button"
 				aria-label="Open transcript outline"
-				class="flex h-9 w-9 flex-col items-center justify-center gap-1 rounded-md transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+				class="flex h-9 w-9 flex-col items-center justify-center gap-1 rounded-md transition-colors outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring/50"
 			>
 				{#each userMessages as message (message.id)}
 					<span

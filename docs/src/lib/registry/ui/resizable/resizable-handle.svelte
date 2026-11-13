@@ -6,19 +6,28 @@
 		ref = $bindable(null),
 		class: className,
 		withHandle = false,
+		appearance = "default",
+		disabled = false,
+		tabindex = 0,
 		...restProps
 	}: WithoutChildrenOrChild<ResizablePrimitive.PaneResizerProps> & {
 		withHandle?: boolean;
+		appearance?: "default" | "workspace";
 	} = $props();
 </script>
 
 <ResizablePrimitive.PaneResizer
 	bind:ref
 	data-slot="resizable-handle"
+	data-appearance={appearance}
+	{disabled}
+	tabindex={appearance === "workspace" && disabled ? -1 : tabindex}
+	aria-disabled={appearance === "workspace" && disabled ? true : undefined}
 	class={cn(
 		// parity-ignore: Paneforge data-direction is the group axis; Radix aria-orientation on the handle is the separator axis (perpendicular)
-		"relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:outline-hidden data-[direction=vertical]:h-px data-[direction=vertical]:w-full data-[direction=vertical]:after:left-0 data-[direction=vertical]:after:h-1 data-[direction=vertical]:after:w-full data-[direction=vertical]:after:translate-x-0 data-[direction=vertical]:after:-translate-y-1/2 [&[data-direction=vertical]>div]:rotate-90",
+		"relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring focus-visible:outline-hidden data-[direction=vertical]:h-px data-[direction=vertical]:w-full data-[direction=vertical]:after:left-0 data-[direction=vertical]:after:h-1 data-[direction=vertical]:after:w-full data-[direction=vertical]:after:translate-x-0 data-[direction=vertical]:after:-translate-y-1/2 [&[data-direction=vertical]>div]:rotate-90",
 		"cn-resizable-handle",
+		appearance === "workspace" && "cn-resizable-handle-workspace",
 		className
 	)}
 	{...restProps}

@@ -74,6 +74,8 @@ links:
 </Tooltip.Provider>
 ```
 
+默认悬停延迟为 500 ms。键盘聚焦后立即显示，按 Escape 关闭，焦点保留在触发器上。
+
 之后即可在应用任意位置使用工具提示：
 
 ```svelte
@@ -111,6 +113,8 @@ links:
 
 ## 带键盘快捷键
 
+触发器支持快捷键时，可以用 `Tooltip.Hint` 显示键帽。聚焦保存按钮后按 Shift+S 即可试用。
+
 <ComponentPreview name="tooltip-keyboard">
 
 <div></div>
@@ -119,18 +123,10 @@ links:
 
 ## 禁用按钮
 
-用 `<span>` 包裹禁用的按钮，即可在按钮上显示工具提示。
+用 `<span>` 包裹禁用按钮，可以为鼠标用户显示提示。重要说明还需放在按钮附近，方便键盘和触屏用户阅读。
 
 <ComponentPreview name="tooltip-disabled">
 
 <div></div>
 
 </ComponentPreview>
-
-## 变更记录
-
-### 2025-12 更新工具提示颜色
-
-工具提示的颜色已更新：背景使用前景色，前景使用背景色。
-
-把 `<Tooltip.Content />` 的 `bg-primary text-primary-foreground` 换成 `bg-foreground text-background`。

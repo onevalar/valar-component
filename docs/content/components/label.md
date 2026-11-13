@@ -21,7 +21,7 @@ links:
 	let { viewerData } = $props();
 </script>
 
-<ComponentPreview name="label-demo">
+<ComponentPreview name="label-demo" title="Labels in forms and settings">
 
 <div></div>
 
@@ -74,6 +74,11 @@ Copy and paste the following code into your project.
 ```svelte
 <Label for="email">Your email address</Label>
 ```
+
+Use `appearance="settings"` for a standalone settings label. The preview uses 13 px text and clicking the label focuses the input.
+
+Set `required` on the control and optionally on `Label` to add a visible asterisk.
+For a standalone disabled control, use `data-disabled="true"` on its label and `disabled` on the control.
 
 ## Label in Field
 

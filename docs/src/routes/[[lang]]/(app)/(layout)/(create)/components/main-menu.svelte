@@ -29,7 +29,7 @@
 	<Picker.Trigger
 		submenu={false}
 		class={cn(
-			"flex items-center justify-between gap-2 rounded-lg px-1.75 ring-1 ring-foreground/10 focus-visible:ring-1",
+			"flex items-center justify-between gap-2 rounded-lg px-1.75 ring-1 ring-foreground/10 focus-visible:ring-1 focus-visible:ring-inset",
 			className
 		)}
 	>

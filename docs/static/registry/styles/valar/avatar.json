@@ -46,7 +46,7 @@
 	},
 	"files": [
 		{
-			"content": "# Avatar 设计规范\n\n- 每个 Avatar 都放 `Avatar.Image` 和 `Avatar.Fallback`：图片加载失败或没有图片时显示 Fallback（姓名首字或图标）。\n- `Avatar.Image` 必须有 `alt`，写人名或账号名；旁边已有姓名文字时写 `alt=\"\"`（检查规则 `valar/image-alt`）。\n- 尺寸只用 `size` 属性（`sm`、`default`、`lg`），不要用 `class` 写 `size-*`。\n- 在线状态等标记用 `Avatar.Badge`，并另外用文字或 `aria-label` 表达状态，不要只靠圆点颜色；多个头像用 `Avatar.Group`，超出部分用 `Avatar.GroupCount` 显示数量。\n",
+			"content": "# Avatar 设计规范\n\n- 每个 Avatar 都放 `Avatar.Image` 和 `Avatar.Fallback`：图片加载失败或没有图片时显示 Fallback（姓名首字或图标）。\n- `Avatar.Image` 必须有 `alt`，写人名或账号名；旁边已有姓名文字时写 `alt=\"\"`（检查规则 `valar/image-alt`）。\n- 尺寸只用 `size` 属性（`sm`、`default`、`lg`），不要用 `class` 写 `size-*`。\n- 订阅者姓名旁可用 `appearance=\"subscriber\"` 显示 18 px 头像。姓名缩写的底色通过 `--valar-avatar-subscriber-color` 设置。\n- 在线状态等标记用 `Avatar.Badge`，并另外用文字或 `aria-label` 表达状态，不要只靠圆点颜色；多个头像用 `Avatar.Group`，超出部分用 `Avatar.GroupCount` 显示数量。\n- 设置成员列表用 `appearance=\"member\"`（24 px，无外描边，缩写 11 px）。多人头像保持顺序；布局空间不足时组内换行，溢出计数提供可读名称。\n",
 			"type": "registry:file",
 			"target": "avatar/RULES.md"
 		},
@@ -66,7 +66,7 @@
 			"target": "avatar/avatar-group-count.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"avatar-group\"\n\tclass={cn(\n\t\t\"group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"avatar-group\"\n\tclass={cn(\n\t\t\"group/avatar-group flex max-w-full flex-wrap gap-y-1 ps-2 *:-ms-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
 			"type": "registry:file",
 			"target": "avatar/avatar-group.svelte"
 		},
@@ -76,7 +76,7 @@
 			"target": "avatar/avatar-image.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { Avatar as AvatarPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tloadingStatus = $bindable(\"loading\"),\n\t\tsize = \"default\",\n\t\tclass: className,\n\t\t...restProps\n\t}: AvatarPrimitive.RootProps & {\n\t\tsize?: \"default\" | \"sm\" | \"lg\";\n\t} = $props();\n</script>\n\n<AvatarPrimitive.Root\n\tbind:ref\n\tbind:loadingStatus\n\tdata-slot=\"avatar\"\n\tdata-size={size}\n\tclass={cn(\n\t\t\"size-8 rounded-full after:rounded-full data-[size=lg]:size-10 data-[size=sm]:size-6 group/avatar relative flex shrink-0 select-none after:absolute after:inset-0 after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten\",\n\t\tclassName\n\t)}\n\t{...restProps}\n/>\n",
+			"content": "<script lang=\"ts\">\n\timport { Avatar as AvatarPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tloadingStatus = $bindable(\"loading\"),\n\t\tsize = \"default\",\n\t\tappearance = \"default\",\n\t\tclass: className,\n\t\t...restProps\n\t}: AvatarPrimitive.RootProps & {\n\t\tsize?: \"default\" | \"sm\" | \"lg\";\n\t\tappearance?: \"default\" | \"subscriber\" | \"member\";\n\t} = $props();\n</script>\n\n<AvatarPrimitive.Root\n\tbind:ref\n\tbind:loadingStatus\n\tdata-slot=\"avatar\"\n\tdata-size={size}\n\tdata-appearance={appearance}\n\tclass={cn(\n\t\t\"size-8 rounded-full after:rounded-full data-[size=lg]:size-10 data-[size=sm]:size-6 group/avatar relative flex shrink-0 select-none after:absolute after:inset-0 after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten\",\n\t\tappearance === \"subscriber\" && \"data-[appearance=subscriber]:size-[18px]! after:hidden [&>[data-slot=avatar-fallback]]:bg-[color:var(--valar-avatar-subscriber-color,lch(70%_60_220))] [&>[data-slot=avatar-fallback]]:text-[9px]/none [&>[data-slot=avatar-fallback]]:font-medium [&>[data-slot=avatar-fallback]]:text-white\",\n\t\tappearance === \"member\" && \"data-[appearance=member]:size-6! after:hidden [&>[data-slot=avatar-fallback]]:text-[11px]/none [&>[data-slot=avatar-fallback]]:font-normal\",\n\t\tclassName\n\t)}\n\t{...restProps}\n/>\n",
 			"type": "registry:file",
 			"target": "avatar/avatar.svelte"
 		},

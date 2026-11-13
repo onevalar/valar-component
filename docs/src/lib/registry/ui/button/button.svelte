@@ -4,7 +4,7 @@
 	import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 
 	export const buttonVariants = tv({
-		base: "cn-button group/button inline-flex shrink-0 items-center justify-center whitespace-nowrap transition-all outline-none select-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+		base: "cn-button group/button inline-flex shrink-0 items-center justify-center whitespace-nowrap outline-none select-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [a]:not-data-loading:aria-disabled:pointer-events-none",
 		variants: {
 			variant: {
 				default: "cn-button-variant-default",
@@ -24,14 +24,19 @@
 				"icon-sm": "cn-button-size-icon-sm",
 				"icon-lg": "cn-button-size-icon-lg",
 			},
-			// The default uses the base radius; `pill` makes a button a capsule and `square` keeps the
-			// rounded square. Inside a ButtonGroup the group decides the corners, so none apply there.
 			shape: {
 				auto: "",
 				pill: "not-in-data-[slot=button-group]:rounded-full",
 				square: "",
 			},
 		},
+		compoundVariants: [
+			{
+				shape: "auto",
+				size: ["default", "xs", "sm", "lg"],
+				class: "cn-button-shape-auto-text",
+			},
+		],
 		defaultVariants: {
 			variant: "default",
 			size: "default",
@@ -47,7 +52,9 @@
 		WithElementRef<HTMLAnchorAttributes> & {
 			variant?: ButtonVariant;
 			size?: ButtonSize;
-			/** `pill` is a capsule; `auto` and `square` use the base radius. */
+			/** Prevents repeat activation while leaving focus on the pending action. */
+			loading?: boolean;
+			/** Auto uses a pill for text sizes and the theme radius for icon sizes. */
 			shape?: ButtonShape;
 		};
 </script>
@@ -62,10 +69,16 @@
 		href = undefined,
 		type = "button",
 		disabled,
+		loading = false,
 		tabindex,
 		children,
 		...restProps
 	}: ButtonProps = $props();
+
+	function blockActivation(event: MouseEvent) {
+		event.preventDefault();
+		event.stopPropagation();
+	}
 </script>
 
 {#if href}
@@ -74,12 +87,16 @@
 		data-slot="button"
 		data-variant={variant}
 		data-size={size}
+		data-shape={shape}
 		class={cn(buttonVariants({ variant, size, shape }), className)}
-		href={disabled ? undefined : href}
-		aria-disabled={disabled}
-		role={disabled ? "link" : undefined}
-		tabindex={disabled ? -1 : tabindex}
 		{...restProps}
+		href={disabled || loading ? undefined : href}
+		aria-disabled={disabled || loading ? true : restProps["aria-disabled"]}
+		aria-busy={loading ? true : restProps["aria-busy"]}
+		data-loading={loading ? "" : undefined}
+		role={disabled || loading ? "link" : restProps.role}
+		tabindex={disabled ? -1 : loading ? (tabindex ?? 0) : tabindex}
+		onclick={disabled || loading ? blockActivation : restProps.onclick}
 	>
 		{@render children?.()}
 	</a>
@@ -89,11 +106,16 @@
 		data-slot="button"
 		data-variant={variant}
 		data-size={size}
+		data-shape={shape}
 		class={cn(buttonVariants({ variant, size, shape }), className)}
 		{type}
 		{disabled}
 		tabindex={disabled ? -1 : tabindex}
 		{...restProps}
+		aria-disabled={loading ? true : restProps["aria-disabled"]}
+		aria-busy={loading ? true : restProps["aria-busy"]}
+		data-loading={loading ? "" : undefined}
+		onclick={loading ? blockActivation : restProps.onclick}
 	>
 		{@render children?.()}
 	</button>

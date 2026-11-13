@@ -1,12 +1,13 @@
 <script lang="ts">
-	import * as Field from "$lib/registry/ui/field/index.js";
 	import { Progress } from "$lib/registry/ui/progress/index.js";
+
+	const labelId = $props.id();
 </script>
 
-<Field.Field class="w-full max-w-sm">
-	<Field.Label for="progress-upload" class="w-full">
-		<span>Upload progress</span>
-		<span class="ml-auto font-normal text-muted-foreground tabular-nums">56%</span>
-	</Field.Label>
-	<Progress value={56} id="progress-upload" />
-</Field.Field>
+<div class="grid w-full max-w-sm gap-2">
+	<div class="flex items-center justify-between gap-2 text-[13px] font-medium">
+		<span id={labelId}>Upload progress</span>
+		<span aria-hidden="true" class="text-muted-foreground font-[450] tabular-nums">56%</span>
+	</div>
+	<Progress value={56} aria-labelledby={labelId} />
+</div>

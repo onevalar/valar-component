@@ -38,7 +38,7 @@ function applyBehaviorDefaults(file: RegistryItemFile, preset: WorkbenchPreset):
 		);
 	} else if (file.target === "tooltip/tooltip-content.svelte") {
 		replace(
-			'\t\tsideOffset = 0,\n\t\tside = "top",',
+			'\t\tsideOffset = 6,\n\t\tside = "top",',
 			`\t\tsideOffset = ${v["tooltip.sideOffset"]},\n\t\tside = ${JSON.stringify(v["tooltip.side"])},`
 		);
 	} else if (file.target === "accordion/accordion.svelte") {

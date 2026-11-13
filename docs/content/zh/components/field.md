@@ -18,11 +18,13 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="field-demo">
+<ComponentPreview name="field-settings-row" title="设置表单行">
 
 <div></div>
 
 </ComponentPreview>
+
+在 `Field.Group` 内将 `appearance="settings"` 与 `orientation="responsive"` 搭配使用。容器变窄时，标签与说明保持成组，控件移至下方。
 
 ## 安装
 
@@ -95,6 +97,14 @@ links:
 - `Field.Field` 是单个字段的核心容器。
 - `Field.Content` 是纵向排列的弹性容器，把标签与描述归在一起。没有描述时可以省略。
 - 用 `Field.Group` 包裹相关字段；需要语义分组时，把 `Field.Set` 与 `Field.Legend` 配合使用。
+
+## 完整表单
+
+<ComponentPreview name="field-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 ## 输入框
 
@@ -195,14 +205,14 @@ links:
 ## 校验与错误
 
 - 在 `Field.Field` 上添加 `data-invalid`，整块字段切换到错误状态。
-- 在输入控件本身加上 `aria-invalid`，供辅助技术识别。
+- 在输入控件本身加上 `aria-invalid`，供辅助技术识别。用 `aria-describedby` 关联说明和当前错误。
 - 把 `Field.Error` 渲染在控件之后或 `Field.Content` 内部，错误提示才能与字段对齐。
 
 ```svelte
 <Field.Field data-invalid>
   <Field.Label for="email">Email</Field.Label>
-  <Input id="email" type="email" aria-invalid />
-  <Field.Error>Enter a valid email address.</Field.Error>
+  <Input id="email" type="email" aria-invalid aria-describedby="email-error" />
+  <Field.Error id="email-error">Enter a valid email address.</Field.Error>
 </Field.Field>
 ```
 

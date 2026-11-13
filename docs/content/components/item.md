@@ -18,13 +18,15 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="item-demo">
+<ComponentPreview name="item-issue-row" title="Issue rows">
 
 <div></div>
 
 </ComponentPreview>
 
 The `Item` component is a straightforward flex container that can house nearly any type of content. Use it to display a title, description, and actions. Group it with the `Item.Group` component to create a list of items.
+
+Use `appearance="issue-row"` for a compact issue list. Place the priority in `Item.Media`, the issue ID, status, and title in `Item.Content`, and the date in `Item.Actions`. Render the row as a link when it opens issue details. Tab focuses the row and Enter opens the details.
 
 ## Installation
 
@@ -78,6 +80,12 @@ If you only need to display content such as a title, description, and actions, u
 ## Variant
 
 Use the `variant` prop to change the visual style of the item.
+
+<ComponentPreview name="item-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 <ComponentPreview name="item-variants-demo">
 

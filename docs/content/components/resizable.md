@@ -20,11 +20,13 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="resizable-demo">
+<ComponentPreview name="resizable-inbox">
 
 <div></div>
 
 </ComponentPreview>
+
+Use `appearance="workspace"` on the handle for a divider that reveals a fine line on hover. Drag the divider between Inbox and details, or focus it with Tab and resize with the arrow keys. Set `aria-orientation="vertical"` for a divider between left and right panes.
 
 ## About
 
@@ -75,6 +77,12 @@ Copy and paste the following code into your project.
   <Resizable.Pane>Two</Resizable.Pane>
 </Resizable.PaneGroup>
 ```
+
+<ComponentPreview name="resizable-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 ## Vertical
 

@@ -1,9 +1,10 @@
 <script lang="ts">
 	import * as AlertDialog from "$lib/registry/ui/alert-dialog/index.js";
 	import { buttonVariants } from "$lib/registry/ui/button/index.js";
+	let open = $state(false);
 </script>
 
-<AlertDialog.Root>
+<AlertDialog.Root bind:open>
 	<AlertDialog.Trigger class={buttonVariants({ variant: "outline" })}
 		>Show Dialog</AlertDialog.Trigger
 	>
@@ -16,7 +17,7 @@
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
 			<AlertDialog.Cancel>Don't allow</AlertDialog.Cancel>
-			<AlertDialog.Action>Allow</AlertDialog.Action>
+			<AlertDialog.Action onclick={() => (open = false)}>Allow</AlertDialog.Action>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

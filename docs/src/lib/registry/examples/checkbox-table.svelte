@@ -12,6 +12,8 @@
 
 	const selectedRows = new SvelteSet<string>(["1"]);
 	const selectAll = $derived(selectedRows.size === tableData.length);
+	const someSelected = $derived(selectedRows.size > 0 && !selectAll);
+	const id = $props.id();
 
 	function handleSelectAll(checked: boolean) {
 		if (checked) {
@@ -30,37 +32,43 @@
 	}
 </script>
 
-<Table.Root>
-	<Table.Header>
-		<Table.Row>
-			<Table.Head class="w-8">
-				<Checkbox
-					id="select-all-checkbox"
-					name="select-all-checkbox"
-					checked={selectAll}
-					onCheckedChange={handleSelectAll}
-				/>
-			</Table.Head>
-			<Table.Head>Name</Table.Head>
-			<Table.Head>Email</Table.Head>
-			<Table.Head>Role</Table.Head>
-		</Table.Row>
-	</Table.Header>
-	<Table.Body>
-		{#each tableData as row (row.id)}
-			<Table.Row data-state={selectedRows.has(row.id) ? "selected" : undefined}>
-				<Table.Cell>
+<div class="w-full min-w-0 space-y-2">
+	<p role="status" class="text-xs text-muted-foreground">{selectedRows.size} selected</p>
+	<Table.Root>
+		<Table.Header>
+			<Table.Row>
+				<Table.Head class="w-8">
 					<Checkbox
-						id="row-{row.id}-checkbox"
-						name="row-{row.id}-checkbox"
-						checked={selectedRows.has(row.id)}
-						onCheckedChange={(checked) => handleSelectRow(row.id, checked === true)}
+						id="{id}-select-all"
+						name="select-all-checkbox"
+						aria-label="Select all users"
+						checked={selectAll}
+						indeterminate={someSelected}
+						onCheckedChange={handleSelectAll}
 					/>
-				</Table.Cell>
-				<Table.Cell class="font-medium">{row.name}</Table.Cell>
-				<Table.Cell>{row.email}</Table.Cell>
-				<Table.Cell>{row.role}</Table.Cell>
+				</Table.Head>
+				<Table.Head>Name</Table.Head>
+				<Table.Head>Email</Table.Head>
+				<Table.Head>Role</Table.Head>
 			</Table.Row>
-		{/each}
-	</Table.Body>
-</Table.Root>
+		</Table.Header>
+		<Table.Body>
+			{#each tableData as row (row.id)}
+				<Table.Row data-state={selectedRows.has(row.id) ? "selected" : undefined}>
+					<Table.Cell>
+						<Checkbox
+							id="{id}-row-{row.id}"
+							name="row-{row.id}-checkbox"
+							aria-label={`Select ${row.name}`}
+							checked={selectedRows.has(row.id)}
+							onCheckedChange={(checked) => handleSelectRow(row.id, checked === true)}
+						/>
+					</Table.Cell>
+					<Table.Cell class="font-medium">{row.name}</Table.Cell>
+					<Table.Cell>{row.email}</Table.Cell>
+					<Table.Cell>{row.role}</Table.Cell>
+				</Table.Row>
+			{/each}
+		</Table.Body>
+	</Table.Root>
+</div>

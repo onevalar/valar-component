@@ -7,12 +7,15 @@
 	let {
 		ref = $bindable(null),
 		class: className,
+		appearance = "default",
 		side = "bottom",
 		sideOffset = 4,
 		align = "center",
+		collisionPadding = 8,
 		portalProps,
 		...restProps
 	}: HoverCardPrimitive.ContentProps & {
+		appearance?: "default" | "profile";
 		portalProps?: WithoutChildrenOrChild<ComponentProps<typeof HoverCardPortal>>;
 	} = $props();
 </script>
@@ -21,11 +24,14 @@
 	<HoverCardPrimitive.Content
 		bind:ref
 		data-slot="hover-card-content"
+		data-appearance={appearance}
 		{side}
 		{sideOffset}
 		{align}
+		{collisionPadding}
 		class={cn(
-			"cn-hover-card-content z-50 origin-(--bits-link-preview-content-transform-origin) outline-hidden",
+			"cn-hover-card-content cn-hover-card-content-logical z-50 origin-(--bits-link-preview-content-transform-origin) outline-hidden",
+			appearance === "profile" && "cn-hover-card-profile",
 			className
 		)}
 		{...restProps}

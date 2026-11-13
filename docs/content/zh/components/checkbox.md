@@ -72,6 +72,8 @@ links:
 
 用 `bind:checked` 绑定复选框状态，或用 `onCheckedChange` 监听状态变化。
 
+默认方框为 14 px，圆角 3 px。点击标签，或聚焦后按空格键，可切换选中状态。
+
 ```svelte showLineNumbers
 <script lang="ts">
   import { Checkbox } from "$lib/components/ui/checkbox/index.js";
@@ -83,6 +85,8 @@ links:
 ```
 
 ## 无效状态
+
+直接提交可查看与复选框关联的错误提示。点击标签或按空格修正后可重新提交。
 
 为复选框设置 `aria-invalid`，并为外层字段容器设置 `data-invalid`，即可显示无效样式。
 
@@ -133,6 +137,8 @@ links:
 </ComponentPreview>
 
 ## 表格
+
+表头复选框表示部分选中并控制全选。各行复选框仍有各自的名称和键盘焦点。
 
 <ComponentPreview name="checkbox-table">
 

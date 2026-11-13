@@ -4,15 +4,17 @@
 	import * as Tabs from "$lib/registry/ui/tabs/index.js";
 </script>
 
-<Tabs.Root value="preview">
-	<Tabs.List>
+<Tabs.Root value="preview" class="w-full max-w-xs">
+	<Tabs.List aria-label="Preview format">
 		<Tabs.Trigger value="preview">
-			<AppWindowIcon />
+			<AppWindowIcon data-icon="inline-start" aria-hidden="true" />
 			Preview
 		</Tabs.Trigger>
 		<Tabs.Trigger value="code">
-			<CodeIcon />
+			<CodeIcon data-icon="inline-start" aria-hidden="true" />
 			Code
 		</Tabs.Trigger>
 	</Tabs.List>
+	<Tabs.Content value="preview">Inspect the rendered project.</Tabs.Content>
+	<Tabs.Content value="code">Inspect the project source.</Tabs.Content>
 </Tabs.Root>

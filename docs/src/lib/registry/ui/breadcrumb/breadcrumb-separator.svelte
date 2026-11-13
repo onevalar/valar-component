@@ -14,6 +14,7 @@
 <li
 	bind:this={ref}
 	data-slot="breadcrumb-separator"
+	data-default={children ? undefined : ""}
 	role="presentation"
 	aria-hidden="true"
 	class={cn("cn-breadcrumb-separator", className)}

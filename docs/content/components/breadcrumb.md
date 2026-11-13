@@ -18,7 +18,7 @@ links:
 	let { viewerData } = $props();
 </script>
 
-<ComponentPreview name="breadcrumb-demo">
+<ComponentPreview name="breadcrumb-workspace" title="Workspace path">
 
 <div></div>
 
@@ -71,6 +71,18 @@ Copy and paste the following code into your project.
   </Breadcrumb.List>
 </Breadcrumb.Root>
 ```
+
+## Workspace path
+
+Use `appearance="workspace"` in a compact issue header. Put the parent route in `Breadcrumb.Link` and the current issue in `Breadcrumb.Page`. In the preview, select **My issues** to return to the list, then select the issue to reopen it.
+
+## Path with a menu
+
+<ComponentPreview name="breadcrumb-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 ## Basic
 

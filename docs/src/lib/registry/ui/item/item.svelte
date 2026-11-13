@@ -2,7 +2,7 @@
 	import { tv, type VariantProps } from "tailwind-variants";
 
 	export const itemVariants = tv({
-		base: "cn-item group/item flex w-full flex-wrap items-center transition-colors duration-100 outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors",
+		base: "cn-item group/item flex w-full min-w-0 flex-wrap items-center transition-colors duration-150 outline-none focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring motion-reduce:transition-none",
 		variants: {
 			variant: {
 				default: "cn-item-variant-default",
@@ -33,19 +33,27 @@
 	let {
 		ref = $bindable(null),
 		class: className,
+		appearance = "default",
 		child,
 		variant,
 		size,
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
+		appearance?: "default" | "issue-row";
 		child?: Snippet<[{ props: Record<string, unknown> }]>;
 		variant?: ItemVariant;
 		size?: ItemSize;
 	} = $props();
 
 	const mergedProps = $derived({
-		class: cn(itemVariants({ variant, size }), className),
+		class: cn(
+			appearance === "issue-row"
+				? "cn-item-issue-row group/item flex w-full items-center"
+				: itemVariants({ variant, size }),
+			className
+		),
 		"data-slot": "item",
+		"data-appearance": appearance,
 		"data-variant": variant,
 		"data-size": size,
 		...restProps,

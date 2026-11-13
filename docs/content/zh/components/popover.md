@@ -81,6 +81,16 @@ links:
 
 </ComponentPreview>
 
+## 显示选项
+
+工具栏下的分组设置用 `appearance="options"`：面板宽 330 px、行高 32 px，每组上下留 8 px、左右留 16 px。按 Escape 先关闭内层选择器，外层面板可继续操作。示例中的修改保留在本地预览，可以重置。
+
+<ComponentPreview name="popover-display-options">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 对齐
 
 用 `Popover.Content` 的 `align` 属性控制水平对齐。

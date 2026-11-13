@@ -54,7 +54,7 @@ Copy and paste the following code into your project.
 ```
 
 ```svelte
-<Badge variant="default | outline | secondary | destructive">Badge</Badge>
+<Badge variant="secondary">Draft</Badge>
 ```
 
 ## Variants
@@ -66,6 +66,12 @@ Use the `variant` prop to change the variant of the badge.
 <div></div>
 
 </ComponentPreview>
+
+Use `variant="label"` for an applied category, such as a label beside an issue title. Pass the category's color as `labelColor` to show an optional dot. Include the category name as text.
+
+```svelte
+<Badge variant="label" labelColor="#EB5757">Bug</Badge>
+```
 
 ## With Icon
 

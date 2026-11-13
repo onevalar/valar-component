@@ -10,7 +10,7 @@
 		<Card.Title>Login to your account</Card.Title>
 		<Card.Description>Enter your email below to login to your account</Card.Description>
 		<Card.Action>
-			<Button variant="link">Sign Up</Button>
+			<Button variant="link" size="sm">Sign Up</Button>
 		</Card.Action>
 	</Card.Header>
 	<Card.Content>

@@ -20,7 +20,7 @@ links:
 	let { viewerData } = $props();
 </script>
 
-<ComponentPreview name="dialog-demo">
+<ComponentPreview name="dialog-demo" title="Draft editor">
 
 <div></div>
 
@@ -58,6 +58,8 @@ Copy and paste the following code into your project.
 
 ## Usage
 
+The default `Dialog.Content` is centered, up to 480 px wide, and scrolls within the viewport. Use `appearance="editor"` for a wider workspace editor near the top of the viewport. The draft preview saves changes locally and returns focus to the opener when dismissed.
+
 ```svelte showLineNumbers
 <script lang="ts">
   import * as Dialog from "$lib/components/ui/dialog/index.js";
@@ -69,10 +71,9 @@ Copy and paste the following code into your project.
   <Dialog.Trigger>Open</Dialog.Trigger>
   <Dialog.Content>
     <Dialog.Header>
-      <Dialog.Title>Are you absolutely sure?</Dialog.Title>
+    <Dialog.Title>Edit project settings</Dialog.Title>
       <Dialog.Description>
-        This action cannot be undone. This will permanently delete your account
-        and remove your data from our servers.
+        Change the name shown to the project team.
       </Dialog.Description>
     </Dialog.Header>
   </Dialog.Content>
@@ -81,7 +82,7 @@ Copy and paste the following code into your project.
 
 ## Custom Close Button
 
-Replace the default close control with your own button.
+Replace the default close control with a Cancel button when the form owns the save flow. This example simulates one failed save followed by a successful retry. The form retains its input and the Save button retains focus while pending.
 
 <ComponentPreview name="dialog-close-button">
 

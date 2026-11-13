@@ -80,6 +80,16 @@ links:
 
 </ComponentPreview>
 
+## 设置卡片
+
+用 `size="settings"` 组合设置行和分隔线。常规卡片的标题操作在空间不足时移到标题下方。
+
+<ComponentPreview name="card-settings">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 间距
 
 除了 `size` 属性，还可用 `--card-spacing` CSS 变量控制各分区之间的间距和卡片各部件的内缩距离。

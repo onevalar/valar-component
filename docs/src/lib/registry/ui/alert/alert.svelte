@@ -25,18 +25,24 @@
 		ref = $bindable(null),
 		class: className,
 		variant = "default",
+		appearance,
 		children,
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		variant?: AlertVariant;
+		appearance?: "connection";
 	} = $props();
 </script>
 
 <div
 	bind:this={ref}
 	data-slot="alert"
+	data-appearance={appearance}
 	role="alert"
-	class={cn(alertVariants({ variant }), className)}
+	class={cn(
+		appearance === "connection" ? "cn-alert-connection group/alert" : alertVariants({ variant }),
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}

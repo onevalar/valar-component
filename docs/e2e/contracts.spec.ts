@@ -1,5 +1,88 @@
 import { execFileSync } from "node:child_process";
 import { test, expect, devices } from "@playwright/test";
+import { isUnpublishedBasicComponentHref } from "../src/lib/basic-component-visibility.js";
+
+test("Basic component catalog and site search only expose fully aligned components", async ({
+	page,
+	request,
+}) => {
+	const response = await request.get("/api/search.json");
+	expect(response.ok()).toBe(true);
+	const entries: { href: string }[] = await response.json();
+	expect(entries.some(({ href }) => href.includes("/docs/ai-elements/"))).toBe(true);
+	for (const { prefix, categories } of [
+		{ prefix: "", categories: "Categories" },
+		{ prefix: "/zh", categories: "分类" },
+	]) {
+		const root = `${prefix}/docs/components`;
+		await page.goto(root, { waitUntil: "networkidle" });
+		const nav = page.getByRole("navigation", { name: categories, exact: true });
+		const visibleHrefs = new Set<string>();
+		for (const chip of await nav.getByRole("link").all()) {
+			await chip.click();
+			await expect(chip).toHaveAttribute("aria-current", "page");
+			const cards = page.locator(`main [data-slot="card-title"] a[href^="${root}/"]`);
+			await expect(cards.first()).toBeVisible();
+			for (const href of await cards.evaluateAll((links) =>
+				links.map((link) => link.getAttribute("href")!)
+			))
+				visibleHrefs.add(href);
+		}
+		expect([...visibleHrefs].some(isUnpublishedBasicComponentHref)).toBe(false);
+		for (const slug of [
+			"avatar",
+			"card",
+			"hover-card",
+			"scroll-area",
+			"table",
+			"sidebar",
+			"breadcrumb",
+			"collapsible",
+			"item",
+			"empty",
+		]) {
+			expect(visibleHrefs).toContain(`${root}/${slug}`);
+		}
+		if (visibleHrefs.size === 0) {
+			await expect(
+				page.getByText(
+					prefix === "/zh"
+						? "基础组件通过 Linear 整体对齐验收后会在这里展示。目前正在复核。"
+						: "Components appear here after their full Linear alignment review. Reviews are in progress.",
+					{ exact: true }
+				)
+			).toBeVisible();
+		}
+
+		const searchHrefs = new Set(
+			entries
+				.map(({ href }) => href.split(/[?#]/, 1)[0])
+				.filter((href) => href.startsWith(`${root}/`))
+		);
+		expect(searchHrefs).toEqual(visibleHrefs);
+
+		const partial = `${root}/progress`;
+		if (isUnpublishedBasicComponentHref(partial)) {
+			await page.goto(partial);
+			await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", "noindex");
+			await expect(page.locator('[data-alignment-status="partial"]')).toHaveText(
+				prefix === "/zh" ? "部分对齐 · 待整体验收" : "Partially aligned · full review pending"
+			);
+			await expect(page.getByRole("progressbar").first()).toBeVisible();
+		}
+
+		const draft = ["radio-group", "slider", "accordion"]
+			.map((slug) => `${root}/${slug}`)
+			.find(isUnpublishedBasicComponentHref);
+		if (draft) {
+			await page.goto(draft);
+			await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", "noindex");
+			await expect(page.locator('[data-alignment-status="pending"]')).toHaveText(
+				prefix === "/zh" ? "待完成样式对齐" : "Design alignment pending"
+			);
+		}
+	}
+});
 
 test("Slider names belong to focusable thumbs and keyboard values still change", async ({
 	page,
@@ -21,6 +104,28 @@ test("Slider names belong to focusable thumbs and keyboard values still change",
 	]) {
 		await expect(page.getByRole("slider", { name, exact: true })).toHaveCount(1);
 	}
+});
+
+test("Command dialog exposes the active option and returns focus after selection", async ({
+	page,
+}) => {
+	await page.goto("/zh/docs/components/command", { waitUntil: "networkidle" });
+	const opener = page.getByRole("button", { name: "Open command menu", exact: true });
+	await opener.click();
+	const dialog = page.getByRole("dialog", { name: "Workspace commands", exact: true });
+	const input = dialog.getByRole("combobox");
+	await expect(input).toBeFocused();
+	await input.press("ArrowDown");
+	await expect(input).toHaveAttribute("aria-activedescendant", /.+/);
+	const active = dialog.getByRole("option", { selected: true });
+	await expect(active).toHaveAttribute("id", (await input.getAttribute("aria-activedescendant"))!);
+	await expect(input).toBeFocused();
+	await input.fill("settings");
+	await expect(dialog.getByRole("option", { name: "Preferences", exact: true })).toBeVisible();
+	await input.press("Enter");
+	await expect(dialog).toHaveCount(0);
+	await expect(opener).toBeFocused();
+	await expect(page.getByRole("status").filter({ hasText: "Ran Preferences" })).toBeVisible();
 });
 
 test("native number reset and nonempty/empty tag Enter preserve form contracts", async ({
@@ -87,8 +192,8 @@ test("full-text search loads on demand, retries failures and shares an in-flight
 	await open.click();
 	await query.fill("upstream-source-manifest");
 	await expect(page.getByRole("status")).toContainText("Full-text search unavailable");
-	await query.fill("Stepper");
-	await expect(page.getByRole("option", { name: "Stepper", exact: true })).toBeVisible();
+	await query.fill("Breadcrumb");
+	await expect(page.getByRole("option", { name: "Breadcrumb", exact: true })).toBeVisible();
 	await page.keyboard.press("Escape");
 	await open.click();
 	await query.fill("upstream-source-manifest");
@@ -152,8 +257,8 @@ test.describe("phone layout and touch navigation", () => {
 			page.getByRole("button", { name: "Toggle menu Menu", exact: true })
 		).toHaveAttribute("aria-expanded", "false");
 		await page.getByRole("button", { name: "Search documentation", exact: true }).tap();
-		await page.getByRole("dialog").getByRole("combobox").fill("Stepper");
-		await expect(page.getByRole("option", { name: "Stepper", exact: true })).toBeVisible();
+		await page.getByRole("dialog").getByRole("combobox").fill("Breadcrumb");
+		await expect(page.getByRole("option", { name: "Breadcrumb", exact: true })).toBeVisible();
 		await page.setViewportSize({ width: 390, height: 360 });
 		await expect
 			.poll(() => page.getByRole("dialog").evaluate((el) => el.getBoundingClientRect().bottom))

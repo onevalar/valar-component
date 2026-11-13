@@ -13,7 +13,10 @@
 <div
 	bind:this={ref}
 	data-slot="item-title"
-	class={cn("cn-item-title line-clamp-1 flex w-fit items-center", className)}
+	class={cn(
+		"cn-item-title line-clamp-1 flex w-fit max-w-full min-w-0 items-center wrap-anywhere",
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}

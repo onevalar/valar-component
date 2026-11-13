@@ -26,6 +26,8 @@ links:
 
 </ComponentPreview>
 
+With `captionLayout="dropdown"`, month and year controls use the same Valar Select as Calendar. In narrow containers, these controls move below the month navigation buttons.
+
 ## About
 
 The `<RangeCalendar />` component is built on top of the [Bits Range Calendar](https://www.bits-ui.com/docs/components/range-calendar) component, which uses the [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/index.html) package to handle dates.
@@ -53,7 +55,7 @@ Install `bits-ui` and `@internationalized/date`:
 
 <Step>
 
-Copy and paste the following code into your project.
+Set up [Calendar](/docs/components/calendar), then copy the following code into your project. The CLI installs the component dependencies automatically.
 
 </Step>
 {#if viewerData}

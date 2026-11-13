@@ -65,7 +65,7 @@
 					{#snippet child({ props })}
 						<div
 							{...props}
-							class="flex min-h-7 cursor-pointer flex-wrap items-center gap-1 rounded-md border border-input bg-input/20 bg-clip-padding px-1 py-0.5 text-xs/relaxed transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30 dark:bg-input/30"
+							class="flex min-h-7 cursor-pointer flex-wrap items-center gap-1 rounded-md border border-input bg-input/20 bg-clip-padding px-1 py-0.5 text-xs/relaxed transition-colors focus-within:border-ring focus-within:ring-1 focus-within:ring-inset focus-within:ring-ring/30 dark:bg-input/30"
 							role="button"
 						>
 							{#each selectedUsers as username (username)}

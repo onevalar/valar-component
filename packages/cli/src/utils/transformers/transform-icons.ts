@@ -17,7 +17,7 @@ export const transformIcons: Transformer = async ({ content, filePath, config })
 
 	const iconLibrary = iconLibraries[config.iconLibrary];
 
-	const icons: { name: string }[] = [];
+	const iconNames = new Set<string>();
 	let placeholderImportNode: ImportDeclaration | null = null;
 
 	const enter = (node: Node) => {
@@ -52,7 +52,7 @@ export const transformIcons: Transformer = async ({ content, filePath, config })
 			// @ts-expect-error wrong
 			src.overwrite(node.start, node.end, iconSrc);
 
-			icons.push({ name: iconName });
+			iconNames.add(iconName);
 		} else if (node.type === "ImportDeclaration") {
 			const specifier = node.specifiers[0];
 			if (
@@ -69,8 +69,8 @@ export const transformIcons: Transformer = async ({ content, filePath, config })
 	// replace IconPlaceholder default import with the actual icon imports
 	if (placeholderImportNode) {
 		const imports: string[] = (iconLibrary as IconLibrary).getAdditionalImports?.() ?? [];
-		for (const icon of icons) {
-			imports.push(iconLibrary.import(icon));
+		for (const name of iconNames) {
+			imports.push(iconLibrary.import({ name }));
 		}
 
 		// @ts-expect-error wrong

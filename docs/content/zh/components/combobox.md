@@ -6,7 +6,7 @@ component: true
 
 <script>
 	import ComponentPreview from "$lib/components/component-preview.svelte";
-	import CodeCollapsibleWrapper from "$lib/components/code-collapsible-wrapper.svelte";
+	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
 <ComponentPreview name="combobox-demo">
@@ -15,82 +15,33 @@ component: true
 
 </ComponentPreview>
 
+示例参考 Linear 的问题负责人选择器。打开后直接聚焦搜索框，输入可筛选，用方向键和 Enter 选值。勾号标记当前负责人，背景高亮跟随键盘位置。示例使用本地数据。
+
 ## 安装
 
-组合框由 `<Popover />` 和 `<Command />` 组件组合而成。
+<PMAddComp name="combobox" />
 
-安装步骤见[弹出层](/docs/components/popover#安装)和[命令面板](/docs/components/command#安装)组件。
+共享包可用 `@valar/svelte-ui/combobox`。
 
 ## 用法
 
-<CodeCollapsibleWrapper >
-
-```svelte title="lib/components/example-combobox.svelte"
+```svelte
 <script lang="ts">
-  import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
-  import { tick } from "svelte";
-  import * as Command from "$lib/components/ui/command/index.js";
-  import * as Popover from "$lib/components/ui/popover/index.js";
-  import { Button } from "$lib/components/ui/button/index.js";
+  import { Combobox } from "$lib/components/ui/combobox/index.js";
 
-  const frameworks = ["Next.js", "SvelteKit", "Nuxt.js", "Remix", "Astro"];
+  const options = [
+    { id: "", label: "Unassigned" },
+    { id: "ada", label: "Ada Chen", keywords: ["design"] },
+    { id: "morgan", label: "Morgan Lee" },
+  ];
 
-  let open = $state(false);
-  let value = $state("");
-  let triggerRef = $state<HTMLButtonElement>(null!);
-
-  // We want to refocus the trigger button when the user selects
-  // an item from the list so users can continue navigating the
-  // rest of the form with the keyboard.
-  function closeAndFocusTrigger() {
-    open = false;
-    tick().then(() => {
-      triggerRef.focus();
-    });
-  }
+  let value = $state<readonly string[]>([""]);
 </script>
 
-<Popover.Root bind:open>
-  <Popover.Trigger bind:ref={triggerRef}>
-    {#snippet child({ props })}
-      <Button
-        {...props}
-        variant="outline"
-        class="w-[200px] justify-between font-normal"
-        role="combobox"
-        aria-expanded={open}
-      >
-        {value || "Select a framework"}
-        <ChevronDownIcon class="text-muted-foreground" />
-      </Button>
-    {/snippet}
-  </Popover.Trigger>
-  <Popover.Content class="w-[200px] p-0">
-    <Command.Root>
-      <Command.Input placeholder="Search framework..." />
-      <Command.List>
-        <Command.Empty>No items found.</Command.Empty>
-        <Command.Group>
-          {#each frameworks as framework (framework)}
-            <Command.Item
-              value={framework}
-              data-checked={value === framework}
-              onSelect={() => {
-                value = framework;
-                closeAndFocusTrigger();
-              }}
-            >
-              {framework}
-            </Command.Item>
-          {/each}
-        </Command.Group>
-      </Command.List>
-    </Command.Root>
-  </Popover.Content>
-</Popover.Root>
+<Combobox label="Assignee" placeholder="Assign to…" {options} bind:value />
 ```
 
-</CodeCollapsibleWrapper>
+`value` 是已选 ID 数组。单选后关闭并归焦，多选后保留列表。`group` 添加分组标题，`keywords` 添加搜索别名。允许清空单选时提供明确的「未分配」选项。
 
 ## 基础用法
 
@@ -104,7 +55,7 @@ component: true
 
 ## 分组
 
-用 `<Command.Group />` 和 `<Command.Separator />` 给列表项分组。
+给选项设置 `group` 以显示分组标题。
 
 <ComponentPreview name="combobox-groups">
 
@@ -114,7 +65,7 @@ component: true
 
 ## 自定义列表项
 
-在 `<Command.Item />` 内渲染自定义组件。
+用 `option` 片段添加头像、图标或说明，行尾保留勾选。
 
 <ComponentPreview name="combobox-custom">
 
@@ -124,7 +75,7 @@ component: true
 
 ## 无效
 
-传入 `aria-invalid` 属性，把组合框标记为无效。
+通过 `triggerProps` 设置 `aria-invalid`，用 `aria-describedby` 关联错误说明。
 
 <ComponentPreview name="combobox-invalid">
 
@@ -144,9 +95,29 @@ component: true
 
 ## 弹出
 
-在 `<Popover.Trigger />` 上使用 `child` 片段，即可用按钮或其他组件触发组合框。把 `<Command.Input />` 放进 `<Popover.Content />` 内。
+用 `children` 片段自定义触发按钮内容。可设 `side`、`align` 或 `contentClass`，窄屏仍会自动避让边缘。
 
 <ComponentPreview name="combobox-popup">
+
+<div></div>
+
+</ComponentPreview>
+
+## 多选
+
+用 `multiple` 添加和移除多个标签。选值后可继续搜索，禁用项会被键盘导航跳过。
+
+<ComponentPreview name="combobox-multiple">
+
+<div></div>
+
+</ComponentPreview>
+
+## 异步搜索
+
+使用 `bind:query` 获取搜索词，传入 `filter={false}` 以显示调用方提供的结果。输入 `support` 可试用本地失败和重试，输入其他文字会开始新查询。
+
+<ComponentPreview name="combobox-async">
 
 <div></div>
 

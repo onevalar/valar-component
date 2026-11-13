@@ -31,6 +31,10 @@ import { AspectRatio } from "../src/lib/registry/ui/aspect-ratio/index.js";
 import { Separator } from "../src/lib/registry/ui/separator/index.js";
 
 const styles = ["valar"];
+const separatorColors = [
+	"bg-[color:var(--valar-separator,var(--valar-separator-base,lch(0%_0_0_/_8.8%)))]",
+	"dark:[--valar-separator-base:lch(100%_0_0_/_8.3%)]",
+];
 const read = (path: string) => readFileSync(resolve(path), "utf8");
 const registryFiles = (component: string, style: string): { target: string; content: string }[] =>
 	JSON.parse(read(`src/__registry__/json/styles/${style}/${component}.json`)).files;
@@ -63,8 +67,8 @@ describe("layout editor baseline and installable geometry contracts", () => {
 				clipping: "style",
 			});
 			expect(parseSeparatorSource(registryFiles("separator", style)).values).toEqual({
-				horizontalThickness: 1,
-				verticalThickness: 1,
+				horizontalThickness: 0.5,
+				verticalThickness: 0.5,
 			});
 			for (const spec of [COLLAPSIBLE_SPEC, ASPECT_RATIO_SPEC, SEPARATOR_SPEC]) {
 				const actual = await spec.readBaseline(document.createElement("div"), `style-${style}`);
@@ -82,8 +86,8 @@ describe("layout editor baseline and installable geometry contracts", () => {
 			expect(parseCollapsibleSource(collapsible).values).toEqual({ paddingX: 0, paddingY: 0 });
 			expect(parseAspectRatioSource(aspect).values).toEqual({ radius: "style", clipping: "style" });
 			expect(parseSeparatorSource(separator).values).toEqual({
-				horizontalThickness: 1,
-				verticalThickness: 1,
+				horizontalThickness: 0.5,
+				verticalThickness: 0.5,
 			});
 			for (const [files, file] of [
 				[collapsible, "collapsible-content.svelte"],
@@ -97,19 +101,19 @@ describe("layout editor baseline and installable geometry contracts", () => {
 			for (const file of ["collapsible.svelte", "collapsible-trigger.svelte"])
 				expect(collapsible.find((entry) => entry.target === file)!.content).toBe(
 					registryFiles("collapsible", style).find((entry) => entry.target.endsWith(`/${file}`))!
-						.content
+						.content.replaceAll("$UTILS$.js", "$lib/utils.js")
 				);
 			const separatorClasses = cn(
 				...classArgs(separator.find((entry) => entry.target === "separator.svelte")!.content)
 			);
 			expect(separatorClasses.split(" ")).toEqual(
 				expect.arrayContaining([
-					"bg-border",
+					...separatorColors,
 					"shrink-0",
 					"data-horizontal:w-full",
 					"data-vertical:self-stretch",
-					"data-horizontal:h-px",
-					"data-vertical:w-px",
+					"data-horizontal:h-[0.5px]",
+					"data-vertical:w-[0.5px]",
 				])
 			);
 		}
@@ -179,7 +183,7 @@ describe("layout editor baseline and installable geometry contracts", () => {
 				)!.content;
 				expect(cn(...classArgs(separatorSource)).split(" ")).toEqual(
 					expect.arrayContaining([
-						"bg-border",
+						...separatorColors,
 						"data-horizontal:w-full",
 						"data-vertical:self-stretch",
 					])
@@ -211,7 +215,7 @@ describe("layout editor baseline and installable geometry contracts", () => {
 		}
 		for (const bad of [NaN, Infinity, -Infinity, -2, 3, 34, "8"])
 			expect(() => collapsibleOverrideClasses({ paddingX: bad } as never)).toThrow();
-		for (const bad of [NaN, Infinity, -Infinity, 0, 9, 1.5, "2"])
+		for (const bad of [NaN, Infinity, -Infinity, 0, 9, 1.25, "2"])
 			expect(() => separatorOverrideClasses({ horizontalThickness: bad } as never)).toThrow();
 		for (const bad of [{ radius: "xxl" }, { clipping: "auto" }, { ratio: 16 / 9 }])
 			expect(() => aspectRatioOverrideClasses(bad as never)).toThrow();
@@ -270,14 +274,14 @@ describe("layout editor baseline and installable geometry contracts", () => {
 		)!;
 		expect(() =>
 			parseSeparatorSource([
-				{ ...separator, content: separator.content.replace("data-vertical:w-px", "") },
+				{ ...separator, content: separator.content.replace("data-vertical:w-[0.5px]", "") },
 			])
 		).toThrow();
 		expect(() =>
 			parseSeparatorSource([
 				{
 					...separator,
-					content: separator.content.replace("data-horizontal:h-px", "data-horizontal:h-[3px]"),
+					content: separator.content.replace("data-horizontal:h-[0.5px]", "data-horizontal:h-[3px]"),
 				},
 			])
 		).toThrow();
@@ -382,9 +386,9 @@ describe("layout primitive runtime defaults and caller props", () => {
 					expect(element.getAttribute("aria-hidden")).toBe(decorative ? "true" : null);
 					expect(element.getAttribute("aria-orientation")).toBe(orientation);
 					expect(element.dataset.orientation).toBe(orientation);
-					expect(element.classList.contains("bg-border")).toBe(true);
-					expect(element.classList.contains("data-horizontal:h-px")).toBe(false);
-					expect(element.classList.contains("data-vertical:w-px")).toBe(false);
+					expect([...element.classList]).toEqual(expect.arrayContaining(separatorColors));
+					expect(element.classList.contains("data-horizontal:h-[0.5px]")).toBe(false);
+					expect(element.classList.contains("data-vertical:w-[0.5px]")).toBe(false);
 					expect(element.style.opacity).toBe("0.6");
 				} finally {
 					await unmount(app);

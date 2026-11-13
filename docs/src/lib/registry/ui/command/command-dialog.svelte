@@ -13,12 +13,14 @@
 		description = "搜索要执行的命令",
 		showCloseButton = false,
 		portalProps,
+		trigger,
 		children,
 		class: className,
 		...restProps
 	}: WithoutChildrenOrChild<DialogPrimitive.RootProps> &
 		WithoutChildrenOrChild<CommandPrimitive.RootProps> & {
 			portalProps?: DialogPrimitive.PortalProps;
+			trigger?: DialogPrimitive.TriggerProps["child"];
 			children: Snippet;
 			title?: string;
 			description?: string;
@@ -28,15 +30,20 @@
 </script>
 
 <Dialog.Root bind:open {...restProps}>
-	<Dialog.Header class="sr-only">
-		<Dialog.Title>{title}</Dialog.Title>
-		<Dialog.Description>{description}</Dialog.Description>
-	</Dialog.Header>
+	{#if trigger}
+		<Dialog.Trigger child={trigger} />
+	{/if}
 	<Dialog.Content
-		class={cn("cn-command-dialog top-1/3 translate-y-0 overflow-hidden p-0", className)}
+		data-command-dialog=""
+		overlayClass="bg-transparent! backdrop-blur-none!"
+		class={cn("cn-command-dialog flex translate-y-0 flex-col overflow-hidden p-0", className)}
 		{showCloseButton}
 		{portalProps}
 	>
+		<Dialog.Header class="sr-only">
+			<Dialog.Title>{title}</Dialog.Title>
+			<Dialog.Description>{description}</Dialog.Description>
+		</Dialog.Header>
 		<Command {...restProps} bind:value bind:ref {children} />
 	</Dialog.Content>
 </Dialog.Root>

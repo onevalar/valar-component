@@ -3,7 +3,7 @@
 	import { Button } from "$lib/registry/ui/button/index.js";
 </script>
 
-<div class="flex flex-col items-start gap-8 sm:flex-row">
+<div class="flex flex-wrap items-start gap-x-8 gap-y-4">
 	<div class="flex items-start gap-2">
 		<Button size="xs" variant="outline">Extra Small</Button>
 		<Button size="icon-xs" aria-label="Submit" variant="outline">

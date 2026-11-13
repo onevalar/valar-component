@@ -4,11 +4,11 @@
 
 <div class="flex flex-col items-center gap-4">
 	<p class="text-sm text-muted-foreground">
-		Use
-		<Kbd.Group>
-			<Kbd.Root>Ctrl + B</Kbd.Root>
-			<Kbd.Root>Ctrl + K</Kbd.Root>
+		Press
+		<Kbd.Group aria-label="Shift and Tab">
+			<Kbd.Root>⇧</Kbd.Root>
+			<Kbd.Root>Tab</Kbd.Root>
 		</Kbd.Group>
-		to open the command palette
+		to move to the previous control.
 	</p>
 </div>

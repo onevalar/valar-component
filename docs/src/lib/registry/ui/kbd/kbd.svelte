@@ -5,14 +5,18 @@
 	let {
 		ref = $bindable(null),
 		class: className,
+		appearance = "default",
 		children,
 		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
+	}: WithElementRef<HTMLAttributes<HTMLElement>> & {
+		appearance?: "default" | "inline" | "compact";
+	} = $props();
 </script>
 
 <kbd
 	bind:this={ref}
 	data-slot="kbd"
+	data-appearance={appearance}
 	class={cn(
 		"cn-kbd pointer-events-none inline-flex items-center justify-center select-none",
 		className

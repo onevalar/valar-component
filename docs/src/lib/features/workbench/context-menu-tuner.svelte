@@ -63,7 +63,7 @@
 			<ContextMenu.Trigger
 				bind:ref={targets[pane]}
 				tabindex={0}
-				class="context-target rounded-lg border border-dashed px-4 py-3 text-center text-sm text-muted-foreground outline-offset-4 focus-visible:outline-2 focus-visible:outline-ring"
+				class="context-target rounded-lg border border-dashed px-4 py-3 text-center text-sm text-muted-foreground -outline-offset-2 focus-visible:outline-2 focus-visible:outline-ring"
 				oncontextmenu={() => (pinned[pane] = false)}
 				onkeydown={(event) => keyboardMenu(event, pane)}
 			>

@@ -68,7 +68,7 @@ Copy and paste the following code into your project.
 
 ## Field
 
-Use `Field.Field`, `Field.Label`, and `Field.Description` to create an input with a label and description.
+Use `Field.Field`, `Field.Label`, and `Field.Description` for a labeled input with help text. The team identifier example uppercases the value, caps it at seven characters, and updates the prefix in the help text as you type.
 
 <ComponentPreview name="input-field" class="[&_[data-align]>*]:max-w-xs">
 
@@ -88,7 +88,7 @@ Use `Field.Group` to show multiple `Field.Field` blocks and to build forms.
 
 ## Disabled
 
-Use the `disabled` prop to disable the input. To style the disabled state, add the `data-disabled` attribute to the `Field.Field` component.
+Use `disabled` to skip an input in keyboard navigation and exclude it from form submission. Set `data-disabled` on its `Field.Field` to style the associated label.
 
 <ComponentPreview name="input-disabled" class="[&_[data-align]>*]:max-w-xs">
 
@@ -96,9 +96,19 @@ Use the `disabled` prop to disable the input. To style the disabled state, add t
 
 </ComponentPreview>
 
+## Read-only
+
+Use `readonly` when the value can be focused, selected, copied, and submitted but cannot be edited.
+
+<ComponentPreview name="input-readonly" class="[&_[data-align]>*]:max-w-xs">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Invalid
 
-Use the `aria-invalid` prop to mark the input as invalid. To style the invalid state, add the `data-invalid` attribute to the `Field.Field` component.
+When a value fails validation, set `aria-invalid`, mark the field with `data-invalid`, and use `aria-describedby` to link to `Field.Error`. Try correcting the email to clear the error.
 
 <ComponentPreview name="input-invalid" class="[&_[data-align]>*]:max-w-xs">
 
@@ -108,7 +118,7 @@ Use the `aria-invalid` prop to mark the input as invalid. To style the invalid s
 
 ## File
 
-Use the `type="file"` prop to create a file input.
+Use `type="file"` and `bind:files` to read the browser’s selected files.
 
 <ComponentPreview name="input-file" class="[&_[data-align]>*]:max-w-xs">
 
@@ -139,7 +149,7 @@ Use a grid layout to place multiple inputs side by side.
 
 ## Required
 
-Use the `required` attribute to indicate required inputs.
+Use the native `required` attribute. Hide any decorative asterisk from assistive technology so the requirement is announced once.
 
 <ComponentPreview name="input-required" class="[&_[data-align]>*]:max-w-xs">
 

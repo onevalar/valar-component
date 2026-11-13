@@ -46,10 +46,10 @@ export function parseInputGroupSource(
 	const gap = px("gap", addon);
 	if (height === undefined || gap === undefined)
 		throw new Error("Input Group registry 缺少高度或附加内容间距");
-	const inlinePadding = px("pl", align("inline-start")) ?? 0;
+	const inlinePadding = px("(?:ps|pl)", align("inline-start")) ?? 0;
 	const blockPaddingX = px("px", align("block-start")) ?? 0;
 	if (
-		inlinePadding !== (px("pr", align("inline-end")) ?? 0) ||
+		inlinePadding !== (px("(?:pe|pr)", align("inline-end")) ?? 0) ||
 		blockPaddingX !== (px("px", align("block-end")) ?? 0)
 	)
 		throw new Error("Input Group registry 的首尾留白不一致");
@@ -98,8 +98,8 @@ export function inputGroupOverrideClasses(
 		);
 	if (root.length) classes["cn-input-group"] = root.join(" ");
 	if (safe.inlinePadding !== undefined) {
-		classes["cn-input-group-addon-align-inline-start"] = `pl-${spacing(safe.inlinePadding)}`;
-		classes["cn-input-group-addon-align-inline-end"] = `pr-${spacing(safe.inlinePadding)}`;
+		classes["cn-input-group-addon-align-inline-start"] = `ps-${spacing(safe.inlinePadding)}`;
+		classes["cn-input-group-addon-align-inline-end"] = `pe-${spacing(safe.inlinePadding)}`;
 	}
 	if (safe.blockPaddingX !== undefined)
 		for (const side of ["start", "end"])
@@ -127,8 +127,8 @@ function inputGroupCss(
 		rules.push(`${root} { border-radius: ${radiusCss(safe.radius)}; }`);
 	if (safe.inlinePadding !== undefined)
 		rules.push(
-			`${addon}[data-align="inline-start"] { padding-left: ${safe.inlinePadding}px; }`,
-			`${addon}[data-align="inline-end"] { padding-right: ${safe.inlinePadding}px; }`
+			`${addon}[data-align="inline-start"] { padding-inline-start: ${safe.inlinePadding}px; }`,
+			`${addon}[data-align="inline-end"] { padding-inline-end: ${safe.inlinePadding}px; }`
 		);
 	if (safe.blockPaddingX !== undefined)
 		rules.push(

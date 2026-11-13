@@ -14,7 +14,11 @@
 
 <div class="grid w-full max-w-sm gap-6">
 	<InputGroup.Root>
-		<InputGroup.Input placeholder="https://github.com/onevalar/valar-svelte" readonly />
+		<InputGroup.Input
+			aria-label="Repository address"
+			value="https://github.com/onevalar/valar-svelte"
+			readonly
+		/>
 		<InputGroup.Addon align="inline-end">
 			<InputGroup.Button
 				aria-label="Copy"
@@ -35,7 +39,7 @@
 			<Popover.Trigger>
 				{#snippet child({ props })}
 					<InputGroup.Addon>
-						<InputGroup.Button {...props} variant="secondary" size="icon-xs">
+						<InputGroup.Button {...props} aria-label="Connection information" variant="secondary" size="icon-xs">
 							<IconInfoCircle />
 						</InputGroup.Button>
 					</InputGroup.Addon>
@@ -47,10 +51,11 @@
 			</Popover.Content>
 		</Popover.Root>
 		<InputGroup.Addon class="ps-1.5 text-muted-foreground">https://</InputGroup.Addon>
-		<InputGroup.Input id="input-secure-19" />
+		<InputGroup.Input aria-label="Website address" />
 		<InputGroup.Addon align="inline-end">
 			<InputGroup.Button
 				aria-label="Favorite"
+				aria-pressed={isFavorite}
 				onclick={() => (isFavorite = !isFavorite)}
 				size="icon-xs"
 			>
@@ -62,9 +67,14 @@
 		</InputGroup.Addon>
 	</InputGroup.Root>
 	<InputGroup.Root>
-		<InputGroup.Input placeholder="Type to search..." />
+		<InputGroup.Addon>
+			<InputGroup.Button aria-label="Search information" size="icon-sm">
+				<IconInfoCircle />
+			</InputGroup.Button>
+		</InputGroup.Addon>
+		<InputGroup.Input aria-label="Search query" placeholder="Type to search..." />
 		<InputGroup.Addon align="inline-end">
-			<InputGroup.Button variant="secondary">Search</InputGroup.Button>
+			<InputGroup.Button variant="secondary" size="sm">Search</InputGroup.Button>
 		</InputGroup.Addon>
 	</InputGroup.Root>
 </div>

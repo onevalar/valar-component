@@ -4,6 +4,7 @@
 	import { DEMO_OVERRIDES } from "$lib/component-categories.js";
 	import { basicCategories } from "$lib/component-category-list.js";
 	import { localizeHref, type Locale } from "$lib/i18n/config.js";
+	import { t } from "$lib/i18n/index.js";
 	import ComponentCategoryNav from "./component-category-nav.svelte";
 	import ComponentCardGrid, { type CardItem } from "./component-card-grid.svelte";
 
@@ -24,6 +25,10 @@
 </script>
 
 <div class="flex flex-col gap-6">
-	<ComponentCategoryNav section="basic" bind:value={current} />
-	<ComponentCardGrid items={cards} />
+	{#if categories.length}
+		<ComponentCategoryNav section="basic" bind:value={current} />
+		<ComponentCardGrid items={cards} />
+	{:else}
+		<p class="text-muted-foreground">{t("components.alignmentEmpty")}</p>
+	{/if}
 </div>

@@ -18,7 +18,7 @@ links:
 	let { viewerData } = $props();
 </script>
 
-<ComponentPreview name="table-demo">
+<ComponentPreview name="table-settings" title="Settings table">
 
 <div></div>
 
@@ -75,6 +75,16 @@ Copy and paste the following code into your project.
   </Table.Body>
 </Table.Root>
 ```
+
+## Basic table
+
+Use `appearance="settings"` for a compact settings list. The preview sorts labels by name and lets you select rows with the checkboxes. The table scrolls horizontally when the columns exceed the available width. Set `scrollLabel` on wide tables so keyboard users can tab into the scroll region and scroll with the arrow keys.
+
+<ComponentPreview name="table-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 ## Footer
 

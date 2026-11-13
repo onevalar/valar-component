@@ -20,7 +20,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="avatar-demo">
+<ComponentPreview name="avatar-subscriber" title="订阅者与成员头像">
 
 <div></div>
 
@@ -72,6 +72,16 @@ links:
   <Avatar.Fallback>CN</Avatar.Fallback>
 </Avatar.Root>
 ```
+
+## 订阅者
+
+在成员姓名旁用 `appearance="subscriber"` 显示 18 px 头像。用 `--valar-avatar-subscriber-color` 指定成员姓名缩写的背景色。示例可在本地照片与姓名缩写之间切换。 在设置成员列表用 `appearance="member"` 显示 24 px 头像。
+
+<ComponentPreview name="avatar-demo" title="头像用法概览">
+
+<div></div>
+
+</ComponentPreview>
 
 ## 基础用法
 

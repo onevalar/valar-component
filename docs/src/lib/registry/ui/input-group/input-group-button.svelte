@@ -1,5 +1,6 @@
 <script lang="ts" module>
 	import { tv, type VariantProps } from "tailwind-variants";
+	import type { ButtonShape } from "$lib/registry/ui/button/index.js";
 
 	const inputGroupButtonVariants = tv({
 		base: "cn-input-group-button flex items-center shadow-none",
@@ -10,20 +11,14 @@
 				"icon-xs": "cn-input-group-button-size-icon-xs",
 				"icon-sm": "cn-input-group-button-size-icon-sm",
 			},
-			shape: {
-				auto: "",
-				pill: "rounded-full",
-				square: "",
-			},
 		},
 		defaultVariants: {
 			size: "xs",
-			shape: "auto",
 		},
 	});
 
 	export type InputGroupButtonSize = VariantProps<typeof inputGroupButtonVariants>["size"];
-	export type InputGroupButtonShape = VariantProps<typeof inputGroupButtonVariants>["shape"];
+	export type InputGroupButtonShape = ButtonShape;
 </script>
 
 <script lang="ts">
@@ -49,9 +44,10 @@
 <Button
 	bind:ref
 	{type}
-	data-size={size}
+	{size}
 	{variant}
-	class={cn(inputGroupButtonVariants({ size, shape }), className)}
+	shape={shape === "auto" ? "square" : shape}
+	class={cn(inputGroupButtonVariants({ size }), className)}
 	{...restProps}
 >
 	{@render children?.()}

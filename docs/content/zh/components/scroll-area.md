@@ -20,11 +20,13 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="scroll-area-demo">
+<ComponentPreview name="scroll-area-settings" title="设置侧栏滚动">
 
 <div></div>
 
 </ComponentPreview>
+
+设置导航用 `appearance="settings"` 显示细滑块和透明轨道。聚焦有名称的视口后可用键盘滚动，也可滚动滚轮或拖动滑块。
 
 ## 安装
 
@@ -75,11 +77,29 @@ links:
 </ScrollArea>
 ```
 
+## 垂直滚动
+
+<ComponentPreview name="scroll-area-demo">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 水平滚动
 
 传入 `orientation="horizontal"` 开启水平滚动。
 
 <ComponentPreview name="scroll-area-horizontal">
+
+<div></div>
+
+</ComponentPreview>
+
+## 双向滚动
+
+视口在两个方向独立滚动。需要防止滚动接力到页面时，传入 `overscroll="contain"`。
+
+<ComponentPreview name="scroll-area-both">
 
 <div></div>
 

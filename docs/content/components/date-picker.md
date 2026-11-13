@@ -1,13 +1,14 @@
 ---
 title: Date Picker
-description: A date picker component with range and presets.
+description: Select a day, month, quarter, half-year, or year by typing or using the calendar.
 component: true
 links:
-  source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/examples/date-picker-demo.svelte
+  source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/date-picker
 ---
 
 <script>
 	import ComponentPreview from "$lib/components/component-preview.svelte";
+	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
 <ComponentPreview name="date-picker-demo">
@@ -18,64 +19,25 @@ links:
 
 ## Installation
 
-The Date Picker is built using a composition of the `<Popover />` and either the `<Calendar />` or `<RangeCalendar />` components.
-
-See installations instructions for the [Popover](/docs/components/popover#installation), [Calendar](/docs/components/calendar#installation), and [Range Calendar](/docs/components/range-calendar#installation) components.
+<PMAddComp name="date-picker" />
 
 ## Usage
 
-```svelte showLineNumbers title="lib/components/example-date-picker.svelte"
+```svelte
 <script lang="ts">
-  import CalendarIcon from "@lucide/svelte/icons/calendar";
-  import {
-    type DateValue,
-    DateFormatter,
-    getLocalTimeZone,
-  } from "@internationalized/date";
-  import { cn } from "$lib/utils.js";
-  import { Button } from "$lib/components/ui/button/index.js";
-  import { Calendar } from "$lib/components/ui/calendar/index.js";
-  import * as Popover from "$lib/components/ui/popover/index.js";
+	import { DatePicker, type Timeframe } from "$lib/components/ui/date-picker/index.js";
 
-  const df = new DateFormatter("en-US", {
-    dateStyle: "long",
-  });
-
-  let value = $state<DateValue>();
+	let start = $state<Timeframe>();
+	let target = $state<Timeframe>();
 </script>
 
-<Popover.Root>
-  <Popover.Trigger>
-    {#snippet child({ props })}
-      <Button
-        variant="outline"
-        class={cn(
-          "w-[280px] justify-start text-start font-normal",
-          !value && "text-muted-foreground"
-        )}
-        {...props}
-      >
-        <CalendarIcon class="me-2 size-4" />
-        {value ? df.format(value.toDate(getLocalTimeZone())) : "Select a date"}
-      </Button>
-    {/snippet}
-  </Popover.Trigger>
-  <Popover.Content class="w-auto p-0">
-    <Calendar bind:value type="single" initialFocus captionLayout="dropdown" />
-  </Popover.Content>
-</Popover.Root>
+<DatePicker label="Start date" max={target} bind:value={start} />
+<DatePicker label="Target date" min={start} bind:value={target} />
 ```
 
-## Composition
+Type `May 2027`, `Q2 2027`, or `2027-05-20` and press Enter. The precision tabs also let you browse periods. The value stores the ISO date and the detected precision. To clear a date, use Clear date or empty the input and press Enter. Set `locale="zh-CN"` for Chinese labels or `precisions={["day"]}` to accept individual dates.
 
-A date picker is built from `Popover` and `Calendar` (there is no `DatePicker` root component):
-
-```text
-Popover.Root
-├── Popover.Trigger
-└── Popover.Content
-    └── Calendar
-```
+Use the Range Calendar composition below to select a continuous range within one calendar.
 
 ## Basic
 

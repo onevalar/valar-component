@@ -31,6 +31,7 @@ export function parseCardSource(files: { target: string; content: string }[]): {
 		return /cn\(\s*"([^"]*)"/.exec(file)?.[1] ?? "";
 	};
 	const root = classes("card");
+	const header = classes("card-header");
 	const readSpacing = (prefix: string) => {
 		const match = new RegExp(`${prefix}\\[--card-spacing:--spacing\\(([\\d.]+)\\)\\]`).exec(root);
 		return Number(match?.[1] ?? 0) * 4;
@@ -39,7 +40,12 @@ export function parseCardSource(files: { target: string; content: string }[]): {
 		values: {
 			spacing: readSpacing("(?<![\\w:-])"),
 			smallSpacing: readSpacing("data-\\[size=sm\\]:"),
-			headerGap: Number(sourceWord(String.raw`gap-(\d+(?:\.5)?)`, classes("card-header")) ?? 0) * 4,
+			headerGap:
+				Number(
+					sourceWord(String.raw`gap-y-(\d+(?:\.5)?)`, header) ??
+						sourceWord(String.raw`gap-(\d+(?:\.5)?)`, header) ??
+						0
+				) * 4,
 			radius: (sourceWord(`rounded-(${RADIUS_LEVELS.join("|")})`, root) ??
 				STYLE_VALUE) as CardValues["radius"],
 		},
@@ -55,7 +61,7 @@ export function cardOverrideClasses(overrides: CardOverrides): Record<string, st
 	if (safe.spacing !== undefined) root.push(`[--card-spacing:--spacing(${spacing(safe.spacing)})]`);
 	if (safe.smallSpacing !== undefined)
 		root.push(`data-[size=sm]:[--card-spacing:--spacing(${spacing(safe.smallSpacing)})]`);
-	if (safe.headerGap !== undefined) header.push(`gap-${spacing(safe.headerGap)}`);
+	if (safe.headerGap !== undefined) header.push(`gap-y-${spacing(safe.headerGap)}`);
 	if (safe.radius !== undefined && safe.radius !== STYLE_VALUE) {
 		root.push(
 			`rounded-${safe.radius}`,
@@ -87,7 +93,7 @@ function cardCss(select: (slot: string) => string, overrides: CardOverrides): st
 	if (safe.smallSpacing !== undefined)
 		rules.push(`${root}[data-size="sm"] { --card-spacing: ${safe.smallSpacing}px; }`);
 	if (safe.headerGap !== undefined)
-		rules.push(`${select("card-header")} { gap: ${safe.headerGap}px; }`);
+		rules.push(`${select("card-header")} { row-gap: ${safe.headerGap}px; }`);
 	if (safe.radius !== undefined && safe.radius !== STYLE_VALUE) {
 		const radius = radiusCss(safe.radius);
 		rules.push(

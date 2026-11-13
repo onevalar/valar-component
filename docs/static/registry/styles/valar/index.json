@@ -522,6 +522,7 @@
 		"type": "registry:ui",
 		"description": "在页面上展示月历并选择日期。",
 		"registryDependencies": [
+			"select",
 			"button"
 		],
 		"meta": {
@@ -883,6 +884,58 @@
 		"relativeUrl": "color-picker.json"
 	},
 	{
+		"name": "combobox",
+		"title": "Combobox 搜索选择",
+		"type": "registry:ui",
+		"description": "在浮层中搜索并选择一个或多个选项，支持分组和异步数据。",
+		"dependencies": [
+			"bits-ui"
+		],
+		"registryDependencies": [
+			"command",
+			"popover",
+			"button"
+		],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"搜索选择",
+					"自动完成",
+					"负责人",
+					"标签",
+					"combobox"
+				],
+				"whenToUse": [
+					"选择负责人、项目或多个标签",
+					"通过名称或别名查找选项"
+				],
+				"whenNotToUse": [
+					{
+						"case": "执行命令或跳转页面",
+						"use": "command"
+					},
+					{
+						"case": "从少量固定选项中选择",
+						"use": "select"
+					}
+				],
+				"accessibility": [
+					"打开时聚焦搜索，方向键移动高亮，回车选择，Escape 关闭并归焦",
+					"选值使用 aria-selected，键盘高亮使用 aria-activedescendant"
+				],
+				"responsive": [
+					"根据锚点和视口限制浮层尺寸，长列表独立滚动"
+				],
+				"related": [
+					"popover",
+					"command",
+					"select"
+				]
+			}
+		},
+		"relativeUrl": "combobox.json"
+	},
+	{
 		"name": "command",
 		"title": "Command 命令菜单",
 		"type": "registry:ui",
@@ -972,7 +1025,7 @@
 					}
 				],
 				"accessibility": [
-					"保留 Bits UI 的键盘操作（方向键、回车、Esc，左右键进出子菜单）",
+					"触发区域聚焦后支持 Shift+F10 和菜单键，菜单内支持方向键、回车、Esc 和子菜单导航",
 					"同样的操作应在可见的按钮或菜单中也能完成；Shortcut 只是快捷键提示，快捷键需另行实现"
 				],
 				"responsive": [
@@ -987,6 +1040,56 @@
 			}
 		},
 		"relativeUrl": "context-menu.json"
+	},
+	{
+		"name": "date-picker",
+		"title": "Date Picker 日期选择器",
+		"type": "registry:ui",
+		"description": "用同一控件输入或选择日、月、季度、半年和年。",
+		"dependencies": [
+			"@internationalized/date"
+		],
+		"registryDependencies": [
+			"popover",
+			"tabs",
+			"button",
+			"calendar",
+			"input"
+		],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"排期",
+					"日期",
+					"季度",
+					"date",
+					"calendar"
+				],
+				"whenToUse": [
+					"为表单选择具体日期或计划周期",
+					"在有限的空间中提供日历和日期输入"
+				],
+				"accessibility": [
+					"提供可读的 label，保留 Calendar 键盘操作与弹层返回焦点"
+				],
+				"related": [
+					"calendar",
+					"range-calendar",
+					"popover",
+					"input"
+				],
+				"whenNotToUse": [
+					{
+						"case": "在同一份日历连续选择日期区间",
+						"use": "range-calendar"
+					}
+				],
+				"responsive": [
+					"浮层按视口收窄，精度标签可换行"
+				]
+			}
+		},
+		"relativeUrl": "date-picker.json"
 	},
 	{
 		"name": "dialog",
@@ -1552,6 +1655,57 @@
 			}
 		},
 		"relativeUrl": "input-otp.json"
+	},
+	{
+		"name": "issue-composer",
+		"title": "Issue Composer 问题编辑弹窗",
+		"type": "registry:ui",
+		"description": "紧凑和展开两种布局的创建表单，包含标题、描述、可搜索的状态与优先级选择，以及连续创建。",
+		"registryDependencies": [
+			"command",
+			"dialog",
+			"popover",
+			"tooltip",
+			"button",
+			"input",
+			"switch",
+			"textarea"
+		],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"新建问题",
+					"issue",
+					"composer",
+					"展开编辑",
+					"连续创建"
+				],
+				"whenToUse": [
+					"从问题列表、空状态或全局入口创建工作项"
+				],
+				"whenNotToUse": [
+					{
+						"case": "字段与问题创建无关的表单",
+						"use": "dialog"
+					}
+				],
+				"accessibility": [
+					"打开聚焦标题，关闭恢复到触发器",
+					"状态和优先级可用键盘选择，空标题错误可被读出"
+				],
+				"responsive": [
+					"窄屏保留 12 px 侧边间距，长描述在编辑区滚动"
+				],
+				"related": [
+					"dialog",
+					"command",
+					"popover",
+					"switch",
+					"textarea"
+				]
+			}
+		},
+		"relativeUrl": "issue-composer.json"
 	},
 	{
 		"name": "item",
@@ -2288,6 +2442,7 @@
 		"type": "registry:ui",
 		"description": "在月历上选择开始和结束日期。",
 		"registryDependencies": [
+			"calendar",
 			"button"
 		],
 		"meta": {
@@ -2549,7 +2704,7 @@
 		"name": "sheet",
 		"title": "Sheet 侧边面板",
 		"type": "registry:ui",
-		"description": "从屏幕边缘滑出的面板，用于补充主内容的信息或设置。",
+		"description": "在屏幕边缘的模态层或工作区侧栏中展示辅助内容。",
 		"registryDependencies": [
 			"button"
 		],
@@ -2577,11 +2732,13 @@
 					}
 				],
 				"accessibility": [
-					"必须有标题",
-					"Esc 关闭并归还焦点"
+					"模态面板须有标题",
+					"工作区侧栏须提供区域名称",
+					"面板内按 Escape 可关闭并归焦"
 				],
 				"responsive": [
-					"窄屏下宽度占满或接近占满"
+					"模态面板在窄屏下占满或接近占满宽度",
+					"工作区侧栏可在窄屏排列到主内容下方"
 				],
 				"related": [
 					"dialog",
@@ -2616,7 +2773,8 @@
 					"菜单"
 				],
 				"whenToUse": [
-					"应用的主侧边导航，可折叠为图标或完全隐藏"
+					"应用的主侧边导航，可折叠为图标或完全隐藏",
+					"工作区主导航在 Sidebar.Provider 上使用 appearance=workspace"
 				],
 				"whenNotToUse": [
 					{
@@ -2635,7 +2793,7 @@
 				"accessibility": [
 					"Ctrl／⌘+B 切换侧边栏",
 					"Sidebar.Trigger 和 Rail 的读屏名称默认“切换侧边栏”，其他语言需改",
-					"菜单项用真实链接"
+					"路由菜单项用真实链接，当前页设置 aria-current=page"
 				],
 				"responsive": [
 					"移动端以 sheet 形式显示",
@@ -3372,7 +3530,9 @@
 		"title": "Tooltip 提示",
 		"type": "registry:ui",
 		"description": "悬停或聚焦时显示的简短文字说明。",
-		"registryDependencies": [],
+		"registryDependencies": [
+			"kbd"
+		],
 		"meta": {
 			"valar": {
 				"keywords": [

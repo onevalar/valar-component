@@ -24,10 +24,12 @@
 		value = $bindable(),
 		placeholder = $bindable(),
 		class: className,
+		appearance = "default",
 		weekdayFormat = "short",
 		buttonVariant = "ghost",
 		captionLayout = "label",
 		locale = "zh-CN",
+		weekStartsOn = 1,
 		months: monthsProp,
 		years,
 		monthFormat: monthFormatProp,
@@ -36,6 +38,7 @@
 		disableDaysOutsideMonth = false,
 		...restProps
 	}: WithoutChildrenOrChild<CalendarPrimitive.RootProps> & {
+		appearance?: "default" | "project-date";
 		buttonVariant?: ButtonVariant;
 		captionLayout?: "dropdown" | "dropdown-months" | "dropdown-years" | "label";
 		months?: CalendarPrimitive.MonthSelectProps["months"];
@@ -45,6 +48,8 @@
 		day?: Snippet<[{ day: DateValue; outsideMonth: boolean }]>;
 	} = $props();
 
+	const appearanceClass = $derived(appearance === "project-date" && "cn-calendar-project-date");
+	const hasCaptionSelect = $derived(captionLayout !== "label");
 	const monthFormat = $derived.by(() => {
 		if (monthFormatProp) return monthFormatProp;
 		if (captionLayout.startsWith("dropdown")) return "short";
@@ -63,25 +68,38 @@ get along, so we shut typescript up by casting `value` to `never`.
 	{weekdayFormat}
 	{disableDaysOutsideMonth}
 	data-slot="calendar"
+	data-appearance={appearance === "default" ? undefined : appearance}
+	data-caption-layout={captionLayout}
 	class={cn(
 		"cn-calendar group/calendar bg-background in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
 		"cn-calendar-geometry",
+		appearanceClass,
 		className
 	)}
 	{locale}
+	{weekStartsOn}
 	{monthFormat}
 	{yearFormat}
 	{...restProps}
 >
 	{#snippet children({ months, weekdays })}
 		<CalendarMonths>
-			<CalendarNav>
+			<CalendarNav data-slot="calendar-nav">
 				<CalendarPrevButton variant={buttonVariant} />
 				<CalendarNextButton variant={buttonVariant} />
 			</CalendarNav>
 			{#each months as month, monthIndex (month)}
-				<CalendarMonth>
-					<CalendarHeader>
+				<CalendarMonth
+					data-slot="calendar-month"
+					class={hasCaptionSelect
+						? "min-w-[calc(max(var(--cell-size),1.75rem)*2+11rem)]"
+						: undefined}
+				>
+					<CalendarHeader
+						class={hasCaptionSelect
+							? "justify-center! gap-2 px-[calc(max(var(--cell-size),1.75rem)+0.5rem)]!"
+							: undefined}
+					>
 						<CalendarCaption
 							{captionLayout}
 							months={monthsProp}
@@ -98,7 +116,7 @@ get along, so we shut typescript up by casting `value` to `never`.
 						<CalendarGridHead>
 							<CalendarGridRow class="select-none">
 								{#each weekdays as weekday, i (i)}
-									<CalendarHeadCell>
+									<CalendarHeadCell class={hasCaptionSelect ? "flex-1" : undefined}>
 										{weekday.slice(0, 2)}
 									</CalendarHeadCell>
 								{/each}
@@ -108,7 +126,13 @@ get along, so we shut typescript up by casting `value` to `never`.
 							{#each month.weeks as weekDates (weekDates)}
 								<CalendarGridRow class="mt-2 w-full">
 									{#each weekDates as date (date)}
-										<CalendarCell {date} month={month.value}>
+										<CalendarCell
+											{date}
+											month={month.value}
+											class={hasCaptionSelect
+												? "flex flex-1 items-center justify-center"
+												: undefined}
+										>
 											{#if day}
 												{@render day({
 													day: date,

@@ -4,6 +4,7 @@
 	import { Button } from "$lib/registry/ui/button/index.js";
 	import { Input } from "$lib/registry/ui/input/index.js";
 
+	const id = $props.id();
 	const countries = [
 		{ value: "us", label: "United States" },
 		{ value: "uk", label: "United Kingdom" },
@@ -11,28 +12,54 @@
 	];
 
 	let country = $state("us");
+	let submitted = $state(false);
 </script>
 
-<form class="w-full max-w-sm">
+<form
+	class="w-full max-w-sm"
+	onreset={() => {
+		country = "us";
+		submitted = false;
+	}}
+	onsubmit={(event) => {
+		event.preventDefault();
+		submitted = true;
+	}}
+>
 	<Field.Group>
 		<Field.Field>
-			<Field.Label for="form-name">Name</Field.Label>
-			<Input id="form-name" type="text" placeholder="Evil Rabbit" required />
+			<Field.Label for={`${id}-name`}>Name</Field.Label>
+			<Input id={`${id}-name`} name="name" autocomplete="name" placeholder="Jordan Lee" required />
 		</Field.Field>
 		<Field.Field>
-			<Field.Label for="form-email">Email</Field.Label>
-			<Input id="form-email" type="email" placeholder="john@example.com" />
-			<Field.Description>We'll never share your email with anyone.</Field.Description>
+			<Field.Label for={`${id}-email`}>Email</Field.Label>
+			<Input
+				id={`${id}-email`}
+				name="email"
+				type="email"
+				autocomplete="email"
+				placeholder="jordan@example.com"
+				aria-describedby={`${id}-email-description`}
+			/>
+			<Field.Description id={`${id}-email-description`}
+				>Receives workspace updates.</Field.Description
+			>
 		</Field.Field>
-		<div class="grid grid-cols-2 gap-4">
+		<div class="grid gap-4 @md/field-group:grid-cols-2">
 			<Field.Field>
-				<Field.Label for="form-phone">Phone</Field.Label>
-				<Input id="form-phone" type="tel" placeholder="+1 (555) 123-4567" />
+				<Field.Label for={`${id}-phone`}>Phone</Field.Label>
+				<Input
+					id={`${id}-phone`}
+					name="phone"
+					type="tel"
+					autocomplete="tel"
+					placeholder="+1 (555) 123-4567"
+				/>
 			</Field.Field>
 			<Field.Field>
-				<Field.Label for="form-country">Country</Field.Label>
+				<Field.Label for={`${id}-country`}>Country</Field.Label>
 				<Select.Root type="single" items={countries} bind:value={country}>
-					<Select.Trigger id="form-country">
+					<Select.Trigger id={`${id}-country`}>
 						<Select.Value />
 					</Select.Trigger>
 					<Select.Content>
@@ -46,12 +73,20 @@
 			</Field.Field>
 		</div>
 		<Field.Field>
-			<Field.Label for="form-address">Address</Field.Label>
-			<Input id="form-address" type="text" placeholder="123 Main St" />
+			<Field.Label for={`${id}-address`}>Address</Field.Label>
+			<Input
+				id={`${id}-address`}
+				name="address"
+				autocomplete="street-address"
+				placeholder="123 Main St"
+			/>
 		</Field.Field>
 		<Field.Field orientation="horizontal">
-			<Button type="button" variant="outline">Cancel</Button>
+			<Button type="reset" variant="outline">Reset</Button>
 			<Button type="submit">Submit</Button>
 		</Field.Field>
+		{#if submitted}<p role="status" class="text-muted-foreground text-xs">
+				Preview submitted.
+			</p>{/if}
 	</Field.Group>
 </form>

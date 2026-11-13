@@ -1,35 +1,30 @@
 <script lang="ts">
-	import * as ButtonGroup from "$lib/registry/ui/button-group/index.js";
-	import * as Kbd from "$lib/registry/ui/kbd/index.js";
-	import * as Tooltip from "$lib/registry/ui/tooltip/index.js";
 	import { Button } from "$lib/registry/ui/button/index.js";
+	import * as Tooltip from "$lib/registry/ui/tooltip/index.js";
+
+	let expanded = $state(false);
+
+	function toggleOptions() {
+		expanded = !expanded;
+	}
 </script>
 
-<div class="flex flex-wrap gap-4">
-	<ButtonGroup.Root>
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				{#snippet child({ props })}
-					<Button variant="outline" {...props}>Save</Button>
-				{/snippet}
-			</Tooltip.Trigger>
-			<Tooltip.Content>
-				Save Changes <Kbd.Root>S</Kbd.Root>
-			</Tooltip.Content>
-		</Tooltip.Root>
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				{#snippet child({ props })}
-					<Button variant="outline" {...props}>Print</Button>
-				{/snippet}
-			</Tooltip.Trigger>
-			<Tooltip.Content>
-				Print Document
-				<Kbd.Group>
-					<Kbd.Root>Ctrl</Kbd.Root>
-					<Kbd.Root>P</Kbd.Root>
-				</Kbd.Group>
-			</Tooltip.Content>
-		</Tooltip.Root>
-	</ButtonGroup.Root>
-</div>
+<Tooltip.Hint label="Show display options" keys={["⇧", "V"]}>
+	{#snippet trigger({ props })}
+		<Button
+			variant="outline"
+			{...props}
+			aria-pressed={expanded}
+			aria-keyshortcuts="Shift+V"
+			onclick={toggleOptions}
+			onkeydown={(event) => {
+				if (event.shiftKey && event.code === "KeyV" && !event.repeat) {
+					event.preventDefault();
+					toggleOptions();
+				}
+			}}
+		>
+			Display options
+		</Button>
+	{/snippet}
+</Tooltip.Hint>

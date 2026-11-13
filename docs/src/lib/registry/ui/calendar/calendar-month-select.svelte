@@ -2,6 +2,7 @@
 	import { Calendar as CalendarPrimitive } from "bits-ui";
 	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
 	import { cn, type WithoutChildrenOrChild } from "$lib/utils.js";
+	import type { HTMLSelectAttributes } from "svelte/elements";
 
 	let {
 		ref = $bindable(null),
@@ -14,17 +15,22 @@
 
 <span
 	class={cn(
-		"relative flex rounded-md border border-input shadow-xs has-focus:border-ring has-focus:ring-[3px] has-focus:ring-ring/50",
+		"relative flex rounded-md border border-input shadow-xs has-focus:border-ring ",
 		className
 	)}
 >
 	<CalendarPrimitive.MonthSelect
 		bind:ref
+		aria-label="Month"
 		class="absolute inset-0 bg-background opacity-0 dark:bg-popover dark:text-popover-foreground"
 		{...restProps}
 	>
 		{#snippet child({ props, monthItems, selectedMonthItem })}
-			<select {...props} {value} {onchange}>
+			<select
+				{...props}
+				value={value ?? props.value}
+				onchange={onchange ?? (props.onchange as HTMLSelectAttributes["onchange"])}
+			>
 				{#each monthItems as monthItem (monthItem.value)}
 					<option
 						value={monthItem.value}

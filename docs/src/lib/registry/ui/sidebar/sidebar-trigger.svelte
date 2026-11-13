@@ -18,6 +18,7 @@
 	} = $props();
 
 	const sidebar = useSidebar();
+	const expanded = $derived(sidebar.isMobile ? sidebar.openMobile : sidebar.open);
 </script>
 
 <Button
@@ -28,8 +29,11 @@
 	size="icon-sm"
 	class={cn("cn-sidebar-trigger", className)}
 	type="button"
+	aria-expanded={sidebar.appearance === "workspace" ? expanded : undefined}
 	onclick={(e) => {
 		onclick?.(e);
+		if (e.defaultPrevented) return;
+		if (sidebar.isMobile && !sidebar.openMobile) sidebar.mobileOpener = e.currentTarget;
 		sidebar.toggle();
 	}}
 	{...restProps}

@@ -26,6 +26,18 @@ links:
 
 </ComponentPreview>
 
+## 问题行
+
+右键点击或长按问题行可打开菜单。使用键盘时，先聚焦问题行，再按 Shift+F10 或菜单键。右方向键打开子菜单，左方向键或 Escape 回到父项。在主菜单按 Escape 将焦点归还问题行。
+
+状态子菜单可以筛选并更新示例问题，由具名弹层和 Command 的搜索输入、选项列表组成。复制子菜单显示对应的值，删除项打开确认弹窗。也可直接使用行下方的操作。
+
+<ComponentPreview name="context-menu-issue">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 安装
 
 <InstallTabs>
@@ -88,7 +100,7 @@ links:
 
 ## 子菜单
 
-用 `ContextMenu.Sub` 嵌套次级操作。
+用 `ContextMenu.Sub` 嵌套次级操作。子菜单在空间不足时翻转或滚动，窄屏优先沿垂直方向展开。需要更明显的阴影时，可在 `ContextMenu.SubContent` 上传入 `elevated`。
 
 <ComponentPreview name="context-menu-submenu">
 

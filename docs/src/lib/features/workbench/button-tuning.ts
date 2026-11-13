@@ -93,7 +93,7 @@ export function buttonOverrideCss(scope: string, overrides: ButtonOverrides): st
 	}
 	if (safe.radius !== undefined)
 		rules.push(
-			`${scope} [data-slot="button"]:not([data-slot="button-group"] *) { border-radius: ${radiusCss(safe.radius)}; }`
+			`${scope} [data-slot="button"]:not([data-shape="pill"], [data-slot="button-group"] *) { border-radius: ${radiusCss(safe.radius)}; }`
 		);
 	return rules.join("\n");
 }
@@ -118,6 +118,9 @@ export function buttonOverrideClasses(overrides: ButtonOverrides): Record<string
 	if (safe.radius !== undefined) {
 		// Some styles give small sizes their own radius; one level keeps every size consistent.
 		classes["cn-button"] = [`rounded-${safe.radius}`];
+		classes["cn-button-shape-auto-text"] = [
+			`not-in-data-[slot=button-group]:rounded-${safe.radius}`,
+		];
 		for (const size of BUTTON_SIZES) {
 			add(size.id, `rounded-${safe.radius}`);
 			add(size.icon, `rounded-${safe.radius}`);

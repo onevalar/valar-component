@@ -72,6 +72,16 @@ links:
 </ToggleGroup.Root>
 ```
 
+## 格式工具栏
+
+用 `appearance="toolbar"` 显示紧凑的图标切换按钮。这个示例中的加粗和斜体可以同时开启。方向键移动焦点，空格键切换格式。
+
+<ComponentPreview name="toggle-group-toolbar">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 描边
 
 传入 `variant="outline"` 使用描边样式。

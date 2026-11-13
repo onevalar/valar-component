@@ -60,13 +60,13 @@
 </script>
 
 <Select.Root type="single" {items}>
-	<Select.Trigger class="w-full max-w-64">
+	<Select.Trigger class="w-full max-w-64" aria-label="Time zone">
 		<Select.Value placeholder="Select a timezone" />
 	</Select.Trigger>
-	<Select.Content>
+	<Select.Content aria-label="Time zones">
 		{#each timezones as group (group.label)}
 			<Select.Group>
-				<Select.Label>{group.label}</Select.Label>
+				<Select.GroupHeading>{group.label}</Select.GroupHeading>
 				{#each group.options as option (option.value)}
 					<Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
 				{/each}

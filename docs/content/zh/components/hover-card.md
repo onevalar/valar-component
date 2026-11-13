@@ -3,7 +3,7 @@ title: 悬停卡片
 description: 供视力正常的用户预览链接背后的内容。
 component: true
 links:
-  source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/link-preview
+  source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/hover-card
   doc: https://bits-ui.com/docs/components/link-preview
   api: https://bits-ui.com/docs/components/link-preview#api-reference
 ---
@@ -20,7 +20,7 @@ links:
 	let { viewerData } = $props();
 </script>
 
-<ComponentPreview name="hover-card-demo">
+<ComponentPreview name="hover-card-profile" title="成员资料卡" tunable={false}>
 
 <div></div>
 
@@ -73,6 +73,10 @@ links:
 </HoverCard.Root>
 ```
 
+## 成员资料
+
+在 `HoverCard.Content` 上传入 `appearance="profile"` 可显示紧凑的成员预览。悬停或聚焦姓名时预览资料，点击姓名链接也可以直接阅读相同内容。
+
 ## 触发延迟
 
 在 `HoverCard.Root` 上传入 `openDelay` 和 `closeDelay`，控制卡片的打开与关闭时机。
@@ -97,7 +101,7 @@ links:
 
 ## 基础用法
 
-<ComponentPreview name="hover-card-demo" tunable={false}>
+<ComponentPreview name="hover-card-demo">
 
 <div></div>
 

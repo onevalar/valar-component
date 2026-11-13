@@ -14,10 +14,14 @@
 	bind:this={ref}
 	data-slot="card-header"
 	class={cn(
-		"cn-card-header group/card-header @container/card-header grid auto-rows-min items-start has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto]",
+		"cn-card-header group/card-header @container/card-header grid min-w-0",
 		className
 	)}
 	{...restProps}
 >
-	{@render children?.()}
+	<div
+		class="grid min-w-0 auto-rows-min grid-cols-[minmax(0,1fr)] items-start gap-[inherit] @min-[17rem]/card-header:has-[>[data-slot=card-action]]:grid-cols-[minmax(0,1fr)_minmax(0,40%)]"
+	>
+		{@render children?.()}
+	</div>
 </div>

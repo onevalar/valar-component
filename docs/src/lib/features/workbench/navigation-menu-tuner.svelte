@@ -107,7 +107,7 @@
 					id={`${id}-${pane}-${destination.key}`}
 					tabindex="-1"
 					aria-label={destination.label}
-					class="min-w-0 scroll-mt-6 rounded-lg border p-4 outline-offset-2 focus-visible:outline-2 focus-visible:outline-ring"
+					class="min-w-0 scroll-mt-6 rounded-lg border p-4 -outline-offset-2 focus-visible:outline-2 focus-visible:outline-ring"
 				>
 					<h3 class="text-sm font-medium">{destination.label}</h3>
 					<p class="mt-2 text-sm text-muted-foreground">{destination.text}</p>

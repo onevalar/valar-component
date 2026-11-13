@@ -12,12 +12,16 @@
 		ref = $bindable(null),
 		class: className,
 		portalProps,
+		overlayClass,
+		appearance = "default",
 		children,
 		closeLabel = "关闭",
 		showCloseButton = true,
 		...restProps
 	}: WithoutChildrenOrChild<DialogPrimitive.ContentProps> & {
 		portalProps?: WithoutChildrenOrChild<ComponentProps<typeof DialogPortal>>;
+		overlayClass?: string;
+		appearance?: "default" | "editor";
 		children: Snippet;
 		showCloseButton?: boolean;
 		/** Screen reader text of the close button. */
@@ -26,12 +30,15 @@
 </script>
 
 <DialogPortal {...portalProps}>
-	<DialogOverlay />
+	<DialogOverlay class={overlayClass} />
 	<DialogPrimitive.Content
 		bind:ref
 		data-slot="dialog-content"
+		data-appearance={appearance}
 		class={cn(
 			"cn-dialog-content fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 outline-none",
+			appearance === "editor" && "cn-dialog-editor",
+			appearance === "default" && showCloseButton && "[&>[data-slot=dialog-header]]:pe-5",
 			className
 		)}
 		{...restProps}

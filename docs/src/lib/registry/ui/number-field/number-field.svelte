@@ -187,7 +187,7 @@
 	data-slot="number-field"
 	data-disabled={disabled || undefined}
 	class={cn(
-		"flex min-h-10 w-full items-center rounded-md border border-input bg-background text-foreground shadow-xs focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30 has-aria-invalid:border-destructive",
+		"flex min-h-10 w-full items-center rounded-md border border-input bg-background text-foreground shadow-xs focus-within:border-ring has-aria-invalid:border-destructive",
 		"cn-number-field",
 		className
 	)}

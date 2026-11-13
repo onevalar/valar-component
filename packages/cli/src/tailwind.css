@@ -18,6 +18,14 @@
 	}
 }
 
+@layer base {
+	/* Keep native keyboard focus indicators within the control. */
+	:where(:focus-visible) {
+		outline-width: 1px;
+		outline-offset: -2px;
+	}
+}
+
 /* Custom variants */
 @custom-variant data-open {
 	&:where([data-state="open"]),

@@ -13,7 +13,7 @@
 <div
 	bind:this={ref}
 	data-slot="item-actions"
-	class={cn("cn-item-actions flex items-center", className)}
+	class={cn("cn-item-actions flex max-w-full flex-wrap items-center", className)}
 	{...restProps}
 >
 	{@render children?.()}

@@ -33,6 +33,7 @@
 		<span
 			class="cn-dropdown-menu-item-indicator pointer-events-none"
 			data-slot="dropdown-menu-checkbox-item-indicator"
+			aria-hidden="true"
 		>
 			{#if indeterminate}
 				<IconPlaceholder

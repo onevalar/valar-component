@@ -147,7 +147,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/alert-dialog",
 			"install": "pnpm exec valar-svelte add alert-dialog",
 			"markdown": "# Alert Dialog 确认对话框\n\n打断用户、要求确认的对话框，用于不可撤销或重要的操作。\n\n- 分类：弹层\n- 关键词：确认、alert dialog、二次确认、删除确认、警告\n- 安装：`pnpm exec valar-svelte add alert-dialog`\n\n## 何时使用\n\n- 删除、覆盖、发布等不可撤销操作前确认\n\n## 何时不用\n\n- 普通表单或内容：改用 `dialog`\n- 操作后的结果通知：改用 `sonner`\n\n## 无障碍\n\n- 必须有标题和说明\n- 点击遮罩不会关闭，必须明确选择\n\n## 响应式\n\n- 窄屏下按钮纵向排列，主操作在最下方便于拇指点击\n\n## 相关组件\n\n- `dialog`\n- `button`\n",
-			"rules": "# Alert Dialog 设计规范\n\n- 只用于需要用户明确确认的操作，如删除、覆盖、放弃未保存的修改；普通表单和内容用 Dialog，操作结果的通知用 Sonner。\n- 必须有 `AlertDialog.Title` 和 `AlertDialog.Description`：标题直接问要做的事（“删除这个项目？”），说明写清后果以及能否撤销（检查规则 `valar/overlay-title`）。\n- 必须有 `AlertDialog.Cancel`：点击遮罩不会关闭，用户只能按 Esc 或点按钮离开（检查规则 `valar/alert-dialog-cancel`）。\n- 按钮文字写具体动作（“删除”“放弃修改”），不要写“确定”“是”。危险操作的 `AlertDialog.Action` 设 `variant=\"destructive\"`；Action 和 Cancel 的尺寸只用 `size` 属性（检查规则 `valar/button-size-via-prop`）。\n- `AlertDialog.Action` 不会自动关闭对话框：用 `bind:open` 控制，在操作成功后设为 `false`；异步操作期间禁用 Action 并显示 Spinner，失败时保留对话框并显示错误原因。\n- 按钮放在 `AlertDialog.Footer`，按 Cancel、Action 的顺序书写；Footer 在窄屏下自动改为纵向排列，不要手写布局。\n- 简短的确认用 `<AlertDialog.Content size=\"sm\">`；需要图标时放进 `AlertDialog.Media`，不要自己写带颜色的图标容器。\n- 打开它的按钮通过 `AlertDialog.Trigger` 的 `child` snippet 渲染 Button（检查规则 `valar/trigger-child-snippet`）。\n"
+			"rules": "# Alert Dialog 设计规范\n\n- 只用于需要用户明确确认的操作，如删除、覆盖、放弃未保存的修改；普通表单和内容用 Dialog，操作结果的通知用 Sonner。\n- 必须有 `AlertDialog.Title` 和 `AlertDialog.Description`：标题直接问要做的事（“删除这个项目？”），说明写清后果以及能否撤销（检查规则 `valar/overlay-title`）。\n- 必须有 `AlertDialog.Cancel`：点击遮罩不会关闭，用户只能按 Esc 或点按钮离开（检查规则 `valar/alert-dialog-cancel`）。\n- 普通确认和 `appearance=\"confirmation\"` 使用同一套 480 px 宽、12 px 圆角、20 px 内边距和透明底操作栏。丢弃草稿或删除时可通过 `focusCancel` 把初始焦点放在安全操作上。传入 `onOpenAutoFocus` 时仍可自行指定焦点。\n- 对照 Linear 删除确认时可用 `appearance=\"danger\"` 与 `variant=\"destructive\"`。弹窗最大宽 480 px，圆角 12 px，水平留白 24 px，操作按钮高 32 px。危险按钮两主题均用 `lch(58% 73 29)`。\n- 按钮文字写具体动作（“删除”“放弃修改”），不要写“确定”“是”。危险操作的 `AlertDialog.Action` 设 `variant=\"destructive\"`；Action 和 Cancel 的尺寸只用 `size` 属性（检查规则 `valar/button-size-via-prop`）。\n- `AlertDialog.Action` 的业务操作成功后通过 `bind:open` 关闭。异步操作期间可用 `loading` 阻止重复触发并保留焦点，配合文案和 Spinner。失败时保留对话框并就地提供错误原因和重试。\n- 按钮放在 `AlertDialog.Footer`。普通确认把 Cancel 放在主操作前；草稿确认把次要的丢弃动作放在 Cancel 前。窄屏时按原有顺序换行。\n- 简短的确认用 `<AlertDialog.Content size=\"sm\">`；需要图标时放进 `AlertDialog.Media`，不要自己写带颜色的图标容器。\n- 打开它的按钮通过 `AlertDialog.Trigger` 的 `child` snippet 渲染 Button（检查规则 `valar/trigger-child-snippet`）。\n"
 		},
 		{
 			"name": "aspect-ratio",
@@ -300,7 +300,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/avatar",
 			"install": "pnpm exec valar-svelte add avatar",
 			"markdown": "# Avatar 头像\n\n表示用户的图片，加载失败时显示缩写等后备内容。\n\n- 分类：展示\n- 关键词：头像、avatar、用户头像、头像组\n- 安装：`pnpm exec valar-svelte add avatar`\n\n## 何时使用\n\n- 显示用户或团队头像，图片失败时显示 Avatar.Fallback\n- 用 Avatar.Group 叠放多个头像，Avatar.GroupCount 显示剩余数量\n\n## 何时不用\n\n- 普通图片或封面：改用 `aspect-ratio`\n- 状态或分类标签：改用 `badge`\n\n## 无障碍\n\n- 图片 alt 写人名；与名字并排时可视为装饰\n- Avatar.Badge 表示的在线等状态不能只靠颜色\n\n## 响应式\n\n- 头像过多时用 Avatar.GroupCount 收起\n\n## 相关组件\n\n- `badge`\n- `item`\n- `message`\n",
-			"rules": "# Avatar 设计规范\n\n- 每个 Avatar 都放 `Avatar.Image` 和 `Avatar.Fallback`：图片加载失败或没有图片时显示 Fallback（姓名首字或图标）。\n- `Avatar.Image` 必须有 `alt`，写人名或账号名；旁边已有姓名文字时写 `alt=\"\"`（检查规则 `valar/image-alt`）。\n- 尺寸只用 `size` 属性（`sm`、`default`、`lg`），不要用 `class` 写 `size-*`。\n- 在线状态等标记用 `Avatar.Badge`，并另外用文字或 `aria-label` 表达状态，不要只靠圆点颜色；多个头像用 `Avatar.Group`，超出部分用 `Avatar.GroupCount` 显示数量。\n"
+			"rules": "# Avatar 设计规范\n\n- 每个 Avatar 都放 `Avatar.Image` 和 `Avatar.Fallback`：图片加载失败或没有图片时显示 Fallback（姓名首字或图标）。\n- `Avatar.Image` 必须有 `alt`，写人名或账号名；旁边已有姓名文字时写 `alt=\"\"`（检查规则 `valar/image-alt`）。\n- 尺寸只用 `size` 属性（`sm`、`default`、`lg`），不要用 `class` 写 `size-*`。\n- 订阅者姓名旁可用 `appearance=\"subscriber\"` 显示 18 px 头像。姓名缩写的底色通过 `--valar-avatar-subscriber-color` 设置。\n- 在线状态等标记用 `Avatar.Badge`，并另外用文字或 `aria-label` 表达状态，不要只靠圆点颜色；多个头像用 `Avatar.Group`，超出部分用 `Avatar.GroupCount` 显示数量。\n- 设置成员列表用 `appearance=\"member\"`（24 px，无外描边，缩写 11 px）。多人头像保持顺序；布局空间不足时组内换行，溢出计数提供可读名称。\n"
 		},
 		{
 			"name": "badge",
@@ -354,7 +354,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/badge",
 			"install": "pnpm exec valar-svelte add badge",
 			"markdown": "# Badge 徽标\n\n简短的状态、分类或计数标签。\n\n- 分类：展示\n- 关键词：徽标、badge、标签、状态、tag\n- 安装：`pnpm exec valar-svelte add badge`\n\n## 何时使用\n\n- 显示状态、分类或数量\n- 用 href 渲染为链接\n\n## 何时不用\n\n- 用户输入、可删除的多个标签：改用 `tags-input`\n- 需要说明的提示信息：改用 `alert`\n- 可点击的操作：改用 `button`\n\n## 无障碍\n\n- 含义要用文字表达，不能只靠颜色\n- 作为链接时文字要说明去向\n\n## 响应式\n\n- 文字保持简短，避免换行\n\n## 相关组件\n\n- `button`\n- `tags-input`\n- `avatar`\n",
-			"rules": "# Badge 设计规范\n\n- 用于状态、分类、计数等简短标记；样式只用 `variant`（`default`、`secondary`、`destructive`、`outline`、`ghost`、`link`），不要自定义背景色。\n- Badge 不是按钮：需要点击执行操作时用 `Button size=\"xs\"` 等小号按钮；需要跳转时给 Badge 设 `href`，它会渲染为链接。\n- 文字保持一两个词；用颜色表示状态时文字本身也要说明状态（“已失败”），不要只靠颜色。\n"
+			"rules": "# Badge 设计规范\n\n- 用于状态、分类、计数等简短标记；用 `variant` 选择用途相符的样式。\n- 已应用的问题标签用 `variant=\"label\"`。胶囊高 24 px，左右留白 8 px，文字 12 px／450。可传入标签数据中的 `labelColor`，在 14 px 标记位内绘制 9 px 圆点，和文字相隔 6 px。浅深色沿用 My issues 实测值，描边为 0.5 CSS px，设备像素对齐由浏览器处理。\n- 标签的描边色、文字色和底色过渡为 150 ms。开启系统的减少动态效果后即时切换。\n- Badge 不是按钮：需要点击执行操作时用 `Button size=\"xs\"` 等小号按钮；需要跳转时给 Badge 设 `href`，它会渲染为链接。\n- 文字保持一两个词；用颜色表示状态时文字本身也要说明状态（“已失败”），不要只靠颜色。\n"
 		},
 		{
 			"name": "breadcrumb",
@@ -406,7 +406,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/breadcrumb",
 			"install": "pnpm exec valar-svelte add breadcrumb",
 			"markdown": "# Breadcrumb 面包屑\n\n按层级显示当前页面的路径。\n\n- 分类：导航\n- 关键词：面包屑、breadcrumb、路径、层级导航\n- 安装：`pnpm exec valar-svelte add breadcrumb`\n\n## 何时使用\n\n- 层级较深的页面显示当前位置，并能返回上级\n\n## 何时不用\n\n- 列表分页：改用 `pagination`\n- 站点主导航：改用 `navigation-menu`\n- 有先后顺序的流程步骤：改用 `stepper`\n\n## 无障碍\n\n- 根元素带 aria-label，当前页 Breadcrumb.Page 设置 aria-current=page\n- 分隔符和省略号对读屏隐藏\n\n## 响应式\n\n- 层级过长时用 Breadcrumb.Ellipsis 折叠中间层，可配合 dropdown-menu 展开\n\n## 相关组件\n\n- `navigation-menu`\n- `dropdown-menu`\n- `sidebar`\n",
-			"rules": "# Breadcrumb 设计规范\n\n- 结构为 `Breadcrumb.Root` > `Breadcrumb.List` > `Breadcrumb.Item`，项之间放 `Breadcrumb.Separator`；不要手写斜杠或箭头。\n- 当前页用 `Breadcrumb.Page`（带 `aria-current=\"page\"`，不可点击），其余层级用带 `href` 的 `Breadcrumb.Link`。\n- 默认的导航名称是“面包屑导航”，省略号 `Breadcrumb.Ellipsis` 的读屏文字是“更多”：需要时给 `Breadcrumb.Root` 传更具体的 `aria-label`（如“当前位置”），省略号用 `label` 改。\n- 层级过多时中间部分折叠为 `Breadcrumb.Ellipsis`，放进 Dropdown Menu 的触发按钮中展开；窄屏下优先保留首项和最后两级。\n"
+			"rules": "# Breadcrumb 设计规范\n\n- 结构为 `Breadcrumb.Root` > `Breadcrumb.List` > `Breadcrumb.Item`，项之间放 `Breadcrumb.Separator`；不要手写斜杠或箭头。\n- 当前页用 `Breadcrumb.Page`（带 `aria-current=\"page\"`，不可点击），其余层级用带 `href` 的 `Breadcrumb.Link`。\n- 默认的导航名称是“面包屑导航”，省略号 `Breadcrumb.Ellipsis` 的读屏文字是“更多”：需要时给 `Breadcrumb.Root` 传更具体的 `aria-label`（如“当前位置”），省略号用 `label` 改。\n- 层级过多时中间部分折叠为 `Breadcrumb.Ellipsis`，放进 Dropdown Menu 的触发按钮中展开；窄屏下优先保留首项和最后两级。\n- 问题详情的标题栏用 `appearance=\"workspace\"`，链接高 24 px，分隔符为 `›`。长标题优先截断，键盘焦点使用 1 px 内描边。\n- 工作区路径单行显示，空间不足时长链接和当前项分别截断。用可操作的菜单承载层级过多时省略的链接。\n"
 		},
 		{
 			"name": "bubble",
@@ -516,7 +516,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/button",
 			"install": "pnpm exec valar-svelte add button",
 			"markdown": "# Button 按钮\n\n触发一个操作或跳转，是界面里最常见的可点击元素。\n\n- 分类：操作\n- 关键词：按钮、button、提交、CTA、操作、点击\n- 安装：`pnpm exec valar-svelte add button`\n\n## 何时使用\n\n- 提交表单、确认、保存等明确操作\n- 需要像按钮一样的链接（传 href）\n\n## 何时不用\n\n- 在一组互斥选项间切换：改用 `toggle-group`\n- 开关某个设置：改用 `switch`\n- 一行内的纯文字链接\n\n## 无障碍\n\n- 只有图标时必须加 aria-label\n- 禁用时用 disabled，不要只改颜色\n\n## 响应式\n\n- 触屏场景至少使用 default 尺寸，避免误触\n- 窄屏下主操作可占满整行\n\n## 相关组件\n\n- `button-group`\n- `toggle`\n- `alert-dialog`\n",
-			"rules": "# Button 设计规范\n\n- 一个区域（卡片、弹窗底部、表单）最多一个 `variant=\"default\"` 实心主按钮；其余操作用 `outline`、`secondary` 或 `ghost`。\n- 不可撤销的危险操作用 `variant=\"destructive\"`，并先用 Alert Dialog 确认。\n- 尺寸只用 `size` 属性（`xs`、`sm`、`default`、`lg`，图标按钮用 `icon`、`icon-sm` 等）；不要用 `class` 写高度、内边距或圆角（检查规则 `valar/button-size-via-prop`）。\n- 只有图标的按钮必须有 `aria-label`（检查规则 `valar/icon-button-label`）。\n- 跳转用 `href`，不要在按钮里再包一个链接；表单提交用 `type=\"submit\"`。\n- 不要用原生 `<button>` 或自己写样式的元素冒充按钮（检查规则 `valar/use-button-component`）。\n- 图标按钮使用原有默认圆角。需要胶囊形时显式设置 `shape=\"pill\"`。\n- 同心圆角：按钮放进有圆角的容器时，按钮圆角约等于容器圆角减去两者间距；圆形和胶囊按钮不得顶出容器的圆角。在 ButtonGroup 内圆角由按钮组决定，`shape` 不生效。\n"
+			"rules": "# Button 设计规范\n\n- 一个区域（卡片、弹窗底部、表单）最多一个 `variant=\"default\"` 实心主按钮；其余操作用 `outline`、`secondary` 或 `ghost`。\n- 不可撤销的危险操作用 `variant=\"destructive\"`，并先用 Alert Dialog 确认。\n- 尺寸只用 `size` 属性（`xs`、`sm`、`default`、`lg`，图标按钮用 `icon`、`icon-sm` 等）；不要用 `class` 写高度、内边距或圆角（检查规则 `valar/button-size-via-prop`）。\n- 只有图标的按钮必须有 `aria-label`（检查规则 `valar/icon-button-label`）。\n- 紧凑工具栏的图标按钮使用 `size=\"icon-sm\"`。按钮为 28 × 28 px，图标默认 14 × 14 px。边框色、底色、文字色和透明度使用 150 ms 过渡，系统启用减少动态效果时即时切换。\n- 常规工作区操作采用 32 px 高、13 px／500 字重和 12 px 横向内边距，Issue 底部紧凑按钮采用 28 px 高、12 px／500 字重和 10 px 横向内边距。独立文字按钮在各视觉变体中默认使用胶囊形。深色工作区按钮即时切换颜色。键盘焦点使用内侧提示。\n- `disabled` 用于不可用操作。异步操作设置 `loading`，以保留键盘焦点、阻止重复触发并传达忙碌状态，可搭配带 `data-icon` 的 Spinner 和状态文字。基础预览的等待与完成行为使用本地数据。\n- 主按钮和危险按钮使用工作区蓝紫色和实心危险色，描边按钮使用独立表面，幽灵按钮在悬停或选中时显示底色。需要局部主题覆盖时用 `--valar-button-primary`、`--valar-button-primary-hover`、`--valar-button-outline` 等组件变量。\n- 跳转用 `href`，不要在按钮里再包一个链接；表单提交用 `type=\"submit\"`。\n- 不要用原生 `<button>` 或自己写样式的元素冒充按钮（检查规则 `valar/use-button-component`）。\n- 独立文字按钮需要主题圆角矩形时用 `shape=\"square\"`。图标按钮默认使用主题圆角，传入 `shape=\"pill\"` 时为圆形。\n- 同心圆角：按钮放进有圆角的容器时，按钮圆角约等于容器圆角减去两者间距；圆形和胶囊按钮不得顶出容器的圆角。在 ButtonGroup 内圆角由按钮组决定，`shape` 不生效。\n"
 		},
 		{
 			"name": "button-group",
@@ -566,7 +566,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/button-group",
 			"install": "pnpm exec valar-svelte add button-group",
 			"markdown": "# Button Group 按钮组\n\n把相关的操作按钮组合在一起，样式连贯。\n\n- 分类：操作\n- 关键词：按钮组、button group、分段按钮、split button、工具栏\n- 安装：`pnpm exec valar-svelte add button-group`\n\n## 何时使用\n\n- 把相关操作的按钮组合在一起，如按钮加下拉菜单\n\n## 何时不用\n\n- 切换状态而不是执行操作：改用 `toggle-group`\n- 输入框旁边的按钮：改用 `input-group`\n\n## 无障碍\n\n- 根元素 role=group，用 aria-label 或 aria-labelledby 命名\n- 用 Tab 在按钮间移动\n\n## 响应式\n\n- 窄屏可改 orientation=vertical\n- 嵌套 ButtonGroup 形成带间距的分组\n\n## 相关组件\n\n- `button`\n- `toggle-group`\n- `input-group`\n",
-			"rules": "# Button Group 设计规范\n\n- 用于一组紧密相关、连在一起的按钮（如分段操作、按钮加下拉菜单）；只是并排的独立按钮用普通 flex 间距排列即可。\n- `ButtonGroup.Root` 渲染 `role=\"group\"`，要用 `aria-label` 说明这组按钮做什么。\n- 组内按钮使用相同的 `size`；方向用 `orientation`，组之间需要间距时嵌套多个 ButtonGroup，不要给按钮单独改圆角或边框（组件已处理相邻按钮的圆角和边框）。\n- 组内的说明文字用 `ButtonGroup.Text`，分隔用 `ButtonGroup.Separator`；Input、Select 等控件也可以放进组内。\n"
+			"rules": "# Button Group 设计规范\n\n- 用于一组紧密相关、连在一起的按钮（如分段操作、按钮加下拉菜单）；只是并排的独立按钮用普通 flex 间距排列即可。\n- `ButtonGroup.Root` 渲染 `role=\"group\"`，要用 `aria-label` 说明这组按钮做什么。\n- 组内按钮使用相同的 `size`；方向用 `orientation`，组之间需要间距时嵌套多个 ButtonGroup，不要给按钮单独改圆角或边框（组件已处理相邻按钮的圆角和边框）。\n- 组内的说明文字用 `ButtonGroup.Text`，分隔用 `ButtonGroup.Separator`；Input、Select 等控件也可以放进组内。\n- 横向胶囊拆分按钮使用 `variant=\"pill\"`，配两个 `size=\"icon-sm\"` 的图标按钮和 `ButtonGroup.Separator`。样式参考 Linear Issue 顶栏的提示词操作组。两个动作各自命名，键盘焦点在按钮边界内显示。\n"
 		},
 		{
 			"name": "calendar",
@@ -618,7 +618,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/calendar",
 			"install": "pnpm exec valar-svelte add calendar",
 			"markdown": "# Calendar 日历\n\n在页面上展示月历并选择日期。\n\n- 分类：表单\n- 关键词：日历、calendar、日期选择、date picker、选择日期\n- 安装：`pnpm exec valar-svelte add calendar`\n\n## 何时使用\n\n- 直接在页面上选择一个或多个日期\n- 与 popover 组合成日期选择器\n- captionLayout=dropdown 用下拉选择月份和年份\n\n## 何时不用\n\n- 选择开始和结束日期：改用 `range-calendar`\n- 页面空间有限，点击后再弹出日历：改用 `popover`\n\n## 无障碍\n\n- 保留 Bits UI 的键盘操作（方向键移动日期、回车选择）\n- locale 默认 zh-CN，其他语言要设置 locale，日期使用 @internationalized/date\n\n## 响应式\n\n- 用 --cell-size 控制格子大小，可按断点设置不同值\n- 显示多个月份时窄屏应减少月数\n\n## 相关组件\n\n- `range-calendar`\n- `popover`\n- `input`\n",
-			"rules": "# Calendar 设计规范\n\n- 值是 `@internationalized/date` 的日期对象（如 `CalendarDate`、`today(getLocalTimeZone())`），不是 JavaScript `Date`；用 `bind:value` 绑定，并设 `type=\"single\"` 或 `type=\"multiple\"`。\n- 默认 `locale=\"zh-CN\"`，月份和星期显示中文；其他语言的界面传对应 `locale`（如 `en-US`）；需要周一开始时设 `weekStartsOn={1}`。\n- 可选范围用 `minValue`、`maxValue`，不可选的日期用 `isDateDisabled`；不要只在提交时才拒绝。\n- 生日等跨度很大的日期用 `captionLayout=\"dropdown\"` 提供年月下拉，不要让用户一个月一个月翻。\n- 日期选择框（Date Picker）用 Popover + Calendar，触发按钮显示已选日期，照日期选择器文档的组合写法；选择日期区间用 Range Calendar。\n- 不要用 `class` 改日期格子的尺寸和圆角，它们跟随组件样式。\n- `captionLayout=\"dropdown\"` 使用原有月份和年份选择器。用 `minValue`、`maxValue` 或 `years` 限定范围。\n- 使用样式自带的格子尺寸。需要调整时通过 `--cell-size` 显式设置。\n- 选中日期是实心主色底、反色数字；不要给日期格子加会改文字颜色的悬停样式，否则选中后鼠标停在上面会变成一个黑块。\n"
+			"rules": "# Calendar 设计规范\n\n- 值是 `@internationalized/date` 的日期对象（如 `CalendarDate`、`today(getLocalTimeZone())`），不是 JavaScript `Date`；用 `bind:value` 绑定，并设 `type=\"single\"` 或 `type=\"multiple\"`。\n- 默认 `locale=\"zh-CN\"`，星期从周一开始。其他语言或周起始日通过 `locale` 和 `weekStartsOn` 指定。\n- 可选范围用 `minValue`、`maxValue`，不可选的日期用 `isDateDisabled`；不要只在提交时才拒绝。\n- 生日等跨度很大的日期用 `captionLayout=\"dropdown\"` 提供年月下拉，不要让用户一个月一个月翻。\n- 日期选择框（Date Picker）用 Popover + Calendar，触发按钮显示已选日期，照日期选择器文档的组合写法；选择日期区间用 Range Calendar。\n- 不要用 `class` 改日期格子的尺寸和圆角，它们跟随组件样式。\n- `captionLayout=\"dropdown\"` 复用 Valar Select。菜单按可用空间定位，最高 240 px，选项在内部滚动。用 `minValue`、`maxValue` 或 `years` 限定范围。\n- 使用样式自带的格子尺寸。需要调整时通过 `--cell-size` 显式设置。\n- 日期默认使用圆形单元格。今日用中性色底和细边，选中使用强调色底和反色数字，键盘焦点画在单元格内。项目月历用 `appearance=\"project-date\"` 获得紧凑的 26 px 日期和右侧翻月按钮。\n"
 		},
 		{
 			"name": "card",
@@ -664,7 +664,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/card",
 			"install": "pnpm exec valar-svelte add card",
 			"markdown": "# Card 卡片\n\n带边框的内容容器，可包含标题、内容和底部操作。\n\n- 分类：展示\n- 关键词：卡片、card、容器、面板\n- 安装：`pnpm exec valar-svelte add card`\n\n## 何时使用\n\n- 把一组相关信息与操作包在一起\n\n## 何时不用\n\n- 整页布局分区：改用 `separator`\n- 可展开折叠的内容：改用 `accordion`\n\n## 无障碍\n\n- 标题使用合适的标题层级\n\n## 响应式\n\n- 窄屏下卡片占满宽度并纵向堆叠\n\n## 相关组件\n\n- `item`\n- `alert`\n",
-			"rules": "# Card 设计规范\n\n- 结构用 `Card.Header`（`Card.Title`、`Card.Description`、右上角操作 `Card.Action`）、`Card.Content`、`Card.Footer`，不要自己写标题样式和分隔线。\n- `Card.Title` 渲染为 `div`，不是标题元素：需要进入页面标题层级时，在里面放合适级别的标题元素（如 `<Card.Title><h2>…</h2></Card.Title>`），或传 `role=\"heading\"` 和 `aria-level`。\n- 紧凑卡片用 `size=\"sm\"`；内边距、间距和圆角跟随组件样式，不要用 `class` 改 `p-*`、`gap-*`、`rounded-*`。\n- 卡片内最多一个主按钮（见 Button 规范）；整张卡片可点击时，用卡片内的主链接或按钮承载点击，不要给 Card 加 `onclick`。\n"
+			"rules": "# Card 设计规范\n\n- 结构用 `Card.Header`（`Card.Title`、`Card.Description`、右上角操作 `Card.Action`）、`Card.Content`、`Card.Footer`，不要自己写标题样式和分隔线。\n- `Card.Title` 渲染为 `div`，不是标题元素：需要进入页面标题层级时，在里面放合适级别的标题元素（如 `<Card.Title><h2>…</h2></Card.Title>`），或传 `role=\"heading\"` 和 `aria-level`。\n- 紧凑卡片用 `size=\"sm\"`；内边距、间距和圆角跟随组件样式，不要用 `class` 改 `p-*`、`gap-*`、`rounded-*`。\n- 默认卡片使用 10 px 圆角、细描边和 16 px 留白；小尺寸留白为 12 px。设置列表用 `size=\"settings\"`，将设置行放在 `Card.Content` 中，行间用 `Separator`，每行负责自己的 16 px 内边距。\n- 卡片内最多一个主按钮（见 Button 规范）；整张卡片可点击时，用卡片内的主链接或按钮承载点击，不要给 Card 加 `onclick`。\n- 有标题操作时，标题区扣除左右留白后达到 272 px 时并排，列间至少 12 px；更窄时操作移到标题和说明下方。操作使用内描边，并在容器内完整显示。操作按钮继承自身高度档位，文字按钮可随长标签换行，图标按钮保持方形点击区。\n"
 		},
 		{
 			"name": "carousel",
@@ -819,7 +819,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/checkbox",
 			"install": "pnpm exec valar-svelte add checkbox",
 			"markdown": "# Checkbox 复选框\n\n勾选或取消勾选一项，可多选。\n\n- 分类：表单\n- 关键词：复选框、checkbox、勾选、多选、同意条款\n- 安装：`pnpm exec valar-svelte add checkbox`\n\n## 何时使用\n\n- 从多个选项中选任意个\n- 表单提交前确认一项（如同意条款）\n\n## 何时不用\n\n- 立即生效的开关设置：改用 `switch`\n- 只能选一个：改用 `radio-group`\n\n## 无障碍\n\n- 每个复选框都有可点击的标签\n- 一组复选框用 FieldSet 和 legend 说明\n\n## 响应式\n\n- 标签区域可点击，扩大触控范围\n\n## 相关组件\n\n- `switch`\n- `radio-group`\n- `field`\n",
-			"rules": "# Checkbox 设计规范\n\n- 每个 Checkbox 都要有可点击的标签：给 Checkbox 设 `id`，用 `Field.Label for={id}`（或 Label）关联，并放在 `<Field.Field orientation=\"horizontal\">` 中（检查规则 `valar/input-label`）。\n- 一组相关的复选框用 `Field.Set` + `Field.Legend` 说明这一组是什么。\n- 用于需要点“保存”“提交”才生效的选项；立即生效的设置用 Switch，多选一用 Radio Group。\n- 状态用 `bind:checked`；部分选中（如“全选”下只选了一部分）用 `indeterminate`，不要换图标模拟。\n- 放在原生表单中提交时设 `name` 和 `value`。错误状态用 `aria-invalid=\"true\"` 加 `Field.Error`（检查规则 `valar/invalid-via-aria`）。\n"
+			"rules": "# Checkbox 设计规范\n\n- Valar 默认复选框参考 Linear 的 Issue labels 列表。方框为 14 × 14 px、圆角 3 px、描边 1 px，未选中底色透明，选中时使用主题蓝紫色及 10 px 浅色勾选图标。\n- 单项复选框使用边界内的焦点提示。方框与勾选标记即时切换。Valar 采用同一强调底色和短横线表达部分选中，禁用与错误沿用表单规则。\n- 每个 Checkbox 都要有可点击的标签：给 Checkbox 设 `id`，用 `Field.Label for={id}`（或 Label）关联，并放在 `<Field.Field orientation=\"horizontal\">` 中（检查规则 `valar/input-label`）。\n- 一组相关的复选框用 `Field.Set` + `Field.Legend` 说明这一组是什么。\n- 用于需要点“保存”“提交”才生效的选项；立即生效的设置用 Switch，多选一用 Radio Group。\n- 状态用 `bind:checked`；部分选中（如“全选”下只选了一部分）用 `indeterminate`，不要换图标模拟。\n- 放在原生表单中提交时设 `name` 和 `value`。错误状态用 `aria-invalid=\"true\"` 加 `Field.Error`（检查规则 `valar/invalid-via-aria`）。\n"
 		},
 		{
 			"name": "code-block",
@@ -922,7 +922,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/collapsible",
 			"install": "pnpm exec valar-svelte add collapsible",
 			"markdown": "# Collapsible 折叠区\n\n展开或收起单个内容区域。\n\n- 分类：展示\n- 关键词：折叠、collapsible、展开收起、显示更多\n- 安装：`pnpm exec valar-svelte add collapsible`\n\n## 何时使用\n\n- 展开或收起单个区域，如高级设置、文件树\n\n## 何时不用\n\n- 多段同类内容：改用 `accordion`\n- 在浮层中显示内容：改用 `popover`\n\n## 无障碍\n\n- 触发器是按钮，带 aria-expanded\n\n## 响应式\n\n- 窄屏下可收起次要内容\n\n## 相关组件\n\n- `accordion`\n- `trace`\n- `sidebar`\n",
-			"rules": "# Collapsible 设计规范\n\n- 用于单块可以展开收起的内容（“显示更多”、高级选项）；多块并列的展开内容用 Accordion。\n- `Collapsible.Trigger` 本身就是按钮：要用 Button 样式时通过 `{#snippet child({ props })}` 渲染 Button（检查规则 `valar/trigger-child-snippet`）；只有图标的触发按钮要有 `aria-label`。\n- 触发按钮的文字或图标随状态变化（“显示更多”／“收起”），展开状态用 `bind:open` 控制。\n"
+			"rules": "# Collapsible 设计规范\n\n- 用于单块可以展开收起的内容（“显示更多”、高级选项）；多块并列的展开内容用 Accordion。\n- `Collapsible.Trigger` 本身就是按钮：要用 Button 样式时通过 `{#snippet child({ props })}` 渲染 Button（检查规则 `valar/trigger-child-snippet`）；只有图标的触发按钮要有 `aria-label`。\n- 触发按钮的文字或图标随状态变化（“显示更多”／“收起”），展开状态用 `bind:open` 控制。\n- 属性分组用 `appearance=\"properties\"`。触发器直接放在根组件内，使用 28 px 高的透明按钮和 16 px 的装饰箭头。标记为 `data-slot=\"collapsible-indicator\"` 的箭头在 150 ms 内转动。内容即时展开或收起，减少动态效果时箭头也即时更新。\n"
 		},
 		{
 			"name": "color-picker",
@@ -967,6 +967,59 @@
 			"install": "pnpm exec valar-svelte add color-picker",
 			"markdown": "# Color Picker 颜色选择\n\n用色盘、十六进制输入或预设色块选择颜色，值为 #rrggbb。\n\n- 分类：表单\n- 关键词：颜色、color、取色、色板、picker\n- 安装：`pnpm exec valar-svelte add color-picker`\n\n## 何时使用\n\n- 选择任意颜色或从预设色中挑选\n\n## 何时不用\n\n- 只在少数固定颜色间选择：改用 `radio-group`\n\n## 无障碍\n\n- 触发器读出标签和当前色值\n- 十六进制输入有错误提示\n\n## 响应式\n\n- 面板在窄屏下保持在视口内\n\n## 相关组件\n\n- `slider-field`\n- `popover`\n",
 			"rules": "# Color Picker 设计规范\n\n- 用于让用户选择任意颜色的数据（标签色、品牌色、主题编辑）；只在少数固定颜色间选择时用 Radio Group。界面本身的颜色仍然只用语义 token，不要把 Color Picker 选出的值写进组件样式。\n- `label` 必填，它同时命名触发按钮、色盘、十六进制输入框和预设组，并显示为可见标签；不要在外面再包 Field.Label。\n- 值始终是小写的六位十六进制（`#rrggbb`）；三位简写会被展开，无效输入不会改变值。需要其他格式时在使用处自行转换。\n- 常用颜色放在 `presets`；放在表单中提交时设 `name`。\n"
+		},
+		{
+			"name": "combobox",
+			"type": "registry:ui",
+			"title": "Combobox 搜索选择",
+			"description": "在浮层中搜索并选择一个或多个选项，支持分组和异步数据。",
+			"categories": [
+				"表单"
+			],
+			"dependencies": [
+				"bits-ui"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"搜索选择",
+						"自动完成",
+						"负责人",
+						"标签",
+						"combobox"
+					],
+					"whenToUse": [
+						"选择负责人、项目或多个标签",
+						"通过名称或别名查找选项"
+					],
+					"whenNotToUse": [
+						{
+							"case": "执行命令或跳转页面",
+							"use": "command"
+						},
+						{
+							"case": "从少量固定选项中选择",
+							"use": "select"
+						}
+					],
+					"accessibility": [
+						"打开时聚焦搜索，方向键移动高亮，回车选择，Escape 关闭并归焦",
+						"选值使用 aria-selected，键盘高亮使用 aria-activedescendant"
+					],
+					"responsive": [
+						"根据锚点和视口限制浮层尺寸，长列表独立滚动"
+					],
+					"related": [
+						"popover",
+						"command",
+						"select"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/combobox",
+			"install": "pnpm exec valar-svelte add combobox",
+			"markdown": "# Combobox 搜索选择\n\n在浮层中搜索并选择一个或多个选项，支持分组和异步数据。\n\n- 分类：表单\n- 关键词：搜索选择、自动完成、负责人、标签、combobox\n- 安装：`pnpm exec valar-svelte add combobox`\n\n## 何时使用\n\n- 选择负责人、项目或多个标签\n- 通过名称或别名查找选项\n\n## 何时不用\n\n- 执行命令或跳转页面：改用 `command`\n- 从少量固定选项中选择：改用 `select`\n\n## 无障碍\n\n- 打开时聚焦搜索，方向键移动高亮，回车选择，Escape 关闭并归焦\n- 选值使用 aria-selected，键盘高亮使用 aria-activedescendant\n\n## 响应式\n\n- 根据锚点和视口限制浮层尺寸，长列表独立滚动\n\n## 相关组件\n\n- `popover`\n- `command`\n- `select`\n",
+			"rules": "# Combobox 设计规范\n\n- 需要搜索再选择时用 Combobox。少量固定选项用 Select，搜索后执行操作用 Command。\n- 提供 `label` 和搜索 `placeholder`。选项使用稳定且唯一的 `id`，额外搜索词放在 `keywords`。\n- 单选确认后关闭并归焦，复选保持打开。已选值以勾选和 `aria-selected` 表达，方向键仅移动高亮。允许清空单选时提供明确的「未分配」选项。\n- 默认浮层 207 px，浅深表面、细边框和阴影沿用工作区浮层。搜索行高 36 px、左边距 14 px，不放搜索图标。候选至少 32 px 高，状态高亮使用内收的圆角底色。\n- 可用 `group` 分组，用 `option` 传入头像或状态图标。行尾留给当前选择。长选项允许换行，列表独立滚动。\n- 异步筛选用 `bind:query` 并传 `filter={false}`，由宿主取消或丢弃过期查询。使用 `loading`、`error`、`empty` 表达等待、错误和无匹配；可将重试等操作放在 `footer`。\n"
 		},
 		{
 			"name": "command",
@@ -1024,7 +1077,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/command",
 			"install": "pnpm exec valar-svelte add command",
 			"markdown": "# Command 命令菜单\n\n可输入筛选的命令列表，用于命令面板（⌘K）和快速搜索选择。\n\n- 分类：操作\n- 关键词：命令面板、command、command palette、cmdk、搜索、快速操作、combobox\n- 安装：`pnpm exec valar-svelte add command`\n\n## 何时使用\n\n- 命令面板：搜索并执行操作或跳转页面（Command.Dialog）\n- 在大量选项中按关键字筛选，可放进 popover 组成可搜索的选择框\n\n## 何时不用\n\n- 选项不多、不需要搜索的选择：改用 `select`\n- 少量固定操作：改用 `dropdown-menu`\n- 页面主导航：改用 `navigation-menu`\n\n## 无障碍\n\n- 保留 Bits UI 的键盘操作（上下键移动、回车选择）和输入过滤\n- Command.Dialog 自带视觉隐藏的标题和描述，默认中文，可传入 title、description 改\n- 用 Command.Empty 告知没有匹配结果\n\n## 响应式\n\n- 列表在固定高度内滚动\n- ⌘K 快捷键在触屏设备上不可用，要提供可见的打开按钮\n\n## 相关组件\n\n- `dialog`\n- `popover`\n- `select`\n",
-			"rules": "# Command 设计规范\n\n- 用于可搜索的命令或选项列表：命令面板用 `Command.Dialog`，可搜索的下拉选择（Combobox）用 Popover + `Command.Root`。选项少、不需要搜索时用 Select。\n- 列表必须有 `Command.Empty`，写明没有结果时该怎么做（如“没有匹配的项目，换个关键词试试”）。\n- `Command.Input` 的 `placeholder` 说明能搜什么；它不是标签，需要时用 `aria-label` 命名。\n- 每个 `Command.Item` 设稳定的 `value`，搜索不到的同义词放在 `keywords`；选中后的动作写在 `onSelect`。跳转页面用 `Command.LinkItem`。\n- `Command.Dialog` 的 `title`、`description` 只给读屏器读，默认是“命令面板”“搜索要执行的命令”；能更具体时传自己的值。打开面板的快捷键要自己绑定，`Command.Shortcut` 只显示文字。\n- 用分组 `Command.Group`（设 `heading`）和 `Command.Separator` 组织长列表；异步加载时用 `Command.Loading`。\n"
+			"rules": "# Command 设计规范\n\n- 用于可搜索的命令或选项列表：命令面板用 `Command.Dialog`，可搜索的下拉选择（Combobox）用 Popover + `Command.Root`。选项少、不需要搜索时用 Select。\n- 列表必须有 `Command.Empty`，写明没有结果时该怎么做（如“没有匹配的项目，换个关键词试试”）。\n- `Command.Input` 的 `placeholder` 说明能搜什么；它不是标签，需要时用 `aria-label` 命名。\n- 每个 `Command.Item` 设稳定的 `value`，搜索不到的同义词放在 `keywords`；选中后的动作写在 `onSelect`。跳转页面用 `Command.LinkItem`。\n- `Command.Dialog` 的 `title`、`description` 只给读屏器读，默认是“命令面板”“搜索要执行的命令”；能更具体时传自己的值。可用 `trigger` 片段提供触发按钮，转发片段的 `props` 以保留焦点恢复。打开面板的快捷键由宿主绑定，`Command.Shortcut` 只显示文字。\n- 用分组 `Command.Group`（设 `heading`）和 `Command.Separator` 组织长列表；异步加载时用 `Command.Loading`。\n- 全局命令面板参考 Linear 的 Cmd+K，桌面宽度上限 720 px、面板高度上限 450 px，结果行最小高 46 px。焦点保留在搜索框，长结果在搜索框下方滚动。方向键移动选项高亮，Enter 执行，Escape 关闭。\n- 工具栏筛选可在 Popover 内使用 `Command.Root appearance=\"compact\"`。搜索框高 36 px，选项最小高 32 px，输入和选项均使用 13 px 文字。浮层表面由 Popover 提供。内联调用继续使用默认密度。\n"
 		},
 		{
 			"name": "context-menu",
@@ -1062,7 +1115,7 @@
 						}
 					],
 					"accessibility": [
-						"保留 Bits UI 的键盘操作（方向键、回车、Esc，左右键进出子菜单）",
+						"触发区域聚焦后支持 Shift+F10 和菜单键，菜单内支持方向键、回车、Esc 和子菜单导航",
 						"同样的操作应在可见的按钮或菜单中也能完成；Shortcut 只是快捷键提示，快捷键需另行实现"
 					],
 					"responsive": [
@@ -1078,8 +1131,57 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/context-menu",
 			"install": "pnpm exec valar-svelte add context-menu",
-			"markdown": "# Context Menu 右键菜单\n\n在区域内右键（触屏长按）打开的操作菜单。\n\n- 分类：弹层\n- 关键词：右键菜单、context menu、上下文菜单、快捷菜单、长按菜单\n- 安装：`pnpm exec valar-svelte add context-menu`\n\n## 何时使用\n\n- 为文件、列表项、画布元素等区域提供右键快捷操作\n- 需要复选项、单选项或子菜单的上下文操作\n\n## 何时不用\n\n- 页面上唯一的操作入口（右键难以被发现）：改用 `dropdown-menu`\n- 桌面应用顶部常驻的命令菜单：改用 `menubar`\n- 搜索并执行大量命令：改用 `command`\n\n## 无障碍\n\n- 保留 Bits UI 的键盘操作（方向键、回车、Esc，左右键进出子菜单）\n- 同样的操作应在可见的按钮或菜单中也能完成；Shortcut 只是快捷键提示，快捷键需另行实现\n\n## 响应式\n\n- 触屏通过长按打开，用户不易发现，移动端要提供可见入口\n- 菜单靠近边缘时自动调整位置保持在视口内\n\n## 相关组件\n\n- `dropdown-menu`\n- `menubar`\n- `command`\n",
-			"rules": "# Context Menu 设计规范\n\n- 右键（触屏为长按）菜单不容易被发现：菜单里的每个操作都必须在界面其他地方也能完成，如工具栏按钮或 Dropdown Menu。\n- `ContextMenu.Trigger` 包住响应右键的区域；它渲染为普通容器，里面可以放任意内容。\n- 菜单项的写法与 Dropdown Menu 相同：操作用 `onSelect`，危险项设 `variant=\"destructive\"` 并放最后，可勾选项用 `CheckboxItem`、`RadioItem`，`ContextMenu.Shortcut` 只显示文字不绑定按键。\n- 不要用它替代浏览器在输入框、链接上的原生右键菜单。\n"
+			"markdown": "# Context Menu 右键菜单\n\n在区域内右键（触屏长按）打开的操作菜单。\n\n- 分类：弹层\n- 关键词：右键菜单、context menu、上下文菜单、快捷菜单、长按菜单\n- 安装：`pnpm exec valar-svelte add context-menu`\n\n## 何时使用\n\n- 为文件、列表项、画布元素等区域提供右键快捷操作\n- 需要复选项、单选项或子菜单的上下文操作\n\n## 何时不用\n\n- 页面上唯一的操作入口（右键难以被发现）：改用 `dropdown-menu`\n- 桌面应用顶部常驻的命令菜单：改用 `menubar`\n- 搜索并执行大量命令：改用 `command`\n\n## 无障碍\n\n- 触发区域聚焦后支持 Shift+F10 和菜单键，菜单内支持方向键、回车、Esc 和子菜单导航\n- 同样的操作应在可见的按钮或菜单中也能完成；Shortcut 只是快捷键提示，快捷键需另行实现\n\n## 响应式\n\n- 触屏通过长按打开，用户不易发现，移动端要提供可见入口\n- 菜单靠近边缘时自动调整位置保持在视口内\n\n## 相关组件\n\n- `dropdown-menu`\n- `menubar`\n- `command`\n",
+			"rules": "# Context Menu 设计规范\n\n- 默认外观参考 Linear 问题列表的右键菜单。实色面板圆角 12 px，选项高至少 32 px，行内圆角 8 px，图文间距 8 px。普通操作起止留白 8／12 px，选择行给行尾勾选预留 32 px。键盘高亮留在选项内部。面板与子菜单使用同一浅深配色。\n\n- 右键（触屏为长按）菜单不容易被发现：菜单里的每个操作都必须在界面其他地方也能完成，如工具栏按钮或 Dropdown Menu。\n- `ContextMenu.Trigger` 包住响应右键的区域。需要将普通容器加入键盘顺序时，添加 `tabindex={0}` 和可访问名称。聚焦后可按 Shift+F10 或菜单键，Escape 关闭并归焦。\n- 操作用 `onSelect`，复选和单选分别用 `CheckboxItem` 和 `RadioItem`。行尾的 `ContextMenu.Shortcut` 仅提示快捷键。确认流程可以由中性色菜单项打开，确认按钮再使用危险色。\n- 父菜单与子菜单根据锚点和可用空间定位，内容过长时在各自的菜单内滚动。\n- 可搜索的子面板用 `SubTrigger aria-haspopup=\"dialog\"` 和具名的 `SubContent role=\"dialog\"`，内部放 Command 输入与选项列表。打开时聚焦输入，确认后关闭主菜单，Escape 返回子菜单入口。\n- 不要用它替代浏览器在输入框、链接上的原生右键菜单。\n"
+		},
+		{
+			"name": "date-picker",
+			"type": "registry:ui",
+			"title": "Date Picker 日期选择器",
+			"description": "用同一控件输入或选择日、月、季度、半年和年。",
+			"categories": [
+				"表单"
+			],
+			"dependencies": [
+				"@internationalized/date"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"排期",
+						"日期",
+						"季度",
+						"date",
+						"calendar"
+					],
+					"whenToUse": [
+						"为表单选择具体日期或计划周期",
+						"在有限的空间中提供日历和日期输入"
+					],
+					"whenNotToUse": [
+						{
+							"case": "在同一份日历连续选择日期区间",
+							"use": "range-calendar"
+						}
+					],
+					"accessibility": [
+						"提供可读的 label，保留 Calendar 键盘操作与弹层返回焦点"
+					],
+					"responsive": [
+						"浮层按视口收窄，精度标签可换行"
+					],
+					"related": [
+						"calendar",
+						"range-calendar",
+						"popover",
+						"input"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/date-picker",
+			"install": "pnpm exec valar-svelte add date-picker",
+			"markdown": "# Date Picker 日期选择器\n\n用同一控件输入或选择日、月、季度、半年和年。\n\n- 分类：表单\n- 关键词：排期、日期、季度、date、calendar\n- 安装：`pnpm exec valar-svelte add date-picker`\n\n## 何时使用\n\n- 为表单选择具体日期或计划周期\n- 在有限的空间中提供日历和日期输入\n\n## 何时不用\n\n- 在同一份日历连续选择日期区间：改用 `range-calendar`\n\n## 无障碍\n\n- 提供可读的 label，保留 Calendar 键盘操作与弹层返回焦点\n\n## 响应式\n\n- 浮层按视口收窄，精度标签可换行\n\n## 相关组件\n\n- `calendar`\n- `range-calendar`\n- `popover`\n- `input`\n",
+			"rules": "# Date Picker 设计规范\n\n- 用于输入或选择一个日期或计划周期。选两个确定的日期时可组合两个 Date Picker，连续选择一段日期时用 Range Calendar。\n- 用 `bind:value` 绑定日期，或者用 `value` 和 `onValueChange` 接入宿主。值包含 ISO 日期和精度，非日精度的日期为该周期第一天。\n- 提供清楚的 `label`。用 `precisions` 限制允许的精度，只有具体日期的场景用 `[\"day\"]`。\n- 用 `min` 和 `max` 约束可选范围。月份、季度等按周期与范围是否相交判断。\n- 打开后聚焦日期输入。可直接输入 ISO 日期、英文月份和年份、季度、半年或年份，按 Enter 提交。组件按输入格式识别精度，并校验允许的范围。已有日期且允许清除时，可按「清除日期」或清空输入后按 Enter。\n- 无效或超出范围时在输入下方说明并保留焦点。日期可通过键盘选择，Escape 关闭并返回触发器。\n- 在有独立主题的区域传入 `portalProps` 继承该主题。焦点提示画在控件内部。\n"
 		},
 		{
 			"name": "dialog",
@@ -1133,7 +1235,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/dialog",
 			"install": "pnpm exec valar-svelte add dialog",
 			"markdown": "# Dialog 对话框\n\n覆盖在页面上的窗口，用于需要专注完成的内容或表单，背后内容不可操作。\n\n- 分类：弹层\n- 关键词：对话框、dialog、弹窗、modal、模态\n- 安装：`pnpm exec valar-svelte add dialog`\n\n## 何时使用\n\n- 需要用户专注完成的短流程或表单\n\n## 何时不用\n\n- 确认危险操作：改用 `alert-dialog`\n- 从边缘滑出的辅助面板：改用 `sheet`\n- 轻量的附加信息：改用 `popover`\n\n## 无障碍\n\n- 必须有标题（Dialog.Title）\n- Esc 关闭，关闭后焦点回到触发按钮\n\n## 响应式\n\n- 移动端可改用 drawer\n- 内容超出时对话框内部滚动\n\n## 相关组件\n\n- `alert-dialog`\n- `sheet`\n- `drawer`\n",
-			"rules": "# Dialog 设计规范\n\n- 每个 `Dialog.Content` 都要有 `Dialog.Title`；界面上不想显示标题时给它加 `class=\"sr-only\"`，不要删掉（检查规则 `valar/overlay-title`）。需要补充说明时加 `Dialog.Description`。\n- 打开对话框的按钮通过 `Dialog.Trigger` 的 `{#snippet child({ props })}` 把 `props` 传给 `Button`；不要在 Trigger 里再放一个 Button（检查规则 `valar/trigger-child-snippet`）。\n- 内边距、内容间距、圆角档位、遮罩不透明度、动效档位和出现时缩放都是组件参数，在 Dialog 文档页的编辑器中调整并写回组件库；不要在 `Dialog.Content` 上用 `class` 改 `p-*`、`gap-*`、`rounded-*`、`duration-*`、`zoom-*`。\n- 宽度默认取组件参数的宽度档；个别对话框确需更宽时只加 `sm:max-w-*` 档位类，不写像素任意值。\n- 操作按钮放在 `Dialog.Footer`，最多一个主按钮（见 Button 规范）。取消按钮用 `Dialog.Close` 的 `child` snippet 包一个 `variant=\"outline\"` 的 Button。\n- 右上角关闭按钮（`showCloseButton`，默认开启）和 `Dialog.Footer` 的 `showCloseButton` 自带的文字默认是“关闭”，其他语言用各自的 `closeLabel` 改。\n- 内容可能超出屏幕高度时，给正文区域设 `max-h-*` 档位（可用 `vh` 单位）和 `overflow-y-auto`，或包一层 Scroll Area，让对话框内部滚动。\n- 需要在代码中开关时用 `bind:open`；关闭后焦点会自动回到触发按钮，不要手动把焦点移到别处。\n- 确认危险操作改用 Alert Dialog；从屏幕边缘滑出的辅助面板用 Sheet；移动端底部面板用 Drawer。\n"
+			"rules": "# Dialog 设计规范\n\n- 每个 `Dialog.Content` 都要有 `Dialog.Title`；界面上不想显示标题时给它加 `class=\"sr-only\"`，不要删掉（检查规则 `valar/overlay-title`）。需要补充说明时加 `Dialog.Description`。\n- 打开对话框的按钮通过 `Dialog.Trigger` 的 `{#snippet child({ props })}` 把 `props` 传给 `Button`；不要在 Trigger 里再放一个 Button（检查规则 `valar/trigger-child-snippet`）。\n- 工作区紧凑编辑器可用 `Dialog.Content appearance=\"editor\"`。标题与正文仍使用各自的组件，正文可能过长时保留弹窗的内部滚动。\n- 普通弹窗居中，宽度上限 480 px，12 px 圆角，标题与表单共用浅深主题表面。操作栏按原有顺序换行，主次操作用同尺寸的胶囊按钮。\n- 内边距、内容间距、圆角档位、遮罩不透明度、动效档位和出现时缩放都是组件参数，在 Dialog 文档页的编辑器中调整并写回组件库；不要在 `Dialog.Content` 上用 `class` 改 `p-*`、`gap-*`、`rounded-*`、`duration-*`、`zoom-*`。\n- 宽度默认取组件参数的宽度档；个别对话框确需更宽时只加 `sm:max-w-*` 档位类，不写像素任意值。\n- 操作按钮放在 `Dialog.Footer`，最多一个主按钮（见 Button 规范）。取消按钮用 `Dialog.Close` 的 `child` snippet 包一个 `variant=\"outline\"` 的 Button。\n- 右上角关闭按钮（`showCloseButton`，默认开启）和 `Dialog.Footer` 的 `showCloseButton` 自带的文字默认是“关闭”，其他语言用各自的 `closeLabel` 改。\n- 弹窗默认在视口内滚动。需保持页首或操作栏可见时，给正文单独设置滚动，并用 `minmax(0, 1fr)` 限制正文所在网格行。\n- 异步提交时通过按钮的 `loading` 保留焦点并阻止重复提交。失败后保留已输入的值，显示错误和重试。业务需要时，可在 `onEscapeKeydown` 和 `onInteractOutside` 内阻止等待中的关闭。\n- 需要在代码中开关时用 `bind:open`；关闭后焦点会自动回到触发按钮，不要手动把焦点移到别处。\n- 确认危险操作改用 Alert Dialog；从屏幕边缘滑出的辅助面板用 Sheet；移动端底部面板用 Drawer。\n"
 		},
 		{
 			"name": "donut-chart",
@@ -1284,7 +1386,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/dropdown-menu",
 			"install": "pnpm exec valar-svelte add dropdown-menu",
 			"markdown": "# Dropdown Menu 下拉菜单\n\n点击按钮后展开的操作列表。\n\n- 分类：导航\n- 关键词：菜单、dropdown、更多操作、操作列表、menu\n- 安装：`pnpm exec valar-svelte add dropdown-menu`\n\n## 何时使用\n\n- 收纳一组相关操作，如“更多”菜单\n\n## 何时不用\n\n- 为表单选值：改用 `select`\n- 右键菜单：改用 `context-menu`\n- 站点导航：改用 `navigation-menu`\n\n## 无障碍\n\n- 方向键在菜单项间移动，Esc 关闭\n- 危险操作项使用 destructive 样式\n\n## 响应式\n\n- 窄屏下菜单保持在视口内\n\n## 相关组件\n\n- `context-menu`\n- `select`\n- `popover`\n",
-			"rules": "# Dropdown Menu 设计规范\n\n- 用于点击按钮后展开的一组操作命令；为表单选值用 Select，右键菜单用 Context Menu，站点导航用 Navigation Menu。\n- 打开菜单的按钮通过 `DropdownMenu.Trigger` 的 `{#snippet child({ props })}` 渲染 Button；只有图标的触发按钮要有 `aria-label`（检查规则 `valar/trigger-child-snippet`、`valar/icon-button-label`）。\n- 操作用 `DropdownMenu.Item` 的 `onSelect`；跳转页面用 `child` snippet 把 `props` 传给 `<a href>`，不要在 Item 里再嵌套链接或按钮。\n- 删除等危险操作项设 `variant=\"destructive\"`，并放在最后、用 `DropdownMenu.Separator` 与其他项隔开；不可撤销时先用 Alert Dialog 确认。\n- 可勾选的设置用 `DropdownMenu.CheckboxItem`，多选一用 `DropdownMenu.RadioGroup` + `DropdownMenu.RadioItem`；不要用普通 Item 加对勾图标模拟。\n- 分组标题用 `DropdownMenu.Label`（或 Group 里的 `GroupHeading`），没有图标的项需要与有图标的项对齐时设 `inset`。\n- `DropdownMenu.Shortcut` 只显示快捷键文字，不会绑定按键；显示的快捷键必须在别处真正实现。\n- 菜单宽度默认与触发按钮一致；需要更宽时用 `min-w-*` 档位，位置用 `align`、`side` 属性，不要写像素值。\n"
+			"rules": "# Dropdown Menu 设计规范\n\n- 用于点击按钮后展开的一组操作命令；为表单选值用 Select，右键菜单用 Context Menu，站点导航用 Navigation Menu。\n- 打开菜单的按钮通过 `DropdownMenu.Trigger` 的 `{#snippet child({ props })}` 渲染 Button；只有图标的触发按钮要有 `aria-label`（检查规则 `valar/trigger-child-snippet`、`valar/icon-button-label`）。\n- 操作用 `DropdownMenu.Item` 的 `onSelect`；跳转页面用 `child` snippet 把 `props` 传给 `<a href>`，不要在 Item 里再嵌套链接或按钮。\n- 删除等不可撤销的操作放在末尾，用 `DropdownMenu.Separator` 分组。普通菜单项打开 Alert Dialog，危险色用于最终确认。需要直接强调菜单命令时可以使用 `variant=\"destructive\"`。\n- 可勾选的设置用 `DropdownMenu.CheckboxItem`，多选一用 `DropdownMenu.RadioGroup` 与 `DropdownMenu.RadioItem`。行尾符号表达已选或半选状态，行底色随鼠标和键盘焦点移动。选择后默认保持打开，可按流程设置 `closeOnSelect`。\n- 分组标题用 `DropdownMenu.Label`（或 Group 里的 `GroupHeading`），没有图标的项需要与有图标的项对齐时设 `inset`。\n- `DropdownMenu.Shortcut` 只显示快捷键文字，不会绑定按键；显示的快捷键必须在别处真正实现。\n- 菜单宽度默认与触发按钮一致；需要更宽时用 `min-w-*` 档位，位置用 `align`、`side` 属性，不要写像素值。\n- 主菜单和子菜单默认采用 12 px 圆角的实色面板与 0.5 px 描边。操作行和 Context Menu 一致，最小高度 32 px、圆角 8 px、图文间距 8 px，行内起止留白为 8／12 px。单选和复选给勾选符号预留 32 px，分隔区高 12 px。文字为 13 px／400。`appearance=\"surface\"` 按内容定宽。主菜单和子菜单应使用同一个主题 Portal。\n- 菜单根据可用空间翻转或收窄，长菜单在面板内滚动。用方向键移动焦点，侧向方向键打开和返回子菜单，Escape 关闭菜单并返回触发器。\n"
 		},
 		{
 			"name": "empty",
@@ -1332,7 +1434,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/empty",
 			"install": "pnpm exec valar-svelte add empty",
 			"markdown": "# Empty 空状态\n\n列表或页面没有数据时显示的说明与下一步操作。\n\n- 分类：反馈\n- 关键词：空状态、empty、无数据、暂无内容、empty state\n- 安装：`pnpm exec valar-svelte add empty`\n\n## 何时使用\n\n- 列表、搜索结果或页面没有数据时，说明原因并给出下一步操作\n\n## 何时不用\n\n- 内容正在加载：改用 `skeleton`\n- 出错或需要警告：改用 `alert`\n\n## 无障碍\n\n- 标题和说明用文字讲清原因和下一步；图标是装饰\n\n## 响应式\n\n- 内容居中，窄屏下自动收窄\n\n## 相关组件\n\n- `skeleton`\n- `alert`\n- `button`\n",
-			"rules": "# Empty 设计规范\n\n- 用于列表、表格、搜索结果为空时的占位：用 `Empty.Header` 包 `Empty.Media`、`Empty.Title`、`Empty.Description`，下一步操作放进 `Empty.Content`。\n- 标题说明当前状态（“还没有项目”），说明文字告诉用户怎么做；尽量提供一个能解决问题的主按钮（如“新建项目”“清除筛选”）。\n- `Empty.Title` 渲染为 `div`：需要进入页面标题层级时在里面放合适级别的标题元素。\n- 图标用 `<Empty.Media variant=\"icon\">`，不要自己写带背景色的图标容器。\n"
+			"rules": "# Empty 设计规范\n\n- 用于列表、表格、搜索结果为空时的占位：用 `Empty.Header` 包 `Empty.Media`、`Empty.Title`、`Empty.Description`，下一步操作放进 `Empty.Content`。\n- 标题说明当前状态（“还没有项目”），说明文字告诉用户怎么做；尽量提供一个能解决问题的主按钮（如“新建项目”“清除筛选”）。\n- 问题列表的初始空状态可用 `appearance=\"issue-list\"`，将插图、标题和一个主操作居中排列，纵向间距 20 px。工作区留白由调用方决定；示例使用 Valar 图标呈现插图。\n- `Empty.Title` 渲染为 `div`：需要进入页面标题层级时在里面放合适级别的标题元素。\n- 图标用 `<Empty.Media variant=\"icon\">`，不要自己写带背景色的图标容器。\n- 筛选后没有匹配项使用 `appearance=\"filtered-list\"`，标题 15 px／600，清除筛选用 24 px 胶囊按钮。恢复列表时将焦点移回可操作的筛选入口。\n"
 		},
 		{
 			"name": "field",
@@ -1378,7 +1480,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/field",
 			"install": "pnpm exec valar-svelte add field",
 			"markdown": "# Field 表单字段\n\n把标签、控件、说明和错误信息组合成一个无障碍的表单字段。\n\n- 分类：表单\n- 关键词：表单字段、field、标签、label、校验、错误提示\n- 安装：`pnpm exec valar-svelte add field`\n\n## 何时使用\n\n- 任何需要标签的表单控件\n- 把相关字段分组（FieldSet、FieldGroup）\n\n## 何时不用\n\n- 单纯的说明文字，没有控件\n\n## 无障碍\n\n- 标签通过 for/id 与控件关联\n- 错误信息用 FieldError，与控件 aria-describedby 关联\n\n## 响应式\n\n- 窄屏下标签在控件上方；宽屏可用横向布局\n\n## 相关组件\n\n- `input`\n- `select`\n- `checkbox`\n",
-			"rules": "# Field 设计规范\n\n- 每个输入控件都放在 `Field.Field` 中，并用 `Field.Label for={id}` 关联控件的 `id`；不要只靠 `placeholder` 说明用途（检查规则 `valar/input-label`）。\n- 补充说明用 `Field.Description`，校验错误用 `Field.Error`，不要用自定义颜色的文字代替。\n- 一组相关字段用 `Field.Set` + `Field.Legend` 包起来，多组之间用 `Field.Separator`。\n- 开关、复选框等横向排列时用 `<Field.Field orientation=\"horizontal\">`，不要手写 flex 布局。\n- 表单状态与校验交给 Form（Formsnap/Superforms）；Field 只负责布局和语义。\n"
+			"rules": "# Field 设计规范\n\n- 设置行用 `appearance=\"settings\"`，16 px 行内边距、12 px 控件间距、3 px 标签与说明间距。需要窄屏堆叠时，放在 `Field.Group` 中并用 `orientation=\"responsive\"`。\n- 每个输入控件都放在 `Field.Field` 中，并用 `Field.Label for={id}` 关联控件的 `id`；不要只靠 `placeholder` 说明用途（检查规则 `valar/input-label`）。\n- 补充说明用 `Field.Description`，校验错误用 `Field.Error`，在控件上用 `aria-describedby` 关联它们。错误列表会省略空白及重复消息。必填状态由控件的 `required` 表达，可搭配 `Field.Label required` 的标记。\n- 只有说明或权限信息的设置行用 `Field.Title` 与可见说明。原生字段组的禁用语义用 `Field.Set disabled`。\n- 一组相关字段用 `Field.Set` + `Field.Legend` 包起来，多组之间用 `Field.Separator`。\n- 开关、复选框等横向排列时用 `<Field.Field orientation=\"horizontal\">`，不要手写 flex 布局。\n- 表单状态与校验交给 Form（Formsnap/Superforms）；Field 只负责布局和语义。\n"
 		},
 		{
 			"name": "form",
@@ -1528,7 +1630,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/hover-card",
 			"install": "pnpm exec valar-svelte add hover-card",
 			"markdown": "# Hover Card 悬停卡片\n\n鼠标悬停在链接上时浮出的预览卡片，展示链接背后的内容摘要。\n\n- 分类：弹层\n- 关键词：悬停卡片、hover card、链接预览、link preview、资料卡\n- 安装：`pnpm exec valar-svelte add hover-card`\n\n## 何时使用\n\n- 悬停链接时预览其指向的内容，如用户资料、页面摘要\n\n## 何时不用\n\n- 简短的文字提示：改用 `tooltip`\n- 点击打开，或卡片内有需要操作的控件：改用 `popover`\n- 触屏为主的场景中唯一的信息入口：改用 `popover`\n\n## 无障碍\n\n- 只是给能看见、用鼠标的用户的补充预览，链接本身必须可访问，卡片内容不能是获取信息的唯一途径\n- 用 openDelay、closeDelay 控制开合延迟，避免划过时误触发\n\n## 响应式\n\n- 触屏设备没有悬停，卡片不会出现，需保证点击链接仍能到达完整内容\n- 默认显示在下方（side=bottom），空间不足时自动翻转\n\n## 相关组件\n\n- `tooltip`\n- `popover`\n- `avatar`\n",
-			"rules": "# Hover Card 设计规范\n\n- 只用于链接的补充预览，如用户名、仓库、文章链接；可操作的内容用 Popover，简短说明用 Tooltip。\n- `HoverCard.Trigger` 渲染为链接，应设 `href` 指向完整内容：触屏设备没有悬停，用户点击后要能直接到达预览中的信息。\n- 预览中不要放只能在这里完成的操作；键盘聚焦链接时也会打开预览，但内容不在 Tab 顺序中，读屏用户可能读不到。\n- 位置用 `side`（默认 `bottom`）、`align`、`sideOffset`；打开和关闭延迟用 `openDelay`、`closeDelay`，同一项目内保持一致。\n"
+			"rules": "# Hover Card 设计规范\n\n- 只用于链接的补充预览，如用户名、仓库、文章链接；可操作的内容用 Popover，简短说明用 Tooltip。\n- `HoverCard.Trigger` 渲染为链接，应设 `href` 指向完整内容：触屏设备没有悬停，用户点击后要能直接到达预览中的信息。\n- 预览中不要放只能在这里完成的操作；键盘聚焦链接时也会打开预览，但内容不在 Tab 顺序中，读屏用户可能读不到。\n- 位置用 `side`（默认 `bottom`）、`align`、`sideOffset`；打开和关闭延迟用 `openDelay`、`closeDelay`，同一项目内保持一致。\n- 卡片与视口边缘至少留 8 px；长内容在卡片内滚动。资料卡用 `appearance=\"profile\"`：头像 32 px，状态、时间和团队信息放在分隔线下方。\n"
 		},
 		{
 			"name": "input",
@@ -1583,7 +1685,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/input",
 			"install": "pnpm exec valar-svelte add input",
 			"markdown": "# Input 输入框\n\n单行文本输入，用于姓名、邮箱、搜索词等短文本。\n\n- 分类：表单\n- 关键词：输入框、input、文本框、表单、text field\n- 安装：`pnpm exec valar-svelte add input`\n\n## 何时使用\n\n- 输入一行短文本\n- 邮箱、密码、数字等带 type 的输入\n\n## 何时不用\n\n- 多行长文本：改用 `textarea`\n- 从固定选项中选择：改用 `select`\n- 调整一个数值范围：改用 `slider-field`\n\n## 无障碍\n\n- 必须有可见标签（用 Field 包裹）\n- 错误信息用 aria-invalid 并关联说明文字\n\n## 响应式\n\n- 窄屏下占满容器宽度\n- 移动端设置合适的 type 与 inputmode 以弹出正确键盘\n\n## 相关组件\n\n- `field`\n- `textarea`\n- `input-group`\n",
-			"rules": "# Input 设计规范\n\n- 每个 Input 都要有可见标签：放在 `Field.Field` 中，用 `Field.Label for={id}` 关联 Input 的 `id`；`placeholder` 只写示例，不能代替标签（检查规则 `valar/input-label`）。\n- 错误状态用 `aria-invalid=\"true\"` 加 `Field.Error`，组件已按 `aria-invalid` 显示错误边框和焦点环；不要用 `class` 直接改成红色边框（检查规则 `valar/invalid-via-aria`）。\n- 按内容设置 `type`、`inputmode` 和 `autocomplete`（如 `type=\"email\"`、`autocomplete=\"email\"`），移动端才会弹出正确的键盘并允许自动填充。\n- 有范围、步长或需要按地区格式化的数字用 Number Field，不要用 `type=\"number\"`；多行文本用 Textarea；从固定选项中选择用 Select。\n- 选择文件用 `<Input type=\"file\" bind:files />`，不要自己写原生 `<input>`（检查规则 `valar/use-form-component`）。\n- 高度、圆角、内边距跟随组件样式和组件参数（与 Button 同一套尺寸、圆角档位）；不要用 `class` 改 `rounded-*`、`px-*`。必须与同一行的小号按钮对齐时，只用与该按钮相同的高度档位类，不写像素值。\n- 前后要加图标、文字或按钮时用 Input Group，不要用绝对定位把图标压在 Input 上。\n"
+			"rules": "# Input 设计规范\n\n- 每个 Input 都要有可见标签：放在 `Field.Field` 中，用 `Field.Label for={id}` 关联 Input 的 `id`；`placeholder` 只写示例，不能代替标签（检查规则 `valar/input-label`）。\n- 默认高度 32 px，圆角使用 `md` 档（默认主题为 8 px），水平留白 12 px。Linear Profile 实测浅色底白色、边框 `lch(86.5% 0 282)`，深色底 `lch(9.232% .85 272)`、边框 `lch(30.833% 1.93 272)`。浅深主题的声明描边均为 0.5 px。桌面正文为 13 px，窄屏为 16 px。\n- 点击或用 Tab 聚焦时，沿边框内侧绘制 1 px 蓝紫描边。边框用同主题的聚焦色阶，焦点即时出现。用 `readonly` 允许聚焦、选择、复制及表单提交，用 `disabled` 禁止编辑并跳过 Tab 和表单提交。\n- 使用原生 `required`、`maxlength` 和类型约束。错误状态用 `aria-invalid=\"true\"` 加 `Field.Error`，用 `aria-describedby` 关联错误文字。普通错误有危险色边框，焦点进入时以内侧描边区分。值修正后移除错误状态和对应的引用（检查规则 `valar/invalid-via-aria`）。\n- Linear 新建团队用 32 px 高的标识符输入框搭配左侧标题和说明。上限 7 字符、转为大写并更新示例前缀是该表单的规则，由调用方实现。\n- 按内容设置 `type`、`inputmode` 和 `autocomplete`（如 `type=\"email\"`、`autocomplete=\"email\"`），移动端才会弹出正确的键盘并允许自动填充。\n- 有范围、步长或需要按地区格式化的数字用 Number Field，不要用 `type=\"number\"`；多行文本用 Textarea；从固定选项中选择用 Select。\n- 选择文件用 `<Input type=\"file\" bind:files />`，不要自己写原生 `<input>`（检查规则 `valar/use-form-component`）。\n- 高度、圆角、内边距跟随组件样式和组件参数（与 Button 同一套尺寸、圆角档位）；不要用 `class` 改 `rounded-*`、`px-*`。必须与同一行的小号按钮对齐时，只用与该按钮相同的高度档位类，不写像素值。\n- 前后要加图标、文字或按钮时用 Input Group，不要用绝对定位把图标压在 Input 上。\n"
 		},
 		{
 			"name": "input-group",
@@ -1640,7 +1742,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/input-group",
 			"install": "pnpm exec valar-svelte add input-group",
 			"markdown": "# Input Group 输入组\n\n给输入框或多行文本框加上图标、文字、按钮等前后缀内容。\n\n- 分类：表单\n- 关键词：输入组、input group、前缀、后缀、addon、搜索框\n- 安装：`pnpm exec valar-svelte add input-group`\n\n## 何时使用\n\n- 输入框带前后缀图标、单位、按钮或快捷键提示，如搜索框、复制链接\n- 多行文本框带底部操作栏（InputGroup.Textarea）\n\n## 何时不用\n\n- 没有附加内容的普通输入：改用 `input`\n- 几个按钮拼在一起：改用 `button-group`\n- 标签、说明和错误信息：改用 `field`\n\n## 无障碍\n\n- InputGroup.Addon 在 DOM 中放在 Input／Textarea 之后，用 align 调整视觉位置，保证焦点顺序\n- 只有图标的 InputGroup.Button 要加 aria-label\n- 仍需用 Field 提供可见标签\n\n## 响应式\n\n- 整组占满容器宽度，附加内容过多会在窄屏挤压输入区\n- align=block-start／block-end 把附加内容放到输入区上方或下方\n\n## 相关组件\n\n- `input`\n- `textarea`\n- `button-group`\n",
-			"rules": "# Input Group 设计规范\n\n- 输入框前后需要图标、文字、按钮或快捷键提示时，用 `InputGroup.Root` 组合，不要用绝对定位把元素压在 Input 上。\n- 框内的输入控件必须用 `InputGroup.Input` 或 `InputGroup.Textarea`，不要放普通 Input；组合的边框、焦点环和错误状态都按这两个控件计算。\n- 输入控件同样需要标签：设 `id` 并用 `Field.Label for={id}` 关联，或提供 `aria-label`；搜索框也不例外（检查规则 `valar/input-label`）。\n- 附加内容放进 `InputGroup.Addon`，用 `align`（`inline-start`、`inline-end`、`block-start`、`block-end`）定位；纯文字用 `InputGroup.Text`。\n- 框内按钮用 `InputGroup.Button`，尺寸只用它的 `size`（`xs`、`sm`、`icon-xs`、`icon-sm`）；只有图标的按钮要有 `aria-label`（检查规则 `valar/button-size-via-prop`、`valar/icon-button-label`）。\n- 错误状态设在输入控件上（`aria-invalid=\"true\"`），整个组合会显示错误边框。\n- 输入组合与按钮使用样式自带的圆角。需要胶囊按钮时显式设置 `shape=\"pill\"`。\n"
+			"rules": "# Input Group 设计规范\n\n- 输入框前后需要图标、文字、按钮或快捷键提示时，用 `InputGroup.Root` 组合，不要用绝对定位把元素压在 Input 上。\n- 框内用 `InputGroup.Input` 或 `InputGroup.Textarea`，由组合统一绘制边框、焦点和错误反馈。使用自定义输入时，把 `data-slot=\"input-group-control\"` 设置在实际可聚焦的控件上。\n- 输入控件同样需要标签：设 `id` 并用 `Field.Label for={id}` 关联，或提供 `aria-label`；搜索框也不例外（检查规则 `valar/input-label`）。\n- 附加内容放进 `InputGroup.Addon`，用 `align`（`inline-start`、`inline-end`、`block-start`、`block-end`）定位，纯文字用 `InputGroup.Text`。点击被动内容会将焦点移到组内输入或多行输入，按钮、链接和标签继续执行各自的动作。\n- 设置侧栏的单行搜索使用 `appearance=\"settings-search\"`。外壳高 28 px、圆角 8 px，前导图标 16 px，清除按钮 22 px，内含 12 px 图标。保留末尾空间，让清除按钮的出现和隐藏保持文字对齐。清除和 Escape 重置查询并把焦点留在搜索框，聚焦提示画在组合边界内。\n- 新建团队的「图标与名称」使用 `appearance=\"settings-name\"`。组高 32 px、圆角 8 px，起始侧是 32 px 宽的图标按钮和细分隔线。字段与图标按钮各自响应键盘焦点，焦点提示分别留在各自边界内。\n- 框内按钮用 `InputGroup.Button`，尺寸只用它的 `size`（`xs`、`sm`、`icon-xs`、`icon-sm`）；只有图标的按钮要有 `aria-label`（检查规则 `valar/button-size-via-prop`、`valar/icon-button-label`）。\n- 错误状态设在输入控件上（`aria-invalid=\"true\"`），组合显示错误边框，并用 `aria-describedby` 关联错误说明。禁用输入控件与禁用附加操作是两种状态，后者仍允许编辑。\n- 异步检查期间在组合上设置 `aria-busy`，在附加区显示加载图标，使用状态文字说明结果。多行输入的底部附加区可以放字数说明和提交动作。\n- 普通单行组合与 Input 使用同档的 32 px 高度和 8 px 圆角。组合内的文字按钮和图标按钮分别按 xs／sm 取 24／28 px 高。需要胶囊按钮时显式设置 `shape=\"pill\"`。\n"
 		},
 		{
 			"name": "input-otp",
@@ -1695,6 +1797,53 @@
 			"rules": "# Input OTP 设计规范\n\n- 只用于验证码、一次性密码等固定位数的输入；其他文本用 Input。\n- 显式设置 `maxlength`（默认值未必等于你的验证码位数），`InputOTP.Slot` 的数量与之相同；只允许数字时设 `pattern={REGEXP_ONLY_DIGITS}`（从 `bits-ui` 导入）。\n- 组件内有一个真实的输入框：用 `aria-label` 命名，或用 `inputId` 设它的 `id` 后由 `Field.Label for` 关联；在 `Field.Description` 中说明验证码发到了哪里。\n- 保留默认的 `autocomplete=\"one-time-code\"`，移动端才能从短信自动填入；粘贴整段验证码会自动拆分到各格，不要另做处理。\n- 分组用 `InputOTP.Group`，组间用 `InputOTP.Separator`；输满后用 `onComplete` 自动提交时，提交期间设 `disabled`。\n- 错误时给每个 `InputOTP.Slot` 设 `aria-invalid`，各格才会显示错误状态；同时用 `Field.Error` 说明原因。\n"
 		},
 		{
+			"name": "issue-composer",
+			"type": "registry:ui",
+			"title": "Issue Composer 问题编辑弹窗",
+			"description": "紧凑和展开两种布局的创建表单，包含标题、描述、可搜索的状态与优先级选择，以及连续创建。",
+			"categories": [
+				"弹层"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"新建问题",
+						"issue",
+						"composer",
+						"展开编辑",
+						"连续创建"
+					],
+					"whenToUse": [
+						"从问题列表、空状态或全局入口创建工作项"
+					],
+					"whenNotToUse": [
+						{
+							"case": "字段与问题创建无关的表单",
+							"use": "dialog"
+						}
+					],
+					"accessibility": [
+						"打开聚焦标题，关闭恢复到触发器",
+						"状态和优先级可用键盘选择，空标题错误可被读出"
+					],
+					"responsive": [
+						"窄屏保留 12 px 侧边间距，长描述在编辑区滚动"
+					],
+					"related": [
+						"dialog",
+						"command",
+						"popover",
+						"switch",
+						"textarea"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/issue-composer",
+			"install": "pnpm exec valar-svelte add issue-composer",
+			"markdown": "# Issue Composer 问题编辑弹窗\n\n紧凑和展开两种布局的创建表单，包含标题、描述、可搜索的状态与优先级选择，以及连续创建。\n\n- 分类：弹层\n- 关键词：新建问题、issue、composer、展开编辑、连续创建\n- 安装：`pnpm exec valar-svelte add issue-composer`\n\n## 何时使用\n\n- 从问题列表、空状态或全局入口创建工作项\n\n## 何时不用\n\n- 字段与问题创建无关的表单：改用 `dialog`\n\n## 无障碍\n\n- 打开聚焦标题，关闭恢复到触发器\n- 状态和优先级可用键盘选择，空标题错误可被读出\n\n## 响应式\n\n- 窄屏保留 12 px 侧边间距，长描述在编辑区滚动\n\n## 相关组件\n\n- `dialog`\n- `command`\n- `popover`\n- `switch`\n- `textarea`\n",
+			"rules": "# Issue Composer\n\n用于从问题列表、空状态或全局入口创建问题。标题和描述纵向排列，状态与优先级放在编辑区下方。底部左侧添加附件，右侧依次放置继续创建开关和主操作。紧凑和展开模式使用同一份草稿。\n\n- 打开时聚焦标题。关闭后通过 `returnFocus` 回到触发器。切换大小时保持表单值和焦点所在的控件。\n- 状态和优先级菜单支持搜索、方向键、Enter、数字快捷键与 Escape。输入搜索词时，数字用于搜索。\n- 保留空白表单的提交入口。提交空标题时聚焦标题并读出错误。继续创建保留状态和优先级，并清空标题、描述与附件。\n- 通过 `onCreate` 交付表单和本地文件。预览用多行纯文本描述，持久化和上传由宿主处理。\n- 颜色、尺寸和动画作用于弹窗自身。窄屏保留 12 px 侧边间距，减少动态效果时取消尺寸过渡。\n"
+		},
+		{
 			"name": "item",
 			"type": "registry:ui",
 			"title": "Item 内容项",
@@ -1747,7 +1896,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/item",
 			"install": "pnpm exec valar-svelte add item",
 			"markdown": "# Item 内容项\n\n显示媒体、标题、说明和操作的内容行。\n\n- 分类：展示\n- 关键词：内容项、item、列表项、list item、行\n- 安装：`pnpm exec valar-svelte add item`\n\n## 何时使用\n\n- 显示带图标或头像、标题、说明和操作的内容行\n- 用 Item.Group 组成列表\n\n## 何时不用\n\n- 表单控件：改用 `field`\n- 大块的分组内容：改用 `card`\n- 行列结构化数据：改用 `table`\n\n## 无障碍\n\n- 整行可点击时用 child 渲染为真实链接或按钮\n- 只有图标的操作要加 aria-label\n\n## 响应式\n\n- size（default、sm、xs）适应紧凑空间\n- 窄屏下操作区可换行\n\n## 相关组件\n\n- `card`\n- `field`\n- `avatar`\n",
-			"rules": "# Item 设计规范\n\n- 用于列表中的一行内容（设置项、文件、成员）：媒体放 `Item.Media`（`variant` 为 `icon` 或 `image`），文字放 `Item.Content`（`Item.Title`、`Item.Description`），操作放 `Item.Actions`。\n- 样式只用 `variant`（`default`、`outline`、`muted`）和 `size`（`default`、`sm`、`xs`），不要用 `class` 改内边距和圆角。\n- 整行可点击时用 `child` snippet 把 `props` 传给 `<a href>` 渲染为链接，不要给 div 加 `onclick`；行内还有其他按钮时不要把整行做成链接，避免嵌套交互元素。\n- 多个 Item 放进 `Item.Group`：它渲染 `role=\"list\"`，组内每个 Item 要设 `role=\"listitem\"`；行之间需要分隔线时用 `Item.Separator`。\n"
+			"rules": "# Item 设计规范\n\n- 用于列表中的一行内容（设置项、文件、成员）：媒体放 `Item.Media`（`variant` 为 `icon` 或 `image`），文字放 `Item.Content`（`Item.Title`、`Item.Description`），操作放 `Item.Actions`。\n- 常规内容行通过 `variant`（`default`、`outline`、`muted`）和 `size`（`default`、`sm`、`xs`）选择样式与密度。\n- 问题列表用 `appearance=\"issue-row\"`。优先级在 `Item.Media`，编号、状态、标题在 `Item.Content`，日期在 `Item.Actions`。使用可访问文本表达图标所代表的优先级与状态。\n- 整行可点击时用 `child` snippet 把 `props` 传给 `<a href>` 渲染为链接，不要给 div 加 `onclick`；行内还有其他按钮时不要把整行做成链接，避免嵌套交互元素。\n- 多个 Item 放进 `Item.Group`：它渲染 `role=\"list\"`，组内每个 Item 要设 `role=\"listitem\"`；行之间需要分隔线时用 `Item.Separator`。\n- 问题行的状态、编号和日期保留在各自区域，空间不足时截断标题。用 `aria-current` 标明当前导航项。不可打开的行使用静态内容和 `aria-disabled`。\n"
 		},
 		{
 			"name": "kbd",
@@ -1795,7 +1944,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/kbd",
 			"install": "pnpm exec valar-svelte add kbd",
 			"markdown": "# Kbd 按键\n\n显示键盘按键或快捷键。\n\n- 分类：展示\n- 关键词：按键、kbd、快捷键、keyboard、shortcut\n- 安装：`pnpm exec valar-svelte add kbd`\n\n## 何时使用\n\n- 在按钮、提示、输入组中显示快捷键，如 ⌘K\n\n## 何时不用\n\n- 代码片段：改用 `code-block`\n- 状态标签：改用 `badge`\n\n## 无障碍\n\n- 渲染为 kbd 元素；⌘ 等符号读屏可能读不出，需配合文字说明\n\n## 响应式\n\n- 触屏设备上快捷键无意义，窄屏可隐藏\n\n## 相关组件\n\n- `button`\n- `tooltip`\n- `command`\n",
-			"rules": "# Kbd 设计规范\n\n- 只用于显示键盘按键或快捷键；组合键用 `Kbd.Group` 包住多个 `Kbd`，不要写成一整段文字。\n- 显示的快捷键必须真正可用；区分平台时按 macOS（⌘、⌥）和其他系统（Ctrl、Alt）分别显示。\n"
+			"rules": "# Kbd 设计规范\n\n- 只用于显示键盘按键或快捷键；组合键用 `Kbd.Group` 包住多个 `Kbd`，不要写成一整段文字。\n- 显示的快捷键必须真正可用；区分平台时按 macOS（⌘、⌥）和其他系统（Ctrl、Alt）分别显示。\n- 默认键帽参考 Linear 快捷键面板。高 21 px、最小宽度 20 px、水平留白 4 px、圆角 3 px，组合键间隔 3 px。透明底，浅深主题使用各自的文字和细描边。\n- 菜单项尾部使用 `appearance=\"inline\"`，字号 11 px，行高 12.1 px，字重 500。没有描边和内边距。\n- 工作区工具提示使用 `Tooltip.Hint`，内置 `appearance=\"compact\"` 键帽。高 17.1 px、最小宽度 18 px、圆角 4 px、水平留白 2 px，字重 400。\n- 键帽是静态提示，随相邻的动作说明一起展示。通过带标签的动作响应按键，键帽本身无需获取焦点。\n"
 		},
 		{
 			"name": "label",
@@ -1839,7 +1988,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/label",
 			"install": "pnpm exec valar-svelte add label",
 			"markdown": "# Label 标签\n\n与控件关联的无障碍文字标签。\n\n- 分类：表单\n- 关键词：标签、label、表单标签、字段名\n- 安装：`pnpm exec valar-svelte add label`\n\n## 何时使用\n\n- 为单个控件提供可见、可点击的标签\n\n## 何时不用\n\n- 完整的表单字段（标签、说明、错误）：改用 `field`\n\n## 无障碍\n\n- 用 for 关联控件的 id\n- 不要用 placeholder 代替标签\n\n## 响应式\n\n- 窄屏下放在控件上方\n\n## 相关组件\n\n- `field`\n- `input`\n- `checkbox`\n",
-			"rules": "# Label 设计规范\n\n- 表单里优先用 `Field.Label`，它已包含 Label；只在 Field 之外的简单场景直接用 Label。\n- 必须用 `for` 指向控件的 `id`，或把控件包在 Label 里，点击标签才能聚焦或切换控件。\n- 标签写控件的用途（“邮箱”），不要写“请输入”；必填用文字或 `aria-required` 表达，不要只靠颜色或星号。\n"
+			"rules": "# Label 设计规范\n\n- 默认标签采用 Linear 设置表单取样的 13 px／500、常规行高。浅色文字 `lch(10% 0 282)`，深色文字 `lch(100% 0 272)`。独立设置行可用 `appearance=\"settings\"`。\n- 表单里优先用 `Field.Label`，它已包含 Label；只在 Field 之外的简单场景直接用 Label。\n- 必须用 `for` 指向控件的 `id`，或把控件包在 Label 里，点击标签才能聚焦或切换控件。\n- 标签写控件的用途。为控件设置原生 `required` 或适用的 `aria-required`。可同时给 Label 传 `required` 显示星号。受限设置项的标题用 Field.Title。独立禁用控件可在标签上设 `data-disabled=\"true\"`，并在控件本身设 `disabled`。\n"
 		},
 		{
 			"name": "marker",
@@ -2327,7 +2476,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/popover",
 			"install": "pnpm exec valar-svelte add popover",
 			"markdown": "# Popover 弹出层\n\n点击触发的小浮层，展示附加内容或简短表单。\n\n- 分类：弹层\n- 关键词：弹出层、popover、浮层、气泡\n- 安装：`pnpm exec valar-svelte add popover`\n\n## 何时使用\n\n- 点击后显示少量内容或控件\n\n## 何时不用\n\n- 悬停提示文字：改用 `tooltip`\n- 操作菜单：改用 `dropdown-menu`\n- 复杂流程：改用 `dialog`\n\n## 无障碍\n\n- 由按钮触发，Esc 关闭并归还焦点\n\n## 响应式\n\n- 窄屏下自动翻转位置并保持在视口内\n\n## 相关组件\n\n- `tooltip`\n- `dropdown-menu`\n- `hover-card`\n",
-			"rules": "# Popover 设计规范\n\n- 用于点击后出现、可以操作的轻量面板，如小表单、筛选、选择器；纯文字提示用 Tooltip，一组操作命令用 Dropdown Menu，较长流程用 Dialog。\n- 打开它的按钮通过 `Popover.Trigger` 的 `{#snippet child({ props })}` 渲染 Button（检查规则 `valar/trigger-child-snippet`）。\n- 面板有标题时用 `Popover.Header`、`Popover.Title`、`Popover.Description`，不要自己写加粗文字。\n- 位置用 `side`、`align`、`sideOffset` 属性；面板会自动翻转并保持在视口内，不要用 `class` 写定位。\n- 内容组件自带内边距时（如 Command、Calendar）才给 `Popover.Content` 加 `p-0`；需要与触发按钮同宽时用 `w-(--bits-popover-anchor-width)`，其他宽度用 `w-*` 档位，不写像素值。\n- 搜索选择（Combobox）用 Popover + Command，日期选择用 Popover + Calendar，照对应文档的组合写法，不要另做一个下拉组件。\n- 面板里的操作完成后需要关闭时，用 `bind:open` 设为 `false` 或用 `Popover.Close`；关闭后焦点回到触发按钮。\n"
+			"rules": "# Popover 设计规范\n\n- 用于点击后出现、可以操作的轻量面板，如小表单、筛选、选择器；纯文字提示用 Tooltip，一组操作命令用 Dropdown Menu，较长流程用 Dialog。\n- 打开它的按钮通过 `Popover.Trigger` 的 `{#snippet child({ props })}` 渲染 Button（检查规则 `valar/trigger-child-snippet`）。\n- 面板有标题时用 `Popover.Header`、`Popover.Title`、`Popover.Description`，不要自己写加粗文字。\n- 位置用 `side`、`align`、`sideOffset` 属性；面板会自动翻转并保持在视口内，不要用 `class` 写定位。\n- 工具栏的分组设置用 `appearance=\"options\"`，由内容组提供 8 × 16 px 内边距，32 px 行容纳紧凑选择器、复选框和简短标签。组之间用 Separator。面板按锚点和视口缩小，长内容在面板内滚动。\n- 内容组件自带内边距时（如 Command、Calendar）可给默认 `Popover.Content` 加 `p-0`；需要与触发按钮同宽时用 `w-(--bits-popover-anchor-width)`，其他宽度用已有尺寸档位。\n- 搜索选择（Combobox）用 Popover + Command，日期选择用 Popover + Calendar，照对应文档的组合写法，不要另做一个下拉组件。\n- 面板里的操作完成后需要关闭时，用 `bind:open` 设为 `false` 或用 `Popover.Close`；关闭后焦点回到触发按钮。\n- 面板默认使用 12 px 圆角、实色底和 10 px 内边距。工作区筛选、属性和对话历史可用 `appearance=\"surface\"` 应用工作区的 Command 行密度。Command 搜索输入在打开时聚焦，关闭后回到触发器。\n"
 		},
 		{
 			"name": "progress",
@@ -2380,7 +2529,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/progress",
 			"install": "pnpm exec valar-svelte add progress",
 			"markdown": "# Progress 进度条\n\n显示任务的完成进度。\n\n- 分类：反馈\n- 关键词：进度条、progress、进度、完成度、上传进度\n- 安装：`pnpm exec valar-svelte add progress`\n\n## 何时使用\n\n- 显示可度量的任务完成度，如上传、导入\n\n## 何时不用\n\n- 无法估计进度的等待：改用 `spinner`\n- 内容加载占位：改用 `skeleton`\n- 用户调整数值：改用 `slider`\n\n## 无障碍\n\n- 用 Field 提供标签或加 aria-label，让进度条有名称\n- 完成度要能用文字读到，如“已上传 60%”\n\n## 响应式\n\n- 占满容器宽度\n\n## 相关组件\n\n- `spinner`\n- `skeleton`\n- `slider`\n",
-			"rules": "# Progress 设计规范\n\n- 用于可以计算进度的任务（上传、导入）；无法估计进度时用 Spinner。\n- 用 `value` 和 `max` 表达进度，进度条必须有名称：传 `aria-label`，或用 `aria-labelledby` 指向旁边的说明文字。\n- 旁边用文字显示百分比或“3／10”等具体进度，不要只靠条的长度。\n- 高度和圆角跟随组件样式，不要用 `class` 改。\n"
+			"rules": "# Progress 设计规范\n\n- 用于上传、导入等异步任务。已知范围时用 `value`、`min` 和 `max` 表达进度。任务已经开始且总量仍未知时传 `value={null}`。\n- 通过 `aria-label` 提供名称，或用 `aria-labelledby` 指向旁边的说明文字。\n- 旁边用文字显示百分比或“3／10”等具体进度，不要只靠条的长度。\n- 高度和圆角跟随组件样式，不要用 `class` 改。\n- Projects 列表的只读百分比使用 `appearance=\"project\"`。\n"
 		},
 		{
 			"name": "questionnaire",
@@ -2538,7 +2687,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/range-calendar",
 			"install": "pnpm exec valar-svelte add range-calendar",
 			"markdown": "# Range Calendar 日期范围\n\n在月历上选择开始和结束日期。\n\n- 分类：表单\n- 关键词：日期范围、range calendar、起止日期、date range、时间段\n- 安装：`pnpm exec valar-svelte add range-calendar`\n\n## 何时使用\n\n- 选择预订、报表等的起止日期\n\n## 何时不用\n\n- 只选一个日期：改用 `calendar`\n- 页面空间有限，点击后再弹出：改用 `popover`\n\n## 无障碍\n\n- 保留 Bits UI 的键盘操作（方向键移动日期、回车选择起止）\n- locale 默认 zh-CN，其他语言要设置 locale\n\n## 响应式\n\n- 显示多个月份时窄屏应减少月数\n- 用 --cell-size 控制格子大小，可按断点设置不同值\n\n## 相关组件\n\n- `calendar`\n- `popover`\n- `input`\n",
-			"rules": "# Range Calendar 设计规范\n\n- 只用于选择起止日期区间；选择单个或多个独立日期用 Calendar。\n- 值是 `{ start, end }`，两端都是 `@internationalized/date` 的日期对象；用 `bind:value` 绑定，处理时注意用户只选了起点（`end` 为空）的状态。\n- 默认 `locale=\"zh-CN\"`；其他语言的界面传对应 `locale`；需要周一开始时设 `weekStartsOn={1}`。\n- 可选范围用 `minValue`、`maxValue`，不可选的日期用 `isDateDisabled`；区间较长时用 `numberOfMonths={2}` 并排显示两个月。\n- 放在 Popover 中作为日期区间选择器时，触发按钮显示已选区间，未选完时提示“选择结束日期”。\n- `captionLayout=\"dropdown\"` 使用原有月份和年份选择器。用 `minValue`、`maxValue` 或 `years` 限定范围。\n- 使用样式自带的格子尺寸。需要调整时通过 `--cell-size` 显式设置。\n- 区间起止日期是实心主色底、反色数字，不要加会改文字颜色的悬停样式，否则鼠标停在上面会变成黑块。\n"
+			"rules": "# Range Calendar 设计规范\n\n- 只用于选择起止日期区间；选择单个或多个独立日期用 Calendar。\n- 值是 `{ start, end }`，两端都是 `@internationalized/date` 的日期对象；用 `bind:value` 绑定，处理时注意用户只选了起点（`end` 为空）的状态。\n- 默认 `locale=\"zh-CN\"`；其他语言的界面传对应 `locale`；需要周一开始时设 `weekStartsOn={1}`。\n- 可选范围用 `minValue`、`maxValue`，不可选的日期用 `isDateDisabled`；区间较长时用 `numberOfMonths={2}` 并排显示两个月。\n- 放在 Popover 中作为日期区间选择器时，触发按钮显示已选区间，未选完时提示“选择结束日期”。\n- `captionLayout=\"dropdown\"` 复用 Calendar 的 Valar Select，长列表在面板内滚动。月历内容宽度小于 275 px 时，年月选择器排在翻月按钮下方，留出 8 px 间距。日期仍与星期按七列对齐。用 `minValue`、`maxValue` 或 `years` 限定范围。\n- 使用样式自带的格子尺寸。需要调整时通过 `--cell-size` 显式设置。\n- 区间起止日期是实心主色底、反色数字，不要加会改文字颜色的悬停样式，否则鼠标停在上面会变成黑块。\n\n- 年月选择器与翻月箭头至少留 8 px。选择器所在月份列较窄时，箭头与年月分行。嵌入卡片时，为卡片提供受父容器约束的宽度，让日期和星期列一起缩小。\n"
 		},
 		{
 			"name": "resizable",
@@ -2587,7 +2736,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/resizable",
 			"install": "pnpm exec valar-svelte add resizable",
 			"markdown": "# Resizable 可调分栏\n\n可拖动调整大小的面板分栏，基于 PaneForge。\n\n- 分类：展示\n- 关键词：可调分栏、resizable、分栏、split pane、拖动调整\n- 安装：`pnpm exec valar-svelte add resizable`\n\n## 何时使用\n\n- 用户可拖动调整大小的分栏，如编辑器、三栏邮件\n\n## 何时不用\n\n- 应用的侧边导航：改用 `sidebar`\n- 固定比例的内容：改用 `aspect-ratio`\n\n## 无障碍\n\n- 分隔把手可键盘聚焦并用方向键调整\n- withHandle 显示可见把手，便于发现\n\n## 响应式\n\n- 窄屏不适合多栏拖动，改为单栏或 direction=vertical\n\n## 相关组件\n\n- `sidebar`\n- `scroll-area`\n- `separator`\n",
-			"rules": "# Resizable 设计规范\n\n- 结构为 `Resizable.PaneGroup`（`direction` 设 `horizontal` 或 `vertical`）> `Resizable.Pane` 和 `Resizable.Handle`；不要自己写拖拽调整宽度。\n- 每个 Pane 设 `defaultSize`，并用 `minSize` 保证内容不会被拖到不可用；可以收起的面板设 `collapsible`。\n- 需要让拖动结果在刷新后保留时，给 PaneGroup 设唯一的 `autoSaveId`。\n- 分隔条可以用键盘方向键调整，需要明显的拖拽提示时设 `withHandle`；窄屏下考虑改为上下堆叠或用 Tabs 切换。\n"
+			"rules": "# Resizable 设计规范\n\n- 结构为 `Resizable.PaneGroup`（`direction` 设 `horizontal` 或 `vertical`）> `Resizable.Pane` 和 `Resizable.Handle`；不要自己写拖拽调整宽度。\n- 每个 Pane 设 `defaultSize`，并用 `minSize` 保证内容不会被拖到不可用；可以收起的面板设 `collapsible`。\n- 需要让拖动结果在刷新后保留时，给 PaneGroup 设唯一的 `autoSaveId`。\n- 分隔条可以用键盘方向键调整，需要明显的拖拽提示时设 `withHandle`；窄屏下考虑改为上下堆叠或用 Tabs 切换。\n- 工作区的列表与详情使用 `Resizable.Handle appearance=\"workspace\"`，两侧 Pane 保留自身的布局边界。悬停和拖动显示 0.5 px 线，键盘聚焦显示 1 px 强调线。给分隔线添加说明其调整对象的 `aria-label`，左右分栏的分隔线设置 `aria-orientation=\"vertical\"`。\n"
 		},
 		{
 			"name": "ruler-slider",
@@ -2679,7 +2828,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/scroll-area",
 			"install": "pnpm exec valar-svelte add scroll-area",
 			"markdown": "# Scroll Area 滚动区域\n\n固定尺寸区域内的滚动，各浏览器滚动条样式一致。\n\n- 分类：展示\n- 关键词：滚动区域、scroll area、滚动条、scrollbar、溢出\n- 安装：`pnpm exec valar-svelte add scroll-area`\n\n## 何时使用\n\n- 固定高度或宽度的区域内滚动，需要统一的滚动条外观\n- orientation=horizontal 横向滚动\n\n## 何时不用\n\n- 聊天记录：改用 `message-scroller`\n- 逐项滑动浏览的内容：改用 `carousel`\n\n## 无障碍\n\n- 保留原生滚动和键盘滚动\n- 区域内没有可聚焦元素时，确保键盘用户仍能滚动查看内容\n\n## 响应式\n\n- 必须给出高度或宽度，否则不会滚动\n\n## 相关组件\n\n- `message-scroller`\n- `carousel`\n- `table`\n",
-			"rules": "# Scroll Area 设计规范\n\n- 用于固定区域内的自定义滚动条（侧栏列表、弹层中的长内容）；整页滚动保持浏览器原生滚动。\n- Scroll Area 必须有确定的高度或最大高度（`h-*`、`max-h-*` 档位类，或在 flex 布局中 `flex-1 min-h-0`），否则不会出现滚动。\n- 横向滚动设 `orientation=\"horizontal\"`，两个方向都需要时设 `both`。\n- 视口可以被键盘聚焦并滚动；区域内容没有标题时给 Scroll Area 设 `aria-label` 说明内容。\n- 滚动条不能改变版面：出现或消失时，内容不能左右晃动。整页滚动条库里已统一处理：位置预留（根元素 `scrollbar-gutter: stable`），轨道透明，只露出细滑块，没有滚动槽；不要在页面或布局上再写 `overflow-y: scroll`、`overflow-y: overlay` 之类的补丁。\n- 横向滚动，或内容会动态变长变短的区域，用 Scroll Area（`orientation=\"horizontal\"` 或 `both`）：滚动条浮在内容上方，只显示滑块、不占位，并按内容比例自动伸缩。原生横向滚动条占的是高度，无法预留，所以不要用在内容会变化的地方。\n"
+			"rules": "# Scroll Area 设计规范\n\n- 用于固定区域内的自定义滚动条（侧栏列表、弹层中的长内容）；整页滚动保持浏览器原生滚动。\n- Scroll Area 必须有确定的高度或最大高度（`h-*`、`max-h-*` 档位类，或在 flex 布局中 `flex-1 min-h-0`），否则不会出现滚动。\n- 横向滚动设 `orientation=\"horizontal\"`，两个方向都需要时设 `both`。\n- 用 `viewportLabel` 给视口命名并提供键盘焦点。视口支持方向键、Page Up、Page Down 和滚轮。\n- 设置导航用 `appearance=\"settings\"`。内容溢出时出现浅深自适应的细滑块，轨道透明。滑块支持拖动。\n- 滚动条不能改变版面：出现或消失时，内容不能左右晃动。整页滚动条库里已统一处理：位置预留（根元素 `scrollbar-gutter: stable`），轨道透明，只露出细滑块，没有滚动槽；不要在页面或布局上再写 `overflow-y: scroll`、`overflow-y: overlay` 之类的补丁。\n- 横向滚动，或内容会动态变长变短的区域，用 Scroll Area（`orientation=\"horizontal\"` 或 `both`）：滚动条浮在内容上方，只显示滑块、不占位，并按内容比例自动伸缩。原生横向滚动条占的是高度，无法预留，所以不要用在内容会变化的地方。\n- 固定尺寸的嵌套容器可用 `overscroll=\"contain\"`，在滚动到边缘时让滚动停在本区。内嵌视口的键盘焦点只使用内描边。\n"
 		},
 		{
 			"name": "select",
@@ -2733,7 +2882,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/select",
 			"install": "pnpm exec valar-svelte add select",
 			"markdown": "# Select 下拉选择\n\n从一组固定选项中选择一个值，选项收在下拉面板里。\n\n- 分类：表单\n- 关键词：下拉、select、选择框、选项、dropdown\n- 安装：`pnpm exec valar-svelte add select`\n\n## 何时使用\n\n- 选项超过 5 个且只能选一个\n\n## 何时不用\n\n- 选项 2–5 个且需要一眼看全：改用 `radio-group`\n- 触发操作而不是选值：改用 `dropdown-menu`\n- 需要搜索大量选项：改用 `command`\n\n## 无障碍\n\n- 保留 Bits UI 的键盘操作（方向键、回车、Esc）\n- 用 Field 提供可见标签\n\n## 响应式\n\n- 窄屏下触发器占满宽度\n- 选项很多时面板内部滚动\n\n## 相关组件\n\n- `radio-group`\n- `native-select`\n- `field`\n",
-			"rules": "# Select 设计规范\n\n- 用于从一组固定选项中选值：2–5 个且需要一眼看全的选项用 Radio Group，需要搜索大量选项用 Popover + Command，触发操作而不是选值用 Dropdown Menu；需要原生行为（移动端系统选择器）时用 Native Select。\n- `Select.Root` 必须设 `type=\"single\"` 或 `type=\"multiple\"`；值是字符串（多选为字符串数组），用 `bind:value` 绑定。\n- 把选项数组传给 `Select.Root` 的 `items`，触发器里用 `<Select.Value placeholder=\"…\" />` 显示选中项的文字；表单提交时设 `name`。\n- `Select.Trigger` 设 `id` 并用 `Field.Label for={id}` 关联（检查规则 `valar/input-label`）；错误状态用 `aria-invalid=\"true\"`（检查规则 `valar/invalid-via-aria`）。\n- 尺寸用 `Select.Trigger` 的 `size` 属性（`sm`、`default`），宽度用 `w-*` 档位；不要用 `class` 改高度或圆角。\n- 选项多时用 `Select.Group` + `Select.Label` 分组，组间用 `Select.Separator`；每个 `Select.Item` 同时设 `value` 和 `label`。\n"
+			"rules": "# Select 设计规范\n\n- 用于从一组固定选项中选值：2–5 个且需要一眼看全的选项用 Radio Group，需要搜索大量选项用 Popover + Command，触发操作而不是选值用 Dropdown Menu；需要原生行为（移动端系统选择器）时用 Native Select。\n- `Select.Root` 必须设 `type=\"single\"` 或 `type=\"multiple\"`；值是字符串（多选为字符串数组），用 `bind:value` 绑定。\n- 把选项数组传给 `Select.Root` 的 `items`，触发器里用 `<Select.Value placeholder=\"…\" />` 显示选中项的文字；表单提交时设 `name`。\n- `Select.Trigger` 设 `id` 并用 `Field.Label for={id}` 关联（检查规则 `valar/input-label`）。错误用 `aria-invalid=\"true\"`，说明用 `aria-describedby` 关联。焦点提示绘制在边界内。\n- 尺寸用 `Select.Trigger` 的 `size` 属性（`sm`、`default`、`settings`），宽度用 `w-*` 档位；不要用 `class` 改高度或圆角。\n- 常规和设置触发器同为 30 px 高，两者共用尺寸档位。小尺寸高 28 px，默认主题圆角为 8 px。浮层圆角 12 px，选项最小高度 32 px。设置区有独立主题时，用 `appearance=\"settings\"` 的内容，并让 Portal 挂在该主题容器内。\n- 选项多时用 `Select.Group` 与 `Select.GroupHeading` 分组，组间用装饰性的 `Select.Separator`。每个 `Select.Item` 同时设 `value` 和 `label`。长选项可在视觉上截断，保留完整可访问名称。\n- 方向键移动高亮，Enter 确认，Escape 关闭并归焦。禁用选项会被跳过，单个禁用选项和整项禁用分别设置。多选中的当前选值以勾选标记，多选、禁用和错误样式采用 Valar 规则。\n"
 		},
 		{
 			"name": "separator",
@@ -2777,13 +2926,13 @@
 			"docs": "http://127.0.0.1:5186/docs/components/separator",
 			"install": "pnpm exec valar-svelte add separator",
 			"markdown": "# Separator 分隔线\n\n在视觉或语义上分隔内容。\n\n- 分类：展示\n- 关键词：分隔线、separator、divider、分割线\n- 安装：`pnpm exec valar-svelte add separator`\n\n## 何时使用\n\n- 分隔内容组或菜单项\n- orientation=vertical 纵向分隔\n\n## 何时不用\n\n- 对话中带文字的分隔，如日期：改用 `marker`\n\n## 无障碍\n\n- 纯装饰时设 decorative，读屏忽略\n\n## 响应式\n\n- 纵向分隔线在父元素中自动拉伸高度\n\n## 相关组件\n\n- `marker`\n- `card`\n- `item`\n",
-			"rules": "# Separator 设计规范\n\n- 方向用 `orientation`（默认横向）；竖向分隔需要父元素有高度或在 flex 行中使用。\n- 只起视觉分隔作用时设 `decorative`，读屏器会忽略它；分隔两段有意义的内容时保持默认。\n- 粗细和颜色跟随全局边框 token，不要用 `class` 改 `h-*`、`w-*` 或颜色；带文字的分隔在对话中用 `<Marker.Root variant=\"separator\">`。\n"
+			"rules": "# Separator 设计规范\n\n- 方向用 `orientation`（默认横向）；竖向分隔需要父元素有高度或在 flex 行中使用。\n- 只起视觉分隔作用时设 `decorative`，读屏器会忽略它；分隔两段有意义的内容时保持默认。\n- 默认粗细 0.5 px。设置卡片行间线浅色用黑色 8.8%，深色用白色 8.3%，随卡片表面合成。卡片有 16 px 行内留白时，行间线可以和内容对齐。\n- 用同一粗细与颜色分隔竖向内容。需要局部主题色时，在容器上设置 `--valar-separator`。带文字的分隔在对话中用 `<Marker.Root variant=\"separator\">`。\n"
 		},
 		{
 			"name": "sheet",
 			"type": "registry:ui",
 			"title": "Sheet 侧边面板",
-			"description": "从屏幕边缘滑出的面板，用于补充主内容的信息或设置。",
+			"description": "在屏幕边缘的模态层或工作区侧栏中展示辅助内容。",
 			"categories": [
 				"弹层"
 			],
@@ -2811,11 +2960,13 @@
 						}
 					],
 					"accessibility": [
-						"必须有标题",
-						"Esc 关闭并归还焦点"
+						"模态面板须有标题",
+						"工作区侧栏须提供区域名称",
+						"面板内按 Escape 可关闭并归焦"
 					],
 					"responsive": [
-						"窄屏下宽度占满或接近占满"
+						"模态面板在窄屏下占满或接近占满宽度",
+						"工作区侧栏可在窄屏排列到主内容下方"
 					],
 					"related": [
 						"dialog",
@@ -2826,8 +2977,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/sheet",
 			"install": "pnpm exec valar-svelte add sheet",
-			"markdown": "# Sheet 侧边面板\n\n从屏幕边缘滑出的面板，用于补充主内容的信息或设置。\n\n- 分类：弹层\n- 关键词：侧边栏、sheet、抽屉、面板、side panel\n- 安装：`pnpm exec valar-svelte add sheet`\n\n## 何时使用\n\n- 查看或编辑与当前页面相关的详细信息\n- 移动端导航菜单\n\n## 何时不用\n\n- 需要专注完成的流程：改用 `dialog`\n- 移动端从底部拉起：改用 `drawer`\n\n## 无障碍\n\n- 必须有标题\n- Esc 关闭并归还焦点\n\n## 响应式\n\n- 窄屏下宽度占满或接近占满\n\n## 相关组件\n\n- `dialog`\n- `drawer`\n- `sidebar`\n",
-			"rules": "# Sheet 设计规范\n\n- 用于从屏幕边缘滑出、与当前页面相关的辅助内容，如筛选条件、详情、设置；需要用户专注完成的流程用 Dialog，移动端可拖拽关闭的底部面板用 Drawer。\n- 每个 `Sheet.Content` 都要有 `Sheet.Title`，不显示时加 `class=\"sr-only\"`（检查规则 `valar/overlay-title`）。\n- 方向只用 `side` 属性（`top`、`right`、`bottom`、`left`，默认 `right`），不要用 `class` 改定位。\n- 左右面板的宽度、滑入距离、动效档位跟随组件默认值和组件参数；不要在 `Sheet.Content` 上写 `w-[...]`、`duration-*` 覆盖。\n- `Sheet.Header`、`Sheet.Footer` 自带内边距；夹在中间的正文容器用与 Header 相同的横向内边距，并加 `flex-1 overflow-y-auto`，让长内容在面板内部滚动、Footer 留在底部。\n- 打开它的按钮通过 `Sheet.Trigger` 的 `child` snippet 渲染 Button（检查规则 `valar/trigger-child-snippet`）。\n- 右上角关闭按钮的读屏文字默认是“关闭”，其他语言用 `Sheet.Content` 的 `closeLabel` 改。\n"
+			"markdown": "# Sheet 侧边面板\n\n在屏幕边缘的模态层或工作区侧栏中展示辅助内容。\n\n- 分类：弹层\n- 关键词：侧边栏、sheet、抽屉、面板、side panel\n- 安装：`pnpm exec valar-svelte add sheet`\n\n## 何时使用\n\n- 查看或编辑与当前页面相关的详细信息\n- 移动端导航菜单\n\n## 何时不用\n\n- 需要专注完成的流程：改用 `dialog`\n- 移动端从底部拉起：改用 `drawer`\n\n## 无障碍\n\n- 模态面板须有标题\n- 工作区侧栏须提供区域名称\n- 面板内按 Escape 可关闭并归焦\n\n## 响应式\n\n- 模态面板在窄屏下占满或接近占满宽度\n- 工作区侧栏可在窄屏排列到主内容下方\n\n## 相关组件\n\n- `dialog`\n- `drawer`\n- `sidebar`\n",
+			"rules": "# Sheet 设计规范\n\n- 用 `Sheet.Panel` 展示可与工作区同时操作的详情或分析。使用 `label` 命名区域，让工具栏按钮通过 `aria-expanded` 和 `aria-controls` 表达开合和控制关系。窄屏可将侧栏排在主内容下方。\n- `Sheet.Panel` 自带独立滚动区域。桌面保留 400 px 的布局宽度。焦点在面板内时可按 Escape 关闭，提供 `trigger` 时归还焦点。\n- 用于从屏幕边缘滑出、与当前页面相关的辅助内容，如筛选条件、详情、设置；需要用户专注完成的流程用 Dialog，移动端可拖拽关闭的底部面板用 Drawer。\n- 每个 `Sheet.Content` 都要有 `Sheet.Title`，不显示时加 `class=\"sr-only\"`（检查规则 `valar/overlay-title`）。\n- 方向只用 `side` 属性（`top`、`right`、`bottom`、`left`，默认 `right`），不要用 `class` 改定位。\n- 左右面板的宽度、滑入距离、动效档位跟随组件默认值和组件参数；不要在 `Sheet.Content` 上写 `w-[...]`、`duration-*` 覆盖。\n- `Sheet.Header`、`Sheet.Footer` 自带内边距；夹在中间的正文容器用与 Header 相同的横向内边距，并加 `flex-1 overflow-y-auto`，让长内容在面板内部滚动、Footer 留在底部。\n- 打开它的按钮通过 `Sheet.Trigger` 的 `child` snippet 渲染 Button（检查规则 `valar/trigger-child-snippet`）。\n- 右上角关闭按钮的读屏文字默认是“关闭”，其他语言用 `Sheet.Content` 的 `closeLabel` 改。\n"
 		},
 		{
 			"name": "sidebar",
@@ -2847,7 +2998,8 @@
 						"菜单"
 					],
 					"whenToUse": [
-						"应用的主侧边导航，可折叠为图标或完全隐藏"
+						"应用的主侧边导航，可折叠为图标或完全隐藏",
+						"工作区主导航在 Sidebar.Provider 上使用 appearance=workspace"
 					],
 					"whenNotToUse": [
 						{
@@ -2866,7 +3018,7 @@
 					"accessibility": [
 						"Ctrl／⌘+B 切换侧边栏",
 						"Sidebar.Trigger 和 Rail 的读屏名称默认“切换侧边栏”，其他语言需改",
-						"菜单项用真实链接"
+						"路由菜单项用真实链接，当前页设置 aria-current=page"
 					],
 					"responsive": [
 						"移动端以 sheet 形式显示",
@@ -2881,8 +3033,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/sidebar",
 			"install": "pnpm exec valar-svelte add sidebar",
-			"markdown": "# Sidebar 侧边栏\n\n可折叠、可定制的应用侧边导航。\n\n- 分类：导航\n- 关键词：侧边栏、sidebar、侧边导航、导航栏、菜单\n- 安装：`pnpm exec valar-svelte add sidebar`\n\n## 何时使用\n\n- 应用的主侧边导航，可折叠为图标或完全隐藏\n\n## 何时不用\n\n- 网站顶部导航：改用 `navigation-menu`\n- 临时的辅助面板：改用 `sheet`\n- 用户可拖动调整的分栏：改用 `resizable`\n\n## 无障碍\n\n- Ctrl／⌘+B 切换侧边栏\n- Sidebar.Trigger 和 Rail 的读屏名称默认“切换侧边栏”，其他语言需改\n- 菜单项用真实链接\n\n## 响应式\n\n- 移动端以 sheet 形式显示\n- collapsible 可选 offcanvas、icon、none\n\n## 相关组件\n\n- `sheet`\n- `navigation-menu`\n- `breadcrumb`\n",
-			"rules": "# Sidebar 设计规范\n\n- 应用外层放 `Sidebar.Provider`（已包含 `Tooltip.Provider`），里面放 `Sidebar.Root` 和主内容；使用 `variant=\"inset\"` 时主内容必须包在 `Sidebar.Inset` 中。需要读写展开状态时用 `useSidebar()`，不要自己维护。\n- 折叠方式用 `collapsible`（`offcanvas`、`icon`、`none`），样式用 `variant`（`sidebar`、`floating`、`inset`），位置用 `side`；展开、收起和图标模式的宽度在 `constants.ts` 的 `SIDEBAR_WIDTH*` 中统一修改，不要在 `class` 里写宽度。\n- 菜单项用 `Sidebar.MenuButton`；跳转用 `child` snippet 渲染 `<a href>`。当前页设 `isActive`，它只改变样式，链接上还要设 `aria-current=\"page\"`。\n- `collapsible=\"icon\"` 时每个 MenuButton 都要设 `tooltipContent`，否则收起后只剩图标没有说明。\n- `Sidebar.Trigger` 和 `Sidebar.Rail` 的读屏名称默认是“切换侧边栏”（Trigger 用 `label` 改，Rail 用 `aria-label` 改）；移动端抽屉的隐藏标题用 `Sidebar.Root` 的 `mobileTitle`、`mobileDescription` 改。\n- `Sidebar.Provider` 的 `keyboardShortcut` 默认为 `true`，启用 ⌘B／Ctrl+B；`input`、`textarea`、可编辑的 `contenteditable` 区域及其子元素内不触发、不阻止原生快捷键。应用要保留该组合键时设 `keyboardShortcut={false}`：不调用 `preventDefault`，不改变展开状态、写 cookie 或触发展开回调/相关播报；`Sidebar.Trigger`、`Sidebar.Rail` 与 `useSidebar().toggle()` 仍可使用。不要在快捷键仍开启时把它分给其他功能。\n- 展开状态会写入名为 `SIDEBAR_COOKIE_NAME` 的 cookie；需要刷新后保持时，在服务端 `load` 中读取它并传给 `Sidebar.Provider` 的 `open`，避免页面闪动。\n"
+			"markdown": "# Sidebar 侧边栏\n\n可折叠、可定制的应用侧边导航。\n\n- 分类：导航\n- 关键词：侧边栏、sidebar、侧边导航、导航栏、菜单\n- 安装：`pnpm exec valar-svelte add sidebar`\n\n## 何时使用\n\n- 应用的主侧边导航，可折叠为图标或完全隐藏\n- 工作区主导航在 Sidebar.Provider 上使用 appearance=workspace\n\n## 何时不用\n\n- 网站顶部导航：改用 `navigation-menu`\n- 临时的辅助面板：改用 `sheet`\n- 用户可拖动调整的分栏：改用 `resizable`\n\n## 无障碍\n\n- Ctrl／⌘+B 切换侧边栏\n- Sidebar.Trigger 和 Rail 的读屏名称默认“切换侧边栏”，其他语言需改\n- 路由菜单项用真实链接，当前页设置 aria-current=page\n\n## 响应式\n\n- 移动端以 sheet 形式显示\n- collapsible 可选 offcanvas、icon、none\n\n## 相关组件\n\n- `sheet`\n- `navigation-menu`\n- `breadcrumb`\n",
+			"rules": "# Sidebar 设计规范\n\n- 应用外层放 `Sidebar.Provider`（已包含 `Tooltip.Provider`），里面放 `Sidebar.Root` 和主内容；使用 `variant=\"inset\"` 时主内容必须包在 `Sidebar.Inset` 中。需要读写展开状态时用 `useSidebar()`，不要自己维护。\n- 折叠方式用 `collapsible`（`offcanvas`、`icon`、`none`），样式用 `variant`（`sidebar`、`floating`、`inset`），位置用 `side`；展开、收起和图标模式的宽度在 `constants.ts` 的 `SIDEBAR_WIDTH*` 中统一修改，不要在 `class` 里写宽度。\n- 菜单项用 `Sidebar.MenuButton`；跳转用 `child` snippet 渲染 `<a href>`。当前页设 `isActive`，它只改变样式，链接上还要设 `aria-current=\"page\"`。\n- `collapsible=\"icon\"` 时每个 MenuButton 都要设 `tooltipContent`，否则收起后只剩图标没有说明。\n- `Sidebar.Trigger` 和 `Sidebar.Rail` 的读屏名称默认是“切换侧边栏”（Trigger 用 `label` 改，Rail 用 `aria-label` 改）；移动端抽屉的隐藏标题用 `Sidebar.Root` 的 `mobileTitle`、`mobileDescription` 改。\n- `Sidebar.Provider` 的 `keyboardShortcut` 默认为 `true`，启用 ⌘B／Ctrl+B；`input`、`textarea`、可编辑的 `contenteditable` 区域及其子元素内不触发、不阻止原生快捷键。应用要保留该组合键时设 `keyboardShortcut={false}`：不调用 `preventDefault`，不改变展开状态、写 cookie 或触发展开回调/相关播报；`Sidebar.Trigger`、`Sidebar.Rail` 与 `useSidebar().toggle()` 仍可使用。不要在快捷键仍开启时把它分给其他功能。\n- 展开状态会写入名为 `SIDEBAR_COOKIE_NAME` 的 cookie；需要刷新后保持时，在服务端 `load` 中读取它并传给 `Sidebar.Provider` 的 `open`，避免页面闪动。\n- 工作区菜单滚动发生在 Sidebar.Content。工作区常规和小号导航行同为 28 px 高、8 px 圆角，图文间隔 6 px。行尾操作或计数占用自己的留白。移动端侧栏关闭后焦点返回打开它的 Sidebar.Trigger。使用自定义移动端关闭按钮时设置 `mobileCloseButton={false}`。\n"
 		},
 		{
 			"name": "skeleton",
@@ -3279,7 +3431,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/switch",
 			"install": "pnpm exec valar-svelte add switch",
 			"markdown": "# Switch 开关\n\n立即开启或关闭一个设置。\n\n- 分类：表单\n- 关键词：开关、switch、toggle、启用、设置\n- 安装：`pnpm exec valar-svelte add switch`\n\n## 何时使用\n\n- 改动立即生效的二元设置\n\n## 何时不用\n\n- 需要点提交才生效的选项：改用 `checkbox`\n- 多个互斥选项：改用 `radio-group`\n\n## 无障碍\n\n- 开关有可见标签说明它控制什么\n- 状态由 aria-checked 表达，不只靠颜色\n\n## 响应式\n\n- 设置列表中标签在左、开关在右\n\n## 相关组件\n\n- `checkbox`\n- `toggle`\n",
-			"rules": "# Switch 设计规范\n\n- 用于立即生效的开关设置；需要点“保存”才生效的选项用 Checkbox。\n- 每个 Switch 都要有可见标签说明它控制什么：设 `id`，用 `Field.Label for={id}` 关联，放在 `<Field.Field orientation=\"horizontal\">` 中，标签在前、开关在后（检查规则 `valar/input-label`）。\n- 标签写被控制的功能（“邮件通知”），不要写“开启／关闭”；状态由组件的 `aria-checked` 表达，不要在旁边再加“已开启”文字代替标签。\n- 状态用 `bind:checked`；切换会触发耗时请求时，请求期间设 `disabled`，失败时恢复原值并提示。\n- 尺寸只用 `size` 属性（`sm`、`default`），不要用 `class` 改宽高。\n"
+			"rules": "# Switch 设计规范\n\n- 用于立即生效的开关设置；需要点“保存”才生效的选项用 Checkbox。\n- 每个 Switch 都要有可见标签说明它控制什么：设 `id`，用 `Field.Label for={id}` 关联，放在 `<Field.Field orientation=\"horizontal\">` 中，标签在前、开关在后（检查规则 `valar/input-label`）。\n- 标签写被控制的功能（“邮件通知”），不要写“开启／关闭”；状态由组件的 `aria-checked` 表达，不要在旁边再加“已开启”文字代替标签。\n- 状态用 `bind:checked`；切换会触发耗时请求时，请求期间设 `disabled`，失败时恢复原值并提示。\n- 尺寸只用 `size` 属性（`sm`、`default`），不要用 `class` 改宽高。\n- `default` 用于设置行，轨道 30 × 20 px、滑块 14 × 14 px。`sm` 用于紧凑工具栏或弹窗底部，轨道 22 × 14 px、滑块 10 × 10 px。弹窗底部将短标签与 Switch 同行，再与主操作分组。\n- 轨道背景与透明度使用 150 ms `ease-out`。减少动态效果时立即切换。实测参考与后续滑块动效对齐见 `standards/DESIGN.md`。\n- 关闭时使用灰色轨道，开启时使用强调色。滑块两侧各过渡 100 ms，其中一侧延迟 50 ms，切换方向时交换延迟。设置区可通过 `--settings-switch-off`、`--settings-switch-on` 与 `--settings-focus` 提供主题色。\n- 键盘焦点描边向内收 1 px。关闭时用强调色，开启时用白色与轨道区分，错误状态用错误色。禁用、等待和错误示例采用 Valar 的表单反馈规则。\n"
 		},
 		{
 			"name": "table",
@@ -3328,7 +3480,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/table",
 			"install": "pnpm exec valar-svelte add table",
 			"markdown": "# Table 表格\n\n展示行列结构化数据的表格。\n\n- 分类：展示\n- 关键词：表格、table、数据表、data table、列表\n- 安装：`pnpm exec valar-svelte add table`\n\n## 何时使用\n\n- 行列结构化数据\n- 结合 @tanstack/table 做排序、筛选、分页\n\n## 何时不用\n\n- 数据的趋势或对比：改用 `chart`\n- 少量内容项：改用 `item`\n\n## 无障碍\n\n- 使用语义化 table、表头单元格，用 Table.Caption 说明表格内容\n\n## 响应式\n\n- 外层容器横向滚动，窄屏不压缩列\n\n## 相关组件\n\n- `pagination`\n- `chart`\n- `item`\n",
-			"rules": "# Table 设计规范\n\n- 结构用 `Table.Header`、`Table.Body`、`Table.Footer`，行用 `Table.Row`，表头单元格用 `Table.Head`，数据用 `Table.Cell`；用 `Table.Caption` 说明表格内容。\n- 表格容器会横向滚动，窄屏下不要压缩列宽到无法阅读；列很多时考虑在移动端改为卡片列表。\n- 数字列右对齐并用 `tabular-nums`，便于比较。\n- 需要排序、筛选、分页、选择行时，按 Data Table 文档用 TanStack Table 组合，不要自己实现；表头上的排序按钮要说明排序状态。\n- 空表格用 Empty 说明原因，不要只显示空白。\n"
+			"rules": "# Table 设计规范\n\n- 结构用 `Table.Header`、`Table.Body`、`Table.Footer`，行用 `Table.Row`，表头单元格用 `Table.Head`，数据用 `Table.Cell`；用 `Table.Caption` 说明表格内容。\n- 表格容器会横向滚动，窄屏下不要压缩列宽到无法阅读；列很多时考虑在移动端改为卡片列表。\n- 管理标签等紧凑设置列表用 `appearance=\"settings\"`。排序状态标在表头，选择状态通过行内复选框传达。\n- 数字列右对齐并用 `tabular-nums`，便于比较。\n- 需要排序、筛选、分页、选择行时，按 Data Table 文档用 TanStack Table 组合，不要自己实现；表头上的排序按钮要说明排序状态。\n- 空表格用 Empty 说明原因，不要只显示空白。\n- 列宽固定或预期窄屏溢出时，传 `scrollLabel` 为滚动区命名，让键盘用户能用 Tab 进入，再用方向键横向移动。列首复选框依逻辑方向对齐。\n"
 		},
 		{
 			"name": "tabs",
@@ -3378,7 +3530,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/tabs",
 			"install": "pnpm exec valar-svelte add tabs",
 			"markdown": "# Tabs 标签页\n\n在同一位置切换显示几组相关内容。\n\n- 分类：导航\n- 关键词：标签页、tabs、选项卡、切换\n- 安装：`pnpm exec valar-svelte add tabs`\n\n## 何时使用\n\n- 同一层级、互相独立的几块内容\n\n## 何时不用\n\n- 步骤有先后顺序：改用 `stepper`\n- 表单单选：改用 `radio-group`\n- 内容需要同时比较\n\n## 无障碍\n\n- 方向键切换标签\n- 每个面板与标签关联\n\n## 响应式\n\n- 标签过多时横向滚动，不要换成多行\n\n## 相关组件\n\n- `toggle-group`\n- `accordion`\n",
-			"rules": "# Tabs 设计规范\n\n- 用于在同一位置切换同级内容；有先后顺序的步骤用 Stepper，表单中的单选用 Radio Group，需要同时比较的内容不要放进不同标签页。\n- 每个 `Tabs.Trigger` 与对应的 `Tabs.Content` 用相同的 `value`；用 `bind:value` 绑定当前标签，需要时同步到网址查询参数。\n- 样式只用 `Tabs.List` 的 `variant`（`default`、`line`），不要自己写下划线或背景。\n- 标签文字简短；标签较多时让 Tabs.List 横向滚动，不要换成多行。\n"
+			"rules": "# Tabs 设计规范\n\n- 用于在同一位置切换同级内容。跨页面用导航链接，有先后顺序的步骤用 Stepper，表单中的单选用 Radio Group。\n- 每个 `Tabs.Trigger` 与对应的 `Tabs.Content` 用相同的 `value`；用 `bind:value` 绑定当前标签，需要时同步到网址查询参数。\n- 样式只用 `Tabs.List` 的 `variant`（`default`、`line`、`capsule`），不要自己写下划线或背景。\n- `capsule` 参考 Linear 项目时间线的 Health／Leads 侧栏，列表高 32 px，圆角 5 px，标签间距 2 px。触发器高 28 px，标签横向留白 12 px，字为 12 px／500。水平列表占满可用宽度，短标签均分空间。手动模式下方向键只移动焦点，由 Space 或 Enter 激活。默认、线型与胶囊的水平触发器均为 28 px 高，列表高 32 px。垂直列表按内容排列。\n- 为 `Tabs.List` 设置可访问名称。水平列表宽度受父容器约束，超出时横向滚动并露出键盘焦点。Home／End 到达第一个和最后一个可用标签，禁用项跳过。垂直列表用上、下方向键。焦点轮廓向内绘制，减少动态效果时停用标签与指示线的过渡。\n"
 		},
 		{
 			"name": "tags-input",
@@ -3482,7 +3634,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/textarea",
 			"install": "pnpm exec valar-svelte add textarea",
 			"markdown": "# Textarea 多行输入\n\n多行文本输入，用于备注、描述、留言等较长内容。\n\n- 分类：表单\n- 关键词：多行输入、textarea、备注、描述、留言\n- 安装：`pnpm exec valar-svelte add textarea`\n\n## 何时使用\n\n- 输入可能超过一行的文本\n\n## 何时不用\n\n- 一行即可的短文本：改用 `input`\n- 需要格式化的富文本\n\n## 无障碍\n\n- 必须有可见标签（用 Field 包裹）\n- 有字数限制时显示剩余字数\n\n## 响应式\n\n- 窄屏下占满容器宽度\n- 高度随内容增长时设置最大高度\n\n## 相关组件\n\n- `field`\n- `input`\n",
-			"rules": "# Textarea 设计规范\n\n- 与 Input 一样需要可见标签：放在 `Field.Field` 中，用 `Field.Label for={id}` 关联 `id`（检查规则 `valar/input-label`）。\n- 错误状态用 `aria-invalid=\"true\"` 加 `Field.Error`，不要用 `class` 改边框颜色（检查规则 `valar/invalid-via-aria`）。\n- 高度默认随内容增长（`field-sizing-content`）；可能输入很长内容时，加 `max-h-*` 档位类限制高度，超出部分在框内滚动。\n- 有字数上限时同时设 `maxlength` 并用 `Field.Description` 显示剩余字数。\n- 一行即可的短文本用 Input；需要格式化的富文本不要用 Textarea 模拟。\n- 前后要加按钮或提示文字时用 Input Group 的 `InputGroup.Textarea`。\n"
+			"rules": "# Textarea 设计规范\n\n- 默认表面和边缘色参考 Linear 团队设置的描述字段。通用外观使用 1 px 边框，正文和占位字沿用主题色。用 `--valar-textarea-surface` 和 `--valar-textarea-border` 可覆盖表面和边缘色。\n- 团队描述等设置字段使用 `appearance=\"settings\"`。其 120 px 固定高度、16 px 留白、13 px 字号、400 字重、10 px 圆角和 0.5 px 描边对应 Linear 设置卡片。内容超出时在框内滚动。聚焦时使用蓝紫色 1 px 内描边，错误状态保留错误边缘。\n- 默认最小高度为 64 px，高度随内容增长。聚焦改变现有边框颜色。可能输入很长内容时，可加 `max-h-*` 限制高度，超出部分在框内滚动。\n\n- 与 Input 一样需要可见标签：放在 `Field.Field` 中，用 `Field.Label for={id}` 关联 `id`（检查规则 `valar/input-label`）。\n- 错误状态用 `aria-invalid=\"true\"` 加 `Field.Error`，用 `aria-describedby` 关联错误文字（检查规则 `valar/invalid-via-aria`）。只读值可以选取和复制，禁用字段不进入 Tab 顺序。\n- 有字数上限时设 `maxlength` 并提供可见计数或说明。团队描述用 255 字符限制；计数、禁用、只读和字段内错误样式采用 Valar 的通用规则。\n- 一行即可的短文本用 Input；需要格式化的富文本不要用 Textarea 模拟。\n- 前后要加按钮或提示文字时用 Input Group 的 `InputGroup.Textarea`。\n"
 		},
 		{
 			"name": "texture-fill",
@@ -3674,7 +3826,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/toggle-group",
 			"install": "pnpm exec valar-svelte add toggle-group",
 			"markdown": "# Toggle Group 切换按钮组\n\n一组切换按钮，可单选（如对齐方式）或多选（如文字样式）。\n\n- 分类：操作\n- 关键词：切换按钮组、toggle group、分段控制、segmented control、对齐方式\n- 安装：`pnpm exec valar-svelte add toggle-group`\n\n## 何时使用\n\n- 一组相关的状态按钮，type=single 单选或 type=multiple 多选\n\n## 何时不用\n\n- 执行操作的按钮组：改用 `button-group`\n- 表单中的单选项：改用 `radio-group`\n- 切换页面内的内容面板：改用 `tabs`\n\n## 无障碍\n\n- 保留 Bits UI 的方向键移动焦点\n- 用 aria-label 命名整组和只有图标的项\n\n## 响应式\n\n- 项较多时窄屏可改 orientation=vertical\n- spacing 控制项之间的间距\n\n## 相关组件\n\n- `toggle`\n- `button-group`\n- `tabs`\n",
-			"rules": "# Toggle Group 设计规范\n\n- `ToggleGroup.Root` 必须设 `type=\"single\"`（多选一，如对齐方式）或 `type=\"multiple\"`（如加粗、斜体）；用 `bind:value` 绑定。\n- 整组用 `aria-label` 说明用途；只有图标的 `ToggleGroup.Item` 都要有 `aria-label`。\n- `variant`、`size` 设在 Root 上，所有项保持一致；需要项之间留空时用 `spacing`，不要给项单独改圆角或边框。\n- 切换视图或模式且各视图内容差异较大时用 Tabs。\n"
+			"rules": "# Toggle Group 设计规范\n\n- `ToggleGroup.Root` 必须设 `type=\"single\"`（多选一，如对齐方式）或 `type=\"multiple\"`（如加粗、斜体）；用 `bind:value` 绑定。\n- 整组用 `aria-label` 说明用途；只有图标的 `ToggleGroup.Item` 都要有 `aria-label`。\n- 默认外观的 `variant`、`size` 设在 Root 上，所有项保持一致；需要项之间留空时用 `spacing`，不要给项单独改圆角或边框。\n- 切换视图或模式且各视图内容差异较大时用 Tabs。\n\n- 富文本格式组使用 `appearance=\"toolbar\"`。参考 Linear 选中文本后的浮动工具栏，按钮为 26 × 26 px、圆角 4 px、图标 16 px，默认间距 6 px。多个格式可同时选中，按下项用底色区分；透明度过渡为 100 ms，系统开启减少动态效果时取消过渡。键盘焦点使用内描边。\n"
 		},
 		{
 			"name": "tooltip",
@@ -3720,7 +3872,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/tooltip",
 			"install": "pnpm exec valar-svelte add tooltip",
 			"markdown": "# Tooltip 提示\n\n悬停或聚焦时显示的简短文字说明。\n\n- 分类：反馈\n- 关键词：提示、tooltip、悬停、说明\n- 安装：`pnpm exec valar-svelte add tooltip`\n\n## 何时使用\n\n- 解释图标按钮或缩写的含义\n\n## 何时不用\n\n- 包含可点击内容：改用 `popover`\n- 关键信息（触屏无法悬停）\n\n## 无障碍\n\n- 键盘聚焦也能显示\n- 不能替代图标按钮的 aria-label\n\n## 响应式\n\n- 触屏设备无悬停，重要信息不要只放在提示里\n\n## 相关组件\n\n- `popover`\n- `hover-card`\n",
-			"rules": "# Tooltip 设计规范\n\n- 根布局放一次 `Tooltip.Provider`，包住所有会出现提示的内容；没有 Provider 时 `Tooltip.Root` 会报错。Sidebar 的 `Sidebar.Provider` 已自带一个。\n- 显示延迟由 `Tooltip.Provider` 的 `delayDuration` 统一决定（属于组件参数），不要在单个 Tooltip 上另设不同的延迟。\n- 提示只放简短的纯文字说明；不要放按钮、链接、输入框等可操作内容，它们无法聚焦和点击，改用 Popover（检查规则 `valar/tooltip-no-interactive`）。\n- 提示不能代替名称：只有图标的按钮仍然要写 `aria-label`（见 Button 规范），Tooltip 只是给鼠标用户的补充。\n- 触屏设备没有悬停，关键信息不要只放在提示里。\n- 触发元素必须可聚焦：给 `Tooltip.Trigger` 设 `class={buttonVariants({ ... })}`，或用 `child` snippet 渲染 Button（检查规则 `valar/trigger-child-snippet`）；不要给纯文字或禁用的按钮加提示，禁用按钮收不到悬停和焦点。\n- 方向用 `side` 属性（默认 `top`），碰撞时会自动翻转；不要用 `class` 改定位或动效。\n"
+			"rules": "# Tooltip 设计规范\n\n- 根布局放一次 `Tooltip.Provider`，包住所有会出现提示的内容；没有 Provider 时 `Tooltip.Root` 会报错。Sidebar 的 `Sidebar.Provider` 已自带一个。\n- 显示延迟由 `Tooltip.Provider` 的 `delayDuration` 统一决定，默认 500 ms。键盘聚焦后可立即显示提示，按 Escape 关闭。默认无进入与退出动效。\n- 提示只放简短的纯文字说明；不要放按钮、链接、输入框等可操作内容，它们无法聚焦和点击，改用 Popover（检查规则 `valar/tooltip-no-interactive`）。\n- 提示不能代替名称：只有图标的按钮仍然要写 `aria-label`（见 Button 规范），Tooltip 只是给鼠标用户的补充。\n- 触屏设备没有悬停，关键信息不要只放在提示里。\n- 触发元素必须可聚焦：给 `Tooltip.Trigger` 设 `class={buttonVariants({ ... })}`，或用 `child` snippet 渲染 Button（检查规则 `valar/trigger-child-snippet`）；不要给纯文字或禁用的按钮加提示，禁用按钮收不到悬停和焦点。\n- 方向用 `side` 属性（默认 `top`），碰撞时会自动翻转。内容在视口内换行。重要的禁用原因应同时放在控件附近的可见文字中。\n\n- 工作区图标按钮可用 `Tooltip.Hint`。在 `trigger` snippet 里把 `props` 展开到原按钮或菜单触发器，沿用它的 `aria-label`。快捷键已实现时，用 `keys` 显示键帽，并给控件设 `aria-keyshortcuts`。\n- 默认使用 8 px 圆角（默认主题）、8 × 5 px 内边距的无箭头实色提示。已有图表可显式传入 `arrowClasses` 保留箭头。工作区提示使用 `Tooltip.Provider delayDuration={500}`；工具栏提示放下方，底部输入栏用 `side=\"top\"`。由浮层管理碰撞和边缘间距。\n"
 		},
 		{
 			"name": "trace",

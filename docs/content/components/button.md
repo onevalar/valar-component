@@ -19,7 +19,7 @@ links:
 	let { viewerData, links } = $props();
 </script>
 
-<ComponentPreview name="button-demo">
+<ComponentPreview name="button-demo" title="Workspace actions">
 
 <div></div>
 
@@ -150,13 +150,11 @@ Remember to add the `data-icon="inline-start"` or `data-icon="inline-end"` attri
 
 ## Radius
 
-Button radius follows the global radius token and the radius level set in the Button editor. Change it there instead of adding `rounded-*` classes, which the `valar/button-size-via-prop` lint rule reports.
-
-Button explicitly defaults to `tabindex={0}` so Tab and pointer focus work under macOS WebKit's default keyboard preference. Explicit tabindex overrides are respected; disabled buttons/links use -1 and keep their disabled semantics.
+Standalone text buttons use a pill by default across all visual variants. Use `shape="square"` for the theme's rounded rectangle. Icon sizes use the theme radius by default and can opt into `shape="pill"`. Button Group controls its joined corners. The Button editor lets you adjust the default radius.
 
 ## Spinner
 
-Render a `<Spinner />` component inside the button to show a loading state. Remember to add the `data-icon="inline-start"` or `data-icon="inline-end"` attribute to the spinner for the correct spacing.
+Set `loading` while an action is pending to retain focus and prevent repeat activation. Render a `<Spinner />` with `data-icon="inline-start"` or `data-icon="inline-end"` to indicate progress. The example runs a local save. Use `disabled` for unavailable actions.
 
 <ComponentPreview name="button-loading">
 

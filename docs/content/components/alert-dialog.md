@@ -20,7 +20,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="alert-dialog-demo">
+<ComponentPreview name="alert-dialog-demo" title="Discard a draft">
 
 <div></div>
 
@@ -58,15 +58,21 @@ Copy and paste the following code into your project.
 
 ## Usage
 
+The default and `appearance="confirmation"` share a compact surface with a 480 px maximum width. Pass `focusCancel` to start on the safe action. In the draft preview, this focuses Keep editing. Escape dismisses the confirmation, and Discard draft clears the local draft example.
+
+Use `appearance="danger"` with a destructive action for deletion confirmations. Pass `loading` to `AlertDialog.Action` while submitting to keep focus on the pending button and prevent repeat activation. Keep the dialog open and show an error if the request fails. The delete preview simulates a failed first attempt and a successful retry.
+
 ```svelte showLineNumbers
 <script lang="ts">
   import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
   import { buttonVariants } from "$lib/components/ui/button/index.js";
+
+  let open = $state(false);
 </script>
 ```
 
 ```svelte showLineNumbers
-<AlertDialog.Root>
+<AlertDialog.Root bind:open>
   <AlertDialog.Trigger class={buttonVariants({ variant: "outline" })}>
     Show Dialog
   </AlertDialog.Trigger>
@@ -80,7 +86,7 @@ Copy and paste the following code into your project.
     </AlertDialog.Header>
     <AlertDialog.Footer>
       <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-      <AlertDialog.Action>Continue</AlertDialog.Action>
+      <AlertDialog.Action onclick={() => (open = false)}>Continue</AlertDialog.Action>
     </AlertDialog.Footer>
   </AlertDialog.Content>
 </AlertDialog.Root>

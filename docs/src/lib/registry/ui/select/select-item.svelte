@@ -8,6 +8,7 @@
 		class: className,
 		value,
 		label,
+		disabled = false,
 		children: childrenProp,
 		...restProps
 	}: WithoutChild<SelectPrimitive.ItemProps> = $props();
@@ -17,17 +18,17 @@
 	bind:ref
 	{value}
 	{label}
+	{disabled}
+	aria-disabled={disabled || undefined}
 	data-slot="select-item"
 	class={cn(
 		"cn-select-item relative flex w-full cursor-default items-center outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-		// parity-ignore: Bits marks the active item with data-highlighted; Radix uses :focus, which cn-select-item already styles
-		"data-highlighted:bg-accent data-highlighted:text-accent-foreground",
 		className
 	)}
 	{...restProps}
 >
 	{#snippet children({ selected, highlighted })}
-		<span class="cn-select-item-indicator">
+		<span class="cn-select-item-indicator" aria-hidden="true">
 			{#if selected}
 				<IconPlaceholder
 					lucide="CheckIcon"
@@ -40,11 +41,11 @@
 			{/if}
 		</span>
 		<!-- parity-ignore: Bits renders the item text inline, so it needs its own box; Radix ItemText carries no classes -->
-		<span class="cn-select-item-text shrink-0 whitespace-nowrap">
+		<span class="cn-select-item-text min-w-0">
 			{#if childrenProp}
 				{@render childrenProp({ selected, highlighted })}
 			{:else}
-				{label || value}
+				<span class="truncate">{label || value}</span>
 			{/if}
 		</span>
 	{/snippet}

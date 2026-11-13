@@ -66,8 +66,8 @@ Copy and paste the following code into your project.
 
 ```svelte showLineNumbers
 <InputGroup.Root>
-  <InputGroup.Input placeholder="Search..." />
-  <InputGroup.Addon>
+  <InputGroup.Input aria-label="Search components" placeholder="Search..." />
+  <InputGroup.Addon aria-hidden="true">
     <SearchIcon />
   </InputGroup.Addon>
   <InputGroup.Addon align="inline-end">
@@ -76,13 +76,33 @@ Copy and paste the following code into your project.
 </InputGroup.Root>
 ```
 
+## Settings search
+
+Use `appearance="settings-search"` for the compact search field with a 16 px leading icon. The preview filters settings as you type. Press Escape or use the clear button to reset the query and return to the search field.
+
+<ComponentPreview name="input-group-settings-search">
+
+<div></div>
+
+</ComponentPreview>
+
+## Icon and name
+
+Use `appearance="settings-name"` when an icon picker shares a border with a name field. The picker and the field each have their own accessible name and keyboard focus.
+
+<ComponentPreview name="input-group-settings-name">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Align
 
 Use the `align` prop on `InputGroup.Addon` to position the addon relative to the input.
 
 <Callout>
 
-For proper focus management, `InputGroup.Addon` should always be placed after `InputGroup.Input` or `InputGroup.Textarea` in the DOM. Use the `align` prop to visually position the addon.
+Place `InputGroup.Addon` after `InputGroup.Input` or `InputGroup.Textarea` in the DOM so keyboard users reach the input first. Use `align` for visual placement. Clicking a passive addon focuses the input. Buttons, labels, and links keep their own behavior.
 
 </Callout>
 
@@ -168,6 +188,8 @@ Use `align="block-end"` to position the addon below the input.
 
 ## Spinner
 
+This local preview checks a workspace URL. It reserves the shared border for the input's focus and error states. Try “design” to see the error, then edit the value to check again. The managed URL demonstrates a disabled field.
+
 <ComponentPreview name="input-group-spinner-demo">
 
 <div></div>
@@ -175,6 +197,8 @@ Use `align="block-end"` to position the addon below the input.
 </ComponentPreview>
 
 ## Textarea
+
+Use a bottom addon for actions and character limits. The textarea grows with the draft, and the send button becomes available when the draft has content.
 
 <ComponentPreview name="input-group-textarea-demo">
 

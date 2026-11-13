@@ -18,7 +18,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="kbd-demo">
+<ComponentPreview name="kbd-demo" title="标准键帽与菜单快捷键">
 
 <div></div>
 
@@ -58,6 +58,11 @@ links:
 <Kbd.Root>B</Kbd.Root>
 ```
 
+键帽与对应的操作名称一起展示，并使用当前平台的快捷键写法。
+
+菜单项尾部使用 `appearance="inline"`，紧凑的带框键帽使用 `appearance="compact"`。
+在上方预览打开 Help 可以查看菜单快捷键，聚焦 Help 时按 Shift+S 可以切换状态。
+
 ## 分组
 
 用 `Kbd.Group` 组件把多个按键组合在一起。
@@ -80,7 +85,7 @@ links:
 
 ## 工具提示
 
-在 `Tooltip` 组件内使用 `Kbd.Root`，即可在工具提示中显示键帽。
+使用 `Tooltip.Hint` 在工具提示里显示紧凑键帽。聚焦预览按钮后按 Shift+V 可以切换按钮状态。
 
 <ComponentPreview name="kbd-tooltip-demo">
 

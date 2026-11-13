@@ -44,7 +44,7 @@
 	},
 	"files": [
 		{
-			"content": "# Collapsible 设计规范\n\n- 用于单块可以展开收起的内容（“显示更多”、高级选项）；多块并列的展开内容用 Accordion。\n- `Collapsible.Trigger` 本身就是按钮：要用 Button 样式时通过 `{#snippet child({ props })}` 渲染 Button（检查规则 `valar/trigger-child-snippet`）；只有图标的触发按钮要有 `aria-label`。\n- 触发按钮的文字或图标随状态变化（“显示更多”／“收起”），展开状态用 `bind:open` 控制。\n",
+			"content": "# Collapsible 设计规范\n\n- 用于单块可以展开收起的内容（“显示更多”、高级选项）；多块并列的展开内容用 Accordion。\n- `Collapsible.Trigger` 本身就是按钮：要用 Button 样式时通过 `{#snippet child({ props })}` 渲染 Button（检查规则 `valar/trigger-child-snippet`）；只有图标的触发按钮要有 `aria-label`。\n- 触发按钮的文字或图标随状态变化（“显示更多”／“收起”），展开状态用 `bind:open` 控制。\n- 属性分组用 `appearance=\"properties\"`。触发器直接放在根组件内，使用 28 px 高的透明按钮和 16 px 的装饰箭头。标记为 `data-slot=\"collapsible-indicator\"` 的箭头在 150 ms 内转动。内容即时展开或收起，减少动态效果时箭头也即时更新。\n",
 			"type": "registry:file",
 			"target": "collapsible/RULES.md"
 		},
@@ -54,12 +54,12 @@
 			"target": "collapsible/collapsible-content.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { Collapsible as CollapsiblePrimitive } from \"bits-ui\";\n\n\tlet { ref = $bindable(null), ...restProps }: CollapsiblePrimitive.TriggerProps = $props();\n</script>\n\n<CollapsiblePrimitive.Trigger bind:ref data-slot=\"collapsible-trigger\" {...restProps} />\n",
+			"content": "<script lang=\"ts\">\n\timport { Collapsible as CollapsiblePrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\t...restProps\n\t}: CollapsiblePrimitive.TriggerProps = $props();\n</script>\n\n<CollapsiblePrimitive.Trigger\n\tbind:ref\n\tdata-slot=\"collapsible-trigger\"\n\tclass={cn(\"min-w-0 focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring disabled:opacity-50\", className)}\n\t{...restProps}\n/>\n",
 			"type": "registry:file",
 			"target": "collapsible/collapsible-trigger.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { Collapsible as CollapsiblePrimitive } from \"bits-ui\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\topen = $bindable(false),\n\t\t...restProps\n\t}: CollapsiblePrimitive.RootProps = $props();\n</script>\n\n<CollapsiblePrimitive.Root bind:ref bind:open data-slot=\"collapsible\" {...restProps} />\n",
+			"content": "<script lang=\"ts\">\n\timport { Collapsible as CollapsiblePrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\topen = $bindable(false),\n\t\tappearance = \"default\",\n\t\tclass: className,\n\t\t...restProps\n\t}: CollapsiblePrimitive.RootProps & {\n\t\tappearance?: \"default\" | \"properties\";\n\t} = $props();\n</script>\n\n<CollapsiblePrimitive.Root\n\tbind:ref\n\tbind:open\n\tdata-slot=\"collapsible\"\n\tdata-appearance={appearance}\n\tclass={cn(appearance === \"properties\" && \"*:data-[slot=collapsible-trigger]:flex *:data-[slot=collapsible-trigger]:min-h-7 *:data-[slot=collapsible-trigger]:py-1 *:data-[slot=collapsible-trigger]:wrap-anywhere *:data-[slot=collapsible-trigger]:w-full *:data-[slot=collapsible-trigger]:items-center *:data-[slot=collapsible-trigger]:gap-[3px] *:data-[slot=collapsible-trigger]:rounded-lg *:data-[slot=collapsible-trigger]:bg-transparent *:data-[slot=collapsible-trigger]:px-2 *:data-[slot=collapsible-trigger]:text-start *:data-[slot=collapsible-trigger]:text-[13px]/5 *:data-[slot=collapsible-trigger]:font-medium *:data-[slot=collapsible-trigger]:text-[color:lch(40%_1_282)] *:data-[slot=collapsible-trigger]:enabled:hover:text-[color:lch(20%_1_282)] dark:*:data-[slot=collapsible-trigger]:text-[color:lch(63.304%_1.425_272)] dark:*:data-[slot=collapsible-trigger]:enabled:hover:text-[color:lch(90.826%_1.425_272)] *:data-[slot=collapsible-trigger]:focus-visible:outline-1 *:data-[slot=collapsible-trigger]:focus-visible:-outline-offset-1 *:data-[slot=collapsible-trigger]:focus-visible:outline-ring *:data-[slot=collapsible-trigger]:disabled:opacity-50 [&>[data-slot=collapsible-trigger]_[data-slot=collapsible-indicator]]:size-4 [&>[data-slot=collapsible-trigger]_[data-slot=collapsible-indicator]]:shrink-0 [&>[data-slot=collapsible-trigger]_[data-slot=collapsible-indicator]]:transition-transform [&>[data-slot=collapsible-trigger]_[data-slot=collapsible-indicator]]:duration-150 motion-reduce:[&>[data-slot=collapsible-trigger]_[data-slot=collapsible-indicator]]:transition-none data-open:[&>[data-slot=collapsible-trigger]_[data-slot=collapsible-indicator]]:rotate-90 rtl:data-closed:[&>[data-slot=collapsible-trigger]_[data-slot=collapsible-indicator]]:rotate-180\", className)}\n\t{...restProps}\n/>\n",
 			"type": "registry:file",
 			"target": "collapsible/collapsible.svelte"
 		},

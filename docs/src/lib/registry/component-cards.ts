@@ -19,12 +19,14 @@ export const REQUIRED_CARDS = [
 	"textarea",
 	"field",
 	"select",
+	"combobox",
 	"checkbox",
 	"radio-group",
 	"switch",
 	"slider-field",
 	"color-picker",
 	"dialog",
+	"issue-composer",
 	"alert-dialog",
 	"sheet",
 	"popover",
@@ -53,6 +55,7 @@ export const REQUIRED_CARDS = [
 	"label",
 	"calendar",
 	"range-calendar",
+	"date-picker",
 	// B3: everything else
 	"accordion",
 	"aspect-ratio",
@@ -104,6 +107,7 @@ export const componentCardSchema = z
 		/** One sentence: what the component is for. */
 		description: line,
 		categories: z.array(z.enum(CARD_CATEGORIES)).length(1),
+		dependencies: z.array(z.string()).optional(),
 		registryDependencies: z.array(z.string()).optional(),
 		meta: z
 			.object({

@@ -11,12 +11,14 @@ import { z } from "zod";
 const N = String.raw`\d+(?:\.(?:25|5|75))?`;
 const RADIUS = "(?:none|sm|md|lg|xl|2xl|3xl|4xl|full)";
 const TIER = "(?:fast|normal|slow)";
+const DIALOG_WIDTH = String.raw`(?:sm|md|lg|xl|2xl|\[30rem\])`;
+const DIALOG_OPACITY = "(?:[1-7]?[05]|80)";
 const BUTTON_UTILITY = new RegExp(`^(?:(?:h|size|px|gap)-${N}|rounded-${RADIUS})$`);
 const DIALOG_CONTENT_UTILITY = new RegExp(
-	`^(?:(?:p|gap)-${N}|rounded-${RADIUS}|sm:max-w-(?:sm|md|lg|xl|2xl)|duration-${TIER}|data-open:zoom-in-(?:90|95|100)|data-closed:zoom-out-(?:90|95|100))$`
+	`^(?:(?:p|gap)-${N}|rounded-${RADIUS}|sm:max-w-${DIALOG_WIDTH}|duration-${TIER}|data-open:zoom-in-(?:90|95|100)|data-closed:zoom-out-(?:90|95|100))$`
 );
 const DIALOG_OVERLAY_UTILITY = new RegExp(
-	`^(?:bg-black/(?:0|10|20|30|40|50|60|70|80)|duration-${TIER})$`
+	`^(?:(?:dark:)?bg-black/${DIALOG_OPACITY}|duration-${TIER})$`
 );
 const DIALOG_FOOTER_UTILITY = new RegExp(`^(?:-m[xb]-${N}|p-${N}|rounded-b-${RADIUS})$`);
 const SIDE = "(?:top|bottom|left|right)";
@@ -40,19 +42,19 @@ const DRAWER_OVERLAY_UTILITY = /^bg-black\/(?:0|10|20|30|40|50|60|70|80)$/;
 const INPUT_UTILITY = new RegExp(`^(?:(?:h|px)-${N}|rounded-${RADIUS})$`);
 const TEXTAREA_UTILITY = new RegExp(`^(?:(?:px|py)-${N}|rounded-${RADIUS})$`);
 const SELECT_TRIGGER_UTILITY = new RegExp(
-	`^(?:data-\\[size=(?:default|sm)\\]:h-${N}|pl-${N}|(?:data-\\[size=sm\\]:)?rounded-${RADIUS})$`
+	`^(?:data-\\[size=(?:default|settings|sm)\\]:h-${N}|pl-${N}|(?:data-\\[size=sm\\]:)?rounded-${RADIUS})$`
 );
 const ZOOM = "(?:90|95|100)";
 const MENU_PANEL_UTILITY = `p-${N}|rounded-${RADIUS}|duration-${TIER}|data-open:zoom-in-${ZOOM}|data-closed:zoom-out-${ZOOM}|data-\\[side=${SIDE}\\]:slide-in-from-${SIDE}-[0-4]`;
 const DROPDOWN_MENU_CONTENT_UTILITY = new RegExp(`^(?:${MENU_PANEL_UTILITY}|min-w-${N})$`);
 const DROPDOWN_MENU_SUB_CONTENT_UTILITY = new RegExp(`^(?:${MENU_PANEL_UTILITY})$`);
 const DROPDOWN_MENU_ITEM_UTILITY = new RegExp(
-	`^(?:(?:px|py|gap)-${N}|rounded-${RADIUS}|data-inset:pl-${N})$`
+	`^(?:(?:px|ps|pe|py|gap)-${N}|rounded-${RADIUS}|data-inset:p[ls]-${N})$`
 );
 const DROPDOWN_MENU_CHOICE_UTILITY = new RegExp(
-	`^(?:(?:pl|py|gap)-${N}|rounded-${RADIUS}|data-inset:pl-${N})$`
+	`^(?:(?:pl|ps|py|gap)-${N}|rounded-${RADIUS}|data-inset:p[ls]-${N})$`
 );
-const DROPDOWN_MENU_LABEL_UTILITY = new RegExp(`^(?:px-${N}|data-inset:pl-${N})$`);
+const DROPDOWN_MENU_LABEL_UTILITY = new RegExp(`^(?:px-${N}|data-inset:p[ls]-${N})$`);
 const DROPDOWN_MENU_SEPARATOR_UTILITY = new RegExp(`^-mx-${N}$`);
 const TOOLTIP_CONTENT_UTILITY = new RegExp(
 	`^(?:(?:px|py)-${N}|rounded-${RADIUS}|duration-${TIER}|data-open:zoom-in-${ZOOM}|data-\\[state=delayed-open\\]:zoom-in-${ZOOM}|data-closed:zoom-out-${ZOOM})$`
@@ -66,7 +68,7 @@ const CARD_UTILITY = new RegExp(
 	`^(?:(?:data-\\[size=sm\\]:)?\\[--card-spacing:--spacing\\(${CARD_SPACING}\\)\\]|rounded-${RADIUS}|\\*:\\[img:first-child\\]:rounded-t-${RADIUS}|\\*:\\[img:last-child\\]:rounded-b-${RADIUS})$`
 );
 const TABS_LIST_UTILITY = new RegExp(
-	`^(?:group-data-horizontal/tabs:h-(?:8|9|10)|(?:group-data-vertical/tabs:)?p-(?:0\\.75|1)|(?:group-data-vertical/tabs:)?data-\\[variant=default\\]:rounded-${RADIUS})$`
+	`^(?:group-data-horizontal/tabs:h-(?:8|9|10)|(?:group-data-vertical/tabs:)?p-(?:0\\.75|1)|group-data-horizontal/tabs:py-(?:0\\.75|1)|(?:group-data-vertical/tabs:)?data-\\[variant=default\\]:rounded-${RADIUS})$`
 );
 const TABS_TRIGGER_UTILITY = new RegExp(
 	`^(?:(?:group-data-vertical/tabs:)?(?:px-(?:1|1\\.5|2|2\\.5|3|3\\.5|4)|py-(?:0|0\\.5|1|1\\.5|2)|rounded-${RADIUS})|has-data-\\[icon=inline-start\\]:pl-(?:1|1\\.5|2|2\\.5|3|3\\.5|4)|has-data-\\[icon=inline-end\\]:pr-(?:1|1\\.5|2|2\\.5|3|3\\.5|4))$`
@@ -92,6 +94,9 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 			"cn-button-size-icon-lg",
 		].map((className) => [className, BUTTON_UTILITY])
 	),
+	"cn-button-shape-auto-text": new RegExp(
+		`^not-in-data-\\[slot=button-group\\]:rounded-${RADIUS}$`
+	),
 	"cn-dialog-content": DIALOG_CONTENT_UTILITY,
 	"cn-dialog-overlay": DIALOG_OVERLAY_UTILITY,
 	"cn-dialog-footer": DIALOG_FOOTER_UTILITY,
@@ -99,7 +104,7 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-accordion-content": /^px-(?:[0-7](?:\.5)?|8)$/,
 	"cn-accordion-content-inner": /^pb-(?:[0-9](?:\.5)?|10)$/,
 	"cn-alert-dialog-content": new RegExp(
-		`^(?:p-(?:[2-9](?:\\.5)?|1[01](?:\\.5)?|12)|gap-(?:[1-9](?:\\.5)?|10)|rounded-${RADIUS}|data-\\[size=default\\]:sm:max-w-(?:sm|md|lg|xl|2xl)|duration-${TIER}|data-open:zoom-in-${ZOOM}|data-closed:zoom-out-${ZOOM})$`
+		`^(?:p-(?:[2-9](?:\\.5)?|1[01](?:\\.5)?|12)|gap-(?:[1-9](?:\\.5)?|10)|rounded-${RADIUS}|data-\\[size=default\\]:sm:max-w-${DIALOG_WIDTH}|duration-${TIER}|data-open:zoom-in-${ZOOM}|data-closed:zoom-out-${ZOOM})$`
 	),
 	"cn-alert-dialog-overlay": DIALOG_OVERLAY_UTILITY,
 	"cn-alert-dialog-footer": new RegExp(
@@ -123,8 +128,8 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-native-select": SELECT_TRIGGER_UTILITY,
 	"cn-input-group": INPUT_GROUP_UTILITY,
 	"cn-input-group-addon": /^(?:gap)-(?:[0-5](?:\.5)?|6)$/,
-	"cn-input-group-addon-align-inline-start": new RegExp(`^pl-${CARD_SPACING}$`),
-	"cn-input-group-addon-align-inline-end": new RegExp(`^pr-${CARD_SPACING}$`),
+	"cn-input-group-addon-align-inline-start": new RegExp(`^(?:pl|ps)-${CARD_SPACING}$`),
+	"cn-input-group-addon-align-inline-end": new RegExp(`^(?:pr|pe)-${CARD_SPACING}$`),
 	"cn-input-group-addon-align-block-start": new RegExp(`^px-${CARD_SPACING}$`),
 	"cn-input-group-addon-align-block-end": new RegExp(`^px-${CARD_SPACING}$`),
 	"cn-input-otp": /^gap-(?:[0-5](?:\.5)?|6)$/,
@@ -140,7 +145,9 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-dropdown-menu-radio-item": DROPDOWN_MENU_CHOICE_UTILITY,
 	"cn-dropdown-menu-label": DROPDOWN_MENU_LABEL_UTILITY,
 	"cn-dropdown-menu-separator": DROPDOWN_MENU_SEPARATOR_UTILITY,
-	"cn-context-menu-content": DROPDOWN_MENU_CONTENT_UTILITY,
+	"cn-context-menu-content": new RegExp(
+		`^(?:${MENU_PANEL_UTILITY}|min-w-${N}|\\[--valar-context-menu-min-width:(?:96|[12]\\d[048]|[12][13579][26]|30[048]|31[26]|320)px\\])$`
+	),
 	"cn-context-menu-sub-content": DROPDOWN_MENU_SUB_CONTENT_UTILITY,
 	"cn-context-menu-item": DROPDOWN_MENU_ITEM_UTILITY,
 	"cn-context-menu-sub-trigger": DROPDOWN_MENU_ITEM_UTILITY,
@@ -214,8 +221,10 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-progress-indicator": new RegExp(`^rounded-${RADIUS}$`),
 	"cn-skeleton": new RegExp(`^rounded-${RADIUS}$`),
 	"cn-spinner": /^size-(?:3|4|5|6|8)$/,
-	"cn-kbd": new RegExp(`^(?:h-(?:[4-7](?:\\.5)?|8)|px-(?:[0-2](?:\\.5)?|3)|rounded-${RADIUS})$`),
-	"cn-kbd-group": /^gap-(?:[0-3](?:\.5)?|4)$/,
+	"cn-kbd": new RegExp(
+		`^(?:h-(?:[4-7](?:\\.(?:25|5|75))?|8)|px-(?:[0-2](?:\\.5)?|3)|rounded-${RADIUS})$`
+	),
+	"cn-kbd-group": /^gap-(?:[0-3](?:\.(?:25|5|75))?|4)$/,
 	...Object.fromEntries(
 		["cn-calendar-geometry", "cn-range-calendar-geometry"].map((name) => [
 			name,
@@ -314,7 +323,7 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-table-head": /^(?:h-(?:[6-9](?:\.5)?|1[0-5](?:\.5)?|16)|px-(?:[0-7](?:\.5)?|8))$/,
 	"cn-table-cell": /^(?:px-(?:[0-7](?:\.5)?|8)|py-(?:[0-5](?:\.5)?|6))$/,
 	"cn-card": CARD_UTILITY,
-	"cn-card-header": new RegExp(`^(?:gap-${N}|rounded-t-${RADIUS})$`),
+	"cn-card-header": new RegExp(`^(?:gap-(?:y-)?${N}|rounded-t-${RADIUS})$`),
 	"cn-card-footer": new RegExp(`^rounded-b-${RADIUS}$`),
 	"cn-tabs": new RegExp(`^gap-${N}$`),
 	"cn-tabs-list": TABS_LIST_UTILITY,

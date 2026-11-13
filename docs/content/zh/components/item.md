@@ -18,13 +18,15 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="item-demo">
+<ComponentPreview name="item-issue-row" title="问题列表行">
 
 <div></div>
 
 </ComponentPreview>
 
 `Item` 组件是一个简单的弹性容器，几乎可以容纳任何类型的内容。用它展示标题、描述与操作，再用 `Item.Group` 组件组合成列表。
+
+紧凑的问题列表使用 `appearance="issue-row"`。优先级放在 `Item.Media`，问题编号、状态和标题放在 `Item.Content`，日期放在 `Item.Actions`。整行打开详情时渲染为原生链接，按 Tab 聚焦，按 Enter 打开详情。
 
 ## 安装
 
@@ -78,6 +80,12 @@ links:
 ## 变体
 
 用 `variant` 属性切换列表项的视觉样式。
+
+<ComponentPreview name="item-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 <ComponentPreview name="item-variants-demo">
 

@@ -41,7 +41,7 @@
 	},
 	"files": [
 		{
-			"content": "# Label 设计规范\n\n- 表单里优先用 `Field.Label`，它已包含 Label；只在 Field 之外的简单场景直接用 Label。\n- 必须用 `for` 指向控件的 `id`，或把控件包在 Label 里，点击标签才能聚焦或切换控件。\n- 标签写控件的用途（“邮箱”），不要写“请输入”；必填用文字或 `aria-required` 表达，不要只靠颜色或星号。\n",
+			"content": "# Label 设计规范\n\n- 默认标签采用 Linear 设置表单取样的 13 px／500、常规行高。浅色文字 `lch(10% 0 282)`，深色文字 `lch(100% 0 272)`。独立设置行可用 `appearance=\"settings\"`。\n- 表单里优先用 `Field.Label`，它已包含 Label；只在 Field 之外的简单场景直接用 Label。\n- 必须用 `for` 指向控件的 `id`，或把控件包在 Label 里，点击标签才能聚焦或切换控件。\n- 标签写控件的用途。为控件设置原生 `required` 或适用的 `aria-required`。可同时给 Label 传 `required` 显示星号。受限设置项的标题用 Field.Title。独立禁用控件可在标签上设 `data-disabled=\"true\"`，并在控件本身设 `disabled`。\n",
 			"type": "registry:file",
 			"target": "label/RULES.md"
 		},
@@ -51,7 +51,7 @@
 			"target": "label/index.ts"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { Label as LabelPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\t...restProps\n\t}: LabelPrimitive.RootProps = $props();\n</script>\n\n<LabelPrimitive.Root\n\tbind:ref\n\tdata-slot=\"label\"\n\tclass={cn(\n\t\t\"gap-2 text-sm leading-none font-medium group-data-[disabled=true]:opacity-50 peer-disabled:opacity-50 flex items-center select-none group-data-[disabled=true]:pointer-events-none peer-disabled:cursor-not-allowed\",\n\t\t\"\",\n\t\tclassName\n\t)}\n\t{...restProps}\n/>\n",
+			"content": "<script lang=\"ts\">\n\timport { Label as LabelPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tappearance = \"default\",\n\t\trequired = false,\n\t\tchildren,\n\t\t...restProps\n\t}: LabelPrimitive.RootProps & {\n\t\tappearance?: \"default\" | \"settings\";\n\t\trequired?: boolean;\n\t} = $props();\n</script>\n\n<LabelPrimitive.Root\n\tbind:ref\n\tdata-slot=\"label\"\n\tdata-appearance={appearance}\n\tclass={cn(\n\t\t\"gap-2 text-[13px]/[normal] font-medium text-[color:lch(10%_0_282)] dark:text-[color:lch(100%_0_272)] data-[disabled=true]:opacity-50 group-data-[disabled=true]:opacity-50 peer-disabled:opacity-50 has-[:disabled]:opacity-50 flex items-center select-none group-data-[disabled=true]:pointer-events-none peer-disabled:cursor-not-allowed\",\n\t\t\"\",\n\t\tappearance === \"settings\" && \"cursor-default\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n\t{#if required}\n\t\t<span data-slot=\"label-required\" aria-hidden=\"true\" class=\"text-destructive\">*</span>\n\t{/if}\n</LabelPrimitive.Root>\n",
 			"type": "registry:file",
 			"target": "label/label.svelte"
 		}

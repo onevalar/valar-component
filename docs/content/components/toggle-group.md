@@ -72,6 +72,16 @@ Copy and paste the following code into your project.
 </ToggleGroup.Root>
 ```
 
+## Formatting toolbar
+
+Use `appearance="toolbar"` for compact icon toggles. In this example, Bold and Italic can be applied together. Use the arrow keys to move focus and press Space to toggle a format.
+
+<ComponentPreview name="toggle-group-toolbar">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Outline
 
 Use `variant="outline"` for an outline style.

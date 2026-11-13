@@ -4,3 +4,4 @@
 - `ButtonGroup.Root` 渲染 `role="group"`，要用 `aria-label` 说明这组按钮做什么。
 - 组内按钮使用相同的 `size`；方向用 `orientation`，组之间需要间距时嵌套多个 ButtonGroup，不要给按钮单独改圆角或边框（组件已处理相邻按钮的圆角和边框）。
 - 组内的说明文字用 `ButtonGroup.Text`，分隔用 `ButtonGroup.Separator`；Input、Select 等控件也可以放进组内。
+- 横向胶囊拆分按钮使用 `variant="pill"`，配两个 `size="icon-sm"` 的图标按钮和 `ButtonGroup.Separator`。样式参考 Linear Issue 顶栏的提示词操作组。两个动作各自命名，键盘焦点在按钮边界内显示。

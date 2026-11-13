@@ -20,7 +20,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="collapsible-demo" align="start">
+<ComponentPreview name="collapsible-properties" title="项目属性折叠" align="start">
 
 <div></div>
 
@@ -90,6 +90,18 @@ links:
   <Collapsible.Content>Content</Collapsible.Content>
 </Collapsible.Root>
 ```
+
+## 属性分组
+
+详情面板内的单个折叠区用 `appearance="properties"`。将 `Collapsible.Trigger` 直接放在根组件内，并给装饰箭头加上 `data-slot="collapsible-indicator"`。展开时箭头朝下。点击 **Properties**，或聚焦后按 Enter 或空格，可以展开或收起内容。
+
+## 订单详情
+
+<ComponentPreview name="collapsible-demo" align="start">
+
+<div></div>
+
+</ComponentPreview>
 
 ## 基础用法
 

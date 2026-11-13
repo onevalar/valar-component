@@ -54,7 +54,7 @@ links:
 ```
 
 ```svelte
-<Badge variant="default | outline | secondary | destructive">Badge</Badge>
+<Badge variant="secondary">草稿</Badge>
 ```
 
 ## 变体
@@ -66,6 +66,12 @@ links:
 <div></div>
 
 </ComponentPreview>
+
+在问题标题旁显示已应用的分类时，用 `variant="label"`。可通过 `labelColor` 传入分类颜色来显示圆点，并用文字写出分类名称。
+
+```svelte
+<Badge variant="label" labelColor="#EB5757">缺陷</Badge>
+```
 
 ## 带图标
 

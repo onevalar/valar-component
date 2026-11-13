@@ -1,0 +1,73 @@
+{
+	"$schema": "http://127.0.0.1:5186/schema/registry-item.json",
+	"name": "combobox",
+	"title": "Combobox 搜索选择",
+	"type": "registry:ui",
+	"description": "在浮层中搜索并选择一个或多个选项，支持分组和异步数据。",
+	"dependencies": [
+		"bits-ui"
+	],
+	"devDependencies": [
+		"bits-ui@2.20.0",
+		"@internationalized/date@^3.12.0"
+	],
+	"registryDependencies": [
+		"command",
+		"popover",
+		"button"
+	],
+	"meta": {
+		"valar": {
+			"keywords": [
+				"搜索选择",
+				"自动完成",
+				"负责人",
+				"标签",
+				"combobox"
+			],
+			"whenToUse": [
+				"选择负责人、项目或多个标签",
+				"通过名称或别名查找选项"
+			],
+			"whenNotToUse": [
+				{
+					"case": "执行命令或跳转页面",
+					"use": "command"
+				},
+				{
+					"case": "从少量固定选项中选择",
+					"use": "select"
+				}
+			],
+			"accessibility": [
+				"打开时聚焦搜索，方向键移动高亮，回车选择，Escape 关闭并归焦",
+				"选值使用 aria-selected，键盘高亮使用 aria-activedescendant"
+			],
+			"responsive": [
+				"根据锚点和视口限制浮层尺寸，长列表独立滚动"
+			],
+			"related": [
+				"popover",
+				"command",
+				"select"
+			]
+		}
+	},
+	"files": [
+		{
+			"content": "# Combobox 设计规范\n\n- 需要搜索再选择时用 Combobox。少量固定选项用 Select，搜索后执行操作用 Command。\n- 提供 `label` 和搜索 `placeholder`。选项使用稳定且唯一的 `id`，额外搜索词放在 `keywords`。\n- 单选确认后关闭并归焦，复选保持打开。已选值以勾选和 `aria-selected` 表达，方向键仅移动高亮。允许清空单选时提供明确的「未分配」选项。\n- 默认浮层 207 px，浅深表面、细边框和阴影沿用工作区浮层。搜索行高 36 px、左边距 14 px，不放搜索图标。候选至少 32 px 高，状态高亮使用内收的圆角底色。\n- 可用 `group` 分组，用 `option` 传入头像或状态图标。行尾留给当前选择。长选项允许换行，列表独立滚动。\n- 异步筛选用 `bind:query` 并传 `filter={false}`，由宿主取消或丢弃过期查询。使用 `loading`、`error`、`empty` 表达等待、错误和无匹配；可将重试等操作放在 `footer`。\n",
+			"type": "registry:file",
+			"target": "combobox/RULES.md"
+		},
+		{
+			"content": "<script lang=\"ts\" module>\n\timport type { Popover as PopoverPrimitive } from \"bits-ui\";\n\timport type { Snippet } from \"svelte\";\n\n\texport type ComboboxOption = {\n\t\tid: string;\n\t\tlabel: string;\n\t\tgroup?: string;\n\t\tkeywords?: readonly string[];\n\t\tdisabled?: boolean;\n\t};\n\n\texport type ComboboxProps = {\n\t\tlabel: string;\n\t\tplaceholder: string;\n\t\toptions: readonly ComboboxOption[];\n\t\tvalue?: readonly string[];\n\t\topen?: boolean;\n\t\tquery?: string;\n\t\tmultiple?: boolean;\n\t\tdisabled?: boolean;\n\t\tempty?: string;\n\t\tloading?: boolean;\n\t\tloadingLabel?: string;\n\t\terror?: string;\n\t\tfilter?: boolean;\n\t\tonSelect?: (id: string) => void;\n\t\ttriggerProps?: Omit<PopoverPrimitive.TriggerProps, \"children\" | \"child\" | \"class\" | \"disabled\">;\n\t\tcontentClass?: string;\n\t\tclass?: string;\n\t\talign?: PopoverPrimitive.ContentProps[\"align\"];\n\t\tside?: PopoverPrimitive.ContentProps[\"side\"];\n\t\tsideOffset?: number;\n\t\tportalProps?: Omit<PopoverPrimitive.PortalProps, \"children\" | \"child\">;\n\t\tchildren?: Snippet;\n\t\toption?: Snippet<[ComboboxOption]>;\n\t\tfooter?: Snippet;\n\t};\n</script>\n\n<script lang=\"ts\">\n\timport { computeCommandScore } from \"bits-ui\";\n\timport * as Command from \"$UI$/command/index.js\";\n\timport * as Popover from \"$UI$/popover/index.js\";\n\timport IconPlaceholder from \"$lib/components/icon-placeholder/icon-placeholder.svelte\";\n\timport { buttonVariants } from \"$UI$/button/index.js\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tlabel,\n\t\tplaceholder,\n\t\toptions,\n\t\tvalue = $bindable([]),\n\t\topen = $bindable(false),\n\t\tquery = $bindable(\"\"),\n\t\tmultiple = false,\n\t\tdisabled = false,\n\t\tempty = \"没有匹配的选项\",\n\t\tloading = false,\n\t\tloadingLabel = \"正在加载…\",\n\t\terror,\n\t\tfilter = true,\n\t\tonSelect,\n\t\ttriggerProps,\n\t\tcontentClass,\n\t\tclass: className,\n\t\talign = \"start\",\n\t\tside = \"bottom\",\n\t\tsideOffset = 4,\n\t\tportalProps,\n\t\tchildren,\n\t\toption,\n\t\tfooter,\n\t}: ComboboxProps = $props();\n\n\tlet search = $state<HTMLInputElement | null>(null);\n\tconst selectedLabel = $derived(\n\t\tvalue.length\n\t\t\t? value.map((id) => options.find((item) => item.id === id)?.label ?? id).join(\", \")\n\t\t\t: label\n\t);\n\tconst triggerLabel = $derived(\n\t\ttriggerProps?.[\"aria-label\"] ??\n\t\t\t(children || !value.length ? label : `${label}: ${selectedLabel}`)\n\t);\n\tconst groupedOptions = $derived.by(() => {\n\t\tconst groups = new Map<string, ComboboxOption[]>();\n\t\tfor (const item of options) {\n\t\t\tconst key = item.group ?? \"\";\n\t\t\tconst group = groups.get(key);\n\t\t\tif (group) group.push(item);\n\t\t\telse groups.set(key, [item]);\n\t\t}\n\t\treturn groups;\n\t});\n\n\t$effect(() => {\n\t\tif (!open) query = \"\";\n\t});\n\n\tfunction choose(item: ComboboxOption) {\n\t\tvalue = multiple\n\t\t\t? value.includes(item.id)\n\t\t\t\t? value.filter((id) => id !== item.id)\n\t\t\t\t: [...value, item.id]\n\t\t\t: [item.id];\n\t\tonSelect?.(item.id);\n\t\tif (!multiple) open = false;\n\t}\n</script>\n\n<Popover.Root bind:open>\n\t<Popover.Trigger {disabled} {...triggerProps}>\n\t\t{#snippet child({ props })}\n\t\t\t<button\n\t\t\t\t{...props}\n\t\t\t\tdata-slot=\"combobox-trigger\"\n\t\t\t\taria-label={triggerLabel}\n\t\t\t\tclass={className ??\n\t\t\t\t\tcn(buttonVariants({ variant: \"outline\", size: \"sm\" }), \"w-fit max-w-full justify-between gap-2 font-normal aria-expanded:bg-accent [&_svg]:size-3.5\")}\n\t\t\t>\n\t\t\t\t{#if children}\n\t\t\t\t\t{@render children()}\n\t\t\t\t{:else}\n\t\t\t\t\t<span class=\"min-w-0 truncate\">{selectedLabel}</span>\n\t\t\t\t\t<IconPlaceholder\n\t\t\t\t\t\tlucide=\"ChevronDownIcon\"\n\t\t\t\t\t\ttabler=\"IconChevronDown\"\n\t\t\t\t\t\thugeicons=\"ArrowDown01Icon\"\n\t\t\t\t\t\tphosphor=\"CaretDownIcon\"\n\t\t\t\t\t\tremixicon=\"RiArrowDownSLine\"\n\t\t\t\t\t\taria-hidden=\"true\"\n\t\t\t\t\t/>\n\t\t\t\t{/if}\n\t\t\t</button>\n\t\t{/snippet}\n\t</Popover.Trigger>\n\t<Popover.Content\n\t\tappearance=\"surface\"\n\t\tdata-slot=\"combobox-content\"\n\t\t{portalProps}\n\t\t{align}\n\t\t{side}\n\t\t{sideOffset}\n\t\trole=\"dialog\"\n\t\taria-label={label}\n\t\tclass={cn(\"w-[207px] gap-0 overflow-hidden p-0 [--valar-combobox-highlight:lch(95%_0_282)] [--valar-combobox-highlight-text:lch(10%_0_282)] [--valar-combobox-placeholder:lch(40%_1_282)] dark:[--valar-combobox-highlight:lch(20.82%_1.3_272)] dark:[--valar-combobox-highlight-text:white] dark:[--valar-combobox-placeholder:lch(64.714%_1.425_272)]\", contentClass)}\n\t\tonOpenAutoFocus={(event) => {\n\t\t\tevent.preventDefault();\n\t\t\tsearch?.focus({ preventScroll: true });\n\t\t}}\n\t>\n\t\t<Command.Root\n\t\t\t{label}\n\t\t\tclass=\"h-auto min-h-0 gap-0 bg-transparent p-0 [&_[data-slot=command-input-wrapper]]:shrink-0 [&_[data-slot=command-input-wrapper]]:p-0 [&_[data-slot=input-group]]:h-9! [&_[data-slot=input-group]]:rounded-none [&_[data-slot=input-group]]:border-0 [&_[data-slot=input-group]]:bg-transparent [&_[data-slot=input-group-addon]]:hidden\"\n\t\t\tshouldFilter={filter}\n\t\t\tfilter={(_value, term, [optionLabel = \"\", ...keywords] = []) =>\n\t\t\t\tcomputeCommandScore(optionLabel, term, keywords)}\n\t\t\tdisableInitialScroll\n\t\t>\n\t\t\t<Command.Input\n\t\t\t\tbind:ref={search}\n\t\t\t\tbind:value={query}\n\t\t\t\t{placeholder}\n\t\t\t\taria-label={placeholder}\n\t\t\t\tclass=\"h-full! pe-3! ps-3.5! text-[13px]! font-normal placeholder:text-[color:var(--valar-combobox-placeholder)]\"\n\t\t\t/>\n\t\t\t<Command.List\n\t\t\t\taria-label={label}\n\t\t\t\taria-multiselectable={multiple ? true : undefined}\n\t\t\t\taria-busy={loading || undefined}\n\t\t\t\tclass=\"min-h-0 overscroll-contain px-1.5 pb-1 data-empty:p-0\"\n\t\t\t>\n\t\t\t\t{#if !loading && !error}\n\t\t\t\t\t<Command.Empty class=\"m-0 px-3.5 py-2.5 text-start text-[13px] text-[color:var(--valar-combobox-placeholder)]\" role=\"status\">{empty}</Command.Empty>\n\t\t\t\t\t{#each groupedOptions as [name, items] (name)}\n\t\t\t\t\t\t{#if name}\n\t\t\t\t\t\t\t<Command.Group heading={name} class=\"p-0\">\n\t\t\t\t\t\t\t\t{#each items as item (item.id)}\n\t\t\t\t\t\t\t\t\t{@render renderOption(item)}\n\t\t\t\t\t\t\t\t{/each}\n\t\t\t\t\t\t\t</Command.Group>\n\t\t\t\t\t\t{:else}\n\t\t\t\t\t\t\t{#each items as item (item.id)}\n\t\t\t\t\t\t\t\t{@render renderOption(item)}\n\t\t\t\t\t\t\t{/each}\n\t\t\t\t\t\t{/if}\n\t\t\t\t\t{/each}\n\t\t\t\t{/if}\n\t\t\t</Command.List>\n\t\t\t{#if loading}\n\t\t\t\t<p class=\"m-0 px-3.5 py-2.5 text-start text-[13px] text-[color:var(--valar-combobox-placeholder)]\" role=\"status\">{loadingLabel}</p>\n\t\t\t{:else if error}\n\t\t\t\t<p class=\"m-0 px-3.5 py-2.5 text-start text-[13px] text-[color:var(--valar-combobox-placeholder)]\" role=\"alert\">{error}</p>\n\t\t\t{/if}\n\t\t\t{#if footer}\n\t\t\t\t<div class=\"flex shrink-0 flex-wrap items-center gap-1 border-t border-border px-2 py-1.5 empty:hidden\">{@render footer()}</div>\n\t\t\t{/if}\n\t\t</Command.Root>\n\t</Popover.Content>\n</Popover.Root>\n\n{#snippet renderOption(item: ComboboxOption)}\n\t{@const selected = value.includes(item.id)}\n\t<Command.Item\n\t\tvalue={`option:${item.id}`}\n\t\tkeywords={[item.label, ...(item.keywords ?? [])]}\n\t\tdisabled={item.disabled}\n\t\tonSelect={() => choose(item)}\n\t\tclass=\"isolate min-h-8 gap-2 rounded-[8px]! py-1 pe-3 ps-2 text-[13px]/[19.5px] font-normal data-selected:bg-transparent! data-selected:text-[color:var(--valar-combobox-highlight-text)]! data-selected:before:pointer-events-none data-selected:before:absolute data-selected:before:inset-x-0 data-selected:before:inset-y-0.5 data-selected:before:-z-10 data-selected:before:rounded-[8px] data-selected:before:bg-[color:var(--valar-combobox-highlight)] [&_svg]:size-3.5\"\n\t>\n\t\t{#snippet child({ props })}\n\t\t\t<div {...props} aria-selected={selected} data-checked={selected}>\n\t\t\t\t{#if option}\n\t\t\t\t\t{@render option(item)}\n\t\t\t\t{:else}\n\t\t\t\t\t<span class=\"min-w-0 flex-1 wrap-anywhere\">{item.label}</span>\n\t\t\t\t{/if}\n\t\t\t\t{#if selected}\n\t\t\t\t\t<IconPlaceholder\n\t\t\t\t\t\tlucide=\"CheckIcon\"\n\t\t\t\t\t\ttabler=\"IconCheck\"\n\t\t\t\t\t\thugeicons=\"Tick02Icon\"\n\t\t\t\t\t\tphosphor=\"CheckIcon\"\n\t\t\t\t\t\tremixicon=\"RiCheckLine\"\n\t\t\t\t\t\taria-hidden=\"true\"\n\t\t\t\t\t\tclass=\"ms-auto size-3.5 shrink-0\"\n\t\t\t\t\t/>\n\t\t\t\t{:else}\n\t\t\t\t\t<span aria-hidden=\"true\" class=\"ms-auto size-3.5 shrink-0\"></span>\n\t\t\t\t{/if}\n\t\t\t</div>\n\t\t{/snippet}\n\t</Command.Item>\n{/snippet}\n",
+			"type": "registry:file",
+			"target": "combobox/combobox.svelte"
+		},
+		{
+			"content": "import Combobox from \"./combobox.svelte\";\n\nexport { Combobox, Combobox as Root };\nexport type { ComboboxOption, ComboboxProps } from \"./combobox.svelte\";\n",
+			"type": "registry:file",
+			"target": "combobox/index.ts"
+		}
+	]
+}

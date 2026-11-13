@@ -13,12 +13,12 @@
 </script>
 
 <Select.Root type="single" name="favoriteFruit" items={fruits} bind:value>
-	<Select.Trigger class="w-full max-w-48">
+	<Select.Trigger class="w-full max-w-48" aria-label="Favorite fruit">
 		<Select.Value placeholder="Select a fruit" />
 	</Select.Trigger>
-	<Select.Content>
+	<Select.Content aria-label="Favorite fruit options">
 		<Select.Group>
-			<Select.Label>Fruits</Select.Label>
+			<Select.GroupHeading>Fruits</Select.GroupHeading>
 			{#each fruits as fruit (fruit.value)}
 				<Select.Item value={fruit.value} label={fruit.label}>
 					{fruit.label}

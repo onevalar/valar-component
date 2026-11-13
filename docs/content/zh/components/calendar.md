@@ -1,6 +1,6 @@
 ---
 title: 日历
-description: 用于选择单个日期或日期区间的日历组件。
+description: 支持键盘操作的日历，可选择单个或多个日期。
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/calendar
@@ -20,11 +20,15 @@ links:
 	let { viewerData } = $props();
 </script>
 
-<ComponentPreview name="calendar-demo">
+<ComponentPreview name="calendar-project-date" title="项目日期">
 
 <div></div>
 
 </ComponentPreview>
+
+设置 `appearance="project-date"` 可使用 Linear 项目目标日期的月历外观。方向键移动日期，Enter 或空格选择。标题右侧的按钮用于翻月，所选日期会显示在月历下方。
+
+默认日历也使用圆形日期，星期从周一开始。可以用 `weekStartsOn` 改变周起始日，或用 `captionLayout="dropdown"` 快速选择年月。
 
 ## 安装
 
@@ -91,6 +95,14 @@ links:
 
 </ComponentPreview>
 
+## 年月与样式调节
+
+<ComponentPreview name="calendar-demo">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 区间日历
 
 使用 [`RangeCalendar`](/docs/components/range-calendar) 组件启用区间选择。
@@ -103,7 +115,7 @@ links:
 
 ## 月份与年份选择器
 
-传入 `captionLayout="dropdown"`，月份与年份以下拉菜单呈现。
+传入 `captionLayout="dropdown"`，月份与年份使用 Valar Select 菜单。长列表在面板内滚动。方向键和 Enter 可选择，按 Escape 可返回触发器。
 
 <ComponentPreview name="calendar-caption">
 

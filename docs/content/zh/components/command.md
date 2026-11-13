@@ -91,7 +91,7 @@ links:
 
 ## 基础用法
 
-对话框中的简单命令面板。
+命令弹窗用宽面板显示分组结果。点击按钮，或聚焦按钮后按 Cmd+K 或 Ctrl+K 打开。输入关键词筛选，方向键移动高亮，Enter 执行。Escape 关闭弹窗并把焦点还给按钮。
 
 <ComponentPreview name="command-basic">
 
@@ -119,9 +119,19 @@ links:
 
 ## 可滚动
 
-包含多个条目、可滚动的命令面板。
+命令弹窗中，滚动长列表时搜索框保持可见。按 Home 或 End 可移到首个或末个结果。
 
 <ComponentPreview name="command-scrollable">
+
+<div></div>
+
+</ComponentPreview>
+
+## 紧凑筛选
+
+工具栏筛选可在 Popover 内使用 `Command.Root appearance="compact"`。搜索框高 36 px，选项最小高 32 px。此预览模拟加载更多筛选项，并展示不可用的选项和无匹配结果时的反馈。
+
+<ComponentPreview name="command-compact">
 
 <div></div>
 

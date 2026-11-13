@@ -88,7 +88,7 @@
 		<Popover.Trigger
 			{disabled}
 			aria-labelledby={`${id}-label ${id}-value`}
-			class="flex h-9 w-full items-center gap-2 rounded-md border border-input bg-background px-2 text-sm shadow-xs outline-none hover:bg-muted focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
+			class="flex h-9 w-full items-center gap-2 rounded-md border border-input bg-background px-2 text-sm shadow-xs outline-none hover:bg-muted focus-visible:border-ring disabled:pointer-events-none disabled:opacity-50"
 		>
 			<span
 				data-slot="color-picker-swatch"
@@ -132,7 +132,7 @@
 						if (event.key === "Enter") commitText();
 					}}
 					onblur={commitText}
-					class="h-8 rounded-md border border-input bg-background px-2 font-mono text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive"
+					class="h-8 rounded-md border border-input bg-background px-2 font-mono text-sm text-foreground outline-none focus-visible:border-ring aria-invalid:border-destructive"
 				/>
 			</label>
 			{#if invalid}<p class="text-xs text-destructive">
@@ -147,7 +147,7 @@
 								type="button"
 								aria-label={hex}
 								aria-pressed={hex === current}
-								class="size-6 rounded-sm border outline-none focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:ring-2 aria-pressed:ring-foreground"
+								class="size-6 rounded-sm border outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring/50 aria-pressed:ring-2 aria-pressed:ring-foreground"
 								style:background={hex}
 								onclick={() => {
 									set(hex);

@@ -15,6 +15,9 @@ export type SidebarStateProps = {
 	/** Whether the Provider currently enables the global Cmd/Ctrl+B shortcut. */
 	keyboardShortcut: Getter<boolean>;
 
+	/** The Provider's appearance also applies to navigation in the mobile portal. */
+	appearance?: Getter<"default" | "workspace">;
+
 	/**
 	 * A function that sets the open state of the sidebar. To support `bind:open`, we need
 	 * a source of truth for changing the open state to ensure it will be synced throughout
@@ -26,7 +29,9 @@ export type SidebarStateProps = {
 class SidebarState {
 	readonly props: SidebarStateProps;
 	open = $derived.by(() => this.props.open());
+	appearance = $derived.by(() => this.props.appearance?.() ?? "default");
 	openMobile = $state(false);
+	mobileOpener: HTMLElement | null = null;
 	setOpen: SidebarStateProps["setOpen"];
 	#isMobile: IsMobile;
 	state = $derived.by(() => (this.open ? "expanded" : "collapsed"));

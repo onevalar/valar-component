@@ -18,11 +18,21 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+<ComponentPreview name="alert-connection">
+
+<div></div>
+
+</ComponentPreview>
+
+Set `appearance="connection"` for a compact connection alert. **Reconnect** attempts to retry while the simulated network is offline. **Simulate recovery** clears the alert, and **Simulate offline** shows it again.
+
 <ComponentPreview name="alert-demo">
 
 <div></div>
 
 </ComponentPreview>
+
+The default alert supports a title, description, optional icon and action. This preview uses the settings notice as its reference.
 
 ## Installation
 

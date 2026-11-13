@@ -91,7 +91,7 @@ Copy and paste the following code into your project.
 
 ## Basic
 
-A simple command menu in a dialog.
+The command dialog uses a wide panel with grouped results. Open it with the button, or focus the button and press Cmd+K or Ctrl+K. Type to filter, use arrow keys to highlight a command, and press Enter to run it. Escape closes the dialog and returns focus to the button.
 
 <ComponentPreview name="command-basic">
 
@@ -119,9 +119,19 @@ A command menu with groups, icons and separators.
 
 ## Scrollable
 
-Scrollable command menu with multiple items.
+In a command dialog, the search input stays visible while long results scroll. Use Home or End to move to the first or last result.
 
 <ComponentPreview name="command-scrollable">
+
+<div></div>
+
+</ComponentPreview>
+
+## Compact filters
+
+Use `appearance="compact"` on `Command.Root` inside a Popover for toolbar filters. The search field is 36 px high and options start at 32 px. This preview simulates loading additional filters, includes an unavailable option, and shows feedback if no filters match.
+
+<ComponentPreview name="command-compact">
 
 <div></div>
 

@@ -62,10 +62,7 @@ function alertCss(select: string, overrides: AlertOverrides): string {
 	const safe = valuesSchema.partial().parse(overrides);
 	const rules: string[] = [];
 	if (safe.paddingX !== undefined)
-		rules.push(
-			`${select} { padding-left: ${safe.paddingX}px; }`,
-			`${select}:not(:has([data-slot="alert-action"])) { padding-right: ${safe.paddingX}px; }`
-		);
+		rules.push(`${select} { padding-inline: ${safe.paddingX}px; }`);
 	if (safe.paddingY !== undefined)
 		rules.push(
 			`${select} { padding-top: ${safe.paddingY}px; padding-bottom: ${safe.paddingY}px; }`
@@ -118,6 +115,7 @@ export const ALERT_SPEC: TunerSpec<AlertValues, null> = {
 		return parseAlertSource((await load()).files);
 	},
 	previewCss: (scope, overrides) => alertCss(`${scope} [data-slot="alert"]`, overrides),
-	pageCss: (overrides) => alertCss(`[data-slot="alert"]${NOT_EDITOR}`, overrides),
+	pageCss: (overrides) =>
+		alertCss(`[data-slot="alert"]:not([data-appearance="connection"])${NOT_EDITOR}`, overrides),
 	overrideClasses: alertOverrideClasses,
 };

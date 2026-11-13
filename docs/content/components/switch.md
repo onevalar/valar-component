@@ -115,3 +115,14 @@ Use the `size` prop to change the size of the switch.
 <div></div>
 
 </ComponentPreview>
+
+## Saving a preference
+
+Keep the switch at the new value while saving and disable repeated toggles until the request finishes.
+Describe the pending state in text. The example simulates a save and restores focus if it was lost while the switch was disabled.
+
+<ComponentPreview name="switch-pending">
+
+<div></div>
+
+</ComponentPreview>

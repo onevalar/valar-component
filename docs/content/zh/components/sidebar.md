@@ -18,6 +18,14 @@ links:
 	import Callout from "$lib/components/callout.svelte";
 </script>
 
+<ComponentPreview name="sidebar-workspace" title="工作区侧栏" previewClassName="p-4">
+
+<div></div>
+
+</ComponentPreview>
+
+在 Sidebar.Provider 上设置 `appearance="workspace"`，即可使用 28 px 高的导航行、紧凑图标和当前页高亮。选择视图或展开、收起 Workspace 分组，可以试用 Linear 的导航状态。预览也展示 Valar 的桌面图标折叠和窄屏 Sheet。接入应用路由时，用真实链接并为当前页设置 `aria-current="page"`。
+
 <DocsFigure caption="折叠为图标的侧边栏。">
 <ComponentPreview type="block" name="demo-sidebar-icon" title="Sidebar" class="w-full">
 
@@ -117,6 +125,7 @@ links:
 | `onOpenChange` | `(open: boolean) => void` | 回调。非受控时在侧边栏展开状态变化之后触发，受控时在侧边栏展开或关闭之前触发。                                     |
 | `persistState` | `boolean`                 | 默认为 `true`。临时或嵌入式预览可设为 `false`，禁止写入 `sidebar_state` cookie；绑定、回调与键盘快捷键仍保持有效。 |
 | `keyboardShortcut` | `boolean`             | 默认为 `true`，在编辑区域外启用 Cmd/Ctrl+B；设为 `false` 时将该快捷键完全交还应用或浏览器。 |
+| `appearance` | `"default" \| "workspace"` | 使用工作区导航色彩、间距和 192 px 桌面宽度。 |
 
 ### 宽度
 

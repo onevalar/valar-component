@@ -96,6 +96,9 @@
 				onOpenAutoFocus={(event) => {
 					if (state[pane].inline) event.preventDefault();
 				}}
+				onEscapeKeydown={(event) => {
+					if (state[pane].pending) event.preventDefault();
+				}}
 				onCloseAutoFocus={(event) => {
 					if (state[pane].inline) event.preventDefault();
 				}}
@@ -114,7 +117,7 @@
 					<AlertDialog.Cancel disabled={state[pane].pending}>取消</AlertDialog.Cancel>
 					<AlertDialog.Action
 						variant="destructive"
-						disabled={state[pane].pending}
+						loading={state[pane].pending}
 						onclick={() => confirm(pane)}
 					>
 						{#if state[pane].pending}<Spinner aria-label="正在模拟确认" />{/if}

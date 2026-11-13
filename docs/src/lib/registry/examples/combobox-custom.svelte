@@ -1,10 +1,5 @@
 <script lang="ts">
-	import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
-	import { tick } from "svelte";
-	import * as Command from "$lib/registry/ui/command/index.js";
-	import * as Item from "$lib/registry/ui/item/index.js";
-	import * as Popover from "$lib/registry/ui/popover/index.js";
-	import { Button } from "$lib/registry/ui/button/index.js";
+	import { Combobox } from "$lib/registry/ui/combobox/index.js";
 
 	const countries = [
 		{ code: "", value: "", continent: "", label: "Select country" },
@@ -29,65 +24,23 @@
 		{ code: "us", value: "united-states", label: "United States", continent: "North America" },
 	];
 
-	const items = countries.filter((country) => country.code !== "");
-
-	let open = $state(false);
-	let value = $state("");
-	let triggerRef = $state<HTMLButtonElement>(null!);
-
-	// We want to refocus the trigger button when the user selects
-	// an item from the list so users can continue navigating the
-	// rest of the form with the keyboard.
-	function closeAndFocusTrigger() {
-		open = false;
-		tick().then(() => {
-			triggerRef.focus();
-		});
-	}
+	const options = countries
+		.filter((country) => country.code !== "")
+		.map((country) => ({ id: country.value, label: country.label, keywords: [country.code] }));
 </script>
 
-<Popover.Root bind:open>
-	<Popover.Trigger bind:ref={triggerRef}>
-		{#snippet child({ props })}
-			<Button
-				{...props}
-				variant="outline"
-				class="w-[200px] justify-between font-normal"
-				role="combobox"
-				aria-expanded={open}
-			>
-				{items.find((country) => country.value === value)?.label || "Select country"}
-				<ChevronDownIcon class="text-muted-foreground" />
-			</Button>
-		{/snippet}
-	</Popover.Trigger>
-	<Popover.Content class="w-[200px] p-0">
-		<Command.Root>
-			<Command.Input placeholder="Search countries..." />
-			<Command.List>
-				<Command.Empty>No countries found.</Command.Empty>
-				<Command.Group>
-					{#each items as country (country.code)}
-						<Command.Item
-							value={country.label}
-							data-checked={value === country.value}
-							onSelect={() => {
-								value = country.value;
-								closeAndFocusTrigger();
-							}}
-						>
-							<Item.Root size="xs" class="p-0">
-								<Item.Content>
-									<Item.Title class="whitespace-nowrap">{country.label}</Item.Title>
-									<Item.Description>
-										{country.continent} ({country.code})
-									</Item.Description>
-								</Item.Content>
-							</Item.Root>
-						</Command.Item>
-					{/each}
-				</Command.Group>
-			</Command.List>
-		</Command.Root>
-	</Popover.Content>
-</Popover.Root>
+<Combobox
+	label="Select country"
+	placeholder="Search countries…"
+	empty="No matching countries."
+	{options}
+	contentClass="w-64"
+>
+	{#snippet option(item)}
+		{@const country = countries.find((country) => country.value === item.id)}
+		<div class="min-w-0 flex-1">
+			<p class="wrap-anywhere">{item.label}</p>
+			<p class="text-xs text-muted-foreground">{country?.continent} ({country?.code})</p>
+		</div>
+	{/snippet}
+</Combobox>

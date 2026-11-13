@@ -358,7 +358,7 @@
 	<Dialog.Content
 		data-component-tuner={id}
 		showCloseButton={false}
-		class="flex h-dvh w-screen max-w-none flex-col gap-0 rounded-none p-0 ring-0 sm:max-w-none"
+		class="flex h-dvh max-h-dvh w-screen max-w-none flex-col gap-0 rounded-none border-0 p-0 ring-0 sm:max-w-none"
 		onCloseAutoFocus={(event) => {
 			event.preventDefault();
 			openButton?.focus({ preventScroll: true });
@@ -600,7 +600,7 @@
 	}
 	.import-label input:focus-visible {
 		outline: 2px solid var(--ring);
-		outline-offset: 3px;
+		outline-offset: -2px;
 	}
 	.notice {
 		margin: 0 0 8px;

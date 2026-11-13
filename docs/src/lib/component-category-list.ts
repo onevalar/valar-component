@@ -1,4 +1,5 @@
 import { aiElements, components } from "$content/index.js";
+import { isPublishedBasicComponent } from "$lib/basic-component-visibility.js";
 import {
 	ADVANCED_CATEGORIES,
 	COMPONENT_CATEGORIES,
@@ -12,7 +13,10 @@ export type CategoryChip = { key: string; title: string; count: number };
 /** The basic components grouped by category, empty groups left out. A component with no group lands in "other". */
 export function basicCategories(locale: Locale) {
 	const lang = locale === "zh" ? "zh" : "en";
-	const docs = components.filter((doc) => doc.locale === locale && doc.path !== "components");
+	const docs = components.filter(
+		(doc) =>
+			doc.locale === locale && doc.path !== "components" && isPublishedBasicComponent(doc.slug)
+	);
 	const known = new Set<string>(COMPONENT_CATEGORIES.flatMap((c) => c.slugs));
 	return [...COMPONENT_CATEGORIES, { ...OTHER_CATEGORY, slugs: [] as readonly string[] }]
 		.map((category) => ({

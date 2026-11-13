@@ -7,7 +7,10 @@
 	"meta": {
 		"valar": {
 			"keywords": ["侧边栏", "sidebar", "侧边导航", "导航栏", "菜单"],
-			"whenToUse": ["应用的主侧边导航，可折叠为图标或完全隐藏"],
+			"whenToUse": [
+				"应用的主侧边导航，可折叠为图标或完全隐藏",
+				"工作区主导航在 Sidebar.Provider 上使用 appearance=workspace"
+			],
 			"whenNotToUse": [
 				{
 					"case": "网站顶部导航",
@@ -25,7 +28,7 @@
 			"accessibility": [
 				"Ctrl／⌘+B 切换侧边栏",
 				"Sidebar.Trigger 和 Rail 的读屏名称默认“切换侧边栏”，其他语言需改",
-				"菜单项用真实链接"
+				"路由菜单项用真实链接，当前页设置 aria-current=page"
 			],
 			"responsive": ["移动端以 sheet 形式显示", "collapsible 可选 offcanvas、icon、none"],
 			"related": ["sheet", "navigation-menu", "breadcrumb"]

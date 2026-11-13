@@ -78,7 +78,7 @@
 				>
 					<HoverCard.Trigger
 						href="/docs/components/hover-card"
-						class="preview-link rounded-sm text-sm font-medium underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden"
+						class="preview-link rounded-sm text-sm font-medium underline underline-offset-4 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring focus-visible:outline-hidden"
 						tabindex={sample === "pinned" ? -1 : 0}
 					>
 						{sample === "pinned" ? "固定展开" : "悬停试试"}

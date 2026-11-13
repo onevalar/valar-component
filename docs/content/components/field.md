@@ -18,11 +18,13 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="field-demo">
+<ComponentPreview name="field-settings-row" title="Settings rows">
 
 <div></div>
 
 </ComponentPreview>
+
+Use `appearance="settings"` with `orientation="responsive"` inside `Field.Group` to keep the label and description together as the control moves below them in a narrow container.
 
 ## Installation
 
@@ -95,6 +97,14 @@ The `Field` family is designed for composing accessible forms. A typical field i
 - `Field.Field` is the core wrapper for a single field.
 - `Field.Content` is a flex column that groups label and description. Not required if you have no description.
 - Wrap related fields with `Field.Group`, and use `Field.Set` with `Field.Legend` for semantic grouping.
+
+## Full form
+
+<ComponentPreview name="field-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 ## Input
 
@@ -195,14 +205,14 @@ Stack `Field` components with `Field.Group`. Add `Field.Separator` to divide the
 ## Validation and Errors
 
 - Add `data-invalid` to `Field.Field` to switch the entire block into an error state.
-- Add `aria-invalid` on the input itself for assistive technologies.
+- Add `aria-invalid` on the input itself for assistive technologies. Link its help and current error using `aria-describedby`.
 - Render `Field.Error` immediately after the control or inside `Field.Content` to keep error messages aligned with the field.
 
 ```svelte
 <Field.Field data-invalid>
   <Field.Label for="email">Email</Field.Label>
-  <Input id="email" type="email" aria-invalid />
-  <Field.Error>Enter a valid email address.</Field.Error>
+  <Input id="email" type="email" aria-invalid aria-describedby="email-error" />
+  <Field.Error id="email-error">Enter a valid email address.</Field.Error>
 </Field.Field>
 ```
 

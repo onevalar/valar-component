@@ -14,6 +14,7 @@
 	}: ToggleGroupPrimitive.ItemProps & ToggleVariants = $props();
 
 	const ctx = getToggleGroupCtx();
+	const toolbar = $derived(ctx.appearance === "toolbar");
 </script>
 
 <ToggleGroupPrimitive.Item
@@ -22,14 +23,13 @@
 	data-variant={ctx.variant || variant}
 	data-size={ctx.size || size}
 	data-spacing={ctx.spacing}
-	class={cn(
-		"cn-toggle-group-item shrink-0 focus:z-10 focus-visible:z-10 group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:border-l-0 group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:border-t-0 group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-l group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-t",
-		toggleVariants({
-			variant: ctx.variant || variant,
-			size: ctx.size || size,
-		}),
-		className
-	)}
+	class={!toolbar
+		? cn(
+				"cn-toggle-group-item shrink-0 focus:z-10 focus-visible:z-10 group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:border-l-0 group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:border-t-0 group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-l group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-t",
+				toggleVariants({ variant: ctx.variant || variant, size: ctx.size || size }),
+				className
+			)
+		: cn("cn-toggle-group-toolbar-item", className)}
 	{value}
 	{...restProps}
 />

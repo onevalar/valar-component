@@ -39,7 +39,7 @@
 			</Field.Group>
 			<Collapsible.Trigger>
 				{#snippet child({ props })}
-					<Button {...props} variant="outline" size="icon">
+					<Button {...props} aria-label={isOpen ? "Show fewer corners" : "Show all corners"} variant="outline" size="icon">
 						{#if isOpen}
 							<MinimizeIcon />
 						{:else}

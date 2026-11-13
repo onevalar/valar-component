@@ -9,20 +9,27 @@
 		{ value: "pineapple", label: "Pineapple" },
 	];
 
+	const id = $props.id();
 	let value = $state("");
 </script>
 
-<Select.Root type="single" items={fruits} bind:value disabled>
-	<Select.Trigger class="w-full max-w-48">
-		<Select.Value placeholder="Select a fruit" />
-	</Select.Trigger>
-	<Select.Content>
-		<Select.Group>
+<div class="flex w-full max-w-48 flex-col gap-3">
+	<Select.Root type="single" items={fruits} value="apple" disabled>
+		<Select.Trigger class="w-full" aria-label="Locked fruit" aria-describedby={id}>
+			<Select.Value />
+		</Select.Trigger>
+	</Select.Root>
+	<p {id} class="text-xs text-muted-foreground">Managed by your workspace.</p>
+	<Select.Root type="single" items={fruits} bind:value>
+		<Select.Trigger class="w-full" aria-label="Available fruit">
+			<Select.Value placeholder="Select a fruit" />
+		</Select.Trigger>
+		<Select.Content aria-label="Available fruit options">
 			{#each fruits as fruit (fruit.value)}
 				<Select.Item value={fruit.value} label={fruit.label} disabled={fruit.disabled}>
 					{fruit.label}
 				</Select.Item>
 			{/each}
-		</Select.Group>
-	</Select.Content>
-</Select.Root>
+		</Select.Content>
+	</Select.Root>
+</div>

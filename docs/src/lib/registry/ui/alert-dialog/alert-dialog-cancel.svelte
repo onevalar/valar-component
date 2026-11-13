@@ -22,6 +22,7 @@
 <AlertDialogPrimitive.Cancel
 	bind:ref
 	data-slot="alert-dialog-cancel"
-	class={cn(buttonVariants({ variant, size }), "cn-alert-dialog-cancel", className)}
+	data-variant={variant}
+	class={cn(buttonVariants({ variant, size, shape: "pill" }), "cn-alert-dialog-cancel", className)}
 	{...restProps}
 />

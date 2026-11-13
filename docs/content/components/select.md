@@ -106,7 +106,7 @@ Without `items` the trigger falls back to the raw value, so you only need it whe
 
 ## Groups
 
-Use `Select.Group`, `Select.Label`, and `Select.Separator` to organize items.
+Use `Select.Group`, `Select.GroupHeading`, and a decorative `Select.Separator` to organize items.
 
 <ComponentPreview name="select-groups">
 
@@ -126,6 +126,8 @@ A select with many items that scrolls.
 
 ## Disabled
 
+Disable `Select.Root` to lock the whole field. Disable an individual `Select.Item` to keep the other options available. Include an accessible explanation for a locked field.
+
 <ComponentPreview name="select-disabled">
 
 <div></div>
@@ -138,14 +140,35 @@ Add the `data-invalid` attribute to the `Field.Field` component and the `aria-in
 
 ```svelte showLineNumbers /data-invalid/ /aria-invalid/
 <Field.Field data-invalid>
-  <Field.Label>Fruit</Field.Label>
-  <Select.Trigger aria-invalid>
+  <Field.Label for="fruit">Fruit</Field.Label>
+  <Select.Trigger id="fruit" aria-invalid aria-describedby="fruit-error">
     <Select.Value />
   </Select.Trigger>
+  <Field.Error id="fruit-error">Please select a fruit.</Field.Error>
 </Field.Field>
 ```
 
 <ComponentPreview name="select-invalid">
+
+<div></div>
+
+</ComponentPreview>
+
+## Settings appearance
+
+Pair `size="settings"` on the trigger with `appearance="settings"` on the listbox. Arrow keys move the highlight while the checkmark continues to show the current value. Press Enter to select or Escape to close.
+
+<ComponentPreview name="select-settings">
+
+<div></div>
+
+</ComponentPreview>
+
+## Multiple selection
+
+Use `type="multiple"` with an array value. Enter toggles the highlighted item and keeps the list open. A named Select submits each selected value under the same field name.
+
+<ComponentPreview name="select-multiple">
 
 <div></div>
 

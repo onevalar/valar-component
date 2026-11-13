@@ -72,6 +72,8 @@ Copy and paste the following code into your project.
 
 Use `bind:checked` to control the checkbox state, or `onCheckedChange` to listen for changes.
 
+The default checkbox uses a 14 px square with 3 px corners. Click its label or press Space when the checkbox has focus to toggle it.
+
 ```svelte showLineNumbers
 <script lang="ts">
   import { Checkbox } from "$lib/components/ui/checkbox/index.js";
@@ -83,6 +85,8 @@ Use `bind:checked` to control the checkbox state, or `onCheckedChange` to listen
 ```
 
 ## Invalid State
+
+Submit the example without accepting to see the linked error. Use the label or Space to correct it, then submit again.
 
 Set `aria-invalid` on the checkbox and `data-invalid` on the field wrapper to show the invalid styles.
 
@@ -133,6 +137,8 @@ Use multiple fields to create a checkbox list.
 </ComponentPreview>
 
 ## Table
+
+The header reflects mixed selection and controls the whole set. The row checkboxes retain independent labels and keyboard focus.
 
 <ComponentPreview name="checkbox-table">
 

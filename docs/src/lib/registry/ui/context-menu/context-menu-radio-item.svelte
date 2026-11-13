@@ -27,7 +27,11 @@
 	{...restProps}
 >
 	{#snippet children({ checked })}
-		<span class="cn-context-menu-item-indicator pointer-events-none">
+		<span
+			class="cn-context-menu-item-indicator pointer-events-none"
+			data-slot="context-menu-item-indicator"
+			aria-hidden="true"
+		>
 			{#if checked}
 				<IconPlaceholder
 					lucide="CheckIcon"

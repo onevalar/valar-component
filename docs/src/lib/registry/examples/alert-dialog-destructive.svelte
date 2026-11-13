@@ -1,29 +1,73 @@
 <script lang="ts">
-	import Trash2Icon from "@lucide/svelte/icons/trash-2";
+	import { onDestroy } from "svelte";
 	import * as AlertDialog from "$lib/registry/ui/alert-dialog/index.js";
-	import { buttonVariants } from "$lib/registry/ui/button/index.js";
+	import { Button } from "$lib/registry/ui/button/index.js";
+	import { Spinner } from "$lib/registry/ui/spinner/index.js";
+
+	let open = $state(false);
+	let pending = $state(false);
+	let failed = $state(false);
+	let removed = $state(false);
+	let timer: ReturnType<typeof setTimeout>;
+
+	function remove() {
+		pending = true;
+		timer = setTimeout(() => {
+			pending = false;
+			if (!failed) {
+				failed = true;
+				return;
+			}
+			open = false;
+			removed = true;
+		}, 600);
+	}
+
+	onDestroy(() => clearTimeout(timer));
 </script>
 
-<AlertDialog.Root>
-	<AlertDialog.Trigger class={buttonVariants({ variant: "destructive" })}>
-		Delete Chat
-	</AlertDialog.Trigger>
-	<AlertDialog.Content size="sm">
-		<AlertDialog.Header>
-			<AlertDialog.Media
-				class="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive"
-			>
-				<Trash2Icon />
-			</AlertDialog.Media>
-			<AlertDialog.Title>Delete chat?</AlertDialog.Title>
-			<AlertDialog.Description>
-				This will permanently delete this chat conversation. View <a href="##">Settings</a> delete any
-				memories saved during this chat.
-			</AlertDialog.Description>
-		</AlertDialog.Header>
-		<AlertDialog.Footer>
-			<AlertDialog.Cancel variant="outline">Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action variant="destructive">Delete</AlertDialog.Action>
-		</AlertDialog.Footer>
-	</AlertDialog.Content>
-</AlertDialog.Root>
+<div class="grid justify-items-center gap-2">
+	<AlertDialog.Root
+		bind:open
+		onOpenChange={(nextOpen) => {
+			if (nextOpen) {
+				failed = false;
+				removed = false;
+			}
+		}}
+	>
+		<AlertDialog.Trigger>
+			{#snippet child({ props })}
+				<Button {...props} variant="outline">Delete example issue</Button>
+			{/snippet}
+		</AlertDialog.Trigger>
+		<AlertDialog.Content
+			appearance="danger"
+			focusCancel
+			aria-busy={pending}
+			onEscapeKeydown={(event) => {
+				if (pending) event.preventDefault();
+			}}
+		>
+			<AlertDialog.Header>
+				<AlertDialog.Title>Delete this issue?</AlertDialog.Title>
+				<AlertDialog.Description>
+					Deleted issues are available in Recently deleted for 30 days.
+				</AlertDialog.Description>
+				{#if failed && !pending}<p role="alert" class="text-sm text-destructive">
+						Could not delete the example issue. Try again.
+					</p>{/if}
+			</AlertDialog.Header>
+			<AlertDialog.Footer>
+				<AlertDialog.Cancel disabled={pending}>Cancel</AlertDialog.Cancel>
+				<AlertDialog.Action variant="destructive" loading={pending} onclick={remove}>
+					{#if pending}<Spinner aria-hidden="true" />{/if}
+					{pending ? "Deleting…" : failed ? "Retry deletion" : "Delete"}
+				</AlertDialog.Action>
+			</AlertDialog.Footer>
+		</AlertDialog.Content>
+	</AlertDialog.Root>
+	<p role="status" class="text-sm text-muted-foreground">
+		{removed ? "Example issue deleted." : ""}
+	</p>
+</div>

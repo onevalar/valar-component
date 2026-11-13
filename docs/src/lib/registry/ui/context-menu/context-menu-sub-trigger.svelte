@@ -7,6 +7,7 @@
 		ref = $bindable(null),
 		class: className,
 		inset,
+		"aria-haspopup": popupRole = "menu",
 		children,
 		...restProps
 	}: WithoutChild<ContextMenuPrimitive.SubTriggerProps> & {
@@ -24,13 +25,17 @@
 	)}
 	{...restProps}
 >
-	{@render children?.()}
-	<IconPlaceholder
-		lucide="ChevronRightIcon"
-		tabler="IconChevronRight"
-		hugeicons="ArrowRight01Icon"
-		phosphor="CaretRightIcon"
-		remixicon="RiArrowRightSLine"
-		class="cn-rtl-flip ms-auto rtl:rotate-180"
-	/>
+	{#snippet child({ props })}
+		<div {...props} aria-haspopup={popupRole}>
+			{@render children?.()}
+			<IconPlaceholder
+				lucide="ChevronRightIcon"
+				tabler="IconChevronRight"
+				hugeicons="ArrowRight01Icon"
+				phosphor="CaretRightIcon"
+				remixicon="RiArrowRightSLine"
+				class="cn-rtl-flip ms-auto rtl:rotate-180"
+			/>
+		</div>
+	{/snippet}
 </ContextMenuPrimitive.SubTrigger>

@@ -14,13 +14,13 @@
 </script>
 
 <Example title="Custom Days">
-	<Card.Root class="mx-auto w-fit p-0">
+	<Card.Root class="mx-auto w-full max-w-[calc(var(--cell-size)*7+1.5rem)] p-0 [--cell-size:--spacing(10)] md:[--cell-size:--spacing(12)]">
 		<Card.Content class="p-0">
 			<RangeCalendar
 				bind:value={date}
 				numberOfMonths={1}
 				captionLayout="dropdown"
-				class="[--cell-size:--spacing(10)] md:[--cell-size:--spacing(12)]"
+				class="[--cell-size:inherit]"
 			>
 				{#snippet day({ day, outsideMonth })}
 					{@const isWeekend =

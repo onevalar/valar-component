@@ -14,7 +14,7 @@
 	bind:this={ref}
 	data-slot="card-action"
 	class={cn(
-		"cn-card-action col-start-2 row-span-2 row-start-1 self-start justify-self-end",
+		"cn-card-action order-last max-w-full min-w-0 self-start justify-self-start @min-[17rem]/card-header:col-start-2 @min-[17rem]/card-header:row-span-2 @min-[17rem]/card-header:row-start-1 @min-[17rem]/card-header:justify-self-end",
 		className
 	)}
 	{...restProps}

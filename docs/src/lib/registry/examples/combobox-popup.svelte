@@ -1,9 +1,5 @@
 <script lang="ts">
-	import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
-	import { tick } from "svelte";
-	import * as Command from "$lib/registry/ui/command/index.js";
-	import * as Popover from "$lib/registry/ui/popover/index.js";
-	import { Button } from "$lib/registry/ui/button/index.js";
+	import { Combobox } from "$lib/registry/ui/combobox/index.js";
 
 	const countries = [
 		{ code: "", value: "", continent: "", label: "Select country" },
@@ -28,56 +24,23 @@
 		{ code: "us", value: "united-states", label: "United States", continent: "North America" },
 	];
 
-	let open = $state(false);
-	let value = $state(countries[0].label);
-	let triggerRef = $state<HTMLButtonElement>(null!);
-
-	// We want to refocus the trigger button when the user selects
-	// an item from the list so users can continue navigating the
-	// rest of the form with the keyboard.
-	function closeAndFocusTrigger() {
-		open = false;
-		tick().then(() => {
-			triggerRef.focus();
-		});
-	}
+	const options = countries
+		.filter((country) => country.code !== "")
+		.map((country) => ({ id: country.value, label: country.label, keywords: [country.code] }));
+	let value = $state<readonly string[]>([]);
+	const country = $derived(countries.find((country) => country.value === value[0]));
 </script>
 
-<Popover.Root bind:open>
-	<Popover.Trigger bind:ref={triggerRef}>
-		{#snippet child({ props })}
-			<Button
-				{...props}
-				variant="outline"
-				class="w-64 justify-between font-normal"
-				role="combobox"
-				aria-expanded={open}
-			>
-				{value}
-				<ChevronDownIcon class="text-muted-foreground" />
-			</Button>
-		{/snippet}
-	</Popover.Trigger>
-	<Popover.Content class="w-64 p-0">
-		<Command.Root>
-			<Command.Input placeholder="Search" />
-			<Command.List>
-				<Command.Empty>No items found.</Command.Empty>
-				<Command.Group>
-					{#each countries as country (country.code)}
-						<Command.Item
-							value={country.label}
-							data-checked={value === country.label}
-							onSelect={() => {
-								value = country.label;
-								closeAndFocusTrigger();
-							}}
-						>
-							{country.label}
-						</Command.Item>
-					{/each}
-				</Command.Group>
-			</Command.List>
-		</Command.Root>
-	</Popover.Content>
-</Popover.Root>
+<Combobox
+	label="Choose a country"
+	placeholder="Find a country…"
+	empty="No matching countries."
+	{options}
+	bind:value
+	side="right"
+	contentClass="w-64"
+>
+	{#snippet children()}
+		<span>{country?.label ?? "+ Set country"}</span>
+	{/snippet}
+</Combobox>

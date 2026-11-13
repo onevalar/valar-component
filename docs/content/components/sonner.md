@@ -19,6 +19,16 @@ links:
 	let { viewerData } = $props();
 </script>
 
+<ComponentPreview name="sonner-workspace">
+
+<div></div>
+
+</ComponentPreview>
+
+Set `appearance="workspace"` on `Toaster` for compact workspace feedback. The preview copies a sample issue ID, shows a short message in the lower-right corner, and lets you dismiss it. Repeated copies update the same notification.
+
+## Standard notifications and tuning
+
 <ComponentPreview name="sonner-demo">
 
 <div></div>

@@ -110,7 +110,8 @@ const docSchema = s
 				// the section's opening paragraph does.
 				const near = paragraphs.findLast((x) => x.afterCode);
 				const text = brief((near ?? paragraphs[0])?.text ?? "");
-				previews.push({ name: p[1], title: heading, text });
+				const title = line.match(/\stitle="([^"]+)"/)?.[1] ?? heading;
+				previews.push({ name: p[1], title, text });
 				paragraphs = [];
 			} else if (!line.trim()) {
 				flush();

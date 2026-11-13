@@ -141,7 +141,7 @@
 		aria-valuetext={unit ? `${readout} ${unit}` : readout}
 		aria-orientation="horizontal"
 		aria-disabled={disabled || undefined}
-		class="relative h-18 w-full cursor-grab touch-pan-y overflow-hidden rounded-lg border bg-background outline-none [-webkit-tap-highlight-color:transparent] focus-visible:ring-2 focus-visible:ring-ring in-data-[disabled]:cursor-not-allowed in-data-[dragging]:cursor-grabbing"
+		class="relative h-18 w-full cursor-grab touch-pan-y overflow-hidden rounded-lg border bg-background outline-none [-webkit-tap-highlight-color:transparent] focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring in-data-[disabled]:cursor-not-allowed in-data-[dragging]:cursor-grabbing"
 	>
 		<div
 			aria-hidden="true"

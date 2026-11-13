@@ -1,5 +1,7 @@
 # Sheet 设计规范
 
+- 用 `Sheet.Panel` 展示可与工作区同时操作的详情或分析。使用 `label` 命名区域，让工具栏按钮通过 `aria-expanded` 和 `aria-controls` 表达开合和控制关系。窄屏可将侧栏排在主内容下方。
+- `Sheet.Panel` 自带独立滚动区域。桌面保留 400 px 的布局宽度。焦点在面板内时可按 Escape 关闭，提供 `trigger` 时归还焦点。
 - 用于从屏幕边缘滑出、与当前页面相关的辅助内容，如筛选条件、详情、设置；需要用户专注完成的流程用 Dialog，移动端可拖拽关闭的底部面板用 Drawer。
 - 每个 `Sheet.Content` 都要有 `Sheet.Title`，不显示时加 `class="sr-only"`（检查规则 `valar/overlay-title`）。
 - 方向只用 `side` 属性（`top`、`right`、`bottom`、`left`，默认 `right`），不要用 `class` 改定位。

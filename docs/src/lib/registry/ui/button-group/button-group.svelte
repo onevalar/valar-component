@@ -4,6 +4,10 @@
 	export const buttonGroupVariants = tv({
 		base: "cn-button-group group/button-group flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
 		variants: {
+			variant: {
+				default: "",
+				pill: "",
+			},
 			orientation: {
 				horizontal:
 					"cn-button-group-orientation-horizontal [&>*:not(:first-child)]:rounded-l-none [&>*:not(:first-child)]:border-l-0 [&>*:not(:last-child)]:rounded-r-none",
@@ -11,11 +15,16 @@
 					"cn-button-group-orientation-vertical flex-col [&>*:not(:first-child)]:rounded-t-none [&>*:not(:first-child)]:border-t-0 [&>*:not(:last-child)]:rounded-b-none",
 			},
 		},
+		compoundVariants: [
+			{ variant: "pill", orientation: "horizontal", class: "cn-button-group-variant-pill" },
+		],
 		defaultVariants: {
+			variant: "default",
 			orientation: "horizontal",
 		},
 	});
 
+	export type ButtonGroupVariant = VariantProps<typeof buttonGroupVariants>["variant"];
 	export type ButtonGroupOrientation = VariantProps<typeof buttonGroupVariants>["orientation"];
 </script>
 
@@ -28,9 +37,11 @@
 		class: className,
 		children,
 		orientation = "horizontal",
+		variant = "default",
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		orientation?: ButtonGroupOrientation;
+		variant?: ButtonGroupVariant;
 	} = $props();
 </script>
 
@@ -39,7 +50,8 @@
 	role="group"
 	data-slot="button-group"
 	data-orientation={orientation}
-	class={cn(buttonGroupVariants({ orientation }), className)}
+	data-variant={variant}
+	class={cn(buttonGroupVariants({ orientation, variant }), className)}
 	{...restProps}
 >
 	{@render children?.()}

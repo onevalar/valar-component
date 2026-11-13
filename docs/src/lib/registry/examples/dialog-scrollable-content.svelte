@@ -5,12 +5,12 @@
 
 <Dialog.Root>
 	<Dialog.Trigger class={buttonVariants({ variant: "outline" })}>Scrollable Content</Dialog.Trigger>
-	<Dialog.Content>
+	<Dialog.Content class="grid-rows-[auto_minmax(0,1fr)] overflow-hidden">
 		<Dialog.Header>
 			<Dialog.Title>Scrollable Content</Dialog.Title>
 			<Dialog.Description>This is a dialog with scrollable content.</Dialog.Description>
 		</Dialog.Header>
-		<div class="-mx-4 no-scrollbar max-h-[50vh] overflow-y-auto px-4">
+		<div class="max-h-[50dvh] overflow-y-auto overscroll-contain pe-2">
 			{#each { length: 10 } as _, i (i)}
 				<p class="mb-4 leading-normal">
 					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt

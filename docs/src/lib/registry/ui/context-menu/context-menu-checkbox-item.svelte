@@ -32,9 +32,21 @@
 	)}
 	{...restProps}
 >
-	{#snippet children({ checked })}
-		<span class="cn-context-menu-item-indicator pointer-events-none">
-			{#if checked}
+	{#snippet children({ checked, indeterminate })}
+		<span
+			class="cn-context-menu-item-indicator pointer-events-none"
+			data-slot="context-menu-item-indicator"
+			aria-hidden="true"
+		>
+			{#if indeterminate}
+				<IconPlaceholder
+					lucide="MinusIcon"
+					tabler="IconMinus"
+					hugeicons="MinusSignIcon"
+					phosphor="MinusIcon"
+					remixicon="RiSubtractLine"
+				/>
+			{:else if checked}
 				<IconPlaceholder
 					lucide="CheckIcon"
 					tabler="IconCheck"

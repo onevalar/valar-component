@@ -7,12 +7,12 @@
 		<span class="font-medium">Settings</span>
 		<span class="text-xs text-muted-foreground">Manage preferences</span>
 	</div>
-	<Separator orientation="vertical" />
+	<Separator orientation="vertical" decorative />
 	<div class="flex flex-col gap-1">
 		<span class="font-medium">Account</span>
 		<span class="text-xs text-muted-foreground">Profile & security</span>
 	</div>
-	<Separator orientation="vertical" class="hidden md:block" />
+	<Separator orientation="vertical" decorative class="hidden md:block" />
 	<div class="hidden flex-col gap-1 md:flex">
 		<span class="font-medium">Help</span>
 		<span class="text-xs text-muted-foreground">Support & docs</span>

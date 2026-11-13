@@ -68,6 +68,8 @@ links:
 <Separator />
 ```
 
+两个方向的默认粗细均为 0.5 px。设置行之间只做视觉分隔时，设置 `decorative`，让线的两端与行内容对齐。
+
 ## 纵向
 
 传入 `orientation="vertical"` 使用纵向分割线。

@@ -70,6 +70,16 @@ links:
 </Empty.Root>
 ```
 
+## 问题列表空状态
+
+问题列表初始为空时使用 `appearance="issue-list"`，居中排列插图、简短标题和主操作。预览使用 Valar 插图，主操作会打开本地新建问题表单。 筛选后无匹配项时用 `appearance="filtered-list"`，提供清除筛选操作。可在预览中切换并操作两种状态。
+
+<ComponentPreview name="empty-issue-list-demo">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 描边
 
 用 `border` 工具类为空状态添加描边。

@@ -13,10 +13,10 @@ import {
 
 const valuesSchema = z
 	.object({
-		height: z.number().int().min(16).max(32).multipleOf(2),
+		height: z.number().int().min(16).max(32),
 		paddingX: z.number().int().min(0).max(12).multipleOf(2),
 		radius: z.enum(RADIUS_CHOICES),
-		groupGap: z.number().int().min(0).max(16).multipleOf(2),
+		groupGap: z.number().int().min(0).max(16),
 	})
 	.strict();
 export type KbdValues = z.infer<typeof valuesSchema>;
@@ -38,7 +38,7 @@ export function parseKbdSource(files: { target: string; content: string }[]): {
 	const root = classes("kbd.svelte", "kbd");
 	const group = classes("kbd-group.svelte", "kbd-group");
 	const pixels = (utility: string, words: string) => {
-		const value = sourceWord(`${utility}-(\\d+(?:\\.5)?)`, words);
+		const value = sourceWord(`${utility}-(\\d+(?:\\.(?:25|5|75))?)`, words);
 		if (value === undefined) throw new Error(`Kbd registry 缺少 ${utility}`);
 		return Number(value) * 4;
 	};
@@ -68,11 +68,12 @@ export function kbdOverrideClasses(overrides: KbdOverrides): Record<string, stri
 function kbdCss(select: (slot: string) => string, overrides: KbdOverrides): string {
 	const safe = valuesSchema.partial().parse(overrides);
 	const rules: string[] = [];
-	if (safe.height !== undefined) rules.push(`${select("kbd")} { height: ${safe.height}px; }`);
+	const key = `${select("kbd")}[data-appearance="default"]`;
+	if (safe.height !== undefined) rules.push(`${key} { height: ${safe.height}px; }`);
 	if (safe.paddingX !== undefined)
-		rules.push(`${select("kbd")} { padding-inline: ${safe.paddingX}px; }`);
+		rules.push(`${key} { padding-inline: ${safe.paddingX}px; }`);
 	if (safe.radius !== undefined && safe.radius !== STYLE_VALUE)
-		rules.push(`${select("kbd")} { border-radius: ${radiusCss(safe.radius)}; }`);
+		rules.push(`${key} { border-radius: ${radiusCss(safe.radius)}; }`);
 	if (safe.groupGap !== undefined)
 		rules.push(`${select("kbd-group")} { gap: ${safe.groupGap}px; }`);
 	return rules.join("\n");
@@ -90,7 +91,7 @@ export const KBD_SPEC: TunerSpec<KbdValues, KbdContext> = {
 	storageKey: "valar.kbd-styles.v2",
 	group: "按键几何",
 	parameters: [
-		{ kind: "number", key: "height", label: "按键高度（px）", min: 16, max: 32, step: 2 },
+		{ kind: "number", key: "height", label: "按键高度（px）", min: 16, max: 32 },
 		{ kind: "number", key: "paddingX", label: "横向留白（px）", min: 0, max: 12, step: 2 },
 		{
 			kind: "select",
@@ -101,14 +102,13 @@ export const KBD_SPEC: TunerSpec<KbdValues, KbdContext> = {
 				...RADIUS_LEVELS.map((value) => ({ value, label: RADIUS_LABELS[value] })),
 			],
 		},
-		{ kind: "number", key: "groupGap", label: "组合键间距（px）", min: 0, max: 16, step: 2 },
+		{ kind: "number", key: "groupGap", label: "组合键间距（px）", min: 0, max: 16 },
 	],
 	valuesSchema,
 	tokens: [
 		["--radius", "圆角基数"],
-		["--text-xs", "按键字号"],
-		["--muted", "按键背景"],
-		["--muted-foreground", "按键文字"],
+		["--valar-kbd-border", "按键描边覆盖"],
+		["--valar-kbd-foreground", "按键文字覆盖"],
 	],
 	async readBaseline(_probe, style) {
 		const load =

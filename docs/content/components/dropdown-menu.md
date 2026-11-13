@@ -84,7 +84,7 @@ Copy and paste the following code into your project.
 
 ## Basic
 
-A basic dropdown menu with labels and separators.
+A dropdown menu with the surface sampled from Linear’s workspace switcher. The same row highlight follows the pointer or the keyboard. Group labels and separators keep related commands together.
 
 <ComponentPreview name="dropdown-menu-basic">
 
@@ -104,7 +104,7 @@ Use `DropdownMenu.Sub` to nest secondary actions.
 
 ## Shortcuts
 
-Add `DropdownMenu.Shortcut` to show keyboard hints.
+Use `DropdownMenu.Shortcut` to align a keyboard hint at the end of a row. Bind the shortcut separately when the action is available outside the menu.
 
 <ComponentPreview name="dropdown-menu-shortcuts">
 
@@ -144,7 +144,7 @@ Add icons to checkbox items.
 
 ## Radio Group
 
-Use `DropdownMenu.RadioGroup` for exclusive choices.
+Use `DropdownMenu.RadioGroup` for exclusive choices. The trailing check indicates the current value while the highlight follows keyboard focus or the pointer. Choice rows stay open by default. Set `closeOnSelect` for workflows such as switching workspaces.
 
 <ComponentPreview name="dropdown-menu-radio-group">
 
@@ -164,7 +164,7 @@ Show radio options with icons.
 
 ## Destructive
 
-Use `variant="destructive"` for irreversible actions.
+Linear’s issue menu opens a confirmation from a neutral Delete row. Use a neutral `DropdownMenu.Item` to open the confirmation and mark the final action as destructive in the alert dialog. `variant="destructive"` is also available for menu commands that need an explicit warning color.
 
 <ComponentPreview name="dropdown-menu-destructive">
 

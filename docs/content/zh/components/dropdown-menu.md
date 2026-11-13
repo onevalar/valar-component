@@ -84,7 +84,7 @@ links:
 
 ## 基础用法
 
-带标签和分割线的基础下拉菜单。
+面板外观取样于 Linear 工作区切换菜单。鼠标移动与键盘导航使用同一套行高亮。用分组标题和分隔线组织相关命令。
 
 <ComponentPreview name="dropdown-menu-basic">
 
@@ -104,7 +104,7 @@ links:
 
 ## 快捷键
 
-加入 `DropdownMenu.Shortcut` 显示快捷键提示。
+用 `DropdownMenu.Shortcut` 将快捷键提示放在行尾。如果菜单关闭时也能使用快捷键，需要另外绑定按键。
 
 <ComponentPreview name="dropdown-menu-shortcuts">
 
@@ -144,7 +144,7 @@ links:
 
 ## 单选按钮组
 
-用 `DropdownMenu.RadioGroup` 实现互斥选择。
+用 `DropdownMenu.RadioGroup` 实现互斥选择。行尾对勾显示当前值，鼠标或键盘焦点移动时改变行底色。选值后默认保持菜单打开，切换工作区等流程可以通过 `closeOnSelect` 选后关闭。
 
 <ComponentPreview name="dropdown-menu-radio-group">
 
@@ -164,7 +164,7 @@ links:
 
 ## 危险操作
 
-不可逆操作使用 `variant="destructive"`。
+Linear Issue 菜单通过中性色的删除项打开确认弹窗。打开确认弹窗时用普通 `DropdownMenu.Item`，危险色用于弹窗里的最终确认按钮。需要直接强调菜单命令时，可以使用 `variant="destructive"`。
 
 <ComponentPreview name="dropdown-menu-destructive">
 

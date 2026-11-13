@@ -114,10 +114,10 @@ export const CHECKBOX_SPEC: TunerSpec<CheckboxValues, CheckboxContext> = {
 	valuesSchema,
 	tokens: [
 		["--radius", "圆角基数"],
-		["--primary", "选中背景"],
-		["--primary-foreground", "选中图标"],
-		["--input", "未选中边框与背景"],
-		["--ring", "焦点环"],
+		["--valar-checkbox-fill", "选中底色覆盖"],
+		["--valar-checkbox-mark", "选中图标颜色覆盖"],
+		["--valar-checkbox-border", "未选中边框颜色覆盖"],
+		["--ring", "聚焦内描边"],
 		["--destructive", "错误状态"],
 	],
 	async readBaseline(_probe, style) {

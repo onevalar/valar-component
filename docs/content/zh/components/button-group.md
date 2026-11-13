@@ -131,6 +131,16 @@ links:
 
 </ComponentPreview>
 
+## 胶囊拆分按钮
+
+横向的 `pill` 变体由两个小尺寸图标按钮和 `ButtonGroup.Separator` 组成。为两个按钮分别设置可访问名称。相邻菜单选择编码工具，主按钮根据当前选项显示本地操作确认。
+
+<ComponentPreview name="button-group-pill-demo">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 输入框
 
 用按钮包裹 `Input` 组件。

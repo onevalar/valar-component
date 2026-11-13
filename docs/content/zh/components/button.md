@@ -19,7 +19,7 @@ links:
 	let { viewerData, links } = $props();
 </script>
 
-<ComponentPreview name="button-demo">
+<ComponentPreview name="button-demo" title="工作区操作">
 
 <div></div>
 
@@ -150,13 +150,11 @@ Tailwind v4 把按钮组件的 `cursor: pointer` 改成了 `cursor: default`，�
 
 ## 圆角
 
-按钮圆角由全局圆角 token 和 Button 编辑器中的圆角级别控制。请在这些位置调整，不要添加 `rounded-*` 类名；`valar/button-size-via-prop` 检查会报告这类覆盖。
-
-Button 默认显式设置 `tabindex={0}`，使 macOS WebKit 默认键盘偏好下的 Tab 和指针焦点正常工作。尊重调用方的 tabindex；禁用按钮与链接使用 -1，并保留禁用语义。
+各视觉变体的独立文字按钮默认采用胶囊形。需要主题圆角矩形时使用 `shape="square"`。图标按钮默认使用主题圆角，可用 `shape="pill"` 改为圆形。按钮组负责相连边角，默认圆角可以在样式调节器中调整。
 
 ## 加载
 
-在按钮内渲染 `<Spinner />` 组件即可显示加载状态。同样要为加载指示器加上 `data-icon="inline-start"` 或 `data-icon="inline-end"` 属性，间距才会正确。
+等待操作完成时设置 `loading`，保留焦点并阻止重复触发。可在按钮内搭配带 `data-icon="inline-start"` 或 `data-icon="inline-end"` 的 `<Spinner />`。示例运行本地保存。不可用的操作使用 `disabled`。
 
 <ComponentPreview name="button-loading">
 

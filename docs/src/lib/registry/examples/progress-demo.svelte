@@ -10,4 +10,4 @@
 	});
 </script>
 
-<Progress {value} max={100} class="w-[60%]" />
+<Progress {value} max={100} aria-label="Import progress" class="w-[60%]" />

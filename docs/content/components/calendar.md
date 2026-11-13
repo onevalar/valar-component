@@ -1,6 +1,6 @@
 ---
 title: Calendar
-description: A calendar component that allows users to select a date or a range of dates.
+description: A keyboard-accessible calendar for selecting one or more dates.
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/calendar
@@ -20,11 +20,15 @@ links:
 	let { viewerData } = $props();
 </script>
 
-<ComponentPreview name="calendar-demo">
+<ComponentPreview name="calendar-project-date" title="Project dates">
 
 <div></div>
 
 </ComponentPreview>
+
+The `project-date` appearance follows the month grid in Linear’s project target date selector. Use the arrow keys to move between dates and press Enter or Space to select. The month buttons let you browse nearby months. The example displays the selected date beneath the calendar.
+
+The default Calendar also uses round days and starts the week on Monday. Set `weekStartsOn` to change the first day, or choose `captionLayout="dropdown"` for quick month and year navigation.
 
 ## Installation
 
@@ -91,6 +95,14 @@ A basic calendar component. We used `class="rounded-lg border"` to style the cal
 
 </ComponentPreview>
 
+## Month and year tuning
+
+<ComponentPreview name="calendar-demo">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Range Calendar
 
 Use the [`RangeCalendar`](/docs/components/range-calendar) component to enable range selection.
@@ -103,7 +115,7 @@ Use the [`RangeCalendar`](/docs/components/range-calendar) component to enable r
 
 ## Month and Year Selector
 
-Use `captionLayout="dropdown"` to show month and year dropdowns.
+Use `captionLayout="dropdown"` to show month and year menus with Valar Select. Longer lists scroll inside the panel. Use the arrow keys and Enter to choose, or Escape to return to the trigger.
 
 <ComponentPreview name="calendar-caption">
 

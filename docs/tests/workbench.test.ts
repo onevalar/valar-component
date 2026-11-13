@@ -556,7 +556,11 @@ describe("installable native component bundle", () => {
 					file.type === "registry:ui" && /^(button|dialog|tooltip|accordion)\//.test(file.target)
 			)
 		).toBe(true);
-		expect(bundle.registryDependencies).toEqual(["utils", "https://example.com/button.json"]);
+		expect(bundle.registryDependencies).toEqual([
+			"utils",
+			"https://example.com/button.json",
+			"kbd",
+		]);
 		expect(bundle.dependencies).toEqual(["example-package"]);
 		expect(bundle.devDependencies).toEqual([
 			...new Set(items.flatMap((item) => item.devDependencies ?? [])),
@@ -735,6 +739,11 @@ describe("Button write-back into Valar style overrides", () => {
 		);
 		const defaults = sizeClasses(second, "default");
 		expect(defaults).toEqual(expect.arrayContaining(["h-11", "px-4", "rounded-xl", "gap-1.5"]));
+		const installed = injectStyleClasses(
+			buttonSource,
+			mergeStyleMaps(parseStyleCss(upstream), parseStyleCss(second))
+		);
+		expect(installed).toContain('class: "not-in-data-[slot=button-group]:rounded-xl"');
 		expect(defaults).not.toContain("h-8");
 		expect(defaults).not.toContain("px-2.5");
 		// Icon-side padding from upstream stays.
@@ -790,25 +799,32 @@ describe("Dialog write-back into Valar style overrides", () => {
 
 	it("reads each style's own baseline from the installed source", () => {
 		const valar = parseDialogSource(registry("valar").files);
-		expect(valar.values).toMatchObject({ padding: 16, gap: 16, overlay: 10, radius: "xl" });
-		expect(valar.context).toEqual({ footerBleed: true, footerRounded: true });
+		expect(valar.values).toMatchObject({
+			width: "compact",
+			padding: 24,
+			gap: 16,
+			overlay: 25,
+			radius: "style",
+		});
+		expect(valar.context).toEqual({ footerBleed: false, footerRounded: false });
 	});
 
-	it("keeps the bleeding footer aligned with the new padding and swaps motion tiers", () => {
-		const css = write("valar", { padding: 24, duration: "slow", zoom: "90", overlay: 40 });
+	it("keeps the footer flush with the body and swaps overlay and motion tiers", () => {
+		const css = write("valar", { padding: 28, duration: "slow", zoom: "90", overlay: 45 });
 		const content = injected("valar", css, "dialog-content.svelte");
-		expect(content).toEqual(expect.arrayContaining(["p-6", "gap-4", "duration-slow"]));
+		expect(content).toEqual(expect.arrayContaining(["p-7", "gap-4", "duration-slow"]));
 		expect(content).toEqual(
 			expect.arrayContaining(["data-open:zoom-in-90", "data-closed:zoom-out-90"])
 		);
-		expect(content).not.toContain("p-4");
-		expect(content).not.toContain("data-open:zoom-in-95");
+		expect(content).not.toContain("p-6");
+		expect(content).not.toContain("data-open:zoom-in-100");
 		const footer = injected("valar", css, "dialog-footer.svelte");
-		expect(footer).toEqual(expect.arrayContaining(["-mx-6", "-mb-6", "p-6"]));
-		expect(footer).not.toContain("-mx-4");
+		expect(footer).not.toContain("-mx-7");
 		const overlay = injected("valar", css, "dialog-overlay.svelte");
-		expect(overlay).toEqual(expect.arrayContaining(["bg-black/40", "duration-slow"]));
-		expect(overlay).not.toContain("bg-black/10");
+		expect(overlay).toEqual(
+			expect.arrayContaining(["bg-black/45", "dark:bg-black/45", "duration-slow"])
+		);
+		expect(overlay).not.toContain("bg-black/25");
 		expect(overlay).not.toContain("duration-100");
 	});
 
@@ -816,7 +832,7 @@ describe("Dialog write-back into Valar style overrides", () => {
 		for (const classes of [
 			{ "cn-dialog-content": "p-6 bg-red-500" },
 			{ "cn-dialog-content": "duration-[400ms]" },
-			{ "cn-dialog-overlay": "bg-black/45" },
+			{ "cn-dialog-overlay": "bg-black/43" },
 			{ "cn-dialog-overlay": "bg-white/40" },
 			{ "cn-dialog-footer": "duration-slow" },
 			{ "cn-dialog-title": "p-4" },
@@ -854,7 +870,7 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 		expect(parsePopoverSource(registry("valar", "popover").files).values).toEqual({
 			padding: 10,
 			gap: 10,
-			radius: "lg",
+			radius: "style",
 			duration: "style",
 			zoom: "95",
 			slide: "8",
@@ -906,7 +922,7 @@ describe("Popover and Sheet write-back into Valar style overrides", () => {
 		expect(parsePopoverSource(files).values).toEqual({
 			padding: 12,
 			gap: 10,
-			radius: "lg",
+			radius: "style",
 			duration: "normal",
 			zoom: "90",
 			slide: "16",
@@ -1059,12 +1075,12 @@ describe("Input, Select and Textarea editors share Button's levels", () => {
 		);
 		const inputClasses = installed("valar", both, "input/input.svelte");
 		expect(inputClasses).toEqual(expect.arrayContaining(["h-9", "rounded-xl", "px-3", "file:h-6"]));
-		for (const old of ["h-8", "rounded-lg", "px-2.5"]) expect(inputClasses).not.toContain(old);
+		for (const old of ["h-8", "rounded-md", "px-2.5"]) expect(inputClasses).not.toContain(old);
 		const trigger = installed("valar", both, "select/select-trigger.svelte");
 		expect(trigger).toEqual(
 			expect.arrayContaining([
 				"data-[size=sm]:h-8",
-				"data-[size=default]:h-8",
+				"data-[size=default]:h-7.5",
 				"rounded-none",
 				"data-[size=sm]:rounded-none",
 				"pl-3",
@@ -1075,6 +1091,16 @@ describe("Input, Select and Textarea editors share Button's levels", () => {
 		expect(trigger).not.toContain("data-[size=sm]:rounded-[min(var(--radius-md),10px)]");
 		// "样式自带" is never written.
 		expect(selectOverrideClasses({ radius: "style", "sm.height": "style" }, context)).toEqual({});
+		const resized = installed(
+			"valar",
+			write("valar", selectOverrideClasses({ "default.height": "lg" }, context)),
+			"select/select-trigger.svelte"
+		);
+		expect(resized).toEqual(expect.arrayContaining([
+			"data-[size=default]:h-9",
+			"data-[size=settings]:h-9",
+			"data-[size=sm]:h-7",
+		]));
 		const textarea = installed(
 			"valar",
 			write("valar", textareaOverrideClasses({ radius: "xl", paddingY: 12 })),
@@ -1361,6 +1387,7 @@ describe("Parallel editor installation contracts", () => {
 	]);
 	roundtrip("kbd", parseKbdSource, kbdOverrideClasses, [
 		{ height: 30, paddingX: 2, radius: "none", groupGap: 14 },
+		{ height: 21, paddingX: 4, radius: "sm", groupGap: 3 },
 		{ height: 16, paddingX: 12, radius: "full", groupGap: 0 },
 	]);
 	roundtrip("menubar", parseMenubarSource, menubarOverrideClasses, [
@@ -1734,22 +1761,20 @@ describe("Accordion editor installation contract", () => {
 describe("Alert Dialog editor installation contracts", () => {
 	it("roundtrips both sizes without changing confirmation semantics, media or footer layout", () => {
 		const styles = ["valar"];
-		const widths = ["sm", "lg", "sm", "md", "sm", "md", "md", "md"];
-		const radii = ["xl", "xl", "none", "4xl", "xl", "4xl", "style", "none"];
-		for (const [index, style] of styles.entries()) {
+		for (const style of styles) {
 			const baseline = parseAlertDialogSource(registryFiles("alert-dialog", style));
 			expect(baseline.values).toEqual({
-				width: widths[index],
-				padding: ["valar"].includes(style) ? 16 : 24,
-				gap: style === "mira" ? 12 : ["valar"].includes(style) ? 16 : 24,
-				radius: radii[index],
-				overlay: [10, 10, 10, 80, 80, 30, 30, 20][index],
+				width: "compact",
+				padding: 20,
+				gap: 16,
+				radius: "style",
+				overlay: 25,
 				duration: "style",
-				zoom: "95",
+				zoom: "100",
 			});
 			expect(baseline.context).toEqual({
-				footerBleed: style === "valar",
-				footerRounded: style === "valar",
+				footerBleed: false,
+				footerRounded: false,
 			});
 			let css = emptyOverrides(style);
 			for (const change of [
@@ -1763,7 +1788,7 @@ describe("Alert Dialog editor installation contracts", () => {
 					zoom: "90",
 				},
 				{
-					width: "sm",
+					width: "compact",
 					padding: 10,
 					gap: 38,
 					radius: "lg",
@@ -1788,9 +1813,7 @@ describe("Alert Dialog editor installation contracts", () => {
 					context: baseline.context,
 				});
 				const content = files.find((f) => f.target === "alert-dialog-content.svelte")!.content;
-				expect(content).toContain(
-					style === "mira" ? "data-[size=sm]:max-w-64" : "data-[size=sm]:max-w-xs"
-				);
+				expect(content).toContain("data-[size=sm]:max-w-xs");
 				for (const file of [
 					"alert-dialog-action.svelte",
 					"alert-dialog-cancel.svelte",
@@ -1803,17 +1826,8 @@ describe("Alert Dialog editor installation contracts", () => {
 						installed("alert-dialog", style, emptyOverrides(style), file)
 					);
 				const footer = files.find((f) => f.target === "alert-dialog-footer.svelte")!.content;
-				if (style === "valar")
-					expect(classList(footer)).toEqual(
-						expect.arrayContaining([
-							`-mx-${change.padding / 4}`,
-							`-mb-${change.padding / 4}`,
-							`p-${change.padding / 4}`,
-							`rounded-b-${change.radius}`,
-						])
-					);
-				else expect(footer).not.toContain("-mx-");
-				expect(footer).toContain("flex-col-reverse");
+				expect(footer).not.toContain("-mx-");
+				expect(footer).toContain("flex-wrap");
 				expect(footer).toContain("group-data-[size=sm]/alert-dialog-content:grid-cols-2");
 				expect(() => compile(content, { filename: "alert-dialog-content.svelte" })).not.toThrow();
 			}
@@ -1826,13 +1840,13 @@ describe("Alert Dialog editor installation contracts", () => {
 			{ "cn-alert-dialog-content": "p-12.5" },
 			{ "cn-alert-dialog-content": "gap-10.5" },
 			{ "cn-alert-dialog-content": "bg-red-500" },
-			{ "cn-alert-dialog-overlay": "bg-black/45" },
+			{ "cn-alert-dialog-overlay": "bg-black/43" },
 			{ "cn-alert-dialog-action": "h-10" },
 			{ "cn-alert-dialog-header": "gap-4" },
 			{ "cn-alert-dialog-content": "duration-[600ms]" },
 		])
 			expect(styleOverridePayloadSchema.safeParse({ style: "valar", classes }).success).toBe(false);
-		for (const input of [{ padding: 9 }, { gap: 42 }, { overlay: 35 }, { size: "sm" }])
+		for (const input of [{ padding: 9 }, { gap: 42 }, { overlay: 33 }, { size: "sm" }])
 			expect(() =>
 				ALERT_DIALOG_SPEC.overrideClasses(input as never, {
 					footerBleed: false,
@@ -1848,9 +1862,9 @@ describe("Alert Dialog editor installation contracts", () => {
 describe("Alert and Empty editor installation contracts", () => {
 	const styles = ["valar"];
 	it("replaces Alert row geometry without changing icon columns, action reserves or alert semantics", () => {
-		const x = [10, 16, 10, 16, 8, 16, 16, 16];
-		const y = [8, 12, 8, 12, 6, 12, 12, 12];
-		const radii = ["lg", "lg", "none", "lg", "lg", "2xl", "2xl", "style"];
+		const x = [16, 16, 10, 16, 8, 16, 16, 16];
+		const y = [16, 12, 8, 12, 6, 12, 12, 12];
+		const radii = ["style", "lg", "none", "lg", "lg", "2xl", "2xl", "style"];
 		for (const [index, style] of styles.entries()) {
 			expect(parseAlertSource(registryFiles("alert", style)).values).toEqual({
 				paddingX: x[index],
@@ -1885,7 +1899,7 @@ describe("Alert and Empty editor installation contracts", () => {
 					original.slice(original.indexOf("variants:"))
 				);
 				expect(source).toContain('role="alert"');
-				expect(source).toContain("has-data-[slot=alert-action]:pr-18");
+				expect(source).toContain("[&:has(>svg)>[data-slot=alert-action]]:col-start-3");
 				expect(installed("alert", style, css, "alert-action.svelte")).toBe(
 					installed("alert", style, emptyOverrides(style), "alert-action.svelte")
 				);
@@ -2037,7 +2051,7 @@ describe("Badge and basic Table editor installation contracts", () => {
 					expect(untouched(file.content)).toEqual(
 						untouched(installed("table", style, emptyOverrides(style), file.target))
 					);
-					expect(file.content).toContain("[&:has([role=checkbox])]:pr-0");
+					expect(file.content).toContain("[&:has([role=checkbox])]:pe-0");
 					expect(() => compile(file.content, { filename: file.target })).not.toThrow();
 				}
 				for (const file of [
@@ -2161,7 +2175,7 @@ describe("Native Select, Input Group and Input OTP editor installation contracts
 			const context = contextFor(style);
 			expect(parseInputGroupSource(registryFiles("input-group", style), context).values).toEqual({
 				height: "default",
-				radius: ["lg", "md", "none", "style", "md", "style", "2xl", "none"][index],
+				radius: ["md", "md", "none", "style", "md", "style", "2xl", "none"][index],
 				inlinePadding: [8, 8, 8, 12, 8, 12, 8, 0][index],
 				blockPaddingX: [10, 10, 10, 12, 8, 12, 10, 0][index],
 				addonGap: style === "mira" ? 4 : 8,
@@ -2410,10 +2424,10 @@ describe("Selection control write-back preserves state styling and linked geomet
 		for (const style of ["valar"]) {
 			const baseline = parseCheckboxSource(registryFiles("checkbox", style));
 			expect(baseline.values).toEqual({
-				size: style === "sera" ? 18 : 16,
-				radius: ["lyra", "sera"].includes(style) ? "none" : "style",
+				size: 14,
+				radius: "style",
 			});
-			const delta = style === "sera" ? 4 : 2;
+			const delta = 4;
 			expect(baseline.context).toEqual({ iconSizeDelta: delta });
 			const write = (css: string, size: number) =>
 				applyStyleOverrides(
@@ -2433,8 +2447,9 @@ describe("Selection control write-back preserves state styling and linked geomet
 				});
 				expect(content).toContain(`[&>svg]:size-${(size - delta) / 4}`);
 				for (const utility of [
-					"data-checked:bg-primary",
+					"data-checked:bg-[color:var(--valar-checkbox-fill,var(--valar-checkbox-fill-base))]",
 					"aria-invalid:border-destructive",
+					"focus-visible:ring-inset",
 					"disabled:opacity-50",
 				])
 					expect(content).toContain(utility);
@@ -2499,7 +2514,7 @@ describe("Selection control write-back preserves state styling and linked geomet
 			radius,
 			nextHeight,
 			nextWidth,
-		] of [["valar", 18.4, 32, 16, 16, 14, 24, 12, 12, "full", 22.4, 40]] as const) {
+		] of [["valar", 20, 30, 14, 14, 14, 22, 10, 10, "full", 26, 42]] as const) {
 			const baseline = parseSwitchSource(registryFiles("switch", style));
 			expect(baseline).toEqual({
 				values: { thumbHeight, smallThumbHeight, radius, duration: "style" },
@@ -2553,9 +2568,9 @@ describe("Selection control write-back preserves state styling and linked geomet
 				width - 2 * thumbWidth
 			);
 			for (const utility of [
-				"data-checked:bg-primary",
-				"data-unchecked:translate-x-",
-				"focus-visible:ring-",
+				"data-checked:bg-[color:var(--settings-switch-on,",
+				"transition-[inset-inline-start,inset-inline-end]",
+				"focus-visible:outline-1",
 				"after:-inset-x-3",
 			])
 				expect(nextSource).toContain(utility);
@@ -2619,7 +2634,7 @@ describe("Selection control write-back preserves state styling and linked geomet
 describe("Card write-back preserves shared spacing and part radii", () => {
 	it("reads all styles and replaces both size variables without flattening conditional layouts", () => {
 		for (const [style, spacing, smallSpacing, headerGap, radius] of [
-			["valar", 16, 12, 4, "xl"],
+			["valar", 16, 12, 4, "style"],
 		] as const) {
 			expect(parseCardSource(registryFiles("card", style)).values).toEqual({
 				spacing,
@@ -2655,11 +2670,13 @@ describe("Card write-back preserves shared spacing and part radii", () => {
 				"gap-(--card-spacing)",
 				"py-(--card-spacing)",
 				"has-[>img:first-child]:pt-0",
+				"overflow-hidden",
 				"*:[img:first-child]:rounded-t-md",
 				"*:[img:last-child]:rounded-b-md",
 			])
 				expect(root).toContain(utility);
 			expect(classList(files[1].content)).toContain("rounded-t-md");
+			expect(classList(files[1].content)).toContain("gap-x-3");
 			expect(classList(files[1].content)).toContain("[.border-b]:pb-(--card-spacing)");
 			expect(classList(files[2].content)).toContain("rounded-b-md");
 			const second = write(css, { spacing: 30 });
@@ -2717,7 +2734,7 @@ describe("Card write-back preserves shared spacing and part radii", () => {
 describe("Tabs write-back preserves variant and orientation contracts", () => {
 	it("reads mixed geometry as style-owned and roundtrips explicit uniform choices in all styles", () => {
 		for (const [style, height, listPadding, listRadius, paddingY, triggerRadius] of [
-			["valar", "32", "3", "lg", "2", "md"],
+			["valar", "32", "style", "lg", "2", "md"],
 		] as const) {
 			expect(parseTabsSource(registryFiles("tabs", style)).values).toEqual({
 				listHeight: height,
@@ -2820,18 +2837,18 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 	it("reads each style's own baseline from the installed source", () => {
 		const valar = parseMenuSource("dropdown-menu", registryFiles("dropdown-menu", "valar"));
 		expect(valar.values).toEqual({
-			padding: 4,
+			padding: 6,
 			minWidth: 128,
-			radius: "lg",
-			itemPaddingX: 6,
+			radius: "style",
+			itemPaddingX: 8,
 			itemPaddingY: 4,
-			itemGap: 6,
-			itemRadius: "md",
+			itemGap: 8,
+			itemRadius: "style",
 			duration: "style",
 			zoom: "95",
 			slide: "8",
 		});
-		expect(valar.context).toMatchObject({ inset: 28, choicePaddingY: 4, separatorBleed: true });
+		expect(valar.context).toMatchObject({ inset: 32, choicePaddingY: 4, separatorBleed: true });
 	});
 
 	it("writes panel, item, inset and separator utilities that stay aligned", () => {
@@ -2856,7 +2873,7 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 			])
 		);
 		for (const stale of [
-			"p-1",
+			"p-1.5",
 			"min-w-32",
 			"duration-100",
 			"data-open:zoom-in-95",
@@ -2877,16 +2894,16 @@ describe("Dropdown Menu write-back into Valar style overrides", () => {
 		);
 		// Inset rows keep lining up with icon rows: 10px padding + 16px icon + 8px gap = 34px.
 		const item = part("valar", css, "item");
-		expect(item).toEqual(expect.arrayContaining(["px-2.5", "gap-2", "data-inset:pl-8.5", "py-1"]));
+		expect(item).toEqual(expect.arrayContaining(["ps-2.5", "pe-3.5", "gap-2", "data-inset:ps-8.5", "py-1"]));
 		expect(item).not.toContain("data-inset:pl-7");
 		const checkbox = part("valar", css, "checkbox-item");
 		// Checkbox rows move only their leading padding; the indicator side stays.
-		expect(checkbox).toEqual(expect.arrayContaining(["pl-2.5", "pr-8", "data-inset:pl-8.5"]));
+		expect(checkbox).toEqual(expect.arrayContaining(["ps-2.5", "pe-8", "data-inset:ps-8.5"]));
 		expect(part("valar", css, "label")).toEqual(
-			expect.arrayContaining(["px-2.5", "data-inset:pl-8.5"])
+			expect.arrayContaining(["px-2.5", "data-inset:ps-8.5"])
 		);
 		expect(part("valar", css, "separator")).toContain("-mx-2");
-		expect(part("valar", css, "separator")).not.toContain("-mx-1");
+		expect(part("valar", css, "separator")).not.toContain("-mx-1.5");
 	});
 
 	it("rejects colors, arbitrary values and utilities outside each Dropdown Menu part", () => {
@@ -2915,10 +2932,10 @@ describe("Tooltip write-back into Valar style overrides", () => {
 
 	it("reads each style's own baseline, including the show delay", () => {
 		expect(parseTooltipSource(registryFiles("tooltip", "valar")).values).toEqual({
-			paddingX: 12,
-			paddingY: 6,
+			paddingX: 8,
+			paddingY: 5,
 			radius: "md",
-			delay: 0,
+			delay: 500,
 			duration: "style",
 			zoom: "95",
 		});
@@ -2941,26 +2958,26 @@ describe("Tooltip write-back into Valar style overrides", () => {
 		expect(evaluateProps(provider, {}, "delayDuration")).toBe(300);
 		expect(evaluateProps(provider, { delayDuration: 0 }, "delayDuration")).toBe(0);
 		expect(() => compile(provider, { generate: "client" })).not.toThrow();
-		// Without a write-back the installed default stays upstream's 0.
+		// Without a write-back the installed default is the workspace hover delay.
 		const untouched = installed(
 			"tooltip",
 			"valar",
 			emptyOverrides("valar"),
 			"tooltip-provider.svelte"
 		);
-		expect(evaluateProps(untouched, {}, "delayDuration")).toBe(0);
+		expect(evaluateProps(untouched, {}, "delayDuration")).toBe(500);
 		const content = classList(installed("tooltip", "valar", css, "tooltip-content.svelte"));
 		expect(content).toEqual(
 			expect.arrayContaining([
 				"px-4",
-				"py-1.5",
+				"py-1.25",
 				"duration-normal",
 				"data-open:zoom-in-90",
 				"data-[state=delayed-open]:zoom-in-90",
 				"data-closed:zoom-out-90",
 			])
 		);
-		for (const stale of ["px-3", "data-open:zoom-in-95", "data-[state=delayed-open]:zoom-in-95"])
+		for (const stale of ["px-2", "data-open:zoom-in-95", "data-[state=delayed-open]:zoom-in-95"])
 			expect(content).not.toContain(stale);
 	});
 
@@ -3155,8 +3172,8 @@ describe("Context Menu write-back uses its own source and shared menu contract",
 				"context-menu",
 				registryFiles("context-menu", style)
 			);
-			expect(values.minWidth).toBe(style === "mira" ? 128 : 144);
-			expect(values.itemPaddingX).toBe(style === "valar" ? 6 : 8);
+			expect(values.minWidth).toBe(180);
+			expect(values.itemPaddingX).toBe(8);
 			const css = applyStyleOverrides(
 				emptyOverrides(style),
 				styleOverridePayloadSchema.parse({
@@ -3205,15 +3222,12 @@ describe("Context Menu write-back uses its own source and shared menu contract",
 			);
 			expect(part("sub-content")).not.toContain("data-[side=right]:slide-in-from-left-2");
 			expect(part("checkbox-item")).toEqual(
-				expect.arrayContaining(["pl-2.5", "pr-8", style === "mira" ? "py-2.5" : "py-2"])
+				expect.arrayContaining(["ps-2.5", "pe-8", style === "mira" ? "py-2.5" : "py-2"])
 			);
 			expect(part("group-heading")).toEqual(
-				expect.arrayContaining([
-					"px-2.5",
-					`data-inset:pl-${style === "mira" ? "8" : style === "lyra" ? "7.5" : "8.5"}`,
-				])
+				expect.arrayContaining(["px-2.5", "data-inset:ps-8.5"])
 			);
-			expect(part("separator")).toContain(style === "lyra" ? "-mx-1" : "-mx-2");
+			expect(part("separator")).toContain("-mx-2");
 		}
 	});
 

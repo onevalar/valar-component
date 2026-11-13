@@ -9,6 +9,7 @@ import {
 	registry,
 	utils,
 } from "$content/index.js";
+import { isPublishedBasicComponent } from "$lib/basic-component-visibility.js";
 import { COMPONENT_CATEGORIES, OTHER_CATEGORY } from "$lib/component-categories.js";
 import { localeFromPathname, localizeHref, type Locale } from "$lib/i18n/config.js";
 import { translate, type MessageKey } from "$lib/i18n/index.js";
@@ -201,7 +202,9 @@ function generateComponentsNav(locale: Locale): SidebarNavItem[] {
 		items.push({ title: index.title, href: to(locale, "/docs/components"), items: [] });
 	}
 
-	const rest = docs.filter((doc) => doc.path !== "components").sort(compareTitles(locale));
+	const rest = docs
+		.filter((doc) => doc.path !== "components" && isPublishedBasicComponent(doc.slug))
+		.sort(compareTitles(locale));
 
 	for (const doc of rest) {
 		items.push({ title: doc.title, href: to(locale, `/docs/components/${doc.slug}`), items: [] });

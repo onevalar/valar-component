@@ -1,11 +1,21 @@
 <script lang="ts">
-	import ArrowUpIcon from "@lucide/svelte/icons/arrow-up";
+	import CircleIcon from "@lucide/svelte/icons/circle";
 	import { Button } from "$lib/registry/ui/button/index.js";
+
+	let unreadOnly = $state(false);
 </script>
 
-<div class="flex flex-wrap items-center gap-2 md:flex-row">
-	<Button variant="outline">Button</Button>
-	<Button variant="outline" size="icon" aria-label="Submit">
-		<ArrowUpIcon />
+<div class="flex flex-wrap items-center gap-2">
+	<Button>Create team</Button>
+	<Button variant="outline">Export CSV</Button>
+	<Button variant="ghost">Customize sidebar</Button>
+	<Button
+		variant="ghost"
+		size="icon-sm"
+		aria-label="Show unread only"
+		aria-pressed={unreadOnly}
+		onclick={() => (unreadOnly = !unreadOnly)}
+	>
+		<CircleIcon aria-hidden="true" />
 	</Button>
 </div>

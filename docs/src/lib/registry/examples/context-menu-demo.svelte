@@ -8,12 +8,15 @@
 
 <ContextMenu.Root>
 	<ContextMenu.Trigger
-		class="flex aspect-video w-full max-w-xs items-center justify-center rounded-xl border border-dashed text-sm"
+		role="group"
+		aria-label="Page actions"
+		tabindex={0}
+		class="flex aspect-video w-full max-w-xs items-center justify-center rounded-xl border border-dashed text-sm focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring"
 	>
 		<span class="hidden pointer-fine:inline-block">Right click here</span>
 		<span class="hidden pointer-coarse:inline-block">Long press here</span>
 	</ContextMenu.Trigger>
-	<ContextMenu.Content class="w-48">
+	<ContextMenu.Content aria-label="Page actions" class="w-48">
 		<ContextMenu.Group>
 			<ContextMenu.Item>
 				Back
@@ -29,7 +32,7 @@
 			</ContextMenu.Item>
 			<ContextMenu.Sub>
 				<ContextMenu.SubTrigger>More Tools</ContextMenu.SubTrigger>
-				<ContextMenu.SubContent class="w-44">
+				<ContextMenu.SubContent aria-label="More tools" class="w-44">
 					<ContextMenu.Group>
 						<ContextMenu.Item>Save Page...</ContextMenu.Item>
 						<ContextMenu.Item>Create Shortcut...</ContextMenu.Item>

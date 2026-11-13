@@ -115,3 +115,14 @@ links:
 <div></div>
 
 </ComponentPreview>
+
+## 保存设置
+
+保存时保留刚切换的状态，等待完成期间禁用重复切换，并用文字提示正在保存。
+示例在本地模拟保存，若禁用开关时焦点丢失，完成后会恢复焦点。
+
+<ComponentPreview name="switch-pending">
+
+<div></div>
+
+</ComponentPreview>

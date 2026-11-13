@@ -50,7 +50,7 @@
 	},
 	"files": [
 		{
-			"content": "# Progress 设计规范\n\n- 用于可以计算进度的任务（上传、导入）；无法估计进度时用 Spinner。\n- 用 `value` 和 `max` 表达进度，进度条必须有名称：传 `aria-label`，或用 `aria-labelledby` 指向旁边的说明文字。\n- 旁边用文字显示百分比或“3／10”等具体进度，不要只靠条的长度。\n- 高度和圆角跟随组件样式，不要用 `class` 改。\n",
+			"content": "# Progress 设计规范\n\n- 用于上传、导入等异步任务。已知范围时用 `value`、`min` 和 `max` 表达进度。任务已经开始且总量仍未知时传 `value={null}`。\n- 通过 `aria-label` 提供名称，或用 `aria-labelledby` 指向旁边的说明文字。\n- 旁边用文字显示百分比或“3／10”等具体进度，不要只靠条的长度。\n- 高度和圆角跟随组件样式，不要用 `class` 改。\n- Projects 列表的只读百分比使用 `appearance=\"project\"`。\n",
 			"type": "registry:file",
 			"target": "progress/RULES.md"
 		},
@@ -60,7 +60,7 @@
 			"target": "progress/index.ts"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { Progress as ProgressPrimitive } from \"bits-ui\";\n\timport { cn, type WithoutChildrenOrChild } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tmax = 100,\n\t\tvalue,\n\t\t...restProps\n\t}: WithoutChildrenOrChild<ProgressPrimitive.RootProps> = $props();\n</script>\n\n<ProgressPrimitive.Root\n\tbind:ref\n\tdata-slot=\"progress\"\n\tclass={cn(\"bg-muted h-1 rounded-full relative flex w-full items-center overflow-x-hidden\", className)}\n\t{value}\n\t{max}\n\t{...restProps}\n>\n\t<div\n\t\tdata-slot=\"progress-indicator\"\n\t\tclass=\"bg-primary size-full flex-1 transition-all\"\n\t\tstyle=\"transform: translateX(-{100 - (100 * (value ?? 0)) / (max ?? 1)}%)\"\n\t></div>\n</ProgressPrimitive.Root>\n",
+			"content": "<script lang=\"ts\">\n\timport { Progress as ProgressPrimitive } from \"bits-ui\";\n\timport { cn, type WithoutChildrenOrChild } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tappearance = \"default\",\n\t\tmin = 0,\n\t\tmax = 100,\n\t\tvalue = 0,\n\t\t...restProps\n\t}: WithoutChildrenOrChild<ProgressPrimitive.RootProps> & {\n\t\tappearance?: \"default\" | \"project\";\n\t} = $props();\n\n\tconst projectClass = $derived(appearance === \"project\" && \"h-auto w-fit bg-transparent text-xs font-[450] tabular-nums text-[color:lch(19.588%_1.25_282)] dark:text-[color:lch(90.451%_1.2_272)]\");\n\tconst currentValue = $derived(value === null ? null : Math.min(max, Math.max(min, value)));\n\tconst fraction = $derived(currentValue !== null && max > min ? (currentValue - min) / (max - min) : 0);\n</script>\n\n<ProgressPrimitive.Root\n\tbind:ref\n\tdata-slot=\"progress\"\n\tdata-appearance={appearance === \"project\" ? \"project\" : undefined}\n\tclass={cn(\n\t\t\"bg-muted h-1 rounded-full relative flex w-full items-center overflow-x-hidden\",\n\t\tprojectClass,\n\t\tclassName\n\t)}\n\tvalue={currentValue}\n\t{min}\n\t{max}\n\t{...restProps}\n>\n\t{#if appearance === \"project\"}\n\t\t<span aria-hidden=\"true\">{currentValue === null ? \"—\" : `${Math.round(fraction * 100)}%`}</span>\n\t{:else}\n\t\t<div\n\t\t\tdata-slot=\"progress-indicator\"\n\t\t\tdata-indeterminate={currentValue === null ? \"\" : undefined}\n\t\t\tclass=\"bg-primary h-full shrink-0 rounded-[inherit] transition-[width] duration-150 data-indeterminate:mx-auto motion-safe:data-indeterminate:animate-pulse motion-reduce:transition-none\"\n\t\t\tstyle:width={currentValue === null ? \"35%\" : `${fraction * 100}%`}\n\t\t></div>\n\t{/if}\n</ProgressPrimitive.Root>\n",
 			"type": "registry:file",
 			"target": "progress/progress.svelte"
 		}

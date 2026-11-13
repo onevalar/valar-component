@@ -20,14 +20,24 @@ import {
  * here Dialog only picks levels (radius level, duration tier) and sets its own layout and
  * motion character (width, padding, gap, overlay opacity, zoom).
  */
-export const DIALOG_WIDTHS = ["sm", "md", "lg", "xl", "2xl"] as const;
+export const DIALOG_WIDTHS = ["sm", "md", "compact", "lg", "xl", "2xl"] as const;
 export const WIDTH_REM: Record<(typeof DIALOG_WIDTHS)[number], number> = {
 	sm: 24,
 	md: 28,
+	compact: 30,
 	lg: 32,
 	xl: 36,
 	"2xl": 42,
 };
+
+export function dialogWidthClass(width: (typeof DIALOG_WIDTHS)[number]) {
+	return width === "compact" ? "[30rem]" : width;
+}
+
+export function readDialogWidth(source: string) {
+	const width = /sm:max-w-(\[30rem\]|sm\b|md\b|lg\b|xl\b|2xl\b)/.exec(source)?.[1];
+	return width === "[30rem]" ? "compact" : (width as (typeof DIALOG_WIDTHS)[number] | undefined);
+}
 
 const valuesSchema = z
 	.object({
@@ -35,7 +45,7 @@ const valuesSchema = z
 		padding: z.number().int().min(8).max(48).multipleOf(2),
 		gap: z.number().int().min(4).max(40).multipleOf(2),
 		radius: z.enum(RADIUS_CHOICES),
-		overlay: z.number().int().min(0).max(80).multipleOf(10),
+		overlay: z.number().int().min(0).max(80).multipleOf(5),
 		duration: z.enum([STYLE_VALUE, ...MOTION_TIERS]),
 		zoom: z.enum(ZOOM_LEVELS),
 	})
@@ -53,25 +63,26 @@ export function parseDialogSource(files: { target: string; content: string }[]):
 } {
 	const file = (name: string) => files.find((f) => f.target.endsWith(name))?.content ?? "";
 	const content = file("dialog-content.svelte");
+	const baseline = /cn\(\s*"([^"]+)"/.exec(content)?.[1] ?? content;
 	const overlay = file("dialog-overlay.svelte");
 	const footer = file("dialog-footer.svelte");
 	const px = (pattern: string, fallback: number) => {
-		const value = sourceWord(pattern, content);
+		const value = sourceWord(pattern, baseline);
 		return value === undefined ? fallback : Number(value) * 4;
 	};
-	const radius = sourceWord(`rounded-(${RADIUS_LEVELS.join("|")})`, content) as
+	const radius = sourceWord(`rounded-(${RADIUS_LEVELS.join("|")})`, baseline) as
 		| RadiusLevel
 		| undefined;
 	return {
 		values: {
-			width: (/sm:max-w-(sm|md|lg|xl|2xl)\b/.exec(content)?.[1] ?? "md") as DialogValues["width"],
+			width: readDialogWidth(baseline) ?? "md",
 			padding: px(String.raw`p-(\d+(?:\.5)?)`, 16),
 			gap: px(String.raw`gap-(\d+(?:\.5)?)`, 16),
 			radius: radius ?? STYLE_VALUE,
 			overlay: Number(/bg-black\/(\d+)/.exec(overlay)?.[1] ?? 0),
-			duration: (sourceWord("duration-(fast|normal|slow)", content) ??
+			duration: (sourceWord("duration-(fast|normal|slow)", baseline) ??
 				STYLE_VALUE) as DialogValues["duration"],
-			zoom: (/data-open:zoom-in-(\d+)/.exec(content)?.[1] ?? "100") as DialogValues["zoom"],
+			zoom: (/data-open:zoom-in-(\d+)/.exec(baseline)?.[1] ?? "100") as DialogValues["zoom"],
 		},
 		context: { footerBleed: /(?:^|\s)-mx-/.test(footer), footerRounded: /rounded-b-/.test(footer) },
 	};
@@ -140,7 +151,7 @@ export function dialogOverrideClasses(
 	const content: string[] = [];
 	const overlay: string[] = [];
 	const footer: string[] = [];
-	if (safe.width !== undefined) content.push(`sm:max-w-${safe.width}`);
+	if (safe.width !== undefined) content.push(`sm:max-w-${dialogWidthClass(safe.width)}`);
 	if (safe.padding !== undefined) {
 		content.push(`p-${spacing(safe.padding)}`);
 		if (context.footerBleed)
@@ -161,7 +172,8 @@ export function dialogOverrideClasses(
 	}
 	if (safe.zoom !== undefined)
 		content.push(`data-open:zoom-in-${safe.zoom}`, `data-closed:zoom-out-${safe.zoom}`);
-	if (safe.overlay !== undefined) overlay.push(`bg-black/${safe.overlay}`);
+	if (safe.overlay !== undefined)
+		overlay.push(`bg-black/${safe.overlay}`, `dark:bg-black/${safe.overlay}`);
 	return Object.fromEntries(
 		[
 			["cn-dialog-content", content],
@@ -200,7 +212,7 @@ export const DIALOG_SPEC: TunerSpec<DialogValues, DialogContext> = {
 				...RADIUS_LEVELS.map((value) => ({ value, label: RADIUS_LABELS[value] })),
 			],
 		},
-		{ kind: "number", key: "overlay", label: "遮罩不透明度（%）", min: 0, max: 80, step: 10 },
+		{ kind: "number", key: "overlay", label: "遮罩不透明度（%）", min: 0, max: 80, step: 5 },
 		{
 			kind: "select",
 			key: "duration",

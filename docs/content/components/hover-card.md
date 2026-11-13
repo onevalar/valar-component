@@ -3,7 +3,7 @@ title: Hover Card
 description: For sighted users to preview content available behind a link.
 component: true
 links:
-  source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/link-preview
+  source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/hover-card
   doc: https://bits-ui.com/docs/components/link-preview
   api: https://bits-ui.com/docs/components/link-preview#api-reference
 ---
@@ -20,7 +20,7 @@ links:
 	let { viewerData } = $props();
 </script>
 
-<ComponentPreview name="hover-card-demo">
+<ComponentPreview name="hover-card-profile" title="Member profile preview" tunable={false}>
 
 <div></div>
 
@@ -73,6 +73,10 @@ Copy and paste the following code into your project.
 </HoverCard.Root>
 ```
 
+## Member Profile
+
+Use `appearance="profile"` on `HoverCard.Content` for a compact member preview. Hover or focus the name to preview the profile. Follow the link to read the same details without opening the card.
+
 ## Trigger Delays
 
 Use `openDelay` and `closeDelay` on `HoverCard.Root` to control when the card opens and closes.
@@ -97,7 +101,7 @@ Use the `side` and `align` props on `HoverCard.Content` to control placement.
 
 ## Basic
 
-<ComponentPreview name="hover-card-demo" tunable={false}>
+<ComponentPreview name="hover-card-demo">
 
 <div></div>
 

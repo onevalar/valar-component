@@ -47,7 +47,7 @@
 	];
 </script>
 
-<Table.Root>
+<Table.Root scrollLabel="Invoice columns">
 	<Table.Caption>A list of your recent invoices.</Table.Caption>
 	<Table.Header>
 		<Table.Row>

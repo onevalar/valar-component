@@ -8,10 +8,12 @@
 		api = $bindable(null),
 		ref = $bindable(null),
 		value = $bindable(""),
+		appearance = "default",
 		class: className,
 		...restProps
 	}: CommandPrimitive.RootProps & {
 		api?: CommandRootApi | null;
+		appearance?: "default" | "compact";
 	} = $props();
 </script>
 
@@ -20,6 +22,11 @@
 	bind:value
 	bind:ref
 	data-slot="command"
-	class={cn("cn-command flex size-full flex-col overflow-hidden", className)}
+	data-command-compact={appearance === "compact" ? "" : undefined}
+	class={cn(
+		"cn-command flex size-full flex-col overflow-hidden",
+		appearance === "compact" && "cn-command-compact",
+		className
+	)}
 	{...restProps}
 />

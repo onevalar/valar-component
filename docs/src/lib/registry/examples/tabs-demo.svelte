@@ -34,8 +34,8 @@
 	];
 </script>
 
-<Tabs.Root value="overview" class="w-[400px]">
-	<Tabs.List>
+<Tabs.Root value="overview" class="w-full max-w-[400px]">
+	<Tabs.List aria-label="Project dashboard">
 		{#each tabs as tab (tab.value)}
 			<Tabs.Trigger value={tab.value}>{tab.title}</Tabs.Trigger>
 		{/each}

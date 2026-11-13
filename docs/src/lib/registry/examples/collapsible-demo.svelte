@@ -6,7 +6,7 @@
 	let isOpen = $state(false);
 </script>
 
-<Collapsible.Root bind:open={isOpen} class="flex w-[350px] flex-col gap-2">
+<Collapsible.Root bind:open={isOpen} class="flex w-full max-w-[350px] flex-col gap-2">
 	<div class="flex items-center justify-between gap-4 px-4">
 		<h4 class="text-sm font-semibold">Order #4189</h4>
 		<Collapsible.Trigger>

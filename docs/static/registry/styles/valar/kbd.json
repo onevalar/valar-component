@@ -41,7 +41,7 @@
 	},
 	"files": [
 		{
-			"content": "# Kbd 设计规范\n\n- 只用于显示键盘按键或快捷键；组合键用 `Kbd.Group` 包住多个 `Kbd`，不要写成一整段文字。\n- 显示的快捷键必须真正可用；区分平台时按 macOS（⌘、⌥）和其他系统（Ctrl、Alt）分别显示。\n",
+			"content": "# Kbd 设计规范\n\n- 只用于显示键盘按键或快捷键；组合键用 `Kbd.Group` 包住多个 `Kbd`，不要写成一整段文字。\n- 显示的快捷键必须真正可用；区分平台时按 macOS（⌘、⌥）和其他系统（Ctrl、Alt）分别显示。\n- 默认键帽参考 Linear 快捷键面板。高 21 px、最小宽度 20 px、水平留白 4 px、圆角 3 px，组合键间隔 3 px。透明底，浅深主题使用各自的文字和细描边。\n- 菜单项尾部使用 `appearance=\"inline\"`，字号 11 px，行高 12.1 px，字重 500。没有描边和内边距。\n- 工作区工具提示使用 `Tooltip.Hint`，内置 `appearance=\"compact\"` 键帽。高 17.1 px、最小宽度 18 px、圆角 4 px、水平留白 2 px，字重 400。\n- 键帽是静态提示，随相邻的动作说明一起展示。通过带标签的动作响应按键，键帽本身无需获取焦点。\n",
 			"type": "registry:file",
 			"target": "kbd/RULES.md"
 		},
@@ -51,12 +51,12 @@
 			"target": "kbd/index.ts"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();\n</script>\n\n<kbd\n\tbind:this={ref}\n\tdata-slot=\"kbd-group\"\n\tclass={cn(\"gap-1 inline-flex items-center\", className)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</kbd>\n",
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();\n</script>\n\n<kbd\n\tbind:this={ref}\n\tdata-slot=\"kbd-group\"\n\tclass={cn(\"gap-0.75 inline-flex items-center\", className)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</kbd>\n",
 			"type": "registry:file",
 			"target": "kbd/kbd-group.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();\n</script>\n\n<kbd\n\tbind:this={ref}\n\tdata-slot=\"kbd\"\n\tclass={cn(\n\t\t\"bg-muted text-muted-foreground in-data-[slot=tooltip-content]:bg-background/20 in-data-[slot=tooltip-content]:text-background dark:in-data-[slot=tooltip-content]:bg-background/10 h-5 w-fit min-w-5 gap-1 rounded-sm px-1 font-sans text-xs font-medium [&_svg:not([class*='size-'])]:size-3 pointer-events-none inline-flex items-center justify-center select-none\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</kbd>\n",
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tappearance = \"default\",\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLElement>> & {\n\t\tappearance?: \"default\" | \"inline\" | \"compact\";\n\t} = $props();\n</script>\n\n<kbd\n\tbind:this={ref}\n\tdata-slot=\"kbd\"\n\tdata-appearance={appearance}\n\tclass={cn(\n\t\t\"h-5.25 w-fit min-w-5 gap-1 rounded-[3px] border-[0.5px] border-[color:var(--valar-kbd-border,var(--valar-kbd-border-base,lch(91.9%_0_282)))] bg-transparent px-1 font-sans text-[11px]/[12.1px] font-[450] text-[color:var(--valar-kbd-foreground,var(--valar-kbd-foreground-base,lch(40%_1_282)))] dark:[--valar-kbd-border-base:lch(16.793%_1.93_272)] dark:[--valar-kbd-foreground-base:lch(63.304%_1.425_272)] [&_svg:not([class*='size-'])]:size-3 data-[appearance=compact]:h-[17.1px] data-[appearance=compact]:min-w-[18px] data-[appearance=compact]:rounded-[4px] data-[appearance=compact]:px-0.5 data-[appearance=compact]:font-normal dark:data-[appearance=compact]:[--valar-kbd-border-base:lch(20.28%_1.93_272)] data-[appearance=inline]:h-auto data-[appearance=inline]:min-w-0 data-[appearance=inline]:rounded-none data-[appearance=inline]:border-0 data-[appearance=inline]:px-0 data-[appearance=inline]:font-medium data-[appearance=inline]:text-[color:var(--valar-kbd-foreground,var(--valar-kbd-foreground-base,lch(40%_1_282)))]! dark:not-data-[appearance=default]:[--valar-kbd-foreground-base:lch(64.714%_1.425_272)] pointer-events-none inline-flex items-center justify-center select-none\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</kbd>\n",
 			"type": "registry:file",
 			"target": "kbd/kbd.svelte"
 		}

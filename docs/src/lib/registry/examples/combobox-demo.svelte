@@ -1,62 +1,49 @@
 <script lang="ts">
-	import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
-	import { tick } from "svelte";
-	import * as Command from "$lib/registry/ui/command/index.js";
-	import * as Popover from "$lib/registry/ui/popover/index.js";
-	import { Button } from "$lib/registry/ui/button/index.js";
+	import UserRoundIcon from "@lucide/svelte/icons/user-round";
+	import { buttonVariants } from "$lib/registry/ui/button/index.js";
+	import { Combobox } from "$lib/registry/ui/combobox/index.js";
 
-	const frameworks = ["Next.js", "SvelteKit", "Nuxt.js", "Remix", "Astro"];
-
-	let open = $state(false);
-	let value = $state("");
-	let triggerRef = $state<HTMLButtonElement>(null!);
-
-	// We want to refocus the trigger button when the user selects
-	// an item from the list so users can continue navigating the
-	// rest of the form with the keyboard.
-	function closeAndFocusTrigger() {
-		open = false;
-		tick().then(() => {
-			triggerRef.focus();
-		});
-	}
+	const assignees = [
+		{ id: "", label: "Unassigned" },
+		{ id: "ada", label: "Ada Chen", group: "Members" },
+		{ id: "morgan", label: "Morgan Lee", group: "Members" },
+		{ id: "priya", label: "Priya Shah", group: "Members" },
+	];
+	let value = $state<readonly string[]>([""]);
+	const assignee = $derived(assignees.find((option) => option.id === value[0])?.label);
 </script>
 
-<Popover.Root bind:open>
-	<Popover.Trigger bind:ref={triggerRef}>
-		{#snippet child({ props })}
-			<Button
-				{...props}
-				variant="outline"
-				class="w-[200px] justify-between font-normal"
-				role="combobox"
-				aria-expanded={open}
-			>
-				{value || "Select a framework"}
-				<ChevronDownIcon class="text-muted-foreground" />
-			</Button>
+<div class="flex flex-col items-center gap-2">
+	<Combobox
+		label="Choose an assignee"
+		placeholder="Assign to…"
+		empty="No matching assignees."
+		options={assignees}
+		bind:value
+		triggerProps={{ "aria-label": `Assignee: ${assignee}` }}
+		class={buttonVariants({
+			variant: "outline",
+			shape: "pill",
+			size: "xs",
+			class: "gap-1.5 px-2 text-xs font-normal",
+		})}
+	>
+		{#snippet children()}
+			<UserRoundIcon class="size-3.5" aria-hidden="true" />
+			{assignee}
 		{/snippet}
-	</Popover.Trigger>
-	<Popover.Content class="w-[200px] p-0">
-		<Command.Root>
-			<Command.Input placeholder="Search framework..." />
-			<Command.List>
-				<Command.Empty>No items found.</Command.Empty>
-				<Command.Group>
-					{#each frameworks as framework (framework)}
-						<Command.Item
-							value={framework}
-							data-checked={value === framework}
-							onSelect={() => {
-								value = framework;
-								closeAndFocusTrigger();
-							}}
-						>
-							{framework}
-						</Command.Item>
-					{/each}
-				</Command.Group>
-			</Command.List>
-		</Command.Root>
-	</Popover.Content>
-</Popover.Root>
+		{#snippet option(item)}
+			{#if item.id}
+				<span
+					aria-hidden="true"
+					class="grid size-4 shrink-0 place-items-center rounded-full bg-accent text-[9px] leading-none text-accent-foreground"
+					>{item.label.slice(0, 1)}</span
+				>
+			{:else}
+				<UserRoundIcon aria-hidden="true" />
+			{/if}
+			<span class="min-w-0 flex-1 wrap-anywhere">{item.label}</span>
+		{/snippet}
+	</Combobox>
+	<p role="status" class="text-xs text-muted-foreground">Current assignee: {assignee}</p>
+</div>

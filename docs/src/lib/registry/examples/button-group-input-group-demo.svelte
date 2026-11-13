@@ -27,6 +27,7 @@
 						{#snippet child({ props })}
 							<InputGroup.Button
 								{...props}
+								aria-label="Voice mode"
 								onclick={() => (voiceEnabled = !voiceEnabled)}
 								size="icon-xs"
 								data-active={voiceEnabled}

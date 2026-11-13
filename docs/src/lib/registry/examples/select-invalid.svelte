@@ -8,16 +8,23 @@
 		{ value: "blueberry", label: "Blueberry" },
 	];
 
+	const id = $props.id();
 	let value = $state("");
+	const invalid = $derived(!value);
 </script>
 
-<Field.Field data-invalid class="w-full max-w-48">
-	<Field.Label>Fruit</Field.Label>
-	<Select.Root type="single" items={fruits} bind:value>
-		<Select.Trigger aria-invalid>
+<Field.Field data-invalid={invalid || undefined} class="w-full max-w-48">
+	<Field.Label for={id} required>Required fruit</Field.Label>
+	<Select.Root type="single" items={fruits} bind:value required name="requiredFruit">
+		<Select.Trigger
+			{id}
+			aria-invalid={invalid}
+			aria-required="true"
+			aria-describedby={invalid ? `${id}-error` : undefined}
+		>
 			<Select.Value placeholder="Select a fruit" />
 		</Select.Trigger>
-		<Select.Content>
+		<Select.Content aria-label="Required fruit options">
 			<Select.Group>
 				{#each fruits as fruit (fruit.value)}
 					<Select.Item value={fruit.value} label={fruit.label}>{fruit.label}</Select.Item>
@@ -25,5 +32,7 @@
 			</Select.Group>
 		</Select.Content>
 	</Select.Root>
-	<Field.Error>Please select a fruit.</Field.Error>
+	{#if invalid}
+		<Field.Error id={`${id}-error`}>Please select a fruit.</Field.Error>
+	{/if}
 </Field.Field>

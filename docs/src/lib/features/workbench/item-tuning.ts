@@ -120,6 +120,7 @@ const registries = import.meta.glob<{ files: { target: string; content: string }
 	{ import: "default" }
 );
 const NOT_EDITOR = ":not([data-component-tuner]):not([data-component-tuner] *)";
+const GENERIC_ITEM = '[data-slot="item"]:not([data-appearance="issue-row"])';
 export const ITEM_SPEC: TunerSpec<ItemValues, null> = {
 	component: "item",
 	title: "Item",
@@ -145,7 +146,7 @@ export const ITEM_SPEC: TunerSpec<ItemValues, null> = {
 		["--foreground", "文字色"],
 		["--muted", "弱化与悬停背景"],
 		["--border", "边框色"],
-		["--ring", "焦点环"],
+		["--ring", "焦点内描边"],
 	],
 	async readBaseline(_probe, style) {
 		const load =
@@ -153,7 +154,7 @@ export const ITEM_SPEC: TunerSpec<ItemValues, null> = {
 		if (!load) throw new Error(`没有 ${style} 的 Item registry`);
 		return parseItemSource((await load()).files);
 	},
-	previewCss: (scope, overrides) => itemCss(`${scope} [data-slot="item"]`, overrides),
-	pageCss: (overrides) => itemCss(`[data-slot="item"]${NOT_EDITOR}`, overrides),
+	previewCss: (scope, overrides) => itemCss(`${scope} ${GENERIC_ITEM}`, overrides),
+	pageCss: (overrides) => itemCss(`${GENERIC_ITEM}${NOT_EDITOR}`, overrides),
 	overrideClasses: itemOverrideClasses,
 };

@@ -70,6 +70,16 @@ Copy and paste the following code into your project.
 </Empty.Root>
 ```
 
+## Empty issue list
+
+Use `appearance="issue-list"` for an initial empty issue list. Center the illustration, short title, and primary action. The preview uses a Valar illustration and opens a local issue composer. Use `appearance="filtered-list"` when active filters hide all results. The preview switches between the assigned and filtered states and includes the action for each.
+
+<ComponentPreview name="empty-issue-list-demo">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Outline
 
 Use the `border` utility class to create an outline empty state.

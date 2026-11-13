@@ -28,7 +28,7 @@
 			<h3
 				id={`${id}-${pane}-heading`}
 				tabindex="-1"
-				class="rounded-sm text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+				class="rounded-sm text-sm font-medium focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
 			>
 				资源列表 · 第 {pages[pane]} 页
 			</h3>

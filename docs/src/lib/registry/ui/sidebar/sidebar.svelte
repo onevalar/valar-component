@@ -12,7 +12,9 @@
 		collapsible = "offcanvas",
 		class: className,
 		children,
+		id,
 		mobileTitle = "侧边栏",
+		mobileCloseButton = true,
 		mobileDescription = "显示移动端侧边栏。",
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
@@ -21,6 +23,8 @@
 		collapsible?: "offcanvas" | "icon" | "none";
 		/** Screen reader title and description of the mobile sheet. */
 		mobileTitle?: string;
+		/** Set false when the mobile header supplies its own close button. */
+		mobileCloseButton?: boolean;
 		mobileDescription?: string;
 	} = $props();
 
@@ -29,11 +33,14 @@
 
 {#if collapsible === "none"}
 	<div
+		data-slot="sidebar"
+		data-sidebar="sidebar"
 		class={cn(
-			"flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground",
+			"flex h-full w-(--sidebar-width) max-w-full flex-col bg-sidebar text-sidebar-foreground",
 			className
 		)}
 		bind:this={ref}
+		{id}
 		{...restProps}
 	>
 		{@render children?.()}
@@ -42,15 +49,25 @@
 	<Sheet.Root bind:open={() => sidebar.openMobile, (v) => sidebar.setOpenMobile(v)} {...restProps}>
 		<Sheet.Content
 			bind:ref
+			id={id ?? undefined}
 			data-sidebar="sidebar"
 			data-slot="sidebar"
 			data-mobile="true"
 			class={cn(
-				"w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden",
+				"w-(--sidebar-width) max-w-full bg-sidebar p-0 text-sidebar-foreground",
+				sidebar.appearance === "workspace" && "cn-sidebar-workspace",
 				className
 			)}
 			style="--sidebar-width: {SIDEBAR_WIDTH_MOBILE};"
 			{side}
+			showCloseButton={mobileCloseButton}
+			onCloseAutoFocus={(event) => {
+				const opener = sidebar.mobileOpener;
+				sidebar.mobileOpener = null;
+				if (!opener?.isConnected) return;
+				event.preventDefault();
+				opener.focus();
+			}}
 		>
 			<Sheet.Header class="sr-only">
 				<Sheet.Title>{mobileTitle}</Sheet.Title>
@@ -64,6 +81,7 @@
 {:else}
 	<div
 		bind:this={ref}
+		{id}
 		class="group peer hidden text-sidebar-foreground md:block"
 		data-state={sidebar.state}
 		data-collapsible={sidebar.state === "collapsed" ? collapsible : ""}
@@ -86,12 +104,17 @@
 		<div
 			data-slot="sidebar-container"
 			data-side={side}
+			inert={collapsible === "offcanvas" && !sidebar.open}
 			class={cn(
 				"fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=left]:start-0 data-[side=left]:group-data-[collapsible=offcanvas]:start-[calc(var(--sidebar-width)*-1)] data-[side=right]:end-0 data-[side=right]:group-data-[collapsible=offcanvas]:end-[calc(var(--sidebar-width)*-1)] md:flex",
 				// Adjust the padding for floating and inset variants.
 				variant === "floating" || variant === "inset"
 					? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
-					: "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-e group-data-[side=right]:border-s",
+					: [
+							"group-data-[collapsible=icon]:w-(--sidebar-width-icon)",
+							sidebar.appearance === "default" &&
+								"group-data-[side=left]:border-e group-data-[side=right]:border-s",
+						],
 				className
 			)}
 			{...restProps}

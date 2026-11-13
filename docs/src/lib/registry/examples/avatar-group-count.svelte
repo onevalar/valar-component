@@ -2,7 +2,7 @@
 	import * as Avatar from "$lib/registry/ui/avatar/index.js";
 </script>
 
-<Avatar.Group class="grayscale">
+<Avatar.Group role="group" aria-label="Collaborators" class="grayscale">
 	<Avatar.Root>
 		<Avatar.Image src="/favicon.svg" alt="Valar" />
 		<Avatar.Fallback>CN</Avatar.Fallback>
@@ -15,5 +15,5 @@
 		<Avatar.Image src="https://github.com/evilrabbit.png" alt="@evilrabbit" />
 		<Avatar.Fallback>ER</Avatar.Fallback>
 	</Avatar.Root>
-	<Avatar.GroupCount>+3</Avatar.GroupCount>
+	<Avatar.GroupCount role="img" aria-label="3 more collaborators">+3</Avatar.GroupCount>
 </Avatar.Group>

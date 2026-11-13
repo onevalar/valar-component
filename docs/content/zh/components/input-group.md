@@ -66,8 +66,8 @@ links:
 
 ```svelte showLineNumbers
 <InputGroup.Root>
-  <InputGroup.Input placeholder="Search..." />
-  <InputGroup.Addon>
+  <InputGroup.Input aria-label="搜索组件" placeholder="Search..." />
+  <InputGroup.Addon aria-hidden="true">
     <SearchIcon />
   </InputGroup.Addon>
   <InputGroup.Addon align="inline-end">
@@ -76,13 +76,33 @@ links:
 </InputGroup.Root>
 ```
 
+## 设置搜索
+
+使用 `appearance="settings-search"` 显示带 16 px 前导图标的紧凑搜索框。预览会随输入筛选设置。按 Escape 或点击清除按钮可以重置关键词，焦点回到搜索框。
+
+<ComponentPreview name="input-group-settings-search">
+
+<div></div>
+
+</ComponentPreview>
+
+## 图标与名称
+
+图标选择按钮和名称输入框需要共用边框时，使用 `appearance="settings-name"`。按钮和输入框各自拥有可访问名称与键盘焦点。
+
+<ComponentPreview name="input-group-settings-name">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 对齐
 
 用 `InputGroup.Addon` 的 `align` 属性设置附加项相对输入框的位置。
 
 <Callout>
 
-为保证焦点管理正确，`InputGroup.Addon` 在 DOM 中应始终放在 `InputGroup.Input` 或 `InputGroup.Textarea` 之后。附加项的视觉位置用 `align` 属性调整。
+在 DOM 中将 `InputGroup.Addon` 放在 `InputGroup.Input` 或 `InputGroup.Textarea` 之后，键盘会先到达输入区。用 `align` 调整附加项的视觉位置。点击纯文字或装饰图标会聚焦输入区，按钮、标签和链接各自保留原有行为。
 
 </Callout>
 
@@ -168,6 +188,8 @@ links:
 
 ## 加载指示器
 
+本地预览模拟检查工作区网址。焦点与校验结果使用组合边框。输入“design”可看到错误，修改后可以重新检查。管理员配置的网址展示禁用状态。
+
 <ComponentPreview name="input-group-spinner-demo">
 
 <div></div>
@@ -175,6 +197,8 @@ links:
 </ComponentPreview>
 
 ## 多行输入框
+
+底部附加区可放操作按钮和字数说明。输入框随草稿增长，有内容后即可发送。
 
 <ComponentPreview name="input-group-textarea-demo">
 

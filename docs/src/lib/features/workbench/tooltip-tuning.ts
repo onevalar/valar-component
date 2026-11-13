@@ -21,14 +21,13 @@ import {
  * levels. The show delay is a Provider prop, so the style carries it as `delay-<ms>` on
  * `cn-tooltip-provider`, which `tooltip-provider.svelte` reads after flattening.
  */
-/** Upstream tooltips set no duration, so tw-animate's built-in 150ms applies. */
 const STYLE_DURATION = "style";
 const DURATION_OPTIONS = [STYLE_DURATION, ...MOTION_TIERS] as const;
 
 const valuesSchema = z
 	.object({
 		paddingX: z.number().int().min(4).max(24).multipleOf(2),
-		paddingY: z.number().int().min(2).max(12).multipleOf(2),
+		paddingY: z.number().int().min(2).max(12),
 		radius: z.enum(RADIUS_CHOICES),
 		delay: z.number().int().min(0).max(1500).multipleOf(50),
 		duration: z.enum(DURATION_OPTIONS),
@@ -47,9 +46,9 @@ export function parseTooltipSource(files: { target: string; content: string }[])
 } {
 	const file = (name: string) => files.find((f) => f.target.endsWith(`/${name}`))?.content ?? "";
 	const content = /cn\(\s*"([^"]*)"/.exec(file("tooltip-content.svelte"))?.[1] ?? "";
-	// The flattened provider holds the style's classes in `.exec("…")`; none means 0ms.
+	// The flattened provider carries the installed delay when it differs from the default.
 	const delay = Number(
-		/exec\("[^"]*?\bdelay-(\d+)\b/.exec(file("tooltip-provider.svelte"))?.[1] ?? 0
+		/exec\("[^"]*?\bdelay-(\d+)\b/.exec(file("tooltip-provider.svelte"))?.[1] ?? 500
 	);
 	const px = (pattern: string, fallback: number) => {
 		const value = sourceWord(pattern, content);
@@ -57,8 +56,8 @@ export function parseTooltipSource(files: { target: string; content: string }[])
 	};
 	return {
 		values: {
-			paddingX: px(String.raw`px-(\d+(?:\.\d+)?)`, 12),
-			paddingY: px(String.raw`py-(\d+(?:\.\d+)?)`, 6),
+			paddingX: px(String.raw`px-(\d+(?:\.\d+)?)`, 8),
+			paddingY: px(String.raw`py-(\d+(?:\.\d+)?)`, 5),
 			radius:
 				(sourceWord(`rounded-(${RADIUS_LEVELS.join("|")})`, content) as RadiusLevel | undefined) ??
 				STYLE_VALUE,
@@ -131,7 +130,7 @@ export const TOOLTIP_SPEC: TunerSpec<TooltipValues, TooltipContext> = {
 	group: "布局、延迟与动效",
 	parameters: [
 		{ kind: "number", key: "paddingX", label: "横向内边距（px）", min: 4, max: 24, step: 2 },
-		{ kind: "number", key: "paddingY", label: "纵向内边距（px）", min: 2, max: 12, step: 2 },
+		{ kind: "number", key: "paddingY", label: "纵向内边距（px）", min: 2, max: 12, step: 1 },
 		{
 			kind: "select",
 			key: "radius",

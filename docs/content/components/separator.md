@@ -68,6 +68,9 @@ Copy and paste the following code into your project.
 <Separator />
 ```
 
+The default line is 0.5 px in both directions. For a visual divider between
+settings rows, set `decorative` and align its ends with the row content.
+
 ## Vertical
 
 Use `orientation="vertical"` for a vertical separator.

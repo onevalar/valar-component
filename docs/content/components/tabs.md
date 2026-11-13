@@ -65,8 +65,8 @@ Copy and paste the following code into your project.
 ```
 
 ```svelte showLineNumbers
-<Tabs.Root value="account" class="w-[400px]">
-  <Tabs.List>
+<Tabs.Root value="account" class="w-full max-w-[400px]">
+  <Tabs.List aria-label="Account settings">
     <Tabs.Trigger value="account">Account</Tabs.Trigger>
     <Tabs.Trigger value="password">Password</Tabs.Trigger>
   </Tabs.List>
@@ -77,9 +77,11 @@ Copy and paste the following code into your project.
 </Tabs.Root>
 ```
 
+Use an accessible name on the list. The active panel uses the same value as its trigger. Arrow keys and Home/End move among enabled tabs. The default activation mode switches the panel when focus moves.
+
 ## Line
 
-Use the `variant="line"` prop on `Tabs.List` for a line style.
+Use `variant="line"` on `Tabs.List` for a line style. When space runs out, the list scrolls horizontally and reveals the focused tab. Try End and Home in the preview.
 
 <ComponentPreview name="tabs-line">
 
@@ -87,9 +89,19 @@ Use the `variant="line"` prop on `Tabs.List` for a line style.
 
 </ComponentPreview>
 
+## Capsule
+
+Use `variant="capsule"` for a few peer panels in a narrow space, such as a project sidebar. This example uses `activationMode="manual"`, so arrow keys move focus and Space or Enter activates the focused tab.
+
+<ComponentPreview name="tabs-capsule">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Vertical
 
-Use `orientation="vertical"` for vertical tabs.
+Use `orientation="vertical"` and the Up and Down arrow keys for a vertical list.
 
 <ComponentPreview name="tabs-vertical">
 

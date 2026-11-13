@@ -1,13 +1,14 @@
 ---
 title: 日期选择器
-description: 支持日期区间与预设的日期选择器组件。
+description: 支持输入和选择日、月、季度、半年和年的日期选择器。
 component: true
 links:
-  source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/examples/date-picker-demo.svelte
+  source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/date-picker
 ---
 
 <script>
 	import ComponentPreview from "$lib/components/component-preview.svelte";
+	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
 <ComponentPreview name="date-picker-demo">
@@ -18,64 +19,25 @@ links:
 
 ## 安装
 
-日期选择器由 `<Popover />` 与 `<Calendar />` 或 `<RangeCalendar />` 组合而成。
-
-安装步骤见 [Popover](/docs/components/popover#安装)、[Calendar](/docs/components/calendar#安装) 和 [Range Calendar](/docs/components/range-calendar#安装) 组件文档。
+<PMAddComp name="date-picker" />
 
 ## 用法
 
-```svelte showLineNumbers title="lib/components/example-date-picker.svelte"
+```svelte
 <script lang="ts">
-  import CalendarIcon from "@lucide/svelte/icons/calendar";
-  import {
-    type DateValue,
-    DateFormatter,
-    getLocalTimeZone,
-  } from "@internationalized/date";
-  import { cn } from "$lib/utils.js";
-  import { Button } from "$lib/components/ui/button/index.js";
-  import { Calendar } from "$lib/components/ui/calendar/index.js";
-  import * as Popover from "$lib/components/ui/popover/index.js";
+	import { DatePicker, type Timeframe } from "$lib/components/ui/date-picker/index.js";
 
-  const df = new DateFormatter("en-US", {
-    dateStyle: "long",
-  });
-
-  let value = $state<DateValue>();
+	let start = $state<Timeframe>();
+	let target = $state<Timeframe>();
 </script>
 
-<Popover.Root>
-  <Popover.Trigger>
-    {#snippet child({ props })}
-      <Button
-        variant="outline"
-        class={cn(
-          "w-[280px] justify-start text-start font-normal",
-          !value && "text-muted-foreground"
-        )}
-        {...props}
-      >
-        <CalendarIcon class="me-2 size-4" />
-        {value ? df.format(value.toDate(getLocalTimeZone())) : "Select a date"}
-      </Button>
-    {/snippet}
-  </Popover.Trigger>
-  <Popover.Content class="w-auto p-0">
-    <Calendar bind:value type="single" initialFocus captionLayout="dropdown" />
-  </Popover.Content>
-</Popover.Root>
+<DatePicker label="Start date" max={target} bind:value={start} />
+<DatePicker label="Target date" min={start} bind:value={target} />
 ```
 
-## 组合
+打开上方示例，直接输入 `May 2027`、`Q2 2027` 或 `2027-05-20`，按 Enter 提交。也可以用精度标签切换选项。值保留 ISO 日期和识别出的精度。已有值时，按「清除日期」或清空输入后按 Enter。用 `locale="zh-CN"` 显示中文，用 `precisions={["day"]}` 只允许选择具体日期。
 
-日期选择器由 `Popover` 和 `Calendar` 组合而成，没有 `DatePicker` 根组件：
-
-```text
-Popover.Root
-├── Popover.Trigger
-└── Popover.Content
-    └── Calendar
-```
+需要在一份日历中选择连续区间时，可继续使用下方的 Range Calendar 组合。
 
 ## 基础用法
 

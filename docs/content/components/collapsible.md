@@ -20,7 +20,7 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="collapsible-demo" align="start">
+<ComponentPreview name="collapsible-properties" title="Project properties" align="start">
 
 <div></div>
 
@@ -90,6 +90,18 @@ Use `bind:open` to control the state.
   <Collapsible.Content>Content</Collapsible.Content>
 </Collapsible.Root>
 ```
+
+## Properties section
+
+Use `appearance="properties"` for a single disclosure in a details panel. Place `Collapsible.Trigger` directly inside the root and mark the decorative caret `data-slot="collapsible-indicator"`. The caret points down when open. Try clicking **Properties**, or press Enter or Space while the trigger is focused.
+
+## Order details
+
+<ComponentPreview name="collapsible-demo" align="start">
+
+<div></div>
+
+</ComponentPreview>
 
 ## Basic
 

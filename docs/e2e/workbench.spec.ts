@@ -58,7 +58,7 @@ for (const sample of [
 		value: 7,
 		selector: '[data-slot="separator"][data-orientation="horizontal"]',
 		property: "height",
-		baseline: "1px",
+		baseline: "0.5px",
 	},
 	{
 		slug: "resizable",
@@ -626,11 +626,13 @@ test("Sidebar editor isolates cookies, breakpoint portals and nested Escape", as
 			url: new URL(test.info().project.use.baseURL!).origin,
 		},
 	]);
-	await page.goto("/docs/components/sidebar", { waitUntil: "domcontentloaded" });
-	await page.getByRole("tab", { name: "Use", exact: true }).click();
+	await page.goto("/docs/components/sidebar", { waitUntil: "networkidle" });
+	const usage = page.getByRole("tab", { name: "Use", exact: true });
+	await usage.click();
+	await expect(usage).toHaveAttribute("aria-selected", "true");
 	const opener = tunerButton(page, "Sidebar");
 	const sample = page.frameLocator('iframe[data-preview-frame="sidebar"]');
-	await expect(sample.locator("[data-preview-ready]")).toBeVisible();
+	await expect(sample.locator("[data-preview-ready]")).toBeVisible({ timeout: 15_000 });
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Sidebar · 组件参数", exact: true });
 	await expect(editor.getByTestId("sidebar-dials")).toBeVisible();
@@ -671,8 +673,9 @@ test("Sidebar editor isolates cookies, breakpoint portals and nested Escape", as
 	await page.keyboard.press("Escape");
 	await expect(editor).toHaveCount(0);
 	await expect(opener).toBeFocused();
-	await page.reload({ waitUntil: "domcontentloaded" });
-	await page.getByRole("tab", { name: "Use", exact: true }).click();
+	await page.reload({ waitUntil: "networkidle" });
+	await usage.click();
+	await expect(usage).toHaveAttribute("aria-selected", "true");
 	await page
 		.getByRole("combobox", { name: "Sidebar 使用版本", exact: true })
 		.selectOption({ label: "侧栏密度" });
@@ -1108,10 +1111,10 @@ test("Item editor keeps independent size density and native list actions while c
 	await page.keyboard.press("Escape");
 	await expect(editor).toHaveCount(0);
 	await expect(opener).toBeFocused();
-	await expect(page.locator('.sample [data-slot="item"]').first()).toHaveCSS(
-		"padding-left",
-		"32px"
-	);
+	await expect(
+		page.locator('.sample [data-slot="item"][data-appearance="default"]').first()
+	).toHaveCSS("padding-left", "32px");
+	await expect(page.getByRole("link", { name: /DS-42/ })).toHaveCSS("padding-left", "8px");
 });
 
 test("Accordion editor keeps single and multiple keyboard behavior while aligning tuned content", async ({
@@ -1201,7 +1204,7 @@ test("Alert Dialog editor preserves size variants and real confirmation focus, c
 	await expect(content).toHaveCSS("gap", "22px");
 	await expect(current.locator('[data-slot="alert-dialog-footer"]')).toHaveCSS(
 		"margin-left",
-		"-30px"
+		"0px"
 	);
 	await current.getByRole("button", { name: "小尺寸", exact: true }).click();
 	await expect(content).toHaveCSS("max-width", "320px");
@@ -1216,7 +1219,7 @@ test("Alert Dialog editor preserves size variants and real confirmation focus, c
 	await current.getByRole("button", { name: "默认尺寸", exact: true }).click();
 	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
 	const before = editor.locator("[data-tuning-before]");
-	await expect(before.locator('[data-slot="alert-dialog-content"]')).toHaveCSS("padding", "16px");
+	await expect(before.locator('[data-slot="alert-dialog-content"]')).toHaveCSS("padding", "20px");
 	await current.getByRole("button", { name: "真实确认流程", exact: true }).click();
 	await expect(content).toHaveCount(0);
 	const trigger = current.getByRole("button", { name: "打开确认预览", exact: true });
@@ -1262,13 +1265,13 @@ test("Alert Dialog editor preserves size variants and real confirmation focus, c
 	await expect(opener).toBeFocused();
 	await page
 		.getByRole("region", { name: "Alert Dialog 样式调节", exact: true })
-		.getByRole("button", { name: "Show Dialog", exact: true })
+		.getByRole("button", { name: "Close draft", exact: true })
 		.click();
 	await expect(page.getByRole("alertdialog")).toHaveCSS("padding", "48px");
 	await page.keyboard.press("Escape");
 });
 
-test("Alert editor preserves icon columns and action reserves without replaying static alerts", async ({
+test("Alert editor preserves icon and action columns without replaying static alerts", async ({
 	page,
 }) => {
 	test.setTimeout(60_000);
@@ -1290,10 +1293,10 @@ test("Alert editor preserves icon columns and action reserves without replaying 
 	await expect(plain).toHaveCSS("padding-top", "6px");
 	await expect(plain).toHaveCSS("row-gap", "14px");
 	await expect(action).toHaveCSS("column-gap", "8px");
-	await expect(action).toHaveCSS("padding-right", "72px");
+	await expect(action).toHaveCSS("padding-right", "30px");
 	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
 	const before = editor.locator("[data-tuning-before]");
-	await expect(before.locator('[data-slot="alert"]').first()).toHaveCSS("padding-left", "10px");
+	await expect(before.locator('[data-slot="alert"]').first()).toHaveCSS("padding-left", "16px");
 	const undo = current.getByRole("button", { name: "撤销", exact: true });
 	await undo.focus();
 	await undo.press("Enter");
@@ -1317,9 +1320,12 @@ test("Alert editor preserves icon columns and action reserves without replaying 
 	await page.keyboard.press("Escape");
 	await expect(editor).toHaveCount(0);
 	await expect(opener).toBeFocused();
-	await expect(page.locator('.sample [data-slot="alert"]').first()).toHaveCSS(
-		"padding-left",
-		"32px"
+	await expect(
+		page.locator('.sample [data-slot="alert"]:not([data-appearance="connection"])').first()
+	).toHaveCSS("padding-left", "32px");
+	await expect(page.getByRole("group", { name: "Connection", exact: true })).toHaveCSS(
+		"height",
+		"24px"
 	);
 });
 
@@ -1919,7 +1925,7 @@ test("Checkbox editor preserves mixed state, labels, keyboard focus and comparis
 }) => {
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
-	await page.goto("/docs/components/checkbox", { waitUntil: "networkidle" });
+	await page.goto("/zh/docs/components/checkbox", { waitUntil: "networkidle" });
 	const opener = tunerButton(page, "Checkbox");
 	await opener.click();
 	const editor = page.getByRole("dialog", { name: "Checkbox · 组件参数" });
@@ -1947,7 +1953,7 @@ test("Checkbox editor preserves mixed state, labels, keyboard focus and comparis
 	await editor.getByRole("option", { name: "md · 0.8 × 基数", exact: true }).click();
 	await expect(unchecked).toHaveCSS("width", "28px");
 	await expect(unchecked).toHaveCSS("border-radius", "8px");
-	await expect(mixed.locator("svg")).toHaveCSS("width", "26px");
+	await expect(mixed.locator("svg")).toHaveCSS("width", "24px");
 	await expect(
 		current.getByRole("checkbox", { name: "同意项目使用规范", exact: true })
 	).toHaveAttribute("aria-invalid", "true");
@@ -1957,7 +1963,7 @@ test("Checkbox editor preserves mixed state, labels, keyboard focus and comparis
 		"aria-checked",
 		"mixed"
 	);
-	await expect(before.getByRole("checkbox").first()).toHaveCSS("width", "16px");
+	await expect(before.getByRole("checkbox").first()).toHaveCSS("width", "14px");
 	await editor.getByRole("radio", { name: "深色", exact: true }).click();
 	await expect(current).toHaveCSS("color", "oklch(0.985 0 0)");
 	await expect(page.locator("html")).not.toHaveClass(/dark/);
@@ -2050,15 +2056,15 @@ test("Switch editor links track and thumb dimensions while preserving small size
 	await control.focus();
 	await page.keyboard.press("Space");
 	await expect(control).toBeChecked();
-	await expect(control).not.toHaveCSS("box-shadow", "none");
+	await expect(control).toHaveCSS("outline-width", "1px");
 	await normal.locator("label").filter({ hasText: "邮件通知" }).click();
 	await expect(control).not.toBeChecked();
 	await setNumber(page, "默认尺寸滑块高度（px）", 20);
-	await expect(control).toHaveCSS("width", "40px");
+	await expect(control).toHaveCSS("width", "42px");
 	await expect(control.locator('[data-slot="switch-thumb"]')).toHaveCSS("height", "20px");
-	await expect(small.getByRole("switch").first()).toHaveCSS("width", "24px");
-	await setNumber(page, "小尺寸滑块高度（px）", 10);
-	await expect(small.getByRole("switch").first()).toHaveCSS("width", "20px");
+	await expect(small.getByRole("switch").first()).toHaveCSS("width", "22px");
+	await setNumber(page, "小尺寸滑块高度（px）", 12);
+	await expect(small.getByRole("switch").first()).toHaveCSS("width", "26px");
 	await editor.getByRole("button", { name: /^切换动效档位 / }).click();
 	await editor.getByRole("option", { name: "慢（全局 token）", exact: true }).click();
 	await expect(control).toHaveCSS("transition-duration", "0.3s");
@@ -2074,7 +2080,7 @@ test("Switch editor links track and thumb dimensions while preserving small size
 			const thumb = await control.locator('[data-slot="switch-thumb"]').boundingBox();
 			return Math.round((track!.x + track!.width - thumb!.x - thumb!.width) * 10) / 10;
 		})
-		.toBe(1);
+		.toBe(3);
 	await expect(
 		normal.getByRole("switch", { name: "安全提醒（禁用）", exact: true })
 	).toBeDisabled();
@@ -2083,7 +2089,7 @@ test("Switch editor links track and thumb dimensions while preserving small size
 	await expect(
 		before.getByRole("switch", { name: "邮件通知", exact: true }).first()
 	).not.toBeChecked();
-	await expect(before.getByRole("switch").first()).toHaveCSS("width", "32px");
+	await expect(before.getByRole("switch").first()).toHaveCSS("width", "30px");
 	await editor.getByRole("radio", { name: "深色", exact: true }).click();
 	await expect(current).toHaveCSS("color", "oklch(0.985 0 0)");
 	await page.setViewportSize({ width: 390, height: 844 });
@@ -2365,20 +2371,29 @@ test("Button editor tunes every variant full screen, compares and restores versi
 		["特小 · 高度（px）", "24"],
 		["小 · 高度（px）", "28"],
 		["默认 · 高度（px）", "32"],
-		["默认 · 横向内边距（px）", "10"],
+		["默认 · 横向内边距（px）", "12"],
 		["大 · 高度（px）", "36"],
 	])
 		await expect(editor.getByRole("slider", { name: label, exact: true })).toHaveAttribute(
 			"aria-valuenow",
 			value
 		);
-	await expect(editor.getByRole("button", { name: "圆角档位 lg · 1 × 基数" })).toBeVisible();
+	const radius = editor.getByRole("button", { name: "圆角档位 full · 胶囊" });
+	await expect(radius).toBeVisible();
+	await radius.click();
+	await page.getByRole("option", { name: "lg · 1 × 基数", exact: true }).click();
+	await expect(cell("current", "outline", "default")).toHaveCSS("border-top-left-radius", "10px");
+	await editor.getByRole("button", { name: "圆角档位 lg · 1 × 基数" }).click();
+	await page.getByRole("option", { name: "full · 胶囊", exact: true }).click();
 	// Global tokens are read-only and point to the token page.
 	await expect(editor.getByText("--radius", { exact: true })).toBeVisible();
 	await expect(editor.getByRole("link", { name: "全局主题页" })).toHaveAttribute("href", "/themes");
-	// Production preview never offers file writes.
-	await expect(editor.getByRole("button", { name: "写回组件库…" })).toHaveCount(0);
-	await expect(editor.getByText("写回只在本地开发站")).toBeVisible();
+	if (process.env.E2E_BASE_URL) {
+		await expect(editor.getByRole("button", { name: "写回组件库…" })).toBeVisible();
+	} else {
+		await expect(editor.getByRole("button", { name: "写回组件库…" })).toHaveCount(0);
+		await expect(editor.getByText("写回只在本地开发站")).toBeVisible();
+	}
 
 	await setNumber(page, "默认 · 高度（px）", 44);
 	await setNumber(page, "默认 · 横向内边距（px）", 16);
@@ -2468,7 +2483,7 @@ test("Button radius level follows the global radius and drafts survive storage f
 		'[data-tuning-current] [data-variant="outline"][data-size="default"]'
 	);
 	await tuner.getByRole("button", { name: "样式调节器", exact: true }).click();
-	await editor.getByRole("button", { name: "圆角档位 lg · 1 × 基数" }).click();
+	await editor.getByRole("button", { name: "圆角档位 full · 胶囊" }).click();
 	await page.getByRole("option", { name: "xl · 1.4 × 基数", exact: true }).click();
 	// xl is 1.4 × the theme radius (0.625rem = 10px), not a fixed pixel value.
 	await expect(current).toHaveCSS("border-top-left-radius", "14px");
@@ -2512,9 +2527,9 @@ test("Dialog editor reuses the shared shell and previews layout, overlay and mot
 	await expect(editor.getByTestId("dialog-dials")).toBeVisible();
 	// Baseline comes from the installed valar source.
 	for (const [label, value] of [
-		["内边距（px）", "16"],
+		["内边距（px）", "24"],
 		["内容间距（px）", "16"],
-		["遮罩不透明度（%）", "10"],
+		["遮罩不透明度（%）", "25"],
 	])
 		await expect(editor.getByRole("slider", { name: label, exact: true })).toHaveAttribute(
 			"aria-valuenow",
@@ -2529,14 +2544,13 @@ test("Dialog editor reuses the shared shell and previews layout, overlay and mot
 	await page.getByRole("option", { name: "慢（全局 token）" }).click();
 	await expect(editor.getByText("已修改 3 项", { exact: true })).toBeVisible();
 	await expect(part("current", "content")).toHaveCSS("padding-top", "28px");
-	// The bleeding footer follows the padding so it still reaches the panel edges.
-	await expect(part("current", "footer")).toHaveCSS("margin-left", "-28px");
+	await expect(part("current", "footer")).toHaveCSS("margin-left", "0px");
 	await expect(part("current", "overlay")).toHaveCSS("background-color", "rgba(0, 0, 0, 0.5)");
 	await expect(part("current", "content")).toHaveCSS("animation-duration", "0.3s");
 	await editor.getByRole("button", { name: "重播进入与退出" }).click();
 	await expect(part("current", "content")).toBeVisible();
 	await editor.getByRole("radio", { name: "并排对比" }).click();
-	await expect(part("before", "content")).toHaveCSS("padding-top", "16px");
+	await expect(part("before", "content")).toHaveCSS("padding-top", "24px");
 	await editor.getByRole("textbox", { name: "Dialog 版本名称" }).fill("宽松弹窗");
 	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
 	await expect(editor.getByRole("status")).toContainText("已保存「宽松弹窗」");
@@ -2613,6 +2627,7 @@ test("Sheet editor previews width, padding, overlay, slide distance and motion t
 	page,
 }) => {
 	test.setTimeout(60_000);
+	await page.emulateMedia({ reducedMotion: "no-preference" });
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.goto("/docs/components/sheet", { waitUntil: "networkidle" });
@@ -2648,7 +2663,7 @@ test("Sheet editor previews width, padding, overlay, slide distance and motion t
 	await editor.getByRole("button", { name: /^左右侧宽度/ }).click();
 	await page.getByRole("option", { name: "lg · 512px" }).click();
 	await editor.getByRole("button", { name: /^滑入距离/ }).click();
-	await page.getByRole("option", { name: "整个面板" }).click();
+	await page.getByRole("option", { name: "整个面板", exact: true }).press("Enter");
 	await editor.getByRole("button", { name: /^动效档位/ }).click();
 	await page.getByRole("option", { name: "慢（全局 token）" }).click();
 	await expect(editor.getByText("已修改 5 项", { exact: true })).toBeVisible();
@@ -2685,21 +2700,22 @@ test("Input editor picks Button's height tier and radius level, compares and sav
 	test.setTimeout(60_000);
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
-	await page.goto("/docs/components/input", { waitUntil: "networkidle" });
+	await page.goto("/zh/docs/components/input", { waitUntil: "networkidle" });
 	const tuner = page.getByRole("region", { name: "Input 样式调节", exact: true });
 	const editor = page.getByRole("dialog", { name: "Input · 组件参数" });
 	const input = (pane: string) => editor.locator(`[data-tuning-${pane}] [data-slot="input"]`);
 	const openButton = tuner.getByRole("button", { name: "样式调节器", exact: true });
 	const pageSample = tuner.locator('[data-tuning-current] [data-slot="input"]');
 	await expect(pageSample).toHaveCSS("height", "32px");
+	await expect(pageSample).toHaveCSS("border-radius", "8px");
 	await openButton.click();
 	await expect(editor.getByTestId("input-dials")).toBeVisible();
 	// Measured from valar: the Input is as tall as Button's default size.
 	await expect(editor.getByRole("button", { name: "高度档位 同 Button 默认" })).toBeVisible();
-	await expect(editor.getByRole("button", { name: "圆角档位 lg · 1 × 基数" })).toBeVisible();
+	await expect(editor.getByRole("button", { name: "圆角档位 md · 0.8 × 基数" })).toBeVisible();
 	await expect(
 		editor.getByRole("slider", { name: "横向内边距（px）", exact: true })
-	).toHaveAttribute("aria-valuenow", "10");
+	).toHaveAttribute("aria-valuenow", "12");
 	await expect(editor.getByText("--input", { exact: true })).toBeVisible();
 
 	await editor.getByRole("button", { name: "高度档位 同 Button 默认" }).click();
@@ -2747,13 +2763,13 @@ test("Select and Textarea editors share the shell and Button's levels", async ({
 	let openButton = tuner.getByRole("button", { name: "样式调节器", exact: true });
 	await openButton.click();
 	await expect(editor.getByTestId("select-dials")).toBeVisible();
-	await expect(editor.getByRole("button", { name: "默认尺寸高度 同 Button 默认" })).toBeVisible();
+	await expect(editor.getByRole("button", { name: "默认尺寸高度 样式自带" })).toBeVisible();
 	await editor.getByRole("button", { name: "小尺寸高度 同 Button 小" }).click();
 	await page.getByRole("option", { name: "同 Button 默认", exact: true }).click();
-	await editor.getByRole("button", { name: "圆角档位 lg · 1 × 基数" }).click();
+	await editor.getByRole("button", { name: "圆角档位 md · 0.8 × 基数" }).click();
 	await page.getByRole("option", { name: "none · 直角", exact: true }).click();
 	await expect(trigger("current", "sm")).toHaveCSS("height", "32px");
-	await expect(trigger("current", "default")).toHaveCSS("height", "32px");
+	await expect(trigger("current", "default")).toHaveCSS("height", "30px");
 	// One radius level for both sizes, replacing valar's own small-size radius.
 	await expect(trigger("current", "sm")).toHaveCSS("border-top-left-radius", "0px");
 	await expect(trigger("current", "default")).toHaveCSS("border-top-left-radius", "0px");
@@ -2806,20 +2822,20 @@ test("Dropdown Menu editor previews panel, item spacing and motion tier on a rea
 	await expect(editor.getByTestId("dropdown-menu-dials")).toBeVisible();
 	// Baseline comes from the installed valar source.
 	for (const [label, value] of [
-		["面板内边距（px）", "4"],
+		["面板内边距（px）", "6"],
 		["最小宽度（px）", "128"],
-		["菜单项横向内边距（px）", "6"],
-		["图文间距（px）", "6"],
+		["菜单项横向内边距（px）", "8"],
+		["图文间距（px）", "8"],
 	])
 		await expect(editor.getByRole("slider", { name: label, exact: true })).toHaveAttribute(
 			"aria-valuenow",
 			value
 		);
 	await expect(part("current", "content")).toBeVisible();
-	await expect(part("current", "content")).toHaveCSS("padding-top", "4px");
+	await expect(part("current", "content")).toHaveCSS("padding-top", "6px");
 
 	await setNumber(page, "面板内边距（px）", 8);
-	await setNumber(page, "菜单项横向内边距（px）", 10);
+	await setNumber(page, "菜单项横向内边距（px）", 12);
 	await editor.getByRole("button", { name: /^动效档位/ }).click();
 	await page.getByRole("option", { name: "慢（全局 token）" }).click();
 	await expect(editor.getByRole("button", { name: /^出现时滑入距离/ })).toContainText("8px");
@@ -2834,18 +2850,18 @@ test("Dropdown Menu editor previews panel, item spacing and motion tier on a rea
 	).toMatch(/^calc\(calc\(4 \* .+\) \* -1\)$/);
 	await expect(part("current", "content")).toHaveCSS("padding-top", "8px");
 	await expect(part("current", "content")).toHaveCSS("animation-duration", "0.3s");
-	await expect(part("current", "item").first()).toHaveCSS("padding-left", "10px");
-	// Inset rows follow the item padding (28px + 4px) so they still line up with icon rows.
+	await expect(part("current", "item").first()).toHaveCSS("padding-left", "12px");
+	// Inset rows track the leading padding change from 8px to 12px.
 	await expect(part("current", "item").and(page.locator("[data-inset]"))).toHaveCSS(
 		"padding-left",
-		"32px"
+		"36px"
 	);
 	// Separators bleed to the panel edge in valar, so they follow the panel padding.
 	await expect(part("current", "separator").first()).toHaveCSS("margin-left", "-8px");
 	await editor.getByRole("button", { name: "重播进入与退出" }).click();
 	await expect(part("current", "content")).toBeVisible();
 	await editor.getByRole("radio", { name: "并排对比" }).click();
-	await expect(part("before", "content")).toHaveCSS("padding-top", "4px");
+	await expect(part("before", "content")).toHaveCSS("padding-top", "6px");
 	await editor.getByRole("textbox", { name: "Dropdown Menu 版本名称" }).fill("宽松菜单");
 	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
 	await expect(editor.getByRole("status")).toContainText("已保存「宽松菜单」");
@@ -2872,16 +2888,16 @@ test("Tooltip editor previews padding, motion tier and the real show delay", asy
 	await openButton.click();
 	await expect(editor.getByTestId("tooltip-dials")).toBeVisible();
 	for (const [label, value] of [
-		["横向内边距（px）", "12"],
-		["纵向内边距（px）", "6"],
-		["显示延迟（ms）", "0"],
+		["横向内边距（px）", "8"],
+		["纵向内边距（px）", "5"],
+		["显示延迟（ms）", "500"],
 	])
 		await expect(editor.getByRole("slider", { name: label, exact: true })).toHaveAttribute(
 			"aria-valuenow",
 			value
 		);
 	await expect(pinned("current")).toBeVisible();
-	await expect(pinned("current")).toHaveCSS("padding-left", "12px");
+	await expect(pinned("current")).toHaveCSS("padding-left", "8px");
 
 	await setNumber(page, "横向内边距（px）", 16);
 	await setNumber(page, "显示延迟（ms）", 700);
@@ -2905,7 +2921,7 @@ test("Tooltip editor previews padding, motion tier and the real show delay", asy
 	await editor.getByRole("button", { name: "重播进入与退出" }).click();
 	await expect(pinned("current")).toBeVisible();
 	await editor.getByRole("radio", { name: "并排对比" }).click();
-	await expect(pinned("before")).toHaveCSS("padding-left", "12px");
+	await expect(pinned("before")).toHaveCSS("padding-left", "8px");
 	await editor.getByRole("textbox", { name: "Tooltip 版本名称" }).fill("慢提示");
 	await editor.getByRole("button", { name: "保存版本", exact: true }).click();
 	await expect(editor.getByRole("status")).toContainText("已保存「慢提示」");
@@ -3049,7 +3065,7 @@ test("Context Menu editor supports real right-click, keyboard submenu and isolat
 	test.setTimeout(60_000);
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
-	await page.goto("/docs/components/context-menu", { waitUntil: "networkidle" });
+	await page.goto("/zh/docs/components/context-menu", { waitUntil: "networkidle" });
 	const openButton = tunerButton(page, "Context Menu");
 	await openButton.click();
 	const editor = page.getByRole("dialog", { name: "Context Menu · 组件参数" });
@@ -3114,7 +3130,7 @@ test("Context Menu editor supports real right-click, keyboard submenu and isolat
 	await page.keyboard.press("ArrowLeft");
 	await page.setViewportSize({ width: 1280, height: 720 });
 	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
-	await expect(part("before", "content")).toHaveCSS("padding-top", "4px");
+	await expect(part("before", "content")).toHaveCSS("padding-top", "6px");
 	await expect(part("before", "checkbox-item")).toHaveAttribute("aria-checked", "true");
 	await editor.getByRole("textbox", { name: "Context Menu 版本名称" }).fill("宽松右键菜单");
 	await editor.getByRole("button", { name: "保存版本", exact: true }).click();

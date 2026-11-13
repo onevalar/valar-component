@@ -26,6 +26,7 @@
 		<span
 			class="cn-dropdown-menu-item-indicator pointer-events-none"
 			data-slot="dropdown-menu-radio-item-indicator"
+			aria-hidden="true"
 		>
 			{#if checked}
 				<IconPlaceholder

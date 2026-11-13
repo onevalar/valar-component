@@ -72,6 +72,7 @@ const registries = import.meta.glob<{ files: { target: string; content: string }
 	{ import: "default" }
 );
 const NOT_EDITOR = ":not([data-component-tuner]):not([data-component-tuner] *)";
+const NOT_PROJECT = ':not([data-appearance="project"])';
 export const PROGRESS_SPEC: TunerSpec<ProgressValues, ProgressContext> = {
 	component: "progress",
 	title: "Progress",
@@ -104,6 +105,7 @@ export const PROGRESS_SPEC: TunerSpec<ProgressValues, ProgressContext> = {
 	},
 	previewCss: (scope, overrides) =>
 		progressCss((slot) => `${scope} [data-slot="${slot}"]`, overrides),
-	pageCss: (overrides) => progressCss((slot) => `[data-slot="${slot}"]${NOT_EDITOR}`, overrides),
+	pageCss: (overrides) =>
+		progressCss((slot) => `[data-slot="${slot}"]${NOT_EDITOR}${NOT_PROJECT}`, overrides),
 	overrideClasses: progressOverrideClasses,
 };

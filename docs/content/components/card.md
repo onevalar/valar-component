@@ -80,6 +80,16 @@ Use the `size="sm"` prop to set the size of the card to small. The small size va
 
 </ComponentPreview>
 
+## Settings card
+
+Use `size="settings"` for settings rows and separators. Actions in ordinary card headers move below the title when space is limited.
+
+<ComponentPreview name="card-settings">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Spacing
 
 In addition to the `size` prop, you can use the `--card-spacing` CSS variable to control the spacing between sections and the inset of card parts.

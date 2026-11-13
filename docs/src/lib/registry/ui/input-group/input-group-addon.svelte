@@ -40,10 +40,17 @@
 	data-align={align}
 	class={cn(inputGroupAddonVariants({ align }), className)}
 	onclick={(e) => {
-		if ((e.target as HTMLElement).closest("button")) {
-			return;
-		}
-		e.currentTarget.parentElement?.querySelector("input")?.focus();
+		const target = e.target;
+		if (e.defaultPrevented || !(target instanceof Element)) return;
+		const interactive = target.closest(
+			"button, a[href], label, input, textarea, select, [tabindex], [contenteditable]"
+		);
+		if (interactive && e.currentTarget.contains(interactive)) return;
+		const root = e.currentTarget.closest('[data-slot="input-group"]');
+		const control =
+			root?.querySelector<HTMLElement>('[data-slot="input-group-control"]') ??
+			root?.querySelector<HTMLElement>('input:not([type="hidden"]), textarea');
+		if (control && control.closest('[data-slot="input-group"]') === root) control.focus();
 	}}
 	{...restProps}
 >

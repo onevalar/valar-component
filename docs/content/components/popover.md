@@ -81,6 +81,16 @@ A simple popover with a header, title, and description.
 
 </ComponentPreview>
 
+## Display options
+
+Use `appearance="options"` for grouped settings anchored to a toolbar. It uses a 330 px panel, 32 px rows, and section padding of 8 × 16 px. The nested Select dismisses first on Escape; the outer panel remains available. The example keeps changes in the preview and lets you reset them.
+
+<ComponentPreview name="popover-display-options">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Align
 
 Use the `align` prop on `Popover.Content` to control the horizontal alignment.
