@@ -27,6 +27,7 @@ export const REQUIRED_CARDS = [
 	"color-picker",
 	"dialog",
 	"issue-composer",
+	"issue-detail",
 	"alert-dialog",
 	"sheet",
 	"popover",

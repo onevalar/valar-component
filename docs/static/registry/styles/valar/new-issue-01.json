@@ -1,0 +1,16 @@
+{
+	"$schema": "http://127.0.0.1:5186/schema/registry-item.json",
+	"name": "new-issue-01",
+	"type": "registry:block",
+	"registryDependencies": [
+		"button",
+		"issue-composer"
+	],
+	"files": [
+		{
+			"content": "<script lang=\"ts\">\n\timport { Button } from \"$UI$/button/index.js\";\n\timport {\n\t\tIssueComposer,\n\t\tissueLabels,\n\t\ttype IssueDraft,\n\t} from \"$UI$/issue-composer/index.js\";\n\n\tlet { chinese = false }: { chinese?: boolean } = $props();\n\tconst text = (zh: string, en: string) => (chinese ? zh : en);\n\tlet open = $state(false);\n\tlet opener = $state<HTMLButtonElement | null>(null);\n\tlet issues = $state<IssueDraft[]>([]);\n</script>\n\n<section\n\taria-label={text(\"新建问题预览\", \"New issue preview\")}\n\tclass=\"rounded-xl border border-border bg-card p-4 text-card-foreground sm:p-6\"\n>\n\t<Button bind:ref={opener} shape=\"pill\" onclick={() => (open = true)}\n\t\t>{text(\"新建问题\", \"New issue\")}</Button\n\t>\n\t<p role=\"status\" class=\"mt-4 text-sm text-muted-foreground\">\n\t\t{text(\n\t\t\t`本次预览已创建 ${issues.length} 个问题`,\n\t\t\t`${issues.length} ${issues.length === 1 ? \"issue\" : \"issues\"} created in this preview`\n\t\t)}\n\t</p>\n\t{#if issues.length}\n\t\t<ol class=\"mt-3 divide-y divide-border\">\n\t\t\t{#each issues as issue}\n\t\t\t\t<li class=\"space-y-1 py-3 text-sm\">\n\t\t\t\t\t<p class=\"font-semibold break-words\">{issue.title}</p>\n\t\t\t\t\t<p class=\"text-xs text-muted-foreground\">\n\t\t\t\t\t\t{issueLabels[issue.status][chinese ? 0 : 1]} · {issueLabels[issue.priority][\n\t\t\t\t\t\t\tchinese ? 0 : 1\n\t\t\t\t\t\t]}\n\t\t\t\t\t</p>\n\t\t\t\t\t{#if issue.description}\n\t\t\t\t\t\t<p class=\"break-words whitespace-pre-wrap\">{issue.description}</p>\n\t\t\t\t\t{/if}\n\t\t\t\t\t{#if issue.attachments.length}\n\t\t\t\t\t\t<p class=\"text-xs break-words text-muted-foreground\">\n\t\t\t\t\t\t\t{issue.attachments.map((file) => file.name).join(\" · \")}\n\t\t\t\t\t\t</p>\n\t\t\t\t\t{/if}\n\t\t\t\t</li>\n\t\t\t{/each}\n\t\t</ol>\n\t{/if}\n</section>\n\n<IssueComposer\n\tbind:open\n\t{chinese}\n\treturnFocus={() => opener}\n\tonCreate={(issue) => (issues = [issue, ...issues])}\n/>\n",
+			"type": "registry:page",
+			"target": "new-issue-01/+page.svelte"
+		}
+	]
+}

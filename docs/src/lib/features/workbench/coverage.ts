@@ -38,6 +38,7 @@ export const COMPONENT_INVENTORY = [
 	"input-group",
 	"input-otp",
 	"issue-composer",
+	"issue-detail",
 	"item",
 	"kbd",
 	"label",

@@ -71,6 +71,33 @@ export const blockMeta = {
 	"dashboard-01": {
 		description: "A dashboard with sidebar, charts and data table.",
 	},
+	"settings-01": {
+		description: "A responsive settings page with grouped fields, a theme select, and switches.",
+		mobile: "component",
+	},
+	"my-issues-01": {
+		description:
+			"An interactive issue list with view pills, filters, display options, and empty states.",
+		mobile: "component",
+	},
+	"new-issue-01": {
+		description:
+			"An expandable issue composer with status and priority pickers and a continuous creation mode.",
+		mobile: "component",
+	},
+	"projects-01": {
+		description:
+			"A project list, draggable status board, and timeline with filters, milestones, and a project creation form.",
+		mobile: "component",
+	},
+	"inbox-01": {
+		description: "A notification inbox with read states, filters, and editable issue details.",
+		mobile: "component",
+	},
+	"agent-01": {
+		description: "An Agent chat with examples, attachments, streamed replies, and tool feedback.",
+		mobile: "component",
+	},
 	"demo-sidebar": {
 		description: "Your first sidebar.",
 	},

@@ -3,8 +3,9 @@ import path from "node:path";
 import * as acorn from "acorn";
 import * as svelte from "svelte/compiler";
 import { tsPlugin } from "@sveltejs/acorn-typescript";
-import { walk, type Node } from "estree-walker";
 import { registryItemSchema, type Registry } from "@valar/svelte-cli/schema";
+import { walk, type Node } from "estree-walker";
+import { sharedBlockDependencies, sharedBlocks } from "./shared-blocks.js";
 import { fonts } from "../src/lib/registry/fonts.js";
 
 const REGISTRY_DEPENDENCY = "$lib/";
@@ -124,24 +125,37 @@ async function buildBlockRegistry(
 	const pagesNames = ["+page.svelte"];
 	const fileNames = ["data.json", "data.ts"];
 	const fileEntries = dir.filter((d) => d.isFile());
+	const scopedPages = sharedBlocks.some((name) => name === blockName);
 
 	const files = await Promise.all(
 		fileEntries.map(async (dirent) => {
 			const isPage = pagesNames.includes(dirent.name);
 			const isFile = fileNames.includes(dirent.name);
-			const type = isPage || isFile ? "registry:page" : "registry:component";
+			const type = scopedPages || isPage || isFile ? "registry:page" : "registry:component";
 
 			// TODO: fix
-			const compPath =
-				isPage || isFile ? dirent.name : path.join(path.basename(dirent.parentPath), dirent.name);
-			const filepath = path.join(blockPath, compPath);
+			const filepath = scopedPages
+				? path.join(dirent.parentPath, dirent.name)
+				: path.join(
+						blockPath,
+						isPage || isFile
+							? dirent.name
+							: path.join(path.basename(dirent.parentPath), dirent.name)
+					);
 			const relativePath = path.relative(process.cwd(), filepath);
 			const source = fs.readFileSync(filepath, { encoding: "utf8" });
 
 			const deps = await getFileDependencies(filepath, source);
 			if (deps) deps.registryDependencies.forEach((dep) => registryDependencies.add(dep));
 
-			return { path: relativePath, type } satisfies RegistryItemFiles[number];
+			return {
+				path: relativePath,
+				type,
+				// These blocks can be installed together without replacing the app's index page.
+				...(scopedPages && {
+					target: `${blockName}/${path.relative(blockPath, filepath).split(path.sep).join("/")}`,
+				}),
+			} satisfies RegistryItemFiles[number];
 		})
 	);
 
@@ -149,6 +163,7 @@ async function buildBlockRegistry(
 		type: "registry:block",
 		files,
 		name: blockName,
+		dependencies: sharedBlockDependencies[blockName],
 		registryDependencies: Array.from(registryDependencies),
 	} satisfies RegistryItems[number];
 }

@@ -1708,6 +1708,58 @@
 		"relativeUrl": "issue-composer.json"
 	},
 	{
+		"name": "issue-detail",
+		"title": "Issue Detail 问题详情",
+		"type": "registry:ui",
+		"description": "行内编辑问题标题与富文本描述，并通过响应式属性栏更新状态、优先级、负责人、标签和项目。",
+		"registryDependencies": [
+			"issue-composer",
+			"avatar",
+			"dropdown-menu",
+			"alert-dialog",
+			"button",
+			"input",
+			"breadcrumb",
+			"combobox",
+			"command",
+			"popover"
+		],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"问题详情",
+					"编辑问题",
+					"富文本",
+					"issue detail"
+				],
+				"whenToUse": [
+					"从问题列表打开具体工作项并更新内容或属性"
+				],
+				"whenNotToUse": [
+					{
+						"case": "创建一个全新的问题",
+						"use": "issue-composer"
+					}
+				],
+				"accessibility": [
+					"编辑时提供明确的保存与取消动作，菜单支持键盘搜索",
+					"退出编辑时焦点返回编辑入口"
+				],
+				"responsive": [
+					"宽容器右置属性栏，窄容器将属性排列为标题下方的胶囊"
+				],
+				"related": [
+					"issue-composer",
+					"button",
+					"input",
+					"popover",
+					"command"
+				]
+			}
+		},
+		"relativeUrl": "issue-detail.json"
+	},
+	{
 		"name": "item",
 		"title": "Item 内容项",
 		"type": "registry:ui",
@@ -3655,6 +3707,26 @@
 		"relativeUrl": "waffle-chart.json"
 	},
 	{
+		"name": "agent-01",
+		"type": "registry:block",
+		"registryDependencies": [
+			"bubble",
+			"card",
+			"command",
+			"message-scroller",
+			"message",
+			"popover",
+			"tooltip",
+			"button",
+			"attachment",
+			"dropdown-menu",
+			"input-group",
+			"marker",
+			"trace"
+		],
+		"relativeUrl": "agent-01.json"
+	},
+	{
 		"name": "calendar-01",
 		"type": "registry:block",
 		"registryDependencies": [
@@ -4733,6 +4805,28 @@
 		"relativeUrl": "demo-sidebar.json"
 	},
 	{
+		"name": "inbox-01",
+		"type": "registry:block",
+		"registryDependencies": [
+			"issue-composer",
+			"issue-detail",
+			"avatar",
+			"dropdown-menu",
+			"empty",
+			"tabs",
+			"tooltip",
+			"button",
+			"input",
+			"field",
+			"popover",
+			"select",
+			"checkbox",
+			"switch",
+			"command"
+		],
+		"relativeUrl": "inbox-01.json"
+	},
+	{
 		"name": "login-01",
 		"type": "registry:block",
 		"registryDependencies": [
@@ -4786,6 +4880,24 @@
 		"relativeUrl": "login-05.json"
 	},
 	{
+		"name": "my-issues-01",
+		"type": "registry:block",
+		"registryDependencies": [
+			"issue-composer",
+			"issue-detail",
+			"command",
+			"empty",
+			"field",
+			"item",
+			"popover",
+			"select",
+			"tabs",
+			"button",
+			"switch"
+		],
+		"relativeUrl": "my-issues-01.json"
+	},
+	{
 		"name": "new-components-01",
 		"type": "registry:block",
 		"registryDependencies": [
@@ -4814,6 +4926,15 @@
 			"spinner"
 		],
 		"relativeUrl": "new-components-01.json"
+	},
+	{
+		"name": "new-issue-01",
+		"type": "registry:block",
+		"registryDependencies": [
+			"button",
+			"issue-composer"
+		],
+		"relativeUrl": "new-issue-01.json"
 	},
 	{
 		"name": "otp-01",
@@ -4867,6 +4988,45 @@
 			"button"
 		],
 		"relativeUrl": "otp-05.json"
+	},
+	{
+		"name": "projects-01",
+		"type": "registry:block",
+		"dependencies": [
+			"@dnd-kit-svelte/svelte@0.1.5",
+			"@dnd-kit/dom@0.1.21"
+		],
+		"registryDependencies": [
+			"date-picker",
+			"collapsible",
+			"command",
+			"dialog",
+			"empty",
+			"popover",
+			"select",
+			"tabs",
+			"tooltip",
+			"button",
+			"input",
+			"switch",
+			"dropdown-menu",
+			"alert-dialog",
+			"textarea"
+		],
+		"relativeUrl": "projects-01.json"
+	},
+	{
+		"name": "settings-01",
+		"type": "registry:block",
+		"registryDependencies": [
+			"card",
+			"field",
+			"select",
+			"sidebar",
+			"separator",
+			"switch"
+		],
+		"relativeUrl": "settings-01.json"
 	},
 	{
 		"name": "sidebar-01",

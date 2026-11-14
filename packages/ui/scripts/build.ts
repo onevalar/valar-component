@@ -10,6 +10,7 @@ import {
 	transformFont,
 } from "@valar/svelte-cli/transformers";
 import { injectStyleClasses } from "@valar/svelte-parity/inject-style-classes";
+import { sharedBlocks } from "../../../docs/scripts/shared-blocks.js";
 import { createThemeCss, getValarStyleMap } from "../../../scripts/valar-style.ts";
 import { DEFAULT_CONFIG } from "../../cli/src/utils/config/schema.ts";
 
@@ -18,6 +19,7 @@ const root = path.resolve(path.dirname(script), "../../..");
 const registry = path.join(root, "docs/src/lib/registry");
 const output = path.join(root, "packages/ui/dist");
 const utilities = path.join(root, "packages/cli/src/tailwind.css");
+const sourceDirectories = ["ui", "hooks", "lib", ...sharedBlocks.map((name) => `blocks/${name}`)];
 
 function files(directory: string): string[] {
 	return fs
@@ -29,7 +31,7 @@ function files(directory: string): string[] {
 
 async function build() {
 	const generated = new Map<string, string>();
-	const sources = ["ui", "hooks", "lib"]
+	const sources = sourceDirectories
 		.flatMap((directory) => files(path.join(registry, directory)))
 		.filter((file) => /\.(svelte|ts|md|json)$/.test(file));
 	const config = {
@@ -55,7 +57,7 @@ async function build() {
 			] as const;
 		})
 	);
-	const themeCss = createThemeCss(root);
+	const themeCss = createThemeCss(root, ["./ui", "./hooks", "./lib", "./blocks"]);
 
 	for (const style of PRESET_STYLES) {
 		const styleMap = getValarStyleMap(root, style);
@@ -136,7 +138,7 @@ if (process.argv.includes("--watch")) {
 		});
 	}
 	const watchers = [
-		...["ui", "hooks", "lib", "styles"].map((directory) =>
+		...[...sourceDirectories, "styles"].map((directory) =>
 			fs.watch(path.join(registry, directory), { recursive: true }, schedule)
 		),
 		...[

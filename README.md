@@ -2,7 +2,7 @@
 
 Valar 是个人组件库系列品牌，Svelte 是当前完整的框架实现。React、Vue 已有本地第一批九组原生组件，尚非完整库，也未发布。
 
-本项目在完整技术基线上独立维护组件、文档、CLI 和 registry。组件样式目前保持导入时的基线；本轮完成品牌、内容和分发配置的独立化。
+本项目在完整技术基线上独立维护组件、文档、CLI 和 registry。Valar Svelte 已建立独立的品牌和分发配置，并按 Linear 参考逐批调整组件与组合。
 
 ## 开发
 
@@ -21,7 +21,7 @@ pnpm --filter docs exec vite dev --host 127.0.0.1 --port 5186 --strictPort
 
 ## 源码目录
 
-- `docs/src/lib/registry/ui/`：68 个基础组件目录（含新增 Slider Field、Color Picker）。
+- `docs/src/lib/registry/ui/`：79 个组件目录（含 Issue Composer 与 Issue Detail）。
 - `docs/src/lib/registry/examples/`、`blocks/`：示例与组合区块。
 - `docs/src/lib/registry/styles/`：唯一的组件风格 `valar`（2026-11-07 起，原上游 Nova；其余七套已移除）。
 - `docs/content/`：Valar 文档与组件用法。
@@ -42,7 +42,7 @@ pnpm dev:playground
 
 该命令同时监听组件生成、样式／token 与底层原语，启动独立消费应用。组件编辑器须“写回组件库”后才影响应用；浏览器草稿不会同步。组件风格只有 `valar`（原 Nova），默认 neutral／Lucide。热更新可能重置临时交互状态，已部署项目仍须重新构建发布。
 
-接入步骤、导入示例与验证边界见[共享 UI 工作区说明](standards/SHARED_UI.md)。自有包仍 private，未发布 npm，也未部署。
+设置页、My issues、新建 Issue、Projects、Inbox 与 Agent 可从 `@valar/svelte-ui/blocks/*` 导入，在 Playground 的 `/linear` 联调。接入步骤、导入示例与验证边界见[共享 UI 工作区说明](standards/SHARED_UI.md)。自有包仍 private，未发布 npm，也未部署。
 
 ## 三框架使用入口
 
@@ -61,6 +61,8 @@ pnpm --filter docs exec playwright test --config playwright.usage.config.ts
 ```
 
 ## 设计师调参工作台
+
+组件样式、图标、组合与验收见 [Valar Svelte 设计规范](standards/DESIGN.md) 和 [Linear 组件对齐清单](standards/LINEAR_ALIGNMENT.md)。浅深色截图取样见 [中性色规范](standards/NEUTRAL_COLOR_SPEC.md)。
 
 调参主线是组件文档页内的按需微调（2026-10-31 确认）。截至2026-11-03，**68／68个组件已接入全屏编辑器**：67个普通示例入口及Sidebar block入口。支持各组件有限视觉参数的草稿、并排对比、命名版本和本地开发站确认写回；全局token在`/themes`修改，不在组件编辑器中重复定义。接入编辑器不代表所有API或所有业务组合均已验收，也不会自动修改消费者已安装的源码。
 

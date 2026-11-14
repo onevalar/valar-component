@@ -7,6 +7,7 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { PRESET_STYLES } from "@valar/svelte-cli/preset";
 import { compile } from "svelte/compiler";
+import { sharedBlocks } from "../../../docs/scripts/shared-blocks.js";
 
 const ui = fileURLToPath(new URL("..", import.meta.url));
 const root = path.resolve(ui, "../..");
@@ -62,6 +63,15 @@ test("all component exports compile without docs aliases or undeclared runtime d
 		import.meta.resolve("@valar/svelte-ui/button"),
 		import.meta.resolve("@valar/svelte-ui/styles/valar/button")
 	);
+	for (const block of sharedBlocks) {
+		const entry = fileURLToPath(import.meta.resolve(`@valar/svelte-ui/blocks/${block}`));
+		assert.ok(fs.existsSync(entry), `${block} has no public entry`);
+	}
+	const theme = fs.readFileSync(
+		fileURLToPath(import.meta.resolve("@valar/svelte-ui/theme.css")),
+		"utf8"
+	);
+	assert.match(theme, /@source "\.\/blocks";/);
 });
 
 test(
@@ -75,6 +85,12 @@ test(
 		fs.mkdirSync(path.join(fixtureUi, "scripts"), { recursive: true });
 		fs.copyFileSync(path.join(ui, "scripts/build.ts"), path.join(fixtureUi, "scripts/build.ts"));
 		fs.copyFileSync(path.join(ui, "package.json"), path.join(fixtureUi, "package.json"));
+		const fixtureScripts = path.join(temporary, "docs/scripts");
+		fs.mkdirSync(fixtureScripts, { recursive: true });
+		fs.copyFileSync(
+			path.join(root, "docs/scripts/shared-blocks.ts"),
+			path.join(fixtureScripts, "shared-blocks.ts")
+		);
 		fs.symlinkSync(path.join(ui, "node_modules"), path.join(fixtureUi, "node_modules"), "dir");
 		fs.mkdirSync(path.join(temporary, "scripts"), { recursive: true });
 		fs.copyFileSync(
@@ -88,7 +104,13 @@ test(
 				"dir"
 			);
 		fs.mkdirSync(fixtureRegistry, { recursive: true });
-		for (const directory of ["ui", "hooks", "lib", "styles"])
+		for (const directory of [
+			"ui",
+			"hooks",
+			"lib",
+			"styles",
+			...sharedBlocks.map((block) => `blocks/${block}`),
+		])
 			fs.cpSync(path.join(registry, directory), path.join(fixtureRegistry, directory), {
 				recursive: true,
 			});
@@ -134,6 +156,15 @@ test(
 				original.replace('data-slot="button"', 'data-slot="button" data-live-probe="updated"')
 			);
 			await until(() => read(output).includes('data-live-probe="updated"'));
+			const blockSource = path.join(fixtureRegistry, "blocks/new-issue-01/+page.svelte");
+			const blockOutput = path.join(fixtureUi, "dist/valar/blocks/new-issue-01/+page.svelte");
+			const originalBlock = read(blockSource);
+			assert.ok(read(blockOutput));
+			fs.writeFileSync(
+				blockSource,
+				originalBlock.replace("<section", '<section data-live-probe="block"')
+			);
+			await until(() => read(blockOutput).includes('data-live-probe="block"'));
 			const style = path.join(fixtureRegistry, "styles/valar/style-valar.css");
 			fs.appendFileSync(
 				style,

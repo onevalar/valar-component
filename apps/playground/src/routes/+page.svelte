@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from "@valar/svelte-ui/dialog";
 	import * as Questionnaire from "@valar/svelte-ui/questionnaire";
-	import { Button } from "@valar/svelte-ui/button";
+	import { Button, buttonVariants } from "@valar/svelte-ui/button";
 	import { Input } from "@valar/svelte-ui/input";
 	import { Label } from "@valar/svelte-ui/label";
 
@@ -144,6 +144,10 @@
 			</div>
 		</section>
 	</div>
+
+	<a href="/linear" class={buttonVariants({ variant: "outline", class: "self-start" })}>
+		查看 Linear 对齐预览
+	</a>
 
 	<footer class="text-sm text-muted-foreground">
 		独立 SvelteKit 消费端 · workspace:* · 无文档站运行时依赖

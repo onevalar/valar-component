@@ -1,0 +1,20 @@
+{
+	"name": "issue-detail",
+	"type": "registry:ui",
+	"title": "Issue Detail 问题详情",
+	"description": "行内编辑问题标题与富文本描述，并通过响应式属性栏更新状态、优先级、负责人、标签和项目。",
+	"categories": ["展示"],
+	"meta": {
+		"valar": {
+			"keywords": ["问题详情", "编辑问题", "富文本", "issue detail"],
+			"whenToUse": ["从问题列表打开具体工作项并更新内容或属性"],
+			"whenNotToUse": [{ "case": "创建一个全新的问题", "use": "issue-composer" }],
+			"accessibility": [
+				"编辑时提供明确的保存与取消动作，菜单支持键盘搜索",
+				"退出编辑时焦点返回编辑入口"
+			],
+			"responsive": ["宽容器右置属性栏，窄容器将属性排列为标题下方的胶囊"],
+			"related": ["issue-composer", "button", "input", "popover", "command"]
+		}
+	}
+}

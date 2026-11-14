@@ -1,13 +1,13 @@
 # 共享 UI 工作区：修改一次，项目直接使用
 
-2026-11-03 · 本地开发方案；不依赖远程 MCP，不发布 npm 包。
+本地 workspace 共享方案 · 2026-11-14 更新组件与区块入口。
 
 ## 当前提供什么
 
 业务应用与组件库放在同一个 pnpm workspace，以 `@valar/svelte-ui: workspace:*` 引用共享组件。应用不再通过 CLI 各自复制一套组件源码。
 
-- **唯一维护源**仍是 `docs/src/lib/registry/ui/`、`hooks/`、`lib/` 与 `styles/`；没有移动或复制另一套手工维护源。
-- `packages/ui/` 将 68 个组件生成单一的 `valar` 风格组件，展开已有样式与写回覆盖、替换真实 Lucide 图标、解析内部依赖。`dist/` 是忽略的产物，不能手改。
+- **唯一维护源**位于 `docs/src/lib/registry/` 下的 `ui/`、`blocks/`、`hooks/`、`lib/` 和 `styles/`。
+- `packages/ui/` 以 `valar` 风格生成 79 个组件和六个组合区块。生成时展开样式和写回覆盖、替换 Lucide 图标并解析内部依赖。`dist/` 由构建生成。
 - `apps/playground/` 是独立 SvelteKit 消费应用，仅导入公共包；不加载文档站、编辑器或文档图标 provider。
 - 应用使用 valar 风格（原 Nova）、neutral 浅／深主题和 Lucide。不再有其他风格；其他基础色板／图标库的包级配置尚未提供。
 - 自有包继续 `private`，没有 npm 发布、生产域名或自动部署。组件文档／CLI 安装方式仍保留，但已复制到外部项目的源码不会因此自动同步。
@@ -23,7 +23,7 @@ pnpm dev:playground
 
 安装脚本会先构建包和同步应用。`dev:playground` 先启动原语包监听与 UI 生成监听，等两者本次首次生成完成后才启动消费应用 Vite；已有 `dist` 文件不被当作就绪信号。本机端口为 5188。在 Amp orb 中用 `amp orb services ensure` 启动已配置的监督服务，并打开其输出的 Playground portal，而不是本机地址。
 
-页面包含计数／输入、真实 Dialog 与必填 Questionnaire，可验证浅深主题、表单提交／重置、焦点与键盘行为。
+首页包含计数／输入、Dialog 与 Questionnaire。打开 `/linear` 可在独立消费端切换设置页、My issues、新建 Issue、Projects、Inbox 和 Agent，并切换浅深主题。
 
 ## 接入实际项目
 
@@ -53,35 +53,41 @@ pnpm dev:playground
 
 5. 开发时保持 UI／原语 watcher 运行，并另启该业务应用的 dev 命令。已有 `dev:playground` 只启动 Playground，不自动启动未来所有应用；可将同样的三进程启动方式用于新应用。
 
-### 选择其他样式
-
-组件与主题配套导入：
+### 使用已对齐的组件与区块
 
 ```svelte
 <script lang="ts">
-  import { Button } from "@valar/svelte-ui/styles/valar/button";
+  import Settings from "@valar/svelte-ui/blocks/settings-01";
+  import MyIssues from "@valar/svelte-ui/blocks/my-issues-01";
+  import NewIssue from "@valar/svelte-ui/blocks/new-issue-01";
+  import Projects from "@valar/svelte-ui/blocks/projects-01";
+  import Inbox from "@valar/svelte-ui/blocks/inbox-01";
+  import Agent from "@valar/svelte-ui/blocks/agent-01";
+  import {
+    IssueComposer,
+    type IssueDraft,
+  } from "@valar/svelte-ui/issue-composer";
 </script>
-
-<Button>保存</Button>
 ```
 
-```css
-@import "tailwindcss";
-@import "@valar/svelte-ui/themes/valar";
-```
+这些区块都接受 `chinese`，使用本地示例数据。Projects 可用 `empty` 和 `singleTeam` 验证空工作区与单团队。Projects 的显示选项可以切换列表、可拖拽的状态看板和带里程碑的时间线，三个视图共享同一份会话状态。Inbox 可用 `empty` 验证空收件箱。Agent 使用会话内示例回复和文件，滚动由共享包的 Message Scroller 提供。需要接入自己的问题列表时，在宿主中使用 `IssueComposer`，通过 `bind:open` 控制打开状态，通过 `onCreate` 获取 `IssueDraft` 与选中的 `File`。
 
-可选 `nova`、`vega`、`maia`、`lyra`、`mira`、`luma`、`sera`、`rhea`。无 style 前缀的组件子路径等价于 Nova。单应用建议统一一套样式；未提供运行时整体切换八套样式的功能。
+`IssueDetail` 通过 `onUpdate` 交付内容或属性的局部更新。宿主合并到列表数据并保存 `descriptionContent`，即可保留描述格式。My issues 和 Inbox 都使用该组件，可在 `/linear` 的对应标签页试用。Inbox 通过 `embedded` 使用自身的通知工具栏。 传入 `activity` 可显示活动时间线和评论。宿主按问题 ID 保留条目，通过 `onAction` 处理发表、回复、编辑与属性变更。
+
+从 registry 向独立项目安装 `agent-01` 时，先用 CLI 的 `--no-deps-install` 写入文件和依赖，再将 `package.json` 中的 `@valar/svelte-primitives` 指向本地 tarball，最后运行 `pnpm install`。同一工作区使用共享包中的 Agent 时由 workspace 提供该依赖。
+
+设置场景的变体使用 `Card.Root size="settings"`、`Select.Trigger size="settings"`、`Select.Content appearance="settings"` 和 `Switch appearance="settings"`。继续导入同一个 `@valar/svelte-ui/theme.css`，生成的主题已包含区块样式扫描路径。
 
 ## 修改如何生效
 
-| 修改位置／操作                        | 消费应用的结果                                                     |
-| ------------------------------------- | ------------------------------------------------------------------ |
-| 编辑 `registry/ui/`、`hooks/`、`lib/` | watcher 重新生成共享包，Vite 自动更新引用它的应用                  |
-| 组件编辑器点击“写回组件库”            | 写入 `styles/valar/style-*.css`，对应样式重新生成并更新应用        |
-| 全局 token 页写回                     | 写入 `styles/valar/tokens.json`，当前包选用的 neutral 主题重新生成 |
-| 只改编辑器草稿／保存浏览器版本        | **不会**更新应用；尚未写到维护源                                   |
-| 修改 `packages/primitives/src/lib/`   | 原语 watcher 更新输出，UI 的底层交互随之更新                       |
-| 修改业务应用的组合、文案、状态        | 只影响该应用；不会反向修改库                                       |
+| 修改位置／操作                                             | 消费应用的结果                                                     |
+| ---------------------------------------------------------- | ------------------------------------------------------------------ |
+| 编辑 `registry/ui/`、`hooks/`、`lib/` 或已纳入共享包的区块 | watcher 重新生成共享包，Vite 自动更新引用它的应用                  |
+| 组件编辑器点击“写回组件库”                                 | 写入 `styles/valar/style-*.css`，对应样式重新生成并更新应用        |
+| 全局 token 页写回                                          | 写入 `styles/valar/tokens.json`，当前包选用的 neutral 主题重新生成 |
+| 只改编辑器草稿／保存浏览器版本                             | **不会**更新应用；尚未写到维护源                                   |
+| 修改 `packages/primitives/src/lib/`                        | 原语 watcher 更新输出，UI 的底层交互随之更新                       |
+| 修改业务应用的组合、文案、状态                             | 只影响该应用；不会反向修改库                                       |
 
 生成器仅改写内容实际变化的文件，并删除已移除的源码产物。源码解析失败时保留上一次可用输出并在终端报错；修复后保存会重试。看到旧界面时先检查 watcher 日志，不要把失败的生成当作同步成功。
 
@@ -103,7 +109,7 @@ pnpm --filter docs test:e2e
 
 执行安装／生产构建前先停止相同应用的开发进程，完成后重新启动。完整原语打包与 SvelteKit 同步会批量改写开发服务器正在使用的文件，不作为普通保存的 HMR 场景支持。生产预览也应在构建完成后新启动；若使用 `E2E_BASE_URL` 复用旧服务，应先重启它，避免旧服务内存中的入口引用已经移除的构建资源。本轮实际遇到旧入口 404，重启后相同入口均恢复 200。
 
-本轮本地验证：
+2026-11-03 初次接入的本地验证记录：
 
 - `pnpm install --frozen-lockfile --ignore-scripts` 校验通过，另行执行 `pnpm build:cli`、`pnpm test`（758项）、`pnpm check`、`pnpm build` 均通过；新 UI 包检查八套生成源码为零错误／零警告。新增与改动的代码文件定向 ESLint／Oxfmt 通过。
 - 公共导出覆盖 68 × 8；生成源码均可编译，内部导入闭合，第三方运行时依赖均声明。

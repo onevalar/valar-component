@@ -1,0 +1,76 @@
+// Selected sRGB samples from standards/NEUTRAL_COLOR_SPEC.md, in light and dark order.
+export const palette = {
+	shell: ["应用外壳", "App shell", "#EFEFF0", "#09090A"],
+	panel: ["主面板", "Main panel", "#F9F9FA", "#121213"],
+	card: ["设置卡片", "Settings card", "#FFFFFF", "#1A1A1B"],
+	composer: ["聊天输入面板", "Chat composer", "#FFFFFF", "#161617"],
+	overlay: ["菜单与提示框", "Menu and tooltip", "#FFFFFF", "#212122"],
+	text: ["标题", "Heading", "#1B1B1B", "#FFFFFF"],
+	secondaryText: ["辅助文字", "Secondary text", "#5C5C5E", "#959597"],
+	sidebarText: ["侧栏文字", "Sidebar text", "#59595B", "#929294"],
+	menuText: ["菜单与提示文字", "Menu and tooltip text", "#303032", "#E5E6E8"],
+	placeholder: ["占位文字", "Placeholder", "#A0A0A2", "#5C5D5F"],
+	panelBorder: ["面板分隔线", "Panel divider", "#E2E2E2", "#212224"],
+	cardBorder: ["卡片上沿", "Card border", "#E3E3E4", "#222223"],
+	divider: ["表单行分隔线", "Form row divider", "#E9E9E9", "#2D2D2E"],
+	inputBorder: ["输入框描边", "Input border", "#D8D8D8", "#48494B"],
+	overlayBorder: ["浮层描边", "Overlay border", "#E8E8E8", "#3C3D3F"],
+	sidebarActive: ["侧栏选中", "Selected sidebar item", "#E1E1E2", "#232325"],
+	sidebarActiveText: ["侧栏选中文字", "Selected sidebar text", "#1A1A1A", "#FFFFFF"],
+	menuActive: ["菜单高亮", "Highlighted menu item", "#F1F1F1", "#323234"],
+	pillSelected: ["胶囊选中", "Selected pill", "#ECECED", "#29292B"],
+	pillBorder: ["选中胶囊描边", "Selected pill border", "#E3E3E3", "#323233"],
+	pillHighlighted: ["胶囊显示提示时", "Pill with tooltip", "#F0F0F1", "#232424"],
+	pillHighlightedBorder: ["胶囊高亮描边", "Highlighted pill border", "#D4D4D5", "#454546"],
+	pillHighlightedText: ["胶囊高亮文字", "Highlighted pill text", "#2F2F31", "#E3E4E6"],
+	buttonHover: ["无底按钮悬停", "Ghost button hover", "#F6F6F6", null],
+	disabledButton: ["禁用按钮底色", "Disabled button surface", "#FDFDFD", null],
+	disabledText: ["禁用按钮文字", "Disabled button text", "#9C9C9E", null],
+	dialogBorder: ["弹窗描边", "Dialog border", null, "#343538"],
+	scrollbar: ["侧栏滚动条", "Sidebar scrollbar", "#9D9D9F", "#57585A"],
+} as const;
+
+export type PaletteColor = keyof typeof palette;
+
+export const paletteGroups = [
+	{
+		zh: "背景与表面",
+		en: "Surfaces",
+		colors: ["shell", "panel", "card", "composer", "overlay"],
+	},
+	{
+		zh: "文字",
+		en: "Text",
+		colors: ["text", "secondaryText", "sidebarText", "menuText", "placeholder"],
+	},
+	{
+		zh: "边框与分隔线",
+		en: "Borders and dividers",
+		colors: [
+			"panelBorder",
+			"cardBorder",
+			"divider",
+			"inputBorder",
+			"overlayBorder",
+			"dialogBorder",
+			"scrollbar",
+		],
+	},
+	{
+		zh: "交互状态",
+		en: "Interaction states",
+		colors: [
+			"sidebarActive",
+			"sidebarActiveText",
+			"menuActive",
+			"pillSelected",
+			"pillBorder",
+			"pillHighlighted",
+			"pillHighlightedBorder",
+			"pillHighlightedText",
+			"buttonHover",
+			"disabledButton",
+			"disabledText",
+		],
+	},
+] as const satisfies ReadonlyArray<{ zh: string; en: string; colors: readonly PaletteColor[] }>;
