@@ -364,8 +364,15 @@ test("My issues saves rich descriptions and returns to the updated list", async 
 	await editor.press("ControlOrMeta+a");
 	await detail.getByRole("button", { name: "粗体", exact: true }).click();
 	await expect(editor.locator("strong")).toHaveText("可持久化的富文本");
-	await editor.press("Control+Enter");
+	await editor.press("ControlOrMeta+Enter");
 	await expect(detail.getByRole("heading", { name: "键盘导航验收完成" })).toBeVisible();
+	await expect(detail.locator('[data-slot="issue-description"] strong')).toHaveText(
+		"可持久化的富文本"
+	);
+	await detail.getByRole("button", { name: "编辑描述" }).click();
+	await expect(editor).toBeFocused();
+	await editor.press(process.platform === "darwin" ? "Control+Enter" : "Meta+Enter");
+	await expect(editor).toBeHidden();
 	await expect(detail.locator('[data-slot="issue-description"] strong')).toHaveText(
 		"可持久化的富文本"
 	);

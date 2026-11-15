@@ -136,9 +136,18 @@
 		void stopEdit();
 	}
 
+	function submitWithShortcut(event: KeyboardEvent) {
+		if (event.isComposing || event.key !== "Enter" || !(event.ctrlKey || event.metaKey))
+			return false;
+		event.preventDefault();
+		if (!event.repeat) form.requestSubmit();
+		return true;
+	}
+
 	function editKeys(event: KeyboardEvent) {
 		if (
 			!editing ||
+			event.defaultPrevented ||
 			event.isComposing ||
 			!(event.target instanceof Node) ||
 			!form.contains(event.target)
@@ -147,11 +156,9 @@
 		if (event.key === "Escape") {
 			event.preventDefault();
 			void stopEdit();
+			return;
 		}
-		if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
-			event.preventDefault();
-			if (!event.repeat) form.requestSubmit();
-		}
+		submitWithShortcut(event);
 	}
 
 	function updateIssue(update: IssueDetailUpdate) {
@@ -351,6 +358,7 @@
 						{content}
 						{chinese}
 						focusOnMount={editing === "description"}
+						onEditorKeyDown={submitWithShortcut}
 						onChange={() => (changedDescription = true)}
 					/>
 					<div class="flex justify-end gap-2">
