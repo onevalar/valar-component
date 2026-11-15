@@ -48,7 +48,7 @@
 			<!-- A text link aligned with the column title, so no button padding. -->
 			<button
 				type="button"
-				class="w-fit rounded-sm text-start text-foreground underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
+				class="w-fit rounded-sm text-start text-foreground underline-offset-4 outline-none hover:underline focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring/50"
 				{...props}
 			>
 				{item.header}

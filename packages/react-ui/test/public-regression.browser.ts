@@ -43,8 +43,8 @@ test("public preview: asymmetric scalar bounds, calendar/range selection, popper
 			padding: "12px",
 			gridMargin: "16px",
 			gridGap: "4px",
-			captionHeight: 36,
-			dayHeight: 36,
+			captionHeight: 28,
+			dayHeight: 28,
 		});
 
 		async function checkRangeBackground() {
@@ -116,6 +116,10 @@ test("public preview: asymmetric scalar bounds, calendar/range selection, popper
 			await month.focus();
 			await page.keyboard.press("Tab");
 			await expect(year).toBeFocused();
+			const day = calendar.locator('button[data-day][tabindex="0"]').first();
+			await day.focus();
+			await expect(day).toBeFocused();
+			await expect(day).toHaveCSS("box-shadow", /inset/);
 		}
 
 		const calendar = page.locator('[data-demo="calendar"]');

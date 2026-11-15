@@ -102,3 +102,15 @@ test("toast actions place their focus shadow inside the button", async ({ page }
 			outsideOutline: false,
 		});
 });
+
+test("the workbench toolbar draws its keyboard focus outline inside the action", async ({
+	page,
+}) => {
+	await page.goto("/zh/workbench");
+	const control = page.getByTestId("workbench").getByRole("button", { name: "导入", exact: true });
+	await page.keyboard.press("Tab");
+	await control.focus();
+	await expect(control).toBeFocused();
+	await expect(control).toHaveCSS("outline-width", "2px");
+	await expect.poll(() => readFocusStyles(control)).toMatchObject({ outsideOutline: false });
+});

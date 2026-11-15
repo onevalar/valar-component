@@ -380,7 +380,7 @@
 	}
 	.workbench :is(button, select, input):focus-visible {
 		outline: 2px solid var(--studio-accent);
-		outline-offset: 2px;
+		outline-offset: -2px;
 	}
 	.workbench-topbar {
 		display: flex;
