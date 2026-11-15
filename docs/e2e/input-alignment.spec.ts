@@ -1,6 +1,72 @@
 import { expect, test } from "@playwright/test";
 
 for (const colorScheme of ["light", "dark"] as const) {
+	test(`File Input shows one button surface and focuses it in ${colorScheme}`, async ({ page }) => {
+		await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
+		await page.goto("/docs/components/input");
+		const file = page.getByLabel("Picture", { exact: true });
+		const chooserStyle = (property: string) =>
+			file.evaluate((input, property) => {
+				return getComputedStyle(input, "::file-selector-button").getPropertyValue(property);
+			}, property);
+
+		for (const [width, direction] of [
+			[1280, "ltr"],
+			[390, "rtl"],
+		] as const) {
+			await page.setViewportSize({ width, height: 850 });
+			await file.evaluate((input, dir) => input.setAttribute("dir", dir), direction);
+			await expect(file).toHaveCSS("height", "32px");
+			await expect(file).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+			await expect(file).toHaveCSS("border-top-width", "0px");
+			expect(await chooserStyle("height")).toBe("28px");
+			expect(await chooserStyle("margin-inline-end")).toBe("8px");
+			expect(await chooserStyle("padding-inline-start")).toBe("10px");
+			expect(await chooserStyle("padding-inline-end")).toBe("10px");
+			expect(parseFloat(await chooserStyle("border-radius"))).toBeGreaterThanOrEqual(14);
+			const background = await chooserStyle("background-color");
+			expect(background).not.toBe("rgba(0, 0, 0, 0)");
+			await file.hover();
+			await expect.poll(() => chooserStyle("background-color")).not.toBe(background);
+			await file.focus();
+			await file.press("Shift+Tab");
+			await expect(file).not.toBeFocused();
+			await page.keyboard.press("Tab");
+			await expect(file).toBeFocused();
+			await expect(file).toHaveCSS("outline-style", "none");
+			await expect(file).toHaveCSS("box-shadow", "none");
+			expect(await chooserStyle("outline-style")).toBe("solid");
+			expect(await chooserStyle("outline-width")).toBe("1px");
+			expect(await chooserStyle("outline-offset")).toBe("-1px");
+			const focusColor =
+				colorScheme === "light" ? "lch(53 52.26 286.91)" : "lch(47.918 59.303 288.421)";
+			expect(await chooserStyle("outline-color")).toBe(focusColor);
+			await file.evaluate((input) => input.setAttribute("aria-invalid", "true"));
+			expect(await chooserStyle("outline-color")).not.toBe(focusColor);
+			await expect(file).toHaveCSS("outline-style", "none");
+			await file.evaluate((input) => input.removeAttribute("aria-invalid"));
+			await page.mouse.move(0, 0);
+		}
+
+		const [chooser] = await Promise.all([page.waitForEvent("filechooser"), file.press("Space")]);
+		await chooser.setFiles({
+			name: `${"long-image-name-".repeat(8)}.svg`,
+			mimeType: "image/svg+xml",
+			buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"/>'),
+		});
+		await expect(
+			page.getByRole("status").filter({ hasText: "Selected long-image-name-" })
+		).toBeVisible();
+		expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
+		await expect(file).toBeFocused();
+		await file.evaluate((input: HTMLInputElement) => {
+			input.disabled = true;
+		});
+		await expect(file).toBeDisabled();
+		await file.focus();
+		await expect(file).not.toBeFocused();
+	});
+
 	test(`Input preserves settings geometry and displays focus on invalid values in ${colorScheme}`, async ({
 		page,
 	}) => {

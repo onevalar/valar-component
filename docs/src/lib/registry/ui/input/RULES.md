@@ -7,6 +7,6 @@
 - Linear 新建团队用 32 px 高的标识符输入框搭配左侧标题和说明。上限 7 字符、转为大写并更新示例前缀是该表单的规则，由调用方实现。
 - 按内容设置 `type`、`inputmode` 和 `autocomplete`（如 `type="email"`、`autocomplete="email"`），移动端才会弹出正确的键盘并允许自动填充。
 - 有范围、步长或需要按地区格式化的数字用 Number Field，不要用 `type="number"`；多行文本用 Textarea；从固定选项中选择用 Select。
-- 选择文件用 `<Input type="file" bind:files />`，不要自己写原生 `<input>`（检查规则 `valar/use-form-component`）。
+- 表单中选择文件用 `<Input type="file" bind:files />`（检查规则 `valar/use-form-component`）。Valar 使用 28 px 中性色胶囊按钮，按钮与文件名间隔 8 px，整行使用透明背景。键盘焦点和错误描边留在按钮内侧，文件选择、文件名和禁用行为由原生控件处理。编辑器里的附件使用工具栏入口，选中文件后在内容区展示。
 - 高度、圆角、内边距跟随组件样式和组件参数（与 Button 同一套尺寸、圆角档位）；不要用 `class` 改 `rounded-*`、`px-*`。必须与同一行的小号按钮对齐时，只用与该按钮相同的高度档位类，不写像素值。
 - 前后要加图标、文字或按钮时用 Input Group，不要用绝对定位把图标压在 Input 上。

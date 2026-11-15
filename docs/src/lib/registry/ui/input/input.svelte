@@ -20,16 +20,15 @@
 	}: Props = $props();
 </script>
 
-{#if type === "file"}
+{#if type !== "file"}
 	<input
 		bind:this={ref}
 		data-slot={dataSlot}
 		class={cn(
-			"cn-input w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+			"cn-input w-full min-w-0 outline-none placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
 			className
 		)}
-		type="file"
-		bind:files
+		{type}
 		bind:value
 		{...restProps}
 	/>
@@ -38,10 +37,11 @@
 		bind:this={ref}
 		data-slot={dataSlot}
 		class={cn(
-			"cn-input w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+			"cn-input-file w-fit max-w-full min-w-0 outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
 			className
 		)}
-		{type}
+		type="file"
+		bind:files
 		bind:value
 		{...restProps}
 	/>

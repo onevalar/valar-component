@@ -1074,7 +1074,7 @@ describe("Input, Select and Textarea editors share Button's levels", () => {
 			input
 		);
 		const inputClasses = installed("valar", both, "input/input.svelte");
-		expect(inputClasses).toEqual(expect.arrayContaining(["h-9", "rounded-xl", "px-3", "file:h-6"]));
+		expect(inputClasses).toEqual(expect.arrayContaining(["h-9", "rounded-xl", "px-3"]));
 		for (const old of ["h-8", "rounded-md", "px-2.5"]) expect(inputClasses).not.toContain(old);
 		const trigger = installed("valar", both, "select/select-trigger.svelte");
 		expect(trigger).toEqual(

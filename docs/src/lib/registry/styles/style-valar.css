@@ -917,10 +917,20 @@
 
   /* MARK: Input */
   .cn-input {
-    @apply border-[color:var(--valar-input-border,var(--valar-input-border-base,lch(86.5%_0_282)))] bg-[color:var(--valar-input-surface,var(--valar-input-surface-base,white))] dark:[--valar-input-border-base:lch(30.833%_1.93_272)] dark:[--valar-input-surface-base:lch(9.232%_.85_272)] dark:[--valar-input-focus:lch(47.918%_59.303_288.421)] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 h-8 rounded-md border-[0.5px] px-3 py-1 text-base transition-[border-color] file:h-6 file:text-sm file:font-medium aria-invalid:ring-1 aria-invalid:ring-inset md:text-[13px] motion-reduce:transition-none;
+    @apply border-[color:var(--valar-input-border,var(--valar-input-border-base,lch(86.5%_0_282)))] bg-[color:var(--valar-input-surface,var(--valar-input-surface-base,white))] dark:[--valar-input-border-base:lch(30.833%_1.93_272)] dark:[--valar-input-surface-base:lch(9.232%_.85_272)] dark:[--valar-input-focus:lch(47.918%_59.303_288.421)] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 h-8 rounded-md border-[0.5px] px-3 py-1 text-base transition-[border-color] aria-invalid:ring-1 aria-invalid:ring-inset md:text-[13px] motion-reduce:transition-none;
     @apply data-[slot=input]:placeholder:text-[color:lch(66%_1_282)] dark:data-[slot=input]:placeholder:text-[color:lch(39.452%_1.425_272)] md:data-[slot=input]:py-1.5 md:data-[slot=input]:leading-[normal] data-[slot=input]:focus:transition-none data-[slot=input]:focus:not-aria-invalid:border-[color:var(--valar-input-border-focus,lch(78.5%_0_282))] dark:[--valar-input-border-focus:lch(28.032%_6.93_272)];
     @apply data-[slot=input]:focus:not-aria-invalid:outline-solid data-[slot=input]:focus:not-aria-invalid:outline-1 data-[slot=input]:focus:not-aria-invalid:-outline-offset-1 data-[slot=input]:focus:not-aria-invalid:outline-[color:var(--settings-focus,var(--valar-input-focus,lch(53%_52.26_286.91)))];
     @apply data-[slot=input]:focus:aria-invalid:outline-solid data-[slot=input]:focus:aria-invalid:outline-1 data-[slot=input]:focus:aria-invalid:-outline-offset-1 data-[slot=input]:focus:aria-invalid:outline-destructive;
+  }
+
+  .cn-input-file {
+    @apply h-8 rounded-none border-0 bg-transparent pt-0.5 text-base text-muted-foreground enabled:cursor-pointer md:text-[13px];
+    @apply [--valar-input-file-button:lch(94.854%_.5_282)] dark:[--valar-input-file-button:lch(18.634%_1.075_272)];
+    @apply file:me-2 file:h-7 file:rounded-full file:border-0 file:bg-[color:var(--valar-input-file-button)] file:px-2.5 file:align-middle file:text-xs/7 file:font-medium file:text-foreground file:transition-[background-color] motion-reduce:file:transition-none;
+    @apply enabled:file:cursor-pointer enabled:hover:file:bg-[color:color-mix(in_lch,var(--valar-input-file-button),currentColor_8%)];
+    @apply [--valar-input-file-focus:lch(53%_52.26_286.91)] dark:[--valar-input-file-focus:lch(47.918%_59.303_288.421)] aria-invalid:[--valar-input-file-focus:var(--destructive)] dark:aria-invalid:[--valar-input-file-focus:var(--destructive)];
+    @apply focus-visible:file:outline-solid focus-visible:file:outline-1 focus-visible:file:-outline-offset-1 focus-visible:file:outline-[color:var(--valar-input-file-focus)];
+    @apply aria-invalid:file:outline-solid aria-invalid:file:outline-1 aria-invalid:file:-outline-offset-1 aria-invalid:file:outline-[color:var(--valar-input-file-focus)];
   }
 
   /* MARK: Input OTP */
