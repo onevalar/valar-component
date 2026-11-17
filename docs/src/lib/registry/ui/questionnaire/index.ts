@@ -1,3 +1,4 @@
+import AgentQuestion, { type QuestionnaireAgentQuestionProps } from "./questionnaire-agent-question.svelte";
 import Actions from "./questionnaire-actions.svelte";
 import ChoiceDescription from "./questionnaire-choice-description.svelte";
 import Choice from "./questionnaire-choice.svelte";
@@ -16,6 +17,8 @@ import Root from "./questionnaire.svelte";
 
 export {
 	Root,
+	AgentQuestion,
+	type QuestionnaireAgentQuestionProps,
 	Progress,
 	Item,
 	Title,
@@ -32,6 +35,7 @@ export {
 	Submit,
 	//
 	Root as Questionnaire,
+	AgentQuestion as QuestionnaireAgentQuestion,
 	Progress as QuestionnaireProgress,
 	Item as QuestionnaireItem,
 	Title as QuestionnaireTitle,

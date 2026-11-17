@@ -15,7 +15,7 @@
 	bind:ref
 	data-slot="input-otp-slot"
 	class={cn(
-		"cn-input-otp-slot relative flex items-center justify-center data-[active=true]:z-10",
+		"cn-input-otp-slot relative flex min-w-0 items-center justify-center tabular-nums data-[active=true]:z-10",
 		className
 	)}
 	{...restProps}

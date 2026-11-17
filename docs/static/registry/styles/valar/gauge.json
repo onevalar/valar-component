@@ -3,17 +3,20 @@
 	"name": "gauge",
 	"title": "Gauge 仪表",
 	"type": "registry:ui",
-	"description": "静态百分比仪表和可组合的 SVG 弧线，保留超限读数。",
+	"description": "静态百分比仪表、紧凑迭代容量和可组合的 SVG 弧线，保留超限读数。",
 	"meta": {
 		"valar": {
 			"keywords": [
 				"gauge",
 				"仪表",
 				"百分比",
-				"quota"
+				"quota",
+				"迭代容量",
+				"capacity"
 			],
 			"whenToUse": [
-				"显示一个只读配额百分比或组合独立同心弧线"
+				"显示一个只读配额百分比或组合独立同心弧线",
+				"在迭代列表同一行显示容量和超限读数"
 			],
 			"whenNotToUse": [
 				{
@@ -25,7 +28,8 @@
 				"label 和 valueText 由调用方本地化；超限读数保留在文字中"
 			],
 			"responsive": [
-				"宽度由容器控制，保持 100:90 比例"
+				"通用仪表保持 100:90 比例",
+				"迭代容量使用 16 px 弧线，说明可换行"
 			],
 			"related": [
 				"tick-meter",
@@ -40,7 +44,7 @@
 			"target": "gauge/LICENSE.md"
 		},
 		{
-			"content": "# Gauge Design Rules\n\n- Read-only percentage, not a completion target; never add confetti or goal states.\n- Supply localized label and valueText. Only the arc and numeric ARIA range clamp; the displayed number/valueText retain overflow.\n- GaugeArc belongs inside an SVG; radius defaults to 42 in a 100-unit viewBox. Null draws a dashed missing track and no value arc.\n- Accent uses primary, danger uses destructive. Size through class; use a separate legend for comparisons.\n",
+			"content": "# Gauge Design Rules\n\n- Read-only percentage, not a completion target; never add confetti or goal states.\n- Supply localized label and valueText. Only the arc and numeric ARIA range clamp; the displayed number/valueText retain overflow.\n- GaugeArc belongs inside an SVG; radius defaults to 42 in a 100-unit viewBox. Null draws a dashed missing track and no value arc.\n- Accent uses primary, danger uses destructive. Size through class; use a separate legend for comparisons.\n- Use `appearance=\"capacity\"` in a cycle-capacity row. The ring is 16 px, followed by the percentage and an optional localized `suffix`, with 8 px between each part. The zero position keeps a small accent endpoint. Over-capacity uses a red ring and displays the entire number.\n- Keep the meter non-interactive. Use a separate Slider to adjust preview values.\n",
 			"type": "registry:file",
 			"target": "gauge/RULES.md"
 		},
@@ -50,12 +54,12 @@
 			"target": "gauge/gauge-arc.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\" module>\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\texport type GaugeProps = Omit<HTMLAttributes<HTMLDivElement>, \"children\"> & {\n\t\tvalue: number;\n\t\tlabel: string;\n\t\tvalueText: string;\n\t\ttone?: \"accent\" | \"danger\";\n\t};\n</script>\n\n<script lang=\"ts\">\n\timport { cn } from \"$UTILS$.js\";\n\timport GaugeArc from \"./gauge-arc.svelte\";\n\tlet {\n\t\tvalue,\n\t\tlabel,\n\t\tvalueText,\n\t\ttone = \"accent\",\n\t\tclass: className,\n\t\t...rest\n\t}: GaugeProps = $props();\n</script>\n\n<div\n\tdata-slot=\"gauge\"\n\tdata-tone={tone}\n\trole=\"meter\"\n\taria-label={label}\n\taria-valuemin={0}\n\taria-valuemax={100}\n\taria-valuenow={Math.min(100, Math.max(0, value))}\n\taria-valuetext={valueText}\n\tclass={cn(\"relative aspect-[100/90] w-full\", className)}\n\t{...rest}\n>\n\t<svg\n\t\tviewBox=\"0 0 100 90\"\n\t\taria-hidden=\"true\"\n\t\tfocusable=\"false\"\n\t\tclass=\"block size-full overflow-visible\"\n\t>\n\t\t<GaugeArc {value} {tone} />\n\t</svg>\n\t<div\n\t\taria-hidden=\"true\"\n\t\tclass=\"pointer-events-none absolute inset-x-0 top-0 grid aspect-square place-content-center\"\n\t>\n\t\t<span\n\t\t\tclass={cn(\n\t\t\t\t\"text-2xl font-medium tabular-nums\",\n\t\t\t\ttone === \"danger\" ? \"text-destructive\" : \"text-foreground\"\n\t\t\t)}\n\t\t>\n\t\t\t{Math.round(value)}<span class=\"ms-px text-[0.5em]\">%</span>\n\t\t</span>\n\t</div>\n</div>\n",
+			"content": "<script lang=\"ts\" module>\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\timport { arcFor } from \"./geometry.js\";\n\n\tconst capacityTrack = arcFor(1, 7, 8, 306);\n\n\texport type GaugeProps = Omit<HTMLAttributes<HTMLDivElement>, \"children\"> & {\n\t\tvalue: number;\n\t\tlabel: string;\n\t\tvalueText: string;\n\t\ttone?: \"accent\" | \"danger\";\n\t\tappearance?: \"default\" | \"capacity\";\n\t\tsuffix?: string;\n\t};\n</script>\n\n<script lang=\"ts\">\n\timport { cn } from \"$UTILS$.js\";\n\timport GaugeArc from \"./gauge-arc.svelte\";\n\tlet {\n\t\tvalue,\n\t\tlabel,\n\t\tvalueText,\n\t\ttone = \"accent\",\n\t\tappearance = \"default\",\n\t\tsuffix,\n\t\tclass: className,\n\t\t...rest\n\t}: GaugeProps = $props();\n\tconst clampedValue = $derived(Math.min(100, Math.max(0, value)));\n\tconst capacity = $derived(appearance === \"capacity\");\n\tconst resolvedTone = $derived(capacity && value > 100 ? \"danger\" : tone);\n\t// Keep a visible rounded endpoint at zero.\n\tconst capacityValue = $derived(arcFor(Math.max(0.002, clampedValue / 100), 7, 8, 306));\n</script>\n\n<div\n\tdata-slot=\"gauge\"\n\tdata-appearance={capacity ? \"capacity\" : undefined}\n\tdata-tone={resolvedTone}\n\trole=\"meter\"\n\taria-label={label}\n\taria-valuemin={0}\n\taria-valuemax={100}\n\taria-valuenow={clampedValue}\n\taria-valuetext={valueText}\n\tclass={cn(\n\t\tcapacity\n\t\t\t? \"inline-flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[13px]/[15.5px]\"\n\t\t\t: \"relative aspect-[100/90] w-full\",\n\t\tclassName,\n\t)}\n\t{...rest}\n>\n\t{#if capacity}\n\t\t<span aria-hidden=\"true\" class=\"inline-flex shrink-0 items-center gap-2\">\n\t\t\t<svg\n\t\t\t\tviewBox=\"0 0 16 16\"\n\t\t\t\taria-hidden=\"true\"\n\t\t\t\tfocusable=\"false\"\n\t\t\t\tfill=\"none\"\n\t\t\t\tstroke-width=\"2\"\n\t\t\t\tstroke-linecap=\"round\"\n\t\t\t\tclass=\"size-4 shrink-0\"\n\t\t\t>\n\t\t\t\t<path\n\t\t\t\t\tdata-slot=\"gauge-capacity-track\"\n\t\t\t\t\td={capacityTrack}\n\t\t\t\t\tclass=\"stroke-[lch(88.49%_0_282)] dark:stroke-[lch(14.16%_1.48_272)]\"\n\t\t\t\t/>\n\t\t\t\t<path\n\t\t\t\t\tdata-slot=\"gauge-capacity-value\"\n\t\t\t\t\td={capacityValue}\n\t\t\t\t\tclass={resolvedTone === \"danger\"\n\t\t\t\t\t\t? \"stroke-[lch(58%_73_29)]\"\n\t\t\t\t\t\t: \"stroke-[lch(48%_59.31_288.43)]\"}\n\t\t\t\t/>\n\t\t\t</svg>\n\t\t\t<span\n\t\t\t\tdata-slot=\"gauge-capacity-number\"\n\t\t\t\tclass=\"font-medium tabular-nums text-[color:lch(19.588%_1.25_282)] dark:text-[color:lch(90.451%_1.2_272)]\"\n\t\t\t>\n\t\t\t\t{value}%\n\t\t\t</span>\n\t\t</span>\n\t\t{#if suffix}\n\t\t\t<span\n\t\t\t\tdata-slot=\"gauge-capacity-suffix\"\n\t\t\t\taria-hidden=\"true\"\n\t\t\t\tclass=\"min-w-0 font-[450] wrap-anywhere text-[color:lch(39.176%_1.25_282)] dark:text-[color:lch(61.803%_1.2_272)]\"\n\t\t\t>\n\t\t\t\t{suffix}\n\t\t\t</span>\n\t\t{/if}\n\t{:else}\n\t\t<svg\n\t\t\tviewBox=\"0 0 100 90\"\n\t\t\taria-hidden=\"true\"\n\t\t\tfocusable=\"false\"\n\t\t\tclass=\"block size-full overflow-visible\"\n\t\t>\n\t\t\t<GaugeArc {value} {tone} />\n\t\t</svg>\n\t\t<div\n\t\t\taria-hidden=\"true\"\n\t\t\tclass=\"pointer-events-none absolute inset-x-0 top-0 grid aspect-square place-content-center\"\n\t\t>\n\t\t\t<span\n\t\t\t\tclass={cn(\n\t\t\t\t\t\"text-2xl font-medium tabular-nums\",\n\t\t\t\t\ttone === \"danger\" ? \"text-destructive\" : \"text-foreground\",\n\t\t\t\t)}\n\t\t\t>\n\t\t\t\t{Math.round(value)}<span class=\"ms-px text-[0.5em]\">%</span>\n\t\t\t</span>\n\t\t</div>\n\t{/if}\n</div>\n",
 			"type": "registry:file",
 			"target": "gauge/gauge.svelte"
 		},
 		{
-			"content": "// Adapted from Arc's free Gauge, copyright (c) 2026 Elia Kuratli (MIT, LICENSE.md).\nexport function arcFor(sweep: number, radius = 42): string {\n\tconst start = -135;\n\tconst end = start + 270 * Math.min(1, Math.max(0, sweep));\n\tconst at = (angle: number) =>\n\t\t`${(50 + radius * Math.sin((angle * Math.PI) / 180)).toFixed(3)} ${(50 - radius * Math.cos((angle * Math.PI) / 180)).toFixed(3)}`;\n\treturn `M ${at(start)} A ${radius} ${radius} 0 ${end - start > 180 ? 1 : 0} 1 ${at(end)}`;\n}\n",
+			"content": "// Adapted from Arc's free Gauge, copyright (c) 2026 Elia Kuratli (MIT, LICENSE.md).\nexport function arcFor(sweep: number, radius = 42, center = 50, angle = 270): string {\n\tconst start = -angle / 2;\n\tconst end = start + angle * Math.min(1, Math.max(0, sweep));\n\tconst at = (angle: number) =>\n\t\t`${(center + radius * Math.sin((angle * Math.PI) / 180)).toFixed(3)} ${(center - radius * Math.cos((angle * Math.PI) / 180)).toFixed(3)}`;\n\treturn `M ${at(start)} A ${radius} ${radius} 0 ${end - start > 180 ? 1 : 0} 1 ${at(end)}`;\n}\n",
 			"type": "registry:file",
 			"target": "gauge/geometry.ts"
 		},

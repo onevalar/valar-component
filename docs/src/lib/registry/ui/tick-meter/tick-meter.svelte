@@ -22,6 +22,9 @@
 	}: TickMeterProps = $props();
 	const bounded = $derived(Math.min(100, Math.max(0, value)));
 	const filled = $derived(Math.round((bounded * 60) / 100));
+	const readout = $derived(String(Math.round(value)));
+	// Keep the complete number inside the ring even for long overflow values.
+	const fontSize = $derived(Math.min(20, 100 / (readout.length + 1)));
 	const ticks = Array.from({ length: 60 }, (_, index) => {
 		const angle = ((index * 6 - 90) * Math.PI) / 180;
 		return {
@@ -42,7 +45,10 @@
 	aria-valuemax={100}
 	aria-valuenow={bounded}
 	aria-valuetext={valueText}
-	class={cn("relative aspect-square w-full", className)}
+	class={cn(
+		"aspect-square w-full min-w-0 [--tick-meter-accent:lch(53%_52.26_286.91)] [--tick-meter-track:lch(83%_0_282)] dark:[--tick-meter-accent:lch(62%_48_288.421)] dark:[--tick-meter-track:lch(30%_1.48_272)]",
+		className
+	)}
 	{...rest}
 >
 	<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false" class="block size-full">
@@ -55,18 +61,22 @@
 				class={index < filled
 					? tone === "danger"
 						? "stroke-destructive"
-						: "stroke-primary"
-					: "stroke-border"}
+					: "stroke-[color:var(--valar-meter-accent,var(--tick-meter-accent))]"
+				: "stroke-[color:var(--valar-meter-track,var(--tick-meter-track))]"}
 			/>
 		{/each}
+		<text
+			x="50"
+			y="50"
+			text-anchor="middle"
+			dominant-baseline="central"
+			direction="ltr"
+			font-size={fontSize}
+			data-slot="tick-meter-readout"
+			class={cn(
+				"pointer-events-none font-medium tabular-nums",
+				tone === "danger" ? "fill-destructive" : "fill-foreground"
+			)}>{readout}<tspan font-size="0.65em">%</tspan></text
+		>
 	</svg>
-	<span
-		aria-hidden="true"
-		class={cn(
-			"pointer-events-none absolute inset-0 grid place-content-center text-2xl font-medium tabular-nums",
-			tone === "danger" ? "text-destructive" : "text-foreground"
-		)}
-	>
-		{Math.round(value)}%
-	</span>
 </div>

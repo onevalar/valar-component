@@ -3,6 +3,7 @@
 	import * as Drawer from "$lib/registry/ui/drawer/index.js";
 	import * as Field from "$lib/registry/ui/field/index.js";
 	import * as RadioGroup from "$lib/registry/ui/radio-group/index.js";
+	import * as ScrollArea from "$lib/registry/ui/scroll-area/index.js";
 	import { IsMobile } from "$lib/registry/hooks/is-mobile.svelte.js";
 	import { Badge } from "$lib/registry/ui/badge/index.js";
 	import { Button, buttonVariants } from "$lib/registry/ui/button/index.js";
@@ -66,8 +67,8 @@
 			<Drawer.Title>Pick a delivery time</Drawer.Title>
 			<Drawer.Description>We&apos;ll prepare your order as soon as possible.</Drawer.Description>
 		</Drawer.Header>
-		<div class="flex-1 overflow-y-auto p-4">
-			<RadioGroup.Root bind:value={deliveryTime} class="gap-2">
+		<ScrollArea.Root class="min-h-0 flex-1" type="hover" data-vaul-no-drag viewportLabel="Scroll delivery windows">
+			<RadioGroup.Root bind:value={deliveryTime} class="gap-2 p-4">
 				{#each deliveryTimes as time (time.value)}
 					<Field.Label for={time.id}>
 						<Field.Field orientation="horizontal">
@@ -85,7 +86,7 @@
 					</Field.Label>
 				{/each}
 			</RadioGroup.Root>
-		</div>
+		</ScrollArea.Root>
 		<Drawer.Footer>
 			<Button onclick={handleConfirm}>Confirm Delivery Time</Button>
 			<Drawer.Close class={buttonVariants({ variant: "outline" })}>Cancel</Drawer.Close>

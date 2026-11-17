@@ -9,7 +9,7 @@
 	<Field.Field>
 		<Field.Label for="four-digits">4 Digits</Field.Label>
 		<Field.Description>Common pattern for PIN codes.</Field.Description>
-		<InputOTP.Root id="four-digits" maxlength={4} pattern={REGEXP_ONLY_DIGITS}>
+		<InputOTP.Root inputId="four-digits" maxlength={4} pattern={REGEXP_ONLY_DIGITS}>
 			{#snippet children({ cells })}
 				<InputOTP.Group>
 					{#each cells as cell (cell)}

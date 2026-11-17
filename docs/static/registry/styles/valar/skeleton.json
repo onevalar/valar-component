@@ -45,7 +45,7 @@
 	},
 	"files": [
 		{
-			"content": "# Skeleton 设计规范\n\n- 用于加载时占位，形状和尺寸尽量与真实内容一致（文字行、头像、卡片），避免加载完成后布局跳动。\n- 加载很快（几百毫秒内）时不要显示骨架屏；加载失败时替换为错误提示，不要一直显示 Skeleton。\n- Skeleton 对读屏器没有意义：给加载中的容器设 `aria-busy=\"true\"`，需要时另外放一段 `sr-only` 的“正在加载”文字。\n- 颜色和动画跟随组件样式，不要另设背景色。\n",
+			"content": "# Skeleton 设计规范\n\n- 用于加载时占位，形状和尺寸尽量与真实内容一致（文字行、头像、卡片），避免加载完成后布局跳动。\n- 头像占位保留直径；同一行的文字占位随容器收缩，保留头像和文字之间的间距。\n- 加载很快（几百毫秒内）时不要显示骨架屏；加载失败时替换为错误提示，不要一直显示 Skeleton。\n- Skeleton 对读屏器没有意义：给加载中的容器设 `aria-busy=\"true\"`，需要时另外放一段 `sr-only` 的“正在加载”文字。\n- 颜色和动画跟随组件样式，不要另设背景色。\n- 筛选条件生成期间用 `appearance=\"filter\"`。占位高 24 px、圆角 8 px、间距 8 px，宽度由最终条件和可用空间决定。用 `delay` 指定毫秒级错峰。默认保留 1.2 秒入场和 2 秒循环，开启减少动态效果时立即显示静态占位。完成后在原位替换为条件，保留现有列表，并通过独立状态文字播报。\n",
 			"type": "registry:file",
 			"target": "skeleton/RULES.md"
 		},
@@ -55,7 +55,7 @@
 			"target": "skeleton/index.ts"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef, type WithoutChildren } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\t...restProps\n\t}: WithoutChildren<WithElementRef<HTMLAttributes<HTMLDivElement>>> = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"skeleton\"\n\tclass={cn(\"bg-muted rounded-md animate-pulse\", className)}\n\t{...restProps}\n></div>\n",
+			"content": "<svelte:options css=\"injected\" />\n\n<script lang=\"ts\">\n\timport { cn, type WithElementRef, type WithoutChildren } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tappearance = \"default\",\n\t\tdelay = 0,\n\t\t...restProps\n\t}: WithoutChildren<WithElementRef<HTMLAttributes<HTMLDivElement>>> & {\n\t\tappearance?: \"default\" | \"filter\";\n\t\t/** Delay in milliseconds before a filter placeholder appears. */\n\t\tdelay?: number;\n\t} = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"skeleton\"\n\tdata-appearance={appearance}\n\taria-hidden={appearance === \"filter\" ? true : undefined}\n\tstyle:--valar-skeleton-delay={appearance === \"filter\" ? `${delay}ms` : undefined}\n\tclass={cn(\n\t\t\"max-w-full\",\n\t\tappearance === \"filter\"\n\t\t\t? \"h-6 rounded-[8px] border-0 bg-[lch(92.44%_.5_282)] dark:bg-[lch(7.32%_.85_272)]\"\n\t\t\t: \"bg-muted rounded-md motion-safe:animate-pulse\",\n\t\tclassName\n\t)}\n\t{...restProps}\n></div>\n\n<style>\n\t@media (prefers-reduced-motion: no-preference) {\n\t\t[data-appearance=\"filter\"] {\n\t\t\tanimation:\n\t\t\t\tfilter-entry 1.2s ease var(--valar-skeleton-delay) both,\n\t\t\t\tfilter-loop 2s ease calc(1.2s + var(--valar-skeleton-delay)) infinite;\n\t\t}\n\t}\n\n\t@keyframes filter-entry {\n\t\t0% { opacity: 0; }\n\t\t50% { opacity: 1; }\n\t\t100% { opacity: 0.3; }\n\t}\n\n\t@keyframes filter-loop {\n\t\t0%, 20%, 100% { opacity: 0.3; }\n\t\t60% { opacity: 1; }\n\t}\n</style>\n",
 			"type": "registry:file",
 			"target": "skeleton/skeleton.svelte"
 		}

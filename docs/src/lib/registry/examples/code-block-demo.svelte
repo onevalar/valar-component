@@ -38,7 +38,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	);
 </script>
 
-<div class="w-full max-w-lg">
+<div class="w-full max-w-lg min-w-0 [contain:inline-size]">
 	<CodeBlock.Root>
 		<CodeBlock.Header>
 			<CodeBlock.Title>

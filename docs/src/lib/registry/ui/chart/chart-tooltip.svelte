@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getChartContext, Tooltip as TooltipPrimitive } from "layerchart";
 	import { cn, type WithElementRef, type WithoutChildren } from "$lib/utils.js";
-	import { getPayloadConfigFromPayload, useChart, type TooltipPayload } from "./chart-utils.js";
+	import { getPayloadConfigFromPayload, insightPriorityColors, useChart, type TooltipPayload } from "./chart-utils.js";
 	import type { Snippet } from "svelte";
 	import type { HTMLAttributes } from "svelte/elements";
 
@@ -13,6 +13,7 @@
 	let {
 		ref = $bindable(null),
 		class: className,
+		appearance = "default",
 		hideLabel = false,
 		indicator = "dot",
 		hideIndicator = false,
@@ -26,6 +27,7 @@
 		...restProps
 	}: WithoutChildren<WithElementRef<HTMLAttributes<HTMLDivElement>>> & {
 		hideLabel?: boolean;
+		appearance?: "default" | "insights";
 		label?: string;
 		indicator?: "line" | "dot" | "dashed";
 		nameKey?: string;
@@ -102,12 +104,19 @@
 	{/if}
 {/snippet}
 
-<TooltipPrimitive.Root variant="none">
+<TooltipPrimitive.Root variant="none" contained={appearance === "insights" ? "window" : "container"}>
 	<div
 		bind:this={ref}
 		data-slot="chart-tooltip"
+		data-appearance={appearance}
 		class={cn(
-			"grid min-w-32 items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
+			"grid min-w-32 items-start border text-xs shadow-xl",
+			appearance === "insights"
+				? [
+						"w-[200px] max-w-[calc(100vw-2rem)] gap-0.5 rounded-[4px] border-[0.5px] border-[lch(86.5%_0_282)] bg-[lch(100%_0_282)] px-3 py-1 font-[450] dark:border-[lch(30.833%_1.93_272)] dark:bg-[lch(17.873%_1.93_272)]",
+						insightPriorityColors
+					]
+				: "gap-1.5 rounded-lg border-border/50 bg-background px-2.5 py-1.5",
 			"cn-chart-tooltip-layout",
 			className
 		)}
@@ -116,7 +125,7 @@
 		{#if !nestLabel}
 			{@render TooltipLabel()}
 		{/if}
-		<div class="grid gap-1.5">
+		<div class={cn("grid", appearance === "insights" ? "gap-0.5" : "gap-1.5")}>
 			{#each visibleSeries as item, i (item.key + i)}
 				{@const key = `${nameKey || item.key || item.label || "value"}`}
 				{@const itemConfig = getPayloadConfigFromPayload(

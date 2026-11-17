@@ -6,12 +6,12 @@
 		variants: {
 			variant: {
 				default: "cn-alert-variant-default",
-				destructive: "cn-alert-variant-destructive",
-			},
+				destructive: "cn-alert-variant-destructive"
+			}
 		},
 		defaultVariants: {
-			variant: "default",
-		},
+			variant: "default"
+		}
 	});
 
 	export type AlertVariant = VariantProps<typeof alertVariants>["variant"];
@@ -30,7 +30,7 @@
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		variant?: AlertVariant;
-		appearance?: "connection";
+		appearance?: "connection" | "notification" | "workflow-error";
 	} = $props();
 </script>
 
@@ -38,9 +38,16 @@
 	bind:this={ref}
 	data-slot="alert"
 	data-appearance={appearance}
+	data-variant={variant}
 	role="alert"
 	class={cn(
-		appearance === "connection" ? "cn-alert-connection group/alert" : alertVariants({ variant }),
+		appearance === "connection"
+			? "cn-alert-connection group/alert"
+			: appearance === "notification"
+				? "cn-alert-notification group/alert"
+				: appearance === "workflow-error"
+					? "cn-alert-workflow-error group/alert"
+					: alertVariants({ variant }),
 		className
 	)}
 	{...restProps}

@@ -2,7 +2,7 @@
 	import { type VariantProps, tv } from "tailwind-variants";
 
 	export const badgeVariants = tv({
-		base: "cn-badge group/badge inline-flex w-fit shrink-0 items-center justify-center overflow-hidden whitespace-nowrap focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none",
+		base: "cn-badge group/badge inline-flex w-fit max-w-full min-w-0 shrink-0 items-center justify-center overflow-hidden whitespace-nowrap focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 focus-visible:ring-inset aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:shrink-0",
 		variants: {
 			variant: {
 				default: "cn-badge-variant-default",
@@ -32,11 +32,14 @@
 		class: className,
 		variant = "default",
 		labelColor,
+		truncate = false,
 		children,
 		...restProps
 	}: WithElementRef<HTMLAnchorAttributes> & {
 		variant?: BadgeVariant;
 		labelColor?: string;
+		/** Keeps a long label on one line while retaining its complete accessible text. */
+		truncate?: boolean;
 	} = $props();
 </script>
 
@@ -56,5 +59,12 @@
 			style:color={labelColor}
 		></span>
 	{/if}
-	{@render children?.()}
+	{#if truncate}
+		<span
+			class="min-w-0 truncate [&>svg]:inline-block [&>svg]:size-3 [&>svg]:align-[-0.125em] [&>svg[data-icon=inline-end]]:ms-1 [&>svg[data-icon=inline-start]]:me-1"
+			>{@render children?.()}</span
+		>
+	{:else}
+		{@render children?.()}
+	{/if}
 </svelte:element>

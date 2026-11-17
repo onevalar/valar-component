@@ -4,6 +4,7 @@
 	"title": "Trace 执行轨迹",
 	"description": "展示 agent 推理、工具调用、来源等步骤的行列表。",
 	"categories": ["展示"],
+	"registryDependencies": ["button", "collapsible", "spinner"],
 	"meta": {
 		"valar": {
 			"keywords": ["执行轨迹", "trace", "工具调用", "推理", "agent", "步骤"],
@@ -22,12 +23,12 @@
 				}
 			],
 			"accessibility": [
-				"本身不加角色，语义来自包裹它的触发器（如 Trace.CollapsibleTrigger 带 aria-expanded）",
+				"步骤行从包裹它的触发器获得语义，独立重试按钮用状态区域宣布结果",
 				"Trace.Title 是可访问名称，要写成完整的一句话，状态也写进标题",
 				"运行中的闪烁效果在“减少动态效果”时停止"
 			],
-			"responsive": ["支持嵌套，摘要可展开为步骤"],
-			"related": ["message", "marker", "collapsible"]
+			"responsive": ["支持嵌套，摘要可展开为步骤，重试反馈按剩余宽度换行"],
+			"related": ["message", "marker", "button", "collapsible"]
 		}
 	}
 }

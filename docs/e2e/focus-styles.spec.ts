@@ -77,6 +77,24 @@ test("keyboard focus remains visible inside buttons, inputs and compound control
 		await expect(activeCell).toHaveCSS("box-shadow", /inset/);
 		await expect.poll(() => readFocusStyles(activeCell)).toMatchObject({ outerRings: [] });
 
+		for (const [slug, selector] of [
+			["number-field", '[data-slot="number-field-increment"]'],
+			["tags-input", '[data-slot="tags-input-item"] button'],
+		]) {
+			await page.goto(`/zh/docs/components/${slug}`);
+			const button = page.locator(`.preview ${selector}`).first();
+			await expect(button).toBeEnabled();
+			await page.keyboard.press("Tab");
+			await button.focus();
+			await expect(button).toHaveCSS("outline-offset", "-1px");
+			await expect
+				.poll(() => readFocusStyles(button))
+				.toMatchObject({
+					outsideOutline: false,
+					outerRings: [],
+				});
+		}
+
 		await page.goto("/zh/docs/components/card");
 		const link = page.getByRole("link", { name: "Forgot your password?" }).first();
 		await page.keyboard.press("Tab");

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Accordion as AccordionPrimitive } from "bits-ui";
 	import { cn, type WithoutChild } from "$lib/utils.js";
+	import { getAccordionAppearance } from "./accordion-context.js";
 
 	let {
 		ref = $bindable(null),
@@ -8,6 +9,8 @@
 		children,
 		...restProps
 	}: WithoutChild<AccordionPrimitive.ContentProps> = $props();
+
+	const appearance = getAccordionAppearance();
 </script>
 
 <!-- parity-ignore-upstream: h-(--radix-accordion-content-height) | Radix leaves the height var unset until measured; Bits initializes it to 0px, so pinning the inner height to it would collapse the content before the first measurement -->
@@ -15,6 +18,7 @@
 	bind:ref
 	data-slot="accordion-content"
 	class="cn-accordion-content overflow-hidden"
+	data-appearance={appearance()}
 	{...restProps}
 >
 	<div
@@ -22,6 +26,7 @@
 			"cn-accordion-content-inner [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
 			className
 		)}
+		data-appearance={appearance()}
 	>
 		{@render children?.()}
 	</div>

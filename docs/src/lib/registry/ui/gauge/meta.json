@@ -2,15 +2,15 @@
 	"name": "gauge",
 	"type": "registry:ui",
 	"title": "Gauge 仪表",
-	"description": "静态百分比仪表和可组合的 SVG 弧线，保留超限读数。",
+	"description": "静态百分比仪表、紧凑迭代容量和可组合的 SVG 弧线，保留超限读数。",
 	"categories": ["展示"],
 	"meta": {
 		"valar": {
-			"keywords": ["gauge", "仪表", "百分比", "quota"],
-			"whenToUse": ["显示一个只读配额百分比或组合独立同心弧线"],
+			"keywords": ["gauge", "仪表", "百分比", "quota", "迭代容量", "capacity"],
+			"whenToUse": ["显示一个只读配额百分比或组合独立同心弧线", "在迭代列表同一行显示容量和超限读数"],
 			"whenNotToUse": [{ "case": "需要让用户调整数值", "use": "slider" }],
 			"accessibility": ["label 和 valueText 由调用方本地化；超限读数保留在文字中"],
-			"responsive": ["宽度由容器控制，保持 100:90 比例"],
+			"responsive": ["通用仪表保持 100:90 比例", "迭代容量使用 16 px 弧线，说明可换行"],
 			"related": ["tick-meter", "progress"]
 		}
 	}

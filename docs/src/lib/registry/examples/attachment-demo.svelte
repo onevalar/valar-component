@@ -26,7 +26,7 @@
 	];
 </script>
 
-<div class="mx-auto flex w-full max-w-sm flex-col gap-3 py-12">
+<div class="mx-auto flex w-full max-w-sm min-w-0 flex-col gap-3 py-12 [contain:inline-size]">
 	<Attachment.Group>
 		{#each images as image (image.name)}
 			<Attachment.Root orientation="vertical">

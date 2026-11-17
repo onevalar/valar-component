@@ -1,3 +1,7 @@
-<h2 class="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-	The People of the Kingdom
-</h2>
+<script lang="ts">
+	import { Typography } from "$lib/registry/ui/typography/index.js";
+</script>
+
+<Typography class="w-full max-w-xl">
+	<h2>Verify the update</h2>
+</Typography>

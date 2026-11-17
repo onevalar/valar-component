@@ -4,6 +4,7 @@
 	"title": "Attachment 附件",
 	"description": "显示文件或图片附件，包含缩略图、名称、上传状态和操作。",
 	"categories": ["展示"],
+	"registryDependencies": ["button", "scroll-area"],
 	"meta": {
 		"valar": {
 			"keywords": ["附件", "attachment", "文件", "上传", "图片附件"],
@@ -28,10 +29,10 @@
 			"accessibility": [
 				"只有图标的 Attachment.Action 和覆盖整卡的 Attachment.Trigger 都要加 aria-label",
 				"error 状态要在 Attachment.Description 写明原因，不能只靠颜色",
-				"纯展示的 Attachment.Group 加 tabindex=0、role=group 和 aria-label，便于键盘滚动"
+				"为纯展示的 Attachment.Group 提供 aria-label，使实际滚动视口可通过键盘操作"
 			],
 			"responsive": [
-				"Attachment.Group 横向滚动、吸附，边缘渐隐",
+				"Attachment.Group 使用悬浮 Scroll Area，横向吸附，也可改为纵向排列",
 				"size（default、sm、xs）与 orientation 适应紧凑空间"
 			],
 			"related": ["message", "item", "progress"]

@@ -1,16 +1,11 @@
 <script lang="ts">
+	import { getLocale } from "$lib/i18n/index.js";
 	import { RulerSlider } from "$lib/registry/ui/ruler-slider/index.js";
-	let reference = $state(50);
+	const text = (zh: string, en: string) => (getLocale() === "zh" ? zh : en);
 </script>
 
 <RulerSlider
-	label="参考预算"
-	bind:value={reference}
-	min={0}
-	max={100}
-	step={1}
-	majorEvery={10}
-	unit="USD"
-	animateReadout={false}
+	label={text("参考预算", "Reference budget")}
+	defaultValue={50}
 	class="w-full max-w-md"
 />

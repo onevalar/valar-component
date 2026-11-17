@@ -16,7 +16,7 @@
 
 <div
 	data-slot="carousel-content"
-	class="overflow-hidden"
+	class={emblaCtx.appearance === "media" ? "h-full min-h-0 w-full overflow-hidden" : "overflow-hidden"}
 	use:emblaCarouselSvelte={{
 		options: {
 			container: "[data-embla-container]",
@@ -32,12 +32,15 @@
 		bind:this={ref}
 		data-slot="carousel-container"
 		data-orientation={emblaCtx.orientation}
+		data-appearance={emblaCtx.appearance}
 		class={cn(
 			"flex",
-			emblaCtx.orientation === "horizontal" ? "-ms-4" : "-mt-4 flex-col",
-			emblaCtx.orientation === "horizontal"
-				? "cn-carousel-content-horizontal"
-				: "cn-carousel-content-vertical",
+			emblaCtx.appearance === "media"
+				? "h-full min-h-0"
+				: emblaCtx.orientation === "horizontal"
+					? "-ms-4 cn-carousel-content-horizontal"
+					: "-mt-4 cn-carousel-content-vertical",
+			emblaCtx.orientation === "vertical" && "flex-col",
 			className
 		)}
 		data-embla-container=""

@@ -3,7 +3,12 @@
 	import * as InputOTP from "$lib/registry/ui/input-otp/index.js";
 </script>
 
-<InputOTP.Root maxlength={6} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}>
+<InputOTP.Root
+	maxlength={6}
+	pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+	inputmode="text"
+	aria-label="Alphanumeric code"
+>
 	{#snippet children({ cells })}
 		<InputOTP.Group>
 			{#each cells.slice(0, 3) as cell (cell)}

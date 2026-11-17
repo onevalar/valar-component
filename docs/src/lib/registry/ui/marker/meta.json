@@ -23,7 +23,7 @@
 				}
 			],
 			"accessibility": [
-				"进行中的状态设 role=status，并配合 spinner",
+				"进行中的状态设 role=status，Agent 思考外观已包含状态语义",
 				"带文字的分隔不要加 role=separator，否则文字不会被朗读",
 				"Marker.Icon 对读屏隐藏，含义写在 Marker.Content"
 			],

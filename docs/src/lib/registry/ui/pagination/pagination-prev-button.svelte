@@ -23,14 +23,15 @@
 		hugeicons="ArrowLeftIcon"
 		phosphor="CaretLeftIcon"
 		remixicon="RiArrowLeftSLine"
-		class={cn("cn-rtl-flip size-4", className)}
+		aria-hidden="true"
+		class="cn-rtl-flip size-4"
 	/>
 	<span>{label}</span>
 {/snippet}
 
 <PaginationPrimitive.PrevButton
 	bind:ref
-	aria-label="上一页"
+	aria-label={label}
 	class={cn(buttonVariants({ variant: "ghost" }), "cn-pagination-previous", className)}
 	{...restProps}
 >

@@ -10,23 +10,23 @@
 	<Field.Field>
 		<Field.Label for="invalid">Invalid State</Field.Label>
 		<Field.Description>Example showing the invalid error state.</Field.Description>
-		<InputOTP.Root id="invalid" maxlength={6} bind:value>
+		<InputOTP.Root inputId="invalid" maxlength={6} bind:value aria-invalid>
 			{#snippet children({ cells })}
 				<InputOTP.Group>
 					{#each cells.slice(0, 2) as cell (cell)}
-						<InputOTP.Slot {cell} aria-invalid />
+						<InputOTP.Slot {cell} />
 					{/each}
 				</InputOTP.Group>
 				<InputOTP.Separator />
 				<InputOTP.Group>
 					{#each cells.slice(2, 4) as cell (cell)}
-						<InputOTP.Slot {cell} aria-invalid />
+						<InputOTP.Slot {cell} />
 					{/each}
 				</InputOTP.Group>
 				<InputOTP.Separator />
 				<InputOTP.Group>
 					{#each cells.slice(4, 6) as cell (cell)}
-						<InputOTP.Slot {cell} aria-invalid />
+						<InputOTP.Slot {cell} />
 					{/each}
 				</InputOTP.Group>
 			{/snippet}

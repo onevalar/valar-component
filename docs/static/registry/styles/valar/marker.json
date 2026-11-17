@@ -35,7 +35,7 @@
 				}
 			],
 			"accessibility": [
-				"进行中的状态设 role=status，并配合 spinner",
+				"进行中的状态设 role=status，Agent 思考外观已包含状态语义",
 				"带文字的分隔不要加 role=separator，否则文字不会被朗读",
 				"Marker.Icon 对读屏隐藏，含义写在 Marker.Content"
 			],
@@ -51,7 +51,7 @@
 	},
 	"files": [
 		{
-			"content": "# Marker 设计规范\n\n- 用于对话中的状态、系统提示、带边框的行或带文字的分隔；样式只用 `variant`（`default`、`border`、`separator`）。\n- Marker 默认没有角色，按用途选择：进行中的状态（“正在思考…”）设 `role=\"status\"`；带文字的分隔（日期）不要加 `role=\"separator\"`，否则文字不会被读出。\n- `Marker.Icon` 对读屏器隐藏，含义写在 `Marker.Content` 里；只有图标时给 `Marker.Root` 设 `aria-label`。\n- 可点击时用 `child` snippet 渲染为 Button 或链接。\n- Marker 的文字是弱化色，放在里面的 outline、ghost 按钮会继承这个颜色而显得不可点击；给按钮加 `class=\"text-foreground\"`。\n",
+			"content": "# Marker 设计规范\n\n- 用于对话中的状态、系统提示、带边框的行或带文字的分隔；样式只用 `variant`（`default`、`border`、`separator`）。\n- Marker 默认没有角色，按用途选择：进行中的状态（“正在思考…”）设 `role=\"status\"`；带文字的分隔（日期）不要加 `role=\"separator\"`，否则文字不会被读出。\n- `Marker.Icon` 对读屏器隐藏，含义写在 `Marker.Content` 里；只有图标时给 `Marker.Root` 设 `aria-label`。\n- 可点击时用 `child` snippet 渲染为 Button 或链接。\n- Marker 的文字是弱化色，放在里面的 outline、ghost 按钮会继承这个颜色而显得不可点击；给按钮加 `class=\"text-foreground\"`。\n- `appearance=\"thinking\"` 用于 Agent 回复前的简短状态。采用 13 px／500 文字、300 ms 淡入和 2.4 秒扫光。默认播报状态，减少动态效果时只显示文字。进入工具处理或停止时卸载该标记。\n",
 			"type": "registry:file",
 			"target": "marker/RULES.md"
 		},
@@ -61,7 +61,7 @@
 			"target": "marker/index.ts"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLSpanElement>> = $props();\n</script>\n\n<span\n\tbind:this={ref}\n\tdata-slot=\"marker-content\"\n\tclass={cn(\"group-data-[variant=separator]/marker:flex-none group-data-[variant=separator]/marker:text-center *:[a]:hover:text-foreground *:[a]:underline *:[a]:underline-offset-3 min-w-0 wrap-break-word\", className)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</span>\n",
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLSpanElement>> = $props();\n</script>\n\n<span\n\tbind:this={ref}\n\tdata-slot=\"marker-content\"\n\tclass={cn(\n\t\t\"group-data-[variant=separator]/marker:flex-none group-data-[variant=separator]/marker:text-center *:[a]:hover:text-foreground *:[a]:underline *:[a]:underline-offset-3 min-w-0 wrap-break-word motion-safe:group-data-[appearance=thinking]/marker:shimmer group-data-[appearance=thinking]/marker:shimmer-duration-2400 group-data-[appearance=thinking]/marker:shimmer-color-primary\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</span>\n",
 			"type": "registry:file",
 			"target": "marker/marker-content.svelte"
 		},
@@ -71,7 +71,7 @@
 			"target": "marker/marker-icon.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\" module>\n\timport { tv, type VariantProps } from \"tailwind-variants\";\n\n\texport const markerVariants = tv({\n\t\tbase: \"gap-2 text-sm text-muted-foreground [a]:hover:text-foreground [a]:underline-offset-3 [a]:underline [&_svg:not([class*='size-'])]:size-4 min-h-4 text-left group/marker relative flex w-full items-center\",\n\t\tvariants: {\n\t\t\tvariant: {\n\t\t\t\tdefault: \"\",\n\t\t\t\tseparator: \"before:h-px before:min-w-0 before:flex-1 before:bg-border after:h-px after:min-w-0 after:flex-1 after:bg-border before:mr-1 after:ml-1\",\n\t\t\t\tborder: \"border-b border-border pb-2\",\n\t\t\t},\n\t\t},\n\t\tdefaultVariants: {\n\t\t\tvariant: \"default\",\n\t\t},\n\t});\n\n\texport type MarkerVariant = VariantProps<typeof markerVariants>[\"variant\"];\n</script>\n\n<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { Snippet } from \"svelte\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tvariant = \"default\",\n\t\tchild,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {\n\t\tvariant?: MarkerVariant;\n\t\tchild?: Snippet<[{ props: Record<string, unknown> }]>;\n\t} = $props();\n\n\tconst mergedProps = $derived({\n\t\tclass: cn(markerVariants({ variant }), className),\n\t\t\"data-slot\": \"marker\",\n\t\t\"data-variant\": variant,\n\t\t...restProps,\n\t});\n</script>\n\n{#if child}\n\t{@render child({ props: mergedProps })}\n{:else}\n\t<div bind:this={ref} {...mergedProps}>\n\t\t{@render mergedProps.children?.()}\n\t</div>\n{/if}\n",
+			"content": "<script lang=\"ts\" module>\n\timport { tv, type VariantProps } from \"tailwind-variants\";\n\n\texport const markerVariants = tv({\n\t\tbase: \"gap-2 text-sm text-muted-foreground [a]:hover:text-foreground [a]:underline-offset-3 [a]:underline [&_svg:not([class*='size-'])]:size-4 min-h-4 text-left group/marker relative flex w-full items-center\",\n\t\tvariants: {\n\t\t\tvariant: {\n\t\t\t\tdefault: \"\",\n\t\t\t\tseparator: \"before:h-px before:min-w-0 before:flex-1 before:bg-border after:h-px after:min-w-0 after:flex-1 after:bg-border before:mr-1 after:ml-1\",\n\t\t\t\tborder: \"border-b border-border pb-2\"\n\t\t\t}\n\t\t},\n\t\tdefaultVariants: {\n\t\t\tvariant: \"default\"\n\t\t}\n\t});\n\n\texport type MarkerVariant = VariantProps<typeof markerVariants>[\"variant\"];\n</script>\n\n<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { Snippet } from \"svelte\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tvariant = \"default\",\n\t\tappearance,\n\t\tchild,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {\n\t\tvariant?: MarkerVariant;\n\t\tappearance?: \"thinking\";\n\t\tchild?: Snippet<[{ props: Record<string, unknown> }]>;\n\t} = $props();\n\n\tconst mergedProps = $derived({\n\t\tclass: cn(\n\t\t\tmarkerVariants({ variant }),\n\t\t\tappearance === \"thinking\" &&\n\t\t\t\t\"min-h-[15.5px] text-[13px]/[15.5px] font-medium text-[rgb(94_94_95)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-300 dark:text-[rgb(92_92_95)] motion-reduce:dark:text-muted-foreground\",\n\t\t\tclassName\n\t\t),\n\t\t\"data-slot\": \"marker\",\n\t\t\"data-variant\": variant,\n\t\t\"data-appearance\": appearance,\n\t\trole: appearance === \"thinking\" ? (\"status\" as const) : undefined,\n\t\t...restProps\n\t});\n</script>\n\n{#if child}\n\t{@render child({ props: mergedProps })}\n{:else}\n\t<div bind:this={ref} {...mergedProps}>\n\t\t{@render mergedProps.children?.()}\n\t</div>\n{/if}\n",
 			"type": "registry:file",
 			"target": "marker/marker.svelte"
 		}

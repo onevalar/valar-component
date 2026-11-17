@@ -1,56 +1,32 @@
-<div class="my-6 w-full overflow-y-auto">
-	<table class="w-full">
-		<thead>
-			<tr class="m-0 border-t p-0 even:bg-muted">
-				<th
-					class="border px-4 py-2 text-start font-bold [&[align=center]]:text-center [&[align=right]]:text-end"
-				>
-					King's Treasury
-				</th>
-				<th
-					class="border px-4 py-2 text-start font-bold [&[align=center]]:text-center [&[align=right]]:text-end"
-				>
-					People's happiness
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="m-0 border-t p-0 even:bg-muted">
-				<td
-					class="border px-4 py-2 text-start [&[align=center]]:text-center [&[align=right]]:text-end"
-				>
-					Empty
-				</td>
-				<td
-					class="border px-4 py-2 text-start [&[align=center]]:text-center [&[align=right]]:text-end"
-				>
-					Overflowing
-				</td>
-			</tr>
-			<tr class="m-0 border-t p-0 even:bg-muted">
-				<td
-					class="border px-4 py-2 text-start [&[align=center]]:text-center [&[align=right]]:text-end"
-				>
-					Modest
-				</td>
-				<td
-					class="border px-4 py-2 text-start [&[align=center]]:text-center [&[align=right]]:text-end"
-				>
-					Satisfied
-				</td>
-			</tr>
-			<tr class="m-0 border-t p-0 even:bg-muted">
-				<td
-					class="border px-4 py-2 text-start [&[align=center]]:text-center [&[align=right]]:text-end"
-				>
-					Full
-				</td>
-				<td
-					class="border px-4 py-2 text-start [&[align=center]]:text-center [&[align=right]]:text-end"
-				>
-					Ecstatic
-				</td>
-			</tr>
-		</tbody>
-	</table>
-</div>
+<script lang="ts">
+	import * as Table from "$lib/registry/ui/table/index.js";
+	import { Typography } from "$lib/registry/ui/typography/index.js";
+
+	const results = [
+		{ check: "Reconnect", scenario: "Resume pending changes", status: "Verified" },
+		{ check: "Keyboard", scenario: "Open the review link", status: "Verified" },
+		{ check: "Narrow screen", scenario: "Read a long command", status: "Verified" },
+	];
+</script>
+
+<Typography class="w-full max-w-xl [contain:inline-size]">
+	<Table.Root class="min-w-96" scroll="overlay" scrollLabel="Scroll release checks">
+		<Table.Caption>Release checks</Table.Caption>
+		<Table.Header>
+			<Table.Row>
+				<Table.Head scope="col">Check</Table.Head>
+				<Table.Head scope="col">Scenario</Table.Head>
+				<Table.Head scope="col">Status</Table.Head>
+			</Table.Row>
+		</Table.Header>
+		<Table.Body>
+			{#each results as result (result.check)}
+				<Table.Row>
+					<Table.Cell>{result.check}</Table.Cell>
+					<Table.Cell>{result.scenario}</Table.Cell>
+					<Table.Cell>{result.status}</Table.Cell>
+				</Table.Row>
+			{/each}
+		</Table.Body>
+	</Table.Root>
+</Typography>

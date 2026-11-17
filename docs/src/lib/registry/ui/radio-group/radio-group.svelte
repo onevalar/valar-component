@@ -5,15 +5,17 @@
 	let {
 		ref = $bindable(null),
 		class: className,
+		appearance = "default",
 		value = $bindable(""),
 		...restProps
-	}: RadioGroupPrimitive.RootProps = $props();
+	}: RadioGroupPrimitive.RootProps & { appearance?: "default" | "settings" } = $props();
 </script>
 
 <RadioGroupPrimitive.Root
 	bind:ref
 	bind:value
 	data-slot="radio-group"
-	class={cn("cn-radio-group w-full", className)}
+	data-appearance={appearance}
+	class={cn("cn-radio-group w-full min-w-0", appearance === "settings" && "gap-4", className)}
 	{...restProps}
 />

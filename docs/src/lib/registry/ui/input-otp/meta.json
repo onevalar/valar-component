@@ -20,12 +20,12 @@
 			],
 			"accessibility": [
 				"基于 Bits UI PinInput，保留粘贴和键盘删除行为",
-				"用 Field 的可见标签说明位数和用途",
+				"用 inputId 连接 Field 的可见标签，用 aria-describedby 连接错误文字",
 				"用 pattern 限制可输入字符（如仅数字）"
 			],
 			"responsive": [
 				"默认 inputmode=numeric，移动端弹出数字键盘",
-				"格子多时窄屏注意总宽度，可用 InputOTP.Separator 分组"
+				"常用 4 位或 6 位按 32 px 表单尺寸；可用 InputOTP.Group 和 Separator 分组"
 			],
 			"related": ["input", "field", "number-field"]
 		}

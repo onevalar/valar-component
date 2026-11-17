@@ -14,13 +14,13 @@
 	bind:ref
 	data-slot="radio-group-item"
 	class={cn(
-		"cn-radio-group-item group/radio-group-item peer relative aspect-square shrink-0 border outline-none after:absolute after:-inset-x-3 after:-inset-y-2 disabled:cursor-not-allowed disabled:opacity-50",
+		"cn-radio-group-item group/radio-group-item peer relative aspect-square shrink-0 border outline-none disabled:cursor-not-allowed disabled:opacity-50",
 		className
 	)}
 	{...restProps}
 >
 	{#snippet children({ checked })}
-		<div data-slot="radio-group-indicator" class="cn-radio-group-indicator">
+		<div data-slot="radio-group-indicator" class="cn-radio-group-indicator" aria-hidden="true">
 			{#if checked}
 				<IconPlaceholder
 					lucide="CircleIcon"

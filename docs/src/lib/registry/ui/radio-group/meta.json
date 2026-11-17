@@ -22,8 +22,11 @@
 					"use": "tabs"
 				}
 			],
-			"accessibility": ["整组有 legend 或 aria-label", "方向键在选项间移动"],
-			"responsive": ["窄屏下纵向排列"],
+			"accessibility": [
+				"整组通过 aria-labelledby 引用 legend 或设置 aria-label",
+				"方向键在选项间移动，使用 aria-describedby 关联说明和错误"
+			],
+			"responsive": ["窄屏优先纵向排列，必须横排的长组使用悬浮 Scroll Area"],
 			"related": ["select", "checkbox", "toggle-group"]
 		}
 	}

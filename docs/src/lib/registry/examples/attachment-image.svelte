@@ -24,7 +24,7 @@
 	];
 </script>
 
-<div class="mx-auto w-full max-w-sm py-12">
+<div class="mx-auto w-full max-w-sm min-w-0 py-12 [contain:inline-size]">
 	<Attachment.Group class="w-full">
 		{#each images as image (image.name)}
 			<Attachment.Root orientation="vertical">

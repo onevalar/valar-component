@@ -59,7 +59,7 @@
 		<NavigationMenu.Item>
 			<NavigationMenu.Trigger>Getting started</NavigationMenu.Trigger>
 			<NavigationMenu.Content>
-				<ul class="w-96">
+				<ul class="w-96 max-w-[calc(100vw-4rem)]">
 					{@render ListItem({
 						href: "/docs",
 						title: "Introduction",

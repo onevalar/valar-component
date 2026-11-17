@@ -9,7 +9,7 @@
 <Example title="With Separator">
 	<Field.Field>
 		<Field.Label for="with-separator">With Separator</Field.Label>
-		<InputOTP.Root id="with-separator" maxlength={6} bind:value>
+		<InputOTP.Root inputId="with-separator" maxlength={6} bind:value>
 			{#snippet children({ cells })}
 				<InputOTP.Group>
 					{#each cells.slice(0, 2) as cell (cell)}

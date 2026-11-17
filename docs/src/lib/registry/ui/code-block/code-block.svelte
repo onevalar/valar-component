@@ -16,6 +16,7 @@
 
 	export type CodeBlockVariant = VariantProps<typeof codeBlockVariants>["variant"];
 	export type CodeBlockSize = "default" | "sm";
+	export type CodeBlockAppearance = "issue" | "agent";
 </script>
 
 <script lang="ts">
@@ -27,11 +28,13 @@
 		class: className,
 		variant = "default",
 		size = "default",
+		appearance,
 		children,
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		variant?: CodeBlockVariant;
 		size?: CodeBlockSize;
+		appearance?: CodeBlockAppearance;
 	} = $props();
 </script>
 
@@ -40,7 +43,8 @@
 	data-slot="code-block"
 	data-variant={variant}
 	data-size={size}
-	class={cn(codeBlockVariants({ variant }), className)}
+	data-appearance={appearance}
+	class={cn(codeBlockVariants({ variant }), appearance && "cn-code-block-linear", className)}
 	{...restProps}
 >
 	{@render children?.()}

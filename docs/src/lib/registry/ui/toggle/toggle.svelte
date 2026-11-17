@@ -35,10 +35,12 @@
 		class: className,
 		size = "default",
 		variant = "default",
+		appearance,
 		...restProps
 	}: TogglePrimitive.RootProps & {
 		variant?: ToggleVariant;
 		size?: ToggleSize;
+		appearance?: "formatting" | "toolbar";
 	} = $props();
 </script>
 
@@ -48,6 +50,15 @@
 	data-slot="toggle"
 	data-size={size}
 	data-variant={variant}
-	class={cn(toggleVariants({ variant, size }), className)}
+	data-appearance={appearance}
+	class={cn(
+		"group/toggle",
+		appearance === "formatting"
+			? "cn-formatting-toggle"
+			: appearance === "toolbar"
+				? "cn-toolbar-icon cn-toggle-workspace"
+				: toggleVariants({ variant, size }),
+		className
+	)}
 	{...restProps}
 />

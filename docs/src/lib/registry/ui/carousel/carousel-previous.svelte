@@ -8,7 +8,7 @@
 	let {
 		ref = $bindable(null),
 		class: className,
-		variant = "outline",
+		variant,
 		size = "icon-sm",
 		label = "上一张",
 		...restProps
@@ -18,33 +18,48 @@
 	} = $props();
 
 	const emblaCtx = getEmblaContext("<Carousel.Previous/>");
+	const isMedia = $derived(emblaCtx.appearance === "media");
 </script>
 
 <Button
 	data-slot="carousel-previous"
-	{variant}
+	variant={variant ?? (isMedia ? "ghost" : "outline")}
 	{size}
 	aria-disabled={!emblaCtx.canScrollPrev}
-	disabled={!emblaCtx.canScrollPrev}
+	disabled={!isMedia && !emblaCtx.canScrollPrev}
 	class={cn(
-		"cn-carousel-previous absolute touch-manipulation",
-		emblaCtx.orientation === "horizontal"
+		"touch-manipulation",
+		isMedia
+			? "size-7 shrink-0"
+			: "cn-carousel-previous absolute",
+		!isMedia && (emblaCtx.orientation === "horizontal"
 			? "inset-y-0 -start-12 my-auto"
-			: "start-1/2 -top-12 -translate-x-1/2 rotate-90",
+			: "start-1/2 -top-12 -translate-x-1/2 rotate-90"),
 		className
 	)}
 	onclick={emblaCtx.scrollPrev}
-	onkeydown={emblaCtx.handleKeyDown}
+	onkeydown={isMedia ? undefined : emblaCtx.handleKeyDown}
 	{...restProps}
 	bind:ref
 >
-	<IconPlaceholder
-		lucide="ChevronLeftIcon"
-		tabler="IconChevronLeft"
-		hugeicons="ArrowLeft01Icon"
-		phosphor="CaretLeftIcon"
-		remixicon="RiArrowLeftSLine"
-		class="cn-rtl-flip"
-	/>
+	{#if isMedia}
+		<IconPlaceholder
+			lucide="ArrowUpIcon"
+			tabler="IconArrowUp"
+			hugeicons="ArrowUp01Icon"
+			phosphor="ArrowUpIcon"
+			remixicon="RiArrowUpLine"
+			class="size-3.5 text-[color:lch(19.588%_1.25_282)] dark:text-[color:lch(90.451%_1.2_272)]"
+		/>
+	{:else}
+		<IconPlaceholder
+			lucide="ChevronLeftIcon"
+			tabler="IconChevronLeft"
+			hugeicons="ArrowLeft01Icon"
+			phosphor="CaretLeftIcon"
+			remixicon="RiArrowLeftSLine"
+			class="cn-rtl-flip"
+		/>
+	{/if}
 	<span class="sr-only">{label}</span>
 </Button>

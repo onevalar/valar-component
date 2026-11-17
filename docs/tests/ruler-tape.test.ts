@@ -186,6 +186,34 @@ it("reduced motion keeps drag, tap and wheel input but suppresses elasticity and
 	expect(frames.size).toBe(0);
 });
 
+it("reaches an off-step maximum through End and resumes regular ticks with the arrows", () => {
+	preference.matches = true;
+	const { commit } = render({ defaultValue: 50, max: 50.2, step: 1, spacing: 10 });
+	slider().dispatchEvent(new KeyboardEvent("keydown", { key: "End" }));
+	flushSync();
+	expect(value()).toBe(50.2);
+	expect(slider().getAttribute("aria-valuetext")).toBe("50.2");
+	expect(offset()).toBeCloseTo(-502);
+	expect(commit).toHaveBeenLastCalledWith(50.2);
+	slider().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft" }));
+	flushSync();
+	expect(value()).toBe(49);
+});
+
+it("honors a live reduced-motion preference while a committed target is gliding", () => {
+	const { commit } = render();
+	slider().dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+	flushSync();
+	expect(value()).toBe(51);
+	expect(offset()).toBe(-100);
+	preference.matches = true;
+	preference.dispatchEvent(new Event("change"));
+	flushSync();
+	expect(offset()).toBe(-102);
+	expect(frames.size).toBe(0);
+	expect(commit).toHaveBeenCalledExactlyOnceWith(51);
+});
+
 it("unmount removes wheel/gesture listeners and cancels queued frames and commits", async () => {
 	const { change, commit } = render();
 	const node = slider();

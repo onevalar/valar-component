@@ -17,13 +17,13 @@
 	bind:ref
 	data-slot="trace-collapsible-trigger"
 	class={cn(
-		"cn-trace-collapsible-trigger group/trace-collapsible-trigger flex w-fit max-w-full min-w-0 cursor-pointer items-center text-left text-muted-foreground transition-colors outline-none hover:text-foreground has-[[data-status=error]]:text-destructive",
+		"cn-trace-collapsible-trigger group/trace-collapsible-trigger flex w-fit max-w-full min-w-0 cursor-pointer items-center text-start text-muted-foreground outline-none hover:text-foreground has-[[data-status=error]]:text-destructive motion-safe:transition-colors",
 		className
 	)}
 	{...restProps}
 >
 	{@render children?.()}
-	<TraceIcon class="transition-transform group-aria-expanded/trace-collapsible-trigger:rotate-90">
+	<TraceIcon class="motion-safe:transition-transform group-aria-expanded/trace-collapsible-trigger:rotate-90">
 		<IconPlaceholder
 			lucide="ChevronRightIcon"
 			tabler="IconChevronRight"

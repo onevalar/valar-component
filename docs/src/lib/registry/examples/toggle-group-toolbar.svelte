@@ -1,6 +1,7 @@
 <script lang="ts">
 	import BoldIcon from "@lucide/svelte/icons/bold";
 	import ItalicIcon from "@lucide/svelte/icons/italic";
+	import UnderlineIcon from "@lucide/svelte/icons/underline";
 	import * as ToggleGroup from "$lib/registry/ui/toggle-group/index.js";
 
 	let formats = $state<string[]>([]);
@@ -16,6 +17,9 @@
 	>
 		<ToggleGroup.Item value="bold" aria-label="Bold"><BoldIcon /></ToggleGroup.Item>
 		<ToggleGroup.Item value="italic" aria-label="Italic"><ItalicIcon /></ToggleGroup.Item>
+		<ToggleGroup.Item value="underline" aria-label="Underline" disabled
+			><UnderlineIcon /></ToggleGroup.Item
+		>
 	</ToggleGroup.Root>
 	<p
 		class="text-sm"

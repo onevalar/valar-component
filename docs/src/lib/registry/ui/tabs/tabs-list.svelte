@@ -49,8 +49,15 @@
 		const start = list.getBoundingClientRect().left + list.clientLeft;
 		const end = start + list.clientWidth;
 		const bounds = tab.getBoundingClientRect();
-		if (bounds.left < start) list.scrollBy({ left: bounds.left - start, behavior: "instant" });
-		else if (bounds.right > end) list.scrollBy({ left: bounds.right - end, behavior: "instant" });
+		const tabs = list.querySelectorAll<HTMLElement>(":scope > [data-tabs-trigger]");
+		const rtl = getComputedStyle(list).direction === "rtl";
+		if (tab === tabs[0]) list.scrollTo({ left: 0, behavior: "instant" });
+		else if (tab === tabs[tabs.length - 1])
+			list.scrollTo({ left: (rtl ? -1 : 1) * list.scrollWidth, behavior: "instant" });
+		else if (bounds.left < start)
+			list.scrollBy({ left: bounds.left - start, behavior: "instant" });
+		else if (bounds.right > end)
+			list.scrollBy({ left: bounds.right - end, behavior: "instant" });
 	};
 </script>
 

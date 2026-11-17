@@ -4,6 +4,7 @@
 	import TableIcon from "@lucide/svelte/icons/table";
 	import XIcon from "@lucide/svelte/icons/x";
 	import * as Attachment from "$lib/registry/ui/attachment/index.js";
+	import { getLocale } from "$lib/i18n/index.js";
 	import type { Component } from "svelte";
 
 	type Item = {
@@ -25,8 +26,11 @@
 	];
 </script>
 
-<div class="mx-auto w-full max-w-sm py-12">
-	<Attachment.Group class="w-full">
+<div class="mx-auto w-full max-w-sm min-w-0 py-12 [contain:inline-size]">
+	<Attachment.Group
+		class="w-full"
+		aria-label={getLocale() === "zh" ? "附件列表" : "Attachment list"}
+	>
 		{#each items as item (item.name)}
 			{@const Icon = item.icon}
 			<Attachment.Root class="w-64">

@@ -4,6 +4,7 @@ export const clamp = (value: number, min: number, max: number) =>
 	Math.min(max, Math.max(min, value));
 export const decimalsOf = (value: number) => (String(value).split(".")[1] ?? "").length;
 export function snap(value: number, min: number, max: number, step: number) {
+	if (value >= max) return max;
 	return clamp(
 		Number(
 			(min + Math.round((value - min) / step) * step).toFixed(
@@ -263,11 +264,12 @@ export function createRulerMotion(node: HTMLDivElement, initial: number, options
 		preferenceChanged() {
 			if (!options.get().reduced) return;
 			const commit = coasting;
+			const target = coasting || drag ? snapped(position) : latest;
 			stop();
-			place(snapped(position));
+			place(target);
 			if (commit) {
-				emit(snapped(position));
-				options.commit(snapped(position));
+				emit(target);
+				options.commit(target);
 			}
 		},
 		destroy() {

@@ -1,3 +1,7 @@
-<code class="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
-	@lucide/svelte
-</code>
+<script lang="ts">
+	import { Typography } from "$lib/registry/ui/typography/index.js";
+</script>
+
+<Typography class="w-full max-w-xl">
+	<p>Use <code>pnpm test</code> to run the checks.</p>
+</Typography>

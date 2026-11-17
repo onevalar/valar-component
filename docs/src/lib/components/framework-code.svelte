@@ -23,7 +23,7 @@
 	</CodeBlock.Header>
 	<CodeBlock.Content wrap class="data-wrap:wrap-anywhere">
 		{#each lines.current as line, index (index)}
-			<CodeBlock.Line code={line} />
+			<CodeBlock.Line code={line} class="mx-0 px-0" />
 		{/each}
 	</CodeBlock.Content>
 </CodeBlock.Root>

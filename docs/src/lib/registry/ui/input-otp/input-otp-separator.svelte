@@ -16,7 +16,7 @@
 	bind:this={ref}
 	data-slot="input-otp-separator"
 	role="separator"
-	class={cn("cn-input-otp-separator flex items-center", className)}
+	class={cn("cn-input-otp-separator flex shrink-0 items-center", className)}
 	{...restProps}
 >
 	{#if children}

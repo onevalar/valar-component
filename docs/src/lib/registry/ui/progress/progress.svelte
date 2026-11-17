@@ -15,8 +15,13 @@
 	} = $props();
 
 	const projectClass = $derived(appearance === "project" && "cn-progress-project");
-	const currentValue = $derived(value === null ? null : Math.min(max, Math.max(min, value)));
-	const fraction = $derived(currentValue !== null && max > min ? (currentValue - min) / (max - min) : 0);
+	const validRange = $derived(Number.isFinite(max - min) && max > min);
+	const currentValue = $derived(
+		validRange && value !== null && Number.isFinite(value)
+			? Math.min(max, Math.max(min, value))
+			: null
+	);
+	const fraction = $derived(currentValue === null ? 0 : (currentValue - min) / (max - min));
 </script>
 
 <ProgressPrimitive.Root
@@ -24,13 +29,13 @@
 	data-slot="progress"
 	data-appearance={appearance === "project" ? "project" : undefined}
 	class={cn(
-		"cn-progress relative flex w-full items-center overflow-x-hidden",
+		"cn-progress relative flex w-full min-w-0 items-center overflow-clip",
 		projectClass,
 		className
 	)}
 	value={currentValue}
-	{min}
-	{max}
+	min={validRange ? min : 0}
+	max={validRange ? max : 100}
 	{...restProps}
 >
 	{#if appearance === "project"}
@@ -38,6 +43,7 @@
 	{:else}
 		<div
 			data-slot="progress-indicator"
+			aria-hidden="true"
 			data-indeterminate={currentValue === null ? "" : undefined}
 			class="cn-progress-indicator h-full shrink-0 rounded-[inherit] transition-[width] duration-150 data-indeterminate:mx-auto motion-safe:data-indeterminate:animate-pulse motion-reduce:transition-none"
 			style:width={currentValue === null ? "35%" : `${fraction * 100}%`}

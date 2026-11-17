@@ -7,3 +7,4 @@
 - 需要排序、筛选、分页、选择行时，按 Data Table 文档用 TanStack Table 组合，不要自己实现；表头上的排序按钮要说明排序状态。
 - 空表格用 Empty 说明原因，不要只显示空白。
 - 列宽固定或预期窄屏溢出时，传 `scrollLabel` 为滚动区命名，让键盘用户能用 Tab 进入，再用方向键横向移动。列首复选框依逻辑方向对齐。
+- Data Table 设置 `scroll="overlay"`，由 Scroll Area 承载横向滚动。通过 `scrollLabel` 命名滚动视口，滑块覆盖表格底部，横向滚动不改变内容宽度。

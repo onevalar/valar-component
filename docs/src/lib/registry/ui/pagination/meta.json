@@ -2,12 +2,12 @@
 	"name": "pagination",
 	"type": "registry:ui",
 	"title": "Pagination 分页",
-	"description": "页码与上一页、下一页导航。",
+	"description": "页码导航和带结果计数的前后翻页。",
 	"categories": ["导航"],
 	"meta": {
 		"valar": {
 			"keywords": ["分页", "pagination", "页码", "上一页", "下一页"],
-			"whenToUse": ["把长列表或表格分成多页浏览"],
+			"whenToUse": ["把长列表或表格分成多页浏览", "在用量记录或表格结果显示当前范围与总数"],
 			"whenNotToUse": [
 				{
 					"case": "显示层级位置",
@@ -24,9 +24,10 @@
 			],
 			"accessibility": [
 				"当前页带 aria-current=page",
-				"上一页／下一页默认中文文字和 aria-label，其他语言传 label 和 aria-label 覆盖"
+				"上一页／下一页默认中文文字和 aria-label，其他语言传 label 和 aria-label 覆盖",
+				"结果计数随翻页播报，零结果和单页禁用前后按钮"
 			],
-			"responsive": ["上一页／下一页的文字在 sm 以下隐藏，只留图标", "窄屏减少显示的页码数"],
+			"responsive": ["上一页／下一页的文字在 sm 以下隐藏，只留图标", "窄屏减少显示的页码数", "紧凑结果栏和相邻操作可换行"],
 			"related": ["table", "breadcrumb", "button"]
 		}
 	}

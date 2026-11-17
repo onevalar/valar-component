@@ -11,6 +11,7 @@ import Line, {
 } from "./code-block-line.svelte";
 import Root, {
 	codeBlockVariants,
+	type CodeBlockAppearance,
 	type CodeBlockSize,
 	type CodeBlockVariant,
 } from "./code-block.svelte";
@@ -26,6 +27,7 @@ export {
 	Footer,
 	codeBlockVariants,
 	codeBlockLineVariants,
+	type CodeBlockAppearance,
 	type CodeBlockVariant,
 	type CodeBlockSize,
 	type CodeBlockLineVariant,

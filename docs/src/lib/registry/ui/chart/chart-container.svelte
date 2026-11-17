@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { cn, type WithElementRef } from "$lib/utils.js";
 	import ChartStyle from "./chart-style.svelte";
-	import { setChartContext, type ChartConfig } from "./chart-utils.js";
+	import { insightPriorityColors, setChartContext, type ChartConfig } from "./chart-utils.js";
 	import type { HTMLAttributes } from "svelte/elements";
 
 	const uid = $props.id();
@@ -12,9 +12,11 @@
 		class: className,
 		children,
 		config,
+		appearance = "default",
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLElement>> & {
 		config: ChartConfig;
+		appearance?: "default" | "usage" | "insights";
 	} = $props();
 
 	const chartId = $derived(`chart-${id || uid.replace(/:/g, "")}`);
@@ -30,6 +32,7 @@
 	bind:this={ref}
 	data-chart={chartId}
 	data-slot="chart"
+	data-appearance={appearance}
 	class={cn(
 		"flex aspect-video justify-center overflow-visible text-xs",
 		// Overrides
@@ -67,7 +70,13 @@
 		"[&_.lc-labels-text:not([fill])]:fill-foreground [&_text]:stroke-transparent",
 
 		// Tick labels on th x/y axes
-		"[&_.lc-axis-tick-label]:fill-muted-foreground [&_.lc-axis-tick-label]:font-normal",
+		appearance === "usage"
+			? "aspect-auto h-80 min-w-0 bg-transparent [&_.lc-axis-tick-label]:fill-[lch(39.176%_1.25_282)] [&_.lc-axis-tick-label]:font-[450] [&_.placement-right_.lc-axis-tick-label]:text-[11px] dark:[&_.lc-axis-tick-label]:fill-[lch(61.803%_1.2_272)]"
+			: "[&_.lc-axis-tick-label]:fill-muted-foreground [&_.lc-axis-tick-label]:font-normal",
+		appearance === "insights" && [
+			"aspect-auto h-[281px] min-w-0 [&_.lc-axis-tick-label]:font-[450] [&_.placement-right_.lc-axis-tick-label]:text-[11px]",
+			insightPriorityColors
+		],
 		"[&_.lc-tooltip-rects-g]:fill-transparent",
 		"[&_.lc-layout-svg-g]:fill-transparent",
 		"[&_.lc-root-container]:w-full",

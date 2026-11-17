@@ -47,7 +47,7 @@
 	}: RulerSliderProps = $props();
 	const id = $props.id();
 	const safeStep = $derived(step > 0 ? step : 1);
-	const decimals = $derived(Math.max(decimalsOf(min), decimalsOf(safeStep)));
+	const decimals = $derived(Math.max(decimalsOf(min), decimalsOf(max), decimalsOf(safeStep)));
 	const current = $derived(snap(value, min, max, safeStep));
 	const readout = $derived(
 		format
@@ -117,17 +117,21 @@
 	data-disabled={disabled || undefined}
 	data-dragging={dragging || undefined}
 	class={cn(
-		"grid w-full min-w-0 justify-items-center gap-1 text-sm text-foreground select-none data-disabled:opacity-50",
+		"grid w-full min-w-0 gap-2 text-foreground select-none data-disabled:opacity-60",
+		"[--ruler-accent:lch(53%_52.26_286.91)] [--ruler-border:lch(86.5%_0_282)] [--ruler-surface:white] dark:[--ruler-accent:lch(47.918%_59.303_288.421)] dark:[--ruler-border:lch(30.833%_1.93_272)] dark:[--ruler-surface:lch(9.232%_.85_272)]",
 		className
 	)}
 	{...rest}
 >
-	<span id={`${id}-label`} class="text-muted-foreground">{label}</span>
-	<div
-		aria-hidden="true"
-		class="mb-3 inline-flex items-baseline gap-[0.3em] text-2xl leading-[1.1] font-medium tabular-nums"
-	>
-		<span>{readout}</span>{#if unit}<span class="text-base text-muted-foreground">{unit}</span>{/if}
+	<div class="flex min-w-0 flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+		<span id={`${id}-label`} class="min-w-0 text-[13px]/5 font-medium wrap-anywhere">{label}</span>
+		<div
+			aria-hidden="true"
+			data-slot="ruler-slider-readout"
+			class="ms-auto flex min-w-0 flex-wrap items-baseline justify-end gap-x-1 text-base leading-5 font-medium wrap-anywhere tabular-nums"
+		>
+			<bdi class="min-w-0">{readout}</bdi>{#if unit}<span class="min-w-0 text-xs text-muted-foreground">{unit}</span>{/if}
+		</div>
 	</div>
 	<div
 		bind:this={viewport}
@@ -141,7 +145,7 @@
 		aria-valuetext={unit ? `${readout} ${unit}` : readout}
 		aria-orientation="horizontal"
 		aria-disabled={disabled || undefined}
-		class="relative h-18 w-full cursor-grab touch-pan-y overflow-hidden rounded-lg border bg-background outline-none [-webkit-tap-highlight-color:transparent] focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring in-data-[disabled]:cursor-not-allowed in-data-[dragging]:cursor-grabbing"
+		class="relative h-16 w-full min-w-0 cursor-grab touch-pan-y overflow-hidden rounded-[8px] border border-[color:var(--valar-ruler-border,var(--ruler-border))] bg-[color:var(--valar-ruler-surface,var(--ruler-surface))] outline-none transition-[border-color,background-color] duration-150 [-webkit-tap-highlight-color:transparent] not-aria-disabled:hover:border-muted-foreground/60 focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-[color:var(--valar-ruler-accent,var(--ruler-accent))] in-data-[disabled]:cursor-not-allowed in-data-[dragging]:cursor-grabbing motion-reduce:transition-none"
 	>
 		<div
 			aria-hidden="true"
@@ -158,12 +162,13 @@
 			>
 				<!-- Inline, not a <style> block: this component is installed on its own and its CSS must travel with it. -->
 				<span
-					class="absolute inset-x-0 top-0 h-7"
-					style="--tick: color-mix(in oklab, var(--foreground) 20%, transparent); --tick-major: color-mix(in oklab, var(--foreground) 48%, transparent); background-image: linear-gradient(to right, var(--tick-major) 0 1px, transparent 1px), linear-gradient(to right, var(--tick) 0 1px, transparent 1px), linear-gradient(to right, var(--tick) 0 1px, transparent 1px); background-repeat: repeat-x; background-size: var(--major) 1.75rem, var(--half) 1.25rem, var(--spacing) 0.75rem;"
+					class="absolute inset-x-0 top-2 h-6"
+					style="--tick: color-mix(in oklab, var(--muted-foreground) 45%, transparent); --tick-major: var(--muted-foreground); background-image: linear-gradient(to right, var(--tick-major) 0 1px, transparent 1px), linear-gradient(to right, var(--tick) 0 1px, transparent 1px), linear-gradient(to right, var(--tick) 0 1px, transparent 1px); background-repeat: repeat-x; background-size: var(--major) 1.5rem, var(--half) 1rem, var(--spacing) 0.5rem;"
 				></span>
 				{#each marks as mark, index}
 					<span
-						class="absolute top-9 -translate-x-1/2 text-xs whitespace-nowrap text-muted-foreground tabular-nums"
+						data-slot="ruler-slider-mark"
+						class="absolute top-10 w-[max(0px,calc(var(--major)-0.5rem))] -translate-x-1/2 truncate text-center text-xs leading-4 text-muted-foreground tabular-nums"
 						style:left={`${index * spacing * majorEvery}px`}>{labelFormat(mark)}</span
 					>
 				{/each}
@@ -172,7 +177,7 @@
 		<span
 			aria-hidden="true"
 			data-slot="ruler-slider-needle"
-			class="pointer-events-none absolute top-0 left-[calc(50%-1px)] h-9 w-0.5 rounded-b-full bg-primary"
+			class="pointer-events-none absolute top-0 left-[calc(50%-1px)] h-8 w-0.5 rounded-b-full bg-[color:var(--valar-ruler-accent,var(--ruler-accent))]"
 		></span>
 	</div>
 	{#if name}<input type="hidden" {name} value={current} {disabled} />{/if}

@@ -2,8 +2,13 @@
 	import { mode } from "mode-watcher";
 	import { Toaster as Sonner, type ToasterProps as SonnerProps } from "svelte-sonner";
 	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import { cn } from "$lib/utils.js";
 
-	let { appearance = "default", ...restProps }: SonnerProps & {
+	let {
+		appearance = "default",
+		toastOptions,
+		...restProps
+	}: SonnerProps & {
 		appearance?: "default" | "workspace";
 	} = $props();
 
@@ -19,8 +24,10 @@
 	closeButton={workspace}
 	style="--normal-bg: var(--color-popover); --normal-text: var(--color-popover-foreground); --normal-border: var(--color-border);"
 	toastOptions={{
+		...toastOptions,
 		classes: {
-			toast: "cn-toast cn-sonner-layout",
+			...toastOptions?.classes,
+			toast: cn("cn-toast cn-sonner-layout", toastOptions?.classes?.toast),
 		},
 	}}
 	{...restProps}
@@ -32,7 +39,7 @@
 			hugeicons="Loading03Icon"
 			phosphor="SpinnerIcon"
 			remixicon="RiLoaderLine"
-			class="size-4 animate-spin"
+			class="size-4 animate-spin motion-reduce:animate-none"
 		/>
 	{/snippet}
 	{#snippet successIcon()}
@@ -95,10 +102,16 @@
 	}
 	/* Sonner adds its own outer focus shadows to the toast and its actions. */
 	:global([data-sonner-toaster] [data-sonner-toast]:focus-visible),
-	:global([data-sonner-toaster] [data-sonner-toast][data-styled="true"] [data-close-button]:focus-visible) {
-		box-shadow: 0 4px 12px rgb(0 0 0 / 0.1), inset 0 0 0 1px var(--ring);
+	:global(
+		[data-sonner-toaster] [data-sonner-toast][data-styled="true"] [data-close-button]:focus-visible
+	) {
+		box-shadow:
+			0 4px 12px rgb(0 0 0 / 0.1),
+			inset 0 0 0 1px var(--ring);
 	}
-	:global([data-sonner-toaster] [data-sonner-toast][data-styled="true"] [data-button]:focus-visible) {
+	:global(
+		[data-sonner-toaster] [data-sonner-toast][data-styled="true"] [data-button]:focus-visible
+	) {
 		box-shadow: inset 0 0 0 1px var(--ring);
 	}
 
@@ -110,9 +123,7 @@
 			--valar-workspace-toast-text: lch(10% 0 282);
 			--valar-workspace-toast-secondary: lch(40% 1 282);
 			--valar-workspace-toast-shadow:
-				0 0 0 0.5px rgb(0 0 0 / 0.088),
-				0 6px 18px rgb(0 0 0 / 0.02),
-				0 3px 9px rgb(0 0 0 / 0.04),
+				0 0 0 0.5px rgb(0 0 0 / 0.088), 0 6px 18px rgb(0 0 0 / 0.02), 0 3px 9px rgb(0 0 0 / 0.04),
 				0 1px 1px rgb(0 0 0 / 0.04);
 
 			&[data-sonner-theme="dark"] {
@@ -120,10 +131,8 @@
 				--valar-workspace-toast-text: lch(100% 0 272);
 				--valar-workspace-toast-secondary: lch(64.714% 1.425 272);
 				--valar-workspace-toast-shadow:
-					0 0 0 0.5px rgb(255 255 255 / 0.148),
-					0 3px 8px rgb(0 0 0 / 0.125),
-					0 2px 5px rgb(0 0 0 / 0.125),
-					0 1px 1px rgb(0 0 0 / 0.125);
+					0 0 0 0.5px rgb(255 255 255 / 0.148), 0 3px 8px rgb(0 0 0 / 0.125),
+					0 2px 5px rgb(0 0 0 / 0.125), 0 1px 1px rgb(0 0 0 / 0.125);
 			}
 
 			.cn-toast[data-sonner-toast][data-styled="true"] {
@@ -153,6 +162,17 @@
 
 				:is([data-title], [data-description]) {
 					line-height: 16px;
+					overflow-wrap: anywhere;
+				}
+
+				[data-content] {
+					min-width: 0;
+				}
+
+				[data-button] {
+					height: auto;
+					min-height: 24px;
+					flex-shrink: 0;
 				}
 
 				[data-description] {

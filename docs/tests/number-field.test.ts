@@ -125,3 +125,47 @@ it("handles percent empty, external updates, off-grid stepping and readonly/disa
 	flushSync();
 	expect(new FormData(form).has("rate")).toBe(false);
 });
+
+it("keeps the whole-dollar draft and numeric form value aligned without coercing bounds", async () => {
+	const form = document.createElement("form");
+	document.body.append(form);
+	app = mount(NumberField, {
+		target: form,
+		props: {
+			appearance: "amount",
+			name: "limit",
+			min: 0,
+			max: 2000,
+			defaultValue: 1000,
+			required: true,
+			"aria-label": "Limit in US dollars",
+		},
+	});
+	flushSync();
+	const input = form.querySelector<HTMLInputElement>('[data-slot="number-field-input"]')!;
+	const type = (raw: string) => {
+		input.value = raw;
+		input.dispatchEvent(new Event("input", { bubbles: true }));
+		flushSync();
+	};
+	expect(input.value).toBe("1,000");
+	expect(input.getAttribute("role")).toBeNull();
+	type("2001");
+	input.dispatchEvent(new FocusEvent("blur"));
+	flushSync();
+	expect(input.value).toBe("2,001");
+	expect(input.getAttribute("aria-invalid")).toBe("true");
+	expect(form.checkValidity()).toBe(false);
+	type("");
+	expect(form.checkValidity()).toBe(false);
+	expect(new FormData(form).get("limit")).toBe("");
+	type("0");
+	expect(form.checkValidity()).toBe(true);
+	expect(new FormData(form).get("limit")).toBe("0");
+	type("9007199254740993");
+	expect(input.value).toBe("0");
+	expect(new FormData(form).get("limit")).toBe("0");
+	form.reset();
+	await expect.poll(() => input.value).toBe("1,000");
+	expect(new FormData(form).get("limit")).toBe("1000");
+});

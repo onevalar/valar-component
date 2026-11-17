@@ -11,6 +11,7 @@
 	> & {
 		value?: number;
 		defaultValue?: number;
+		appearance?: "default" | "amount";
 		min?: number;
 		max?: number;
 		step?: number;
@@ -30,8 +31,9 @@
 
 	let {
 		ref = $bindable(null),
+		appearance = "default",
 		defaultValue,
-		value = $bindable<number | undefined>(defaultValue),
+		value = $bindable<number | undefined>(),
 		min,
 		max,
 		step = 1,
@@ -55,23 +57,45 @@
 		...restProps
 	}: NumberFieldProps = $props();
 
-	const initialValue = untrack(() => value);
-	const formatter = $derived(
-		new Intl.NumberFormat(locale, {
-			...(!formatOptions?.style || formatOptions.style === "decimal"
-				? { maximumFractionDigits: 12 }
-				: {}),
-			...formatOptions,
-		})
+	const amountRoot = cn(
+		"flex h-7 w-24 max-w-full min-w-0 items-center gap-1 rounded-[8px] bg-transparent px-2.5 text-xs font-[450]",
+		"[--number-field-amount-rest-border:lch(91.9%_0_282)] [--number-field-amount-focus:lch(53%_52.26_286.91)] dark:[--number-field-amount-rest-border:lch(25.905%_2.38_272)] dark:[--number-field-amount-focus:lch(47.918%_59.303_288.421)]",
+		"[--number-field-amount-border:var(--number-field-amount-rest-border)] shadow-[inset_0_0_0_0.5px_var(--number-field-amount-border)]",
+		"focus-within:[--number-field-amount-border:var(--number-field-amount-focus)] focus-within:shadow-[inset_0_0_0_1px_var(--number-field-amount-border)] has-aria-invalid:[--number-field-amount-border:var(--destructive)] data-disabled:opacity-50"
 	);
-	const parser = $derived(new NumberParser(locale, formatOptions));
+	const amountInput = cn(
+		"h-full w-full min-w-0 bg-transparent py-1.5 pe-3 text-xs font-[450] text-[color:lch(20%_1_282)] outline-none placeholder:text-[color:lch(40%_1_282)] disabled:cursor-not-allowed",
+		"dark:text-[color:lch(91.201%_1.65_272)] dark:placeholder:text-[color:lch(64.805%_1.65_272)]"
+	);
+
+	const isAmount = $derived(appearance === "amount");
+	const initialValue = untrack(() => {
+		if (value === undefined && defaultValue !== undefined) value = defaultValue;
+		return value;
+	});
+	const formatter = $derived(
+		isAmount
+			? new Intl.NumberFormat("en-US", { maximumFractionDigits: 20 })
+			: new Intl.NumberFormat(locale, {
+					...(!formatOptions?.style || formatOptions.style === "decimal"
+						? { maximumFractionDigits: 12 }
+						: {}),
+					...formatOptions,
+				})
+	);
+	const parser = $derived(
+		isAmount ? new NumberParser("en-US") : new NumberParser(locale, formatOptions)
+	);
 	let text = $state(untrack(() => (value === undefined ? "" : formatter.format(value))));
 	let lastValue: number | undefined = untrack(() => value);
 	let lastFormatter = untrack(() => formatter);
 	let composing = false;
 	const parsed = $derived(text.trim() === "" ? undefined : parser.parse(text));
 	const invalid = $derived(
-		text.trim() !== "" && (parsed === undefined || !Number.isFinite(parsed))
+		text.trim() !== "" &&
+			(parsed === undefined ||
+				!Number.isFinite(parsed) ||
+				(isAmount && value !== undefined && (!Number.isSafeInteger(value) || value < 0)))
 	);
 	const outOfRange = $derived(
 		parsed !== undefined &&
@@ -102,9 +126,38 @@
 		value = next;
 		onValueChange?.(next);
 	}
-	function edit() {
+	function edit(input: HTMLInputElement, inputType?: string) {
+		if (!isAmount) {
+			text = input.value;
+			if (composing || disabled || readonly) return;
+			update(parsed !== undefined && Number.isFinite(parsed) ? parsed : undefined);
+			return;
+		}
 		if (composing || disabled || readonly) return;
-		update(parsed !== undefined && Number.isFinite(parsed) ? parsed : undefined);
+
+		const raw = input.value;
+		const digits = raw.replace(/[^0-9]/g, "");
+		const next = digits === "" ? undefined : Number(digits);
+		const acceptable = next === undefined || Number.isSafeInteger(next);
+		const display = acceptable ? (next === undefined ? "" : formatter.format(next)) : text;
+		if (raw !== display) {
+			let remainingDigits = raw
+				.slice(input.selectionStart ?? raw.length)
+				.replace(/[^0-9]/g, "").length;
+			let caret = display.length;
+			while (caret > 0 && remainingDigits > 0) {
+				caret--;
+				if (display[caret] !== ",") remainingDigits--;
+			}
+			// A backspace that removes a separator moves past it so the next one removes a digit.
+			if (inputType === "deleteContentBackward" && next === value && display[caret - 1] === ",")
+				caret--;
+			input.value = display;
+			input.setSelectionRange(caret, caret);
+		}
+		if (!acceptable) return;
+		text = display;
+		update(next);
 	}
 	function normalize(number: number) {
 		const increment = Number.isFinite(step) && step > 0 ? step : 1;
@@ -115,7 +168,7 @@
 		return Math.min(max ?? Infinity, Math.max(min ?? -Infinity, rounded));
 	}
 	function commit() {
-		if (composing || disabled || readonly) return;
+		if (isAmount || composing || disabled || readonly) return;
 		if (text.trim() === "") {
 			update(undefined);
 			return;
@@ -144,7 +197,7 @@
 	}
 	function keydown(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
 		onkeydown?.(event);
-		if (event.defaultPrevented || event.isComposing || composing || disabled || readonly) return;
+		if (isAmount || event.defaultPrevented || event.isComposing || composing || disabled || readonly) return;
 		if (event.key === "ArrowUp" || event.key === "ArrowDown") {
 			event.preventDefault();
 			spin(event.key === "ArrowUp" ? 1 : -1);
@@ -185,49 +238,62 @@
 
 <div
 	data-slot="number-field"
+	data-appearance={appearance}
 	data-disabled={disabled || undefined}
 	class={cn(
-		"flex min-h-10 w-full items-center rounded-md border border-input bg-background text-foreground shadow-xs focus-within:border-ring has-aria-invalid:border-destructive",
-		"cn-number-field",
+		!isAmount &&
+			"flex min-h-10 w-full items-center rounded-md border border-input bg-background text-foreground shadow-xs focus-within:border-ring has-aria-invalid:border-destructive",
+		!isAmount && "cn-number-field",
+		isAmount && amountRoot,
 		className
 	)}
 >
-	<button
-		type="button"
-		data-slot="number-field-decrement"
-		aria-label={decrementLabel}
-		disabled={disabled || readonly || (value !== undefined && min !== undefined && value <= min)}
-		class={cn(
-			"size-10 shrink-0 rounded-s-md text-lg hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-40",
-			"cn-number-field-decrement"
-		)}
-		onpointerdown={(event) => event.preventDefault()}
-		onclick={() => spin(-1)}>−</button
-	>
+	{#if isAmount}
+		<span
+			data-slot="number-field-currency"
+			aria-hidden="true"
+			class="shrink-0 text-[color:lch(40%_1_282)] dark:text-[color:lch(64.805%_1.65_272)]"
+		>$</span>
+	{:else}
+		<button
+			type="button"
+			data-slot="number-field-decrement"
+			aria-label={decrementLabel}
+			disabled={disabled || readonly || (value !== undefined && min !== undefined && value <= min)}
+			class={cn(
+				"size-10 shrink-0 rounded-s-md text-lg hover:bg-muted focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring disabled:opacity-40",
+				"cn-number-field-decrement"
+			)}
+			onpointerdown={(event) => event.preventDefault()}
+			onclick={() => spin(-1)}>−</button
+		>
+	{/if}
 	<input
 		{...restProps}
 		bind:this={ref}
 		type="text"
-		role="spinbutton"
-		inputmode="decimal"
+		role={isAmount ? undefined : "spinbutton"}
+		inputmode={isAmount ? "numeric" : "decimal"}
 		data-slot="number-field-input"
+		data-appearance={appearance}
 		class={cn(
-			"h-10 w-full min-w-0 bg-transparent px-2 text-center text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50",
-			"cn-number-field-input"
+			!isAmount &&
+				"h-10 w-full min-w-0 bg-transparent px-2 text-center text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50",
+			!isAmount && "cn-number-field-input",
+			isAmount && amountInput
 		)}
 		{form}
 		{disabled}
 		{readonly}
 		{required}
 		value={text}
-		aria-valuemin={min}
-		aria-valuemax={max}
-		aria-valuenow={value}
-		aria-valuetext={text}
+		aria-valuemin={isAmount ? undefined : min}
+		aria-valuemax={isAmount ? undefined : max}
+		aria-valuenow={isAmount ? undefined : value}
+		aria-valuetext={isAmount ? undefined : text}
 		aria-invalid={invalid || outOfRange || restProps["aria-invalid"] || undefined}
 		oninput={(event) => {
-			text = event.currentTarget.value;
-			edit();
+			edit(event.currentTarget, event instanceof InputEvent ? event.inputType : undefined);
 			oninput?.(event);
 		}}
 		onblur={(event) => {
@@ -241,23 +307,24 @@
 		}}
 		oncompositionend={(event) => {
 			composing = false;
-			text = event.currentTarget.value;
-			edit();
+			edit(event.currentTarget);
 			oncompositionend?.(event);
 		}}
 	/>
-	<button
-		type="button"
-		data-slot="number-field-increment"
-		aria-label={incrementLabel}
-		disabled={disabled || readonly || (value !== undefined && max !== undefined && value >= max)}
-		class={cn(
-			"size-10 shrink-0 rounded-e-md text-lg hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-40",
-			"cn-number-field-increment"
-		)}
-		onpointerdown={(event) => event.preventDefault()}
-		onclick={() => spin(1)}>+</button
-	>
+	{#if !isAmount}
+		<button
+			type="button"
+			data-slot="number-field-increment"
+			aria-label={incrementLabel}
+			disabled={disabled || readonly || (value !== undefined && max !== undefined && value >= max)}
+			class={cn(
+				"size-10 shrink-0 rounded-e-md text-lg hover:bg-muted focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring disabled:opacity-40",
+				"cn-number-field-increment"
+			)}
+			onpointerdown={(event) => event.preventDefault()}
+			onclick={() => spin(1)}>+</button
+		>
+	{/if}
 </div>
 {#if name}
 	<input type="hidden" {name} {form} {disabled} value={value ?? ""} />

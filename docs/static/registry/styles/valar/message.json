@@ -48,7 +48,7 @@
 	},
 	"files": [
 		{
-			"content": "# Message 设计规范\n\n- Message 负责一条消息的整行布局：头像、对齐、发送者和元信息；带框的消息正文用 Bubble，代理执行的步骤用 Trace，状态和分隔用 Marker。\n- 自己发送的消息设 `align=\"end\"`；同一发送者连续的消息放进 `Message.Group`，前几条放空的 `Message.Avatar` 保持对齐。\n- 发送者名称放 `Message.Header`，发送状态、时间等放 `Message.Footer`；Footer 里只有图标的操作按钮都要有 `aria-label`（检查规则 `valar/icon-button-label`）。\n- 进行中的消息用 `<Marker.Root role=\"status\">` 表达状态，读屏器才会播报。\n",
+			"content": "# Message 设计规范\n\n- Message 负责一条消息的整行布局：头像、对齐、发送者和元信息；带框的消息正文用 Bubble，代理执行的步骤用 Trace，状态和分隔用 Marker。\n- 自己发送的消息设 `align=\"end\"`；同一发送者连续的消息放进 `Message.Group`，前几条放空的 `Message.Avatar` 保持对齐。\n- 发送者名称放 `Message.Header`，发送状态、时间等放 `Message.Footer`；Footer 里只有图标的操作按钮都要有 `aria-label`（检查规则 `valar/icon-button-label`）。\n- 进行中的消息用 `<Marker.Root role=\"status\">` 表达状态，读屏器才会播报。\n- Agent 消息行使用 `appearance=\"agent\"`。正文基准 15 px／24 px。用户气泡靠末端，助手回复使用透明气泡，已完成回复的复制按钮放在底部，图标按钮为 24 × 24 px。\n",
 			"type": "registry:file",
 			"target": "message/RULES.md"
 		},
@@ -68,7 +68,7 @@
 			"target": "message/message-content.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"message-footer\"\n\tclass={cn(\n\t\t\"text-xs font-medium text-muted-foreground px-3 group-has-data-[variant=ghost]/message:px-0 flex max-w-full min-w-0 items-center group-data-[align=end]/message:justify-end\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"message-footer\"\n\tclass={cn(\n\t\t\"text-xs font-medium text-muted-foreground px-3 group-has-data-[variant=ghost]/message:px-0 group-data-[appearance=agent]/message:gap-0.5 group-data-[appearance=agent]/message:px-2.5 group-data-[appearance=agent]/message:*:data-[slot=button]:size-6 group-data-[appearance=agent]/message:*:data-[slot=button]:rounded-full group-data-[appearance=agent]/message:*:data-[slot=button]:shadow-none flex max-w-full min-w-0 items-center group-data-[align=end]/message:justify-end\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
 			"type": "registry:file",
 			"target": "message/message-footer.svelte"
 		},
@@ -83,7 +83,7 @@
 			"target": "message/message-header.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\talign = \"start\",\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {\n\t\talign?: \"start\" | \"end\";\n\t} = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"message\"\n\tdata-align={align}\n\tclass={cn(\n\t\t\"text-sm gap-2 group/message relative flex w-full min-w-0 data-[align=end]:flex-row-reverse\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\talign = \"start\",\n\t\tappearance,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {\n\t\talign?: \"start\" | \"end\";\n\t\tappearance?: \"agent\";\n\t} = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"message\"\n\tdata-align={align}\n\tdata-appearance={appearance}\n\tclass={cn(\n\t\t\"text-sm gap-2 group/message relative flex w-full min-w-0 data-[align=end]:flex-row-reverse\",\n\t\tappearance === \"agent\" && \"text-[15px]/6 *:data-[slot=message-content]:gap-2\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
 			"type": "registry:file",
 			"target": "message/message.svelte"
 		}

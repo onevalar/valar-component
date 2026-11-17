@@ -4,3 +4,4 @@
 - 滑块必须有名称：设 `aria-label` 或 `aria-labelledby`，多个滑块（范围选择）用 `thumbLabels` 给每个滑块单独命名；`Field.Label for` 无法关联滑块（检查规则 `valar/input-label`）。
 - 必须设 `type="single"` 或 `type="multiple"`，并给出 `min`、`max`、`step`；值用 `bind:value`。
 - 竖向滑块用 `orientation="vertical"`，并给父容器明确的高度。
+- 外观设置可用横向 `appearance="settings"`。轨道高 6 px，白色手柄直径 20 px，焦点反馈使用内描边。把实时数值放在独立读数中，间隔 12 px，窄屏允许整个滑块与读数换到下一行。

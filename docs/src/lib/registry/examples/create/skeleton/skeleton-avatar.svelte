@@ -4,11 +4,11 @@
 </script>
 
 <Example title="Avatar">
-	<div class="flex w-full items-center gap-4">
+	<div class="flex w-full max-w-[206px] items-center gap-4" aria-busy="true">
 		<Skeleton class="size-10 shrink-0 rounded-full" />
-		<div class="grid gap-2">
-			<Skeleton class="h-4 w-[150px]" />
-			<Skeleton class="h-4 w-[100px]" />
+		<div class="grid min-w-0 flex-1 gap-2">
+			<Skeleton class="h-4 w-full" />
+			<Skeleton class="h-4 w-2/3" />
 		</div>
 	</div>
 </Example>

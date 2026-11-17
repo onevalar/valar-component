@@ -31,11 +31,13 @@
 		class: className,
 		variant = "default",
 		align = "start",
+		appearance,
 		children,
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		variant?: BubbleVariant;
 		align?: "start" | "end";
+		appearance?: "agent-user" | "agent-assistant";
 	} = $props();
 </script>
 
@@ -44,7 +46,13 @@
 	data-slot="bubble"
 	data-variant={variant}
 	data-align={align}
-	class={cn(bubbleVariants({ variant }), className)}
+	data-appearance={appearance}
+	class={cn(
+		appearance
+			? "cn-bubble-agent group/bubble relative flex min-w-0 flex-col"
+			: bubbleVariants({ variant }),
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}

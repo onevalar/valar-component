@@ -3,11 +3,14 @@
 	"name": "navigation-menu",
 	"title": "Navigation Menu 导航菜单",
 	"type": "registry:ui",
-	"description": "网站顶部的导航链接，可展开为带说明的分组面板。",
+	"description": "网站导航和项目子路由链接，支持分组面板和横向悬浮滚动。",
 	"devDependencies": [
 		"bits-ui@2.20.0",
 		"@internationalized/date@^3.12.0",
 		"tailwind-variants@^3.3.0"
+	],
+	"registryDependencies": [
+		"scroll-area"
 	],
 	"meta": {
 		"valar": {
@@ -19,7 +22,8 @@
 				"站点导航"
 			],
 			"whenToUse": [
-				"网站顶部导航，部分入口展开为分组链接面板"
+				"网站顶部导航，部分入口展开为分组链接面板",
+				"项目视图之间切换路由"
 			],
 			"whenNotToUse": [
 				{
@@ -41,7 +45,7 @@
 			],
 			"responsive": [
 				"内容面板在 md 及以上绝对定位，窄屏占满宽度",
-				"移动端通常改用 sheet 或 drawer 承载导航"
+				"项目链接在窄容器中使用悬浮 Scroll Area，站点主导航可用 Sheet 或 Drawer"
 			],
 			"related": [
 				"sidebar",
@@ -52,7 +56,7 @@
 	},
 	"files": [
 		{
-			"content": "# Navigation Menu 设计规范\n\n- 只用于网站的主导航（带下拉面板的顶部导航）；页面内的操作菜单用 Dropdown Menu，应用式菜单栏用 Menubar。\n- 每个入口都是 `NavigationMenu.Link`（设 `href`）；有子菜单的项用 `NavigationMenu.Trigger` + `NavigationMenu.Content`，Trigger 本身不跳转，子菜单中要包含该栏目的入口链接。\n- 当前页面的链接设 `active`（会带 `aria-current=\"page\"`），不要只改颜色。\n- 窄屏下不要强行横排：移动端改用 Sheet 或 Drawer 承载同样的链接。\n- 下拉面板默认渲染在共享的 viewport 中（`viewport`，默认开启）；不需要时设 `viewport={false}`，不要自己写定位。\n",
+			"content": "# Navigation Menu 设计规范\n\n- 用于网站主导航或跨路由的项目页导航。页面内的操作菜单用 Dropdown Menu，应用式菜单栏用 Menubar。\n- 每个入口都是 `NavigationMenu.Link`（设 `href`）；有子菜单的项用 `NavigationMenu.Trigger` + `NavigationMenu.Content`，Trigger 本身不跳转，子菜单中要包含该栏目的入口链接。\n- 当前页面的链接设 `active`（会带 `aria-current=\"page\"`），不要只改颜色。\n- 窄屏下不要强行横排：移动端改用 Sheet 或 Drawer 承载同样的链接。\n- 下拉面板默认渲染在共享的 viewport 中（`viewport`，默认开启）；不需要时设 `viewport={false}`，不要自己写定位。\n- 项目子路由用 `appearance=\"project\"`，链接为 28 px 胶囊，相隔 4 px。短容器通过悬浮 Scroll Area 露出后续链接，导航中的 `scrollLabel` 指定滚动视口名称。用常规外观组织需要下拉面板的导航。\n",
 			"type": "registry:file",
 			"target": "navigation-menu/RULES.md"
 		},
@@ -77,12 +81,12 @@
 			"target": "navigation-menu/navigation-menu-item.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { NavigationMenu as NavigationMenuPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\t...restProps\n\t}: NavigationMenuPrimitive.LinkProps = $props();\n</script>\n\n<NavigationMenuPrimitive.Link\n\tbind:ref\n\tdata-slot=\"navigation-menu-link\"\n\tclass={cn(\"data-active:focus:bg-muted data-active:hover:bg-muted data-active:bg-muted/50 focus-visible:ring-ring/50 hover:bg-muted focus:bg-muted flex items-center gap-2 rounded-lg p-2 text-sm transition-all outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:outline-1 focus-visible:-outline-offset-1 in-data-[slot=navigation-menu-content]:rounded-md [&_svg:not([class*='size-'])]:size-4\", className)}\n\t{...restProps}\n/>\n",
+			"content": "<script lang=\"ts\">\n\timport { NavigationMenu as NavigationMenuPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\t...restProps\n\t}: NavigationMenuPrimitive.LinkProps = $props();\n</script>\n\n<NavigationMenuPrimitive.Link\n\tbind:ref\n\tdata-slot=\"navigation-menu-link\"\n\tclass={cn(\"data-active:focus:bg-muted data-active:hover:bg-muted data-active:bg-muted/50 focus-visible:ring-ring/50 hover:bg-muted focus:bg-muted flex items-center gap-2 rounded-lg p-2 text-sm transition-all outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:outline-1 focus-visible:-outline-offset-1 in-data-[slot=navigation-menu-content]:rounded-md [&_svg:not([class*='size-'])]:size-4 group-data-[appearance=project]/navigation-menu:inline-flex group-data-[appearance=project]/navigation-menu:h-7 group-data-[appearance=project]/navigation-menu:shrink-0 group-data-[appearance=project]/navigation-menu:rounded-full group-data-[appearance=project]/navigation-menu:border-[0.5px] group-data-[appearance=project]/navigation-menu:border-transparent group-data-[appearance=project]/navigation-menu:px-2.5 group-data-[appearance=project]/navigation-menu:py-0 group-data-[appearance=project]/navigation-menu:text-xs group-data-[appearance=project]/navigation-menu:font-medium group-data-[appearance=project]/navigation-menu:whitespace-nowrap group-data-[appearance=project]/navigation-menu:bg-[lch(99.997%_.5_282)] group-data-[appearance=project]/navigation-menu:text-[color:lch(39.176%_1.25_282)] dark:group-data-[appearance=project]/navigation-menu:bg-[lch(10.149%_.593_272)] dark:group-data-[appearance=project]/navigation-menu:text-[color:lch(61.803%_1.2_272)] group-data-[appearance=project]/navigation-menu:hover:bg-muted group-data-[appearance=project]/navigation-menu:focus-visible:outline-1 group-data-[appearance=project]/navigation-menu:focus-visible:outline-solid group-data-[appearance=project]/navigation-menu:focus-visible:-outline-offset-1 group-data-[appearance=project]/navigation-menu:focus-visible:outline-[color:lch(53%_52.26_286.91)] group-data-[appearance=project]/navigation-menu:focus-visible:ring-0 dark:group-data-[appearance=project]/navigation-menu:focus-visible:outline-[color:lch(47.918%_59.303_288.421)] group-data-[appearance=project]/navigation-menu:data-active:bg-[lch(93.483%_.5_282)] group-data-[appearance=project]/navigation-menu:data-active:text-[color:lch(9.794%_0_282)] dark:group-data-[appearance=project]/navigation-menu:data-active:bg-[lch(16.706%_.979_272)] dark:group-data-[appearance=project]/navigation-menu:data-active:text-[color:lch(100%_0_272)] group-data-[appearance=project]/navigation-menu:transition-colors group-data-[appearance=project]/navigation-menu:duration-150 motion-reduce:group-data-[appearance=project]/navigation-menu:transition-none\", className)}\n\t{...restProps}\n/>\n",
 			"type": "registry:file",
 			"target": "navigation-menu/navigation-menu-link.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { NavigationMenu as NavigationMenuPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\t...restProps\n\t}: NavigationMenuPrimitive.ListProps = $props();\n</script>\n\n<NavigationMenuPrimitive.List\n\tbind:ref\n\tdata-slot=\"navigation-menu-list\"\n\tclass={cn(\n\t\t\"gap-0 group flex flex-1 list-none items-center justify-center\",\n\t\tclassName\n\t)}\n\t{...restProps}\n/>\n",
+			"content": "<script lang=\"ts\">\n\timport { NavigationMenu as NavigationMenuPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\t...restProps\n\t}: NavigationMenuPrimitive.ListProps = $props();\n</script>\n\n<NavigationMenuPrimitive.List\n\tbind:ref\n\tdata-slot=\"navigation-menu-list\"\n\tclass={cn(\n\t\t\"gap-0 group flex flex-1 list-none items-center justify-center group-data-[appearance=project]/navigation-menu:w-max group-data-[appearance=project]/navigation-menu:justify-start group-data-[appearance=project]/navigation-menu:gap-1 group-data-[appearance=project]/navigation-menu:py-2\",\n\t\tclassName\n\t)}\n\t{...restProps}\n/>\n",
 			"type": "registry:file",
 			"target": "navigation-menu/navigation-menu-list.svelte"
 		},
@@ -97,7 +101,7 @@
 			"target": "navigation-menu/navigation-menu-viewport.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { NavigationMenu as NavigationMenuPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\timport NavigationMenuViewport from \"./navigation-menu-viewport.svelte\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tviewport = true,\n\t\tchildren,\n\t\t...restProps\n\t}: NavigationMenuPrimitive.RootProps & {\n\t\tviewport?: boolean;\n\t} = $props();\n</script>\n\n<NavigationMenuPrimitive.Root\n\tbind:ref\n\tdata-slot=\"navigation-menu\"\n\tdata-viewport={viewport}\n\tclass={cn(\n\t\t\"max-w-max group/navigation-menu relative flex max-w-max flex-1 items-center justify-center\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n\t{#if viewport}\n\t\t<NavigationMenuViewport />\n\t{/if}\n</NavigationMenuPrimitive.Root>\n",
+			"content": "<script lang=\"ts\">\n\timport { NavigationMenu as NavigationMenuPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\timport * as ScrollArea from \"$UI$/scroll-area/index.js\";\n\timport NavigationMenuViewport from \"./navigation-menu-viewport.svelte\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tviewport = true,\n\t\tappearance = \"default\",\n\t\tscrollLabel,\n\t\tchildren,\n\t\t...restProps\n\t}: NavigationMenuPrimitive.RootProps & {\n\t\tviewport?: boolean;\n\t\tappearance?: \"default\" | \"project\";\n\t\tscrollLabel?: string;\n\t} = $props();\n\n\tconst project = $derived(appearance === \"project\");\n</script>\n\n<NavigationMenuPrimitive.Root\n\tbind:ref\n\tdata-slot=\"navigation-menu\"\n\tdata-appearance={appearance}\n\tdata-viewport={viewport && !project}\n\tclass={cn(\n\t\t\"group/navigation-menu relative flex flex-1 items-center\",\n\t\tproject ? \"w-full min-w-0\" : \"max-w-max justify-center\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{#if project}\n\t\t<ScrollArea.Root\n\t\t\torientation=\"horizontal\"\n\t\t\ttype=\"hover\"\n\t\t\tclass=\"w-full max-w-full\"\n\t\t\tviewportLabel={scrollLabel}\n\t\t>\n\t\t\t{@render children?.()}\n\t\t</ScrollArea.Root>\n\t{:else}\n\t\t{@render children?.()}\n\t\t{#if viewport}<NavigationMenuViewport />{/if}\n\t{/if}\n</NavigationMenuPrimitive.Root>\n",
 			"type": "registry:file",
 			"target": "navigation-menu/navigation-menu.svelte"
 		}

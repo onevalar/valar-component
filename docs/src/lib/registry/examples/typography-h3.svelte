@@ -1,1 +1,7 @@
-<h3 class="scroll-m-20 text-2xl font-semibold tracking-tight">The Joke Tax</h3>
+<script lang="ts">
+	import { Typography } from "$lib/registry/ui/typography/index.js";
+</script>
+
+<Typography class="w-full max-w-xl">
+	<h3>Confirm keyboard access</h3>
+</Typography>

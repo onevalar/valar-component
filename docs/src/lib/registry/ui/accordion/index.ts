@@ -3,6 +3,8 @@ import Item from "./accordion-item.svelte";
 import Trigger from "./accordion-trigger.svelte";
 import Root from "./accordion.svelte";
 
+export type { AccordionAppearance } from "./accordion-context.js";
+
 export {
 	Root,
 	Content,

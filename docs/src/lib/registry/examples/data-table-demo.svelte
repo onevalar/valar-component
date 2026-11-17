@@ -193,8 +193,9 @@
 </script>
 
 <div class="w-full">
-	<div class="flex items-center py-4">
+	<div class="flex items-center gap-2 py-4">
 		<Input
+			aria-label="Filter payments by email"
 			placeholder="Filter emails..."
 			value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
 			oninput={(e) => table.getColumn("email")?.setFilterValue(e.currentTarget.value)}
@@ -225,13 +226,22 @@
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</div>
-	<div class="overflow-hidden rounded-md border">
-		<Table.Root>
+	<div class="min-w-0 rounded-md border">
+		<Table.Root scroll="overlay" scrollLabel="Payment columns" class="min-w-[28rem]">
+			<Table.Caption class="sr-only">Payments</Table.Caption>
 			<Table.Header>
 				{#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
 					<Table.Row>
 						{#each headerGroup.headers as header (header.id)}
-							<Table.Head>
+							{@const sorted = header.column.getIsSorted()}
+							<Table.Head
+								scope="col"
+								aria-sort={sorted === "asc"
+									? "ascending"
+									: sorted === "desc"
+										? "descending"
+										: undefined}
+							>
 								{#if !header.isPlaceholder}
 									<FlexRender {header} />
 								{/if}
@@ -251,13 +261,15 @@
 					</Table.Row>
 				{:else}
 					<Table.Row>
-						<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
+						<Table.Cell colspan={table.getVisibleLeafColumns().length} class="h-24 text-start">
+							<p role="status">No results.</p>
+						</Table.Cell>
 					</Table.Row>
 				{/each}
 			</Table.Body>
 		</Table.Root>
 	</div>
-	<div class="flex items-center justify-end space-x-2 py-4">
+	<div class="flex flex-wrap items-center justify-end gap-2 py-4">
 		<div class="flex-1 text-sm text-muted-foreground">
 			{table.getFilteredSelectedRowModel().rows.length} of
 			{table.getFilteredRowModel().rows.length} row(s) selected.

@@ -13,6 +13,8 @@
 		plugins = [],
 		setApi = () => {},
 		orientation = "horizontal",
+		appearance = "default",
+		onkeydown,
 		class: className,
 		children,
 		...restProps
@@ -24,10 +26,11 @@
 		scrollPrev,
 		scrollNext,
 		orientation,
+		appearance,
 		canScrollNext: false,
 		canScrollPrev: false,
 		handleKeyDown,
-		options: opts,
+		options: getOptions(),
 		plugins,
 		onInit,
 		scrollSnaps: [],
@@ -37,12 +40,28 @@
 
 	setEmblaContext(carouselState);
 
+	function getOptions() {
+		if (appearance !== "media") return opts;
+		const mediaOptions = { loop: false, slidesToScroll: 1 };
+		const breakpoints = Object.fromEntries(
+			Object.entries(opts.breakpoints ?? {}).map(([query, options]) => [
+				query,
+				{ ...options, ...mediaOptions },
+			])
+		);
+		return { ...opts, ...mediaOptions, breakpoints };
+	}
+
 	function scrollPrev() {
-		carouselState.api?.scrollPrev();
+		carouselState.api?.scrollPrev(reduceMediaMotion());
 	}
 
 	function scrollNext() {
-		carouselState.api?.scrollNext();
+		carouselState.api?.scrollNext(reduceMediaMotion());
+	}
+
+	function reduceMediaMotion() {
+		return appearance === "media" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	}
 
 	function scrollTo(index: number, jump?: boolean) {
@@ -57,27 +76,41 @@
 	}
 
 	function handleKeyDown(e: KeyboardEvent) {
-		if (e.key === "ArrowLeft") {
+		const usesVerticalKeys = appearance === "media" || orientation === "vertical";
+		if (e.key === "ArrowLeft" || (usesVerticalKeys && e.key === "ArrowUp")) {
 			e.preventDefault();
 			scrollPrev();
-		} else if (e.key === "ArrowRight") {
+		} else if (e.key === "ArrowRight" || (usesVerticalKeys && e.key === "ArrowDown")) {
 			e.preventDefault();
 			scrollNext();
 		}
 	}
 
+	function handleRootKeyDown(event: Parameters<NonNullable<CarouselProps["onkeydown"]>>[0]) {
+		onkeydown?.(event);
+		if (appearance !== "media" || event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey)
+			return;
+		if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable]"))
+			return;
+		handleKeyDown(event);
+	}
+
+	function syncSlides() {
+		if (!carouselState.api) return;
+		carouselState.scrollSnaps = carouselState.api.scrollSnapList();
+		onSelect();
+	}
+
 	function onInit(event: CustomEvent<CarouselAPI>) {
 		carouselState.api = event.detail;
+		carouselState.api.on("select", onSelect).on("reInit", syncSlides);
+		syncSlides();
 		setApi(carouselState.api);
-
-		carouselState.scrollSnaps = carouselState.api.scrollSnapList();
-		carouselState.api.on("select", onSelect);
-		onSelect();
 	}
 
 	$effect(() => {
 		return () => {
-			carouselState.api?.off("select", onSelect);
+			carouselState.api?.off("select", onSelect).off("reInit", syncSlides);
 		};
 	});
 </script>
@@ -85,9 +118,11 @@
 <div
 	bind:this={ref}
 	data-slot="carousel"
+	data-appearance={appearance}
 	class={cn("relative", className)}
 	role="region"
 	aria-roledescription="轮播"
+	onkeydown={handleRootKeyDown}
 	{...restProps}
 >
 	{@render children?.()}

@@ -4,23 +4,23 @@
 	let value = $state("000000");
 </script>
 
-<InputOTP.Root maxlength={6} bind:value>
+<InputOTP.Root maxlength={6} bind:value aria-label="Invalid verification code" aria-invalid>
 	{#snippet children({ cells })}
 		<InputOTP.Group>
 			{#each cells.slice(0, 2) as cell (cell)}
-				<InputOTP.Slot aria-invalid {cell} />
+				<InputOTP.Slot {cell} />
 			{/each}
 		</InputOTP.Group>
 		<InputOTP.Separator />
 		<InputOTP.Group>
 			{#each cells.slice(2, 4) as cell (cell)}
-				<InputOTP.Slot aria-invalid {cell} />
+				<InputOTP.Slot {cell} />
 			{/each}
 		</InputOTP.Group>
 		<InputOTP.Separator />
 		<InputOTP.Group>
 			{#each cells.slice(4, 6) as cell (cell)}
-				<InputOTP.Slot aria-invalid {cell} />
+				<InputOTP.Slot {cell} />
 			{/each}
 		</InputOTP.Group>
 	{/snippet}
