@@ -2393,7 +2393,7 @@ test("Button editor tunes every variant full screen, compares and restores versi
 	// Global tokens are read-only and point to the token page.
 	await expect(editor.getByText("--radius", { exact: true })).toBeVisible();
 	await expect(editor.getByRole("link", { name: "全局主题页" })).toHaveAttribute("href", "/themes");
-	if (process.env.E2E_BASE_URL) {
+	if (process.env.E2E_WRITEBACK === "1") {
 		await expect(editor.getByRole("button", { name: "写回组件库…" })).toBeVisible();
 	} else {
 		await expect(editor.getByRole("button", { name: "写回组件库…" })).toHaveCount(0);
