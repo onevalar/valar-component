@@ -24,8 +24,8 @@ export type ToggleGroupContext = null;
 const JOINED = "group-data-[spacing=0]/toggle-group:";
 const OUTLINE = "data-[spacing=0]:data-[variant=outline]:";
 const ENDS = [
-	["horizontal", "first", "l"],
-	["horizontal", "last", "r"],
+	["horizontal", "first", "s"],
+	["horizontal", "last", "e"],
 	["vertical", "first", "t"],
 	["vertical", "last", "b"],
 ] as const;
@@ -137,8 +137,8 @@ function toggleGroupCss(select: (slot: string) => string, overrides: ToggleGroup
 		);
 		for (const [orientation, end, side] of ENDS) {
 			const corners = {
-				l: ["top-left", "bottom-left"],
-				r: ["top-right", "bottom-right"],
+				s: ["start-start", "end-start"],
+				e: ["start-end", "end-end"],
 				t: ["top-left", "top-right"],
 				b: ["bottom-left", "bottom-right"],
 			}[side];

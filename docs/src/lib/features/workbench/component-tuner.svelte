@@ -10,6 +10,7 @@
 	import * as AlertDialog from "$lib/registry/ui/alert-dialog/index.js";
 	import * as Dialog from "$lib/registry/ui/dialog/index.js";
 	import * as NativeSelect from "$lib/registry/ui/native-select/index.js";
+	import * as ScrollArea from "$lib/registry/ui/scroll-area/index.js";
 	import * as ToggleGroup from "$lib/registry/ui/toggle-group/index.js";
 	import { Badge } from "$lib/registry/ui/badge/index.js";
 	import { Button } from "$lib/registry/ui/button/index.js";
@@ -102,7 +103,8 @@
 		const owner = probe!.closest('[class*="style-"]');
 		return {
 			style:
-				[...(owner?.classList ?? [])].find((value) => /^style-[a-z]+$/.test(value)) ?? "style-valar",
+				[...(owner?.classList ?? [])].find((value) => /^style-[a-z]+$/.test(value)) ??
+				"style-valar",
 		};
 	}
 
@@ -334,13 +336,17 @@
 		{/if}
 	</div>
 	{#if !editing}{@render status()}{/if}
-	<div class="sample" data-tuning-current>
-		{@render children({
-			overrides: currentOverrides as Partial<V>,
-			style: source?.style ?? "style-valar",
-			dark: pageDark,
-			requestClose: () => {},
-		})}
+	<div class="sample">
+		<ScrollArea.Root orientation="both" type="hover" viewportLabel={`${title} 示例滚动区`}>
+			<div class="sample-content" data-tuning-current>
+				{@render children({
+					overrides: currentOverrides as Partial<V>,
+					style: source?.style ?? "style-valar",
+					dark: pageDark,
+					requestClose: () => {},
+				})}
+			</div>
+		</ScrollArea.Root>
 	</div>
 	<!-- Unmodified instances supply the rendered values of every size and the radius levels. -->
 	<div class="probe" bind:this={probe} aria-hidden="true" inert>
@@ -569,15 +575,20 @@
 		margin-bottom: 8px;
 	}
 	.sample {
+		overflow: clip;
+		border: 1px solid var(--border);
+		border-radius: 12px;
+	}
+	.sample > :global([data-slot="scroll-area"]) > :global([data-slot="scroll-area-viewport"]) {
+		height: auto;
+		max-height: calc(28rem - 2px);
+	}
+	.sample-content {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 120px;
-		max-height: 28rem;
+		min-height: 118px;
 		padding: 24px 16px;
-		overflow: auto;
-		border: 1px solid var(--border);
-		border-radius: 12px;
 	}
 	.probe {
 		position: absolute;
@@ -614,8 +625,8 @@
 		margin: 0;
 	}
 	@media (max-width: 640px) {
-		.sample {
-			min-height: 100px;
+		.sample-content {
+			min-height: 98px;
 			padding: 16px 8px;
 		}
 	}

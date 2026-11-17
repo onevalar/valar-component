@@ -426,7 +426,8 @@ for (const sample of [
 		title: "Code Block",
 		label: "默认横向留白（px）",
 		value: 30,
-		selector: '[data-slot="code-block"][data-size="default"] > [data-slot="code-block-content"]',
+		selector:
+			'[data-slot="code-block"][data-size="default"] > [data-code-block-scroll-area] > [data-slot="scroll-area-viewport"]',
 		property: "padding-left",
 		expected: "30px",
 		style: "valar",
@@ -1311,7 +1312,10 @@ test("Alert editor preserves icon and action columns without replaying static al
 	const noOverlap = await action.evaluate((el) => {
 		const text = el.querySelector('[data-slot="alert-title"]')!.getBoundingClientRect();
 		const button = el.querySelector("button")!.getBoundingClientRect();
-		return text.right <= button.left && button.right <= el.getBoundingClientRect().right;
+		return (
+			(text.right <= button.left || text.bottom <= button.top) &&
+			button.right <= el.getBoundingClientRect().right
+		);
 	});
 	expect(noOverlap).toBe(true);
 	await editor.getByRole("textbox", { name: "Alert 版本名称", exact: true }).fill("提示区留白");
@@ -2002,7 +2006,8 @@ test("Radio Group editor keeps roving keyboard focus and dark dots with independ
 		const weekly = group.getByRole("radio", { name: "每周汇总", exact: true });
 		await expect(weekly).toBeFocused();
 		await expect(weekly).toBeChecked();
-		await expect(weekly).not.toHaveCSS("box-shadow", "none");
+		await expect(weekly).toHaveCSS("outline-style", "solid");
+		await expect(weekly).toHaveCSS("outline-offset", "-1px");
 		await expect(
 			group.getByRole("radio", { name: "即时通知（暂不可用）", exact: true })
 		).toBeDisabled();
@@ -2014,7 +2019,7 @@ test("Radio Group editor keeps roving keyboard focus and dark dots with independ
 	const vertical = current.getByRole("radiogroup", { name: "通知频率 · 纵向", exact: true });
 	await expect(vertical).toHaveCSS("gap", "18px");
 	await expect(vertical.getByRole("radio").first()).toHaveCSS("width", "22px");
-	await expect(vertical.locator("svg")).toHaveCSS("width", "11px");
+	await expect(vertical.locator("svg")).toHaveCSS("width", "7px");
 	await editor.getByRole("radio", { name: "并排对比", exact: true }).click();
 	const before = editor.locator("[data-tuning-before]");
 	await expect(
@@ -2025,7 +2030,7 @@ test("Radio Group editor keeps roving keyboard focus and dark dots with independ
 	await expect(before.getByRole("radio").first()).toHaveCSS("width", "16px");
 	await editor.getByRole("radio", { name: "深色", exact: true }).click();
 	await expect(current).toHaveCSS("color", "oklch(0.985 0 0)");
-	await expect(vertical.locator("svg")).toHaveCSS("width", "11px");
+	await expect(vertical.locator("svg")).toHaveCSS("width", "7px");
 	await page.setViewportSize({ width: 390, height: 844 });
 	for (const pane of [current, before])
 		expect(await pane.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);

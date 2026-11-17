@@ -72,6 +72,7 @@ const registries = import.meta.glob<{ files: { target: string; content: string }
 	{ import: "default" }
 );
 const NOT_EDITOR = ":not([data-component-tuner]):not([data-component-tuner] *)";
+const EDITABLE_FIELD = '[data-slot="slider-field"]:not([data-appearance="readout"])';
 export const SLIDER_FIELD_SPEC: TunerSpec<SliderFieldValues, null> = {
 	component: "slider-field",
 	title: "Slider Field",
@@ -99,7 +100,7 @@ export const SLIDER_FIELD_SPEC: TunerSpec<SliderFieldValues, null> = {
 		return parseSliderFieldSource((await load()).files);
 	},
 	previewCss: (scope, overrides) =>
-		sliderFieldCss(`${scope} [data-slot="slider-field"]`, overrides),
-	pageCss: (overrides) => sliderFieldCss(`[data-slot="slider-field"]${NOT_EDITOR}`, overrides),
+		sliderFieldCss(`${scope} ${EDITABLE_FIELD}`, overrides),
+	pageCss: (overrides) => sliderFieldCss(`${EDITABLE_FIELD}${NOT_EDITOR}`, overrides),
 	overrideClasses: sliderFieldOverrideClasses,
 };

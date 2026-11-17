@@ -55,8 +55,8 @@ function applyBehaviorDefaults(file: RegistryItemFile, preset: WorkbenchPreset):
 			`\t\tclass: className,\n\t\ttype = "${defaultType}",\n\t\tdisabled = ${v["accordion.disabled"]},\n\t\t...restProps`
 		);
 		replace(
-			"\t}: AccordionPrimitive.RootProps = $props();",
-			"\t}: WorkbenchAccordionProps = $props();\n\n\tconst rootProps = $derived({ ...restProps, type, disabled } as AccordionPrimitive.RootProps);"
+			"\t}: AccordionPrimitive.RootProps & { appearance?: AccordionAppearance } = $props();",
+			"\t}: WorkbenchAccordionProps & { appearance?: AccordionAppearance } = $props();\n\n\tconst rootProps = $derived({ ...restProps, type, disabled } as AccordionPrimitive.RootProps);"
 		);
 		replace("\t{...restProps}\n/>", "\t{...rootProps}\n/>");
 	}

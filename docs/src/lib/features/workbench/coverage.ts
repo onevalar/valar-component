@@ -80,6 +80,7 @@ export const COMPONENT_INVENTORY = [
 	"toggle-group",
 	"tooltip",
 	"trace",
+	"typography",
 	"waffle-chart",
 ] as const;
 

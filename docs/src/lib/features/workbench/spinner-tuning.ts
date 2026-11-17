@@ -14,13 +14,16 @@ export function parseSpinnerSource(files: { target: string; content: string }[])
 } {
 	const source =
 		files.find((file) => file.target.split("/").at(-1) === "spinner.svelte")?.content ?? "";
-	// Also reads registry generated before the new slot: there is exactly one cn call.
-	const root = /class=\{cn\(([\s\S]*?)\)\}/.exec(source)?.[1];
-	if (root === undefined) throw new Error("Spinner registry 缺少图标样式");
-	const classes = cn(...[...root.matchAll(/"([^"]*)"/g)].map((match) => match[1]));
-	const size = sourceWord("size-(\\d+)", classes);
-	if (size === undefined || !classes.split(/\s+/).includes("animate-spin"))
-		throw new Error("Spinner registry 缺少尺寸或旋转行为");
+	// Find the rotating icon classes in both the current and earlier registry sources.
+	const classes = [...source.matchAll(/class=\{cn\(([\s\S]*?)\)\}/g)]
+		.map(([, root]) => cn(...[...root.matchAll(/"([^"]*)"/g)].map((match) => match[1])))
+		.find((candidate) =>
+			candidate
+				.split(/\s+/)
+				.some((word) => word === "animate-spin" || word === "motion-safe:animate-spin")
+		);
+	const size = classes === undefined ? undefined : sourceWord("size-(\\d+)", classes);
+	if (size === undefined) throw new Error("Spinner registry 缺少尺寸或旋转行为");
 	const values = valuesSchema.parse({ size: String(Number(size) * 4) });
 	return { values, context: { size: values.size } };
 }
@@ -47,6 +50,7 @@ const registries = import.meta.glob<{ files: { target: string; content: string }
 	{ import: "default" }
 );
 const NOT_EDITOR = ":not([data-component-tuner]):not([data-component-tuner] *)";
+const ICON_SPINNER = '[data-slot="spinner"]:not([data-appearance="dots"])';
 export const SPINNER_SPEC: TunerSpec<SpinnerValues, SpinnerContext> = {
 	component: "spinner",
 	title: "Spinner",
@@ -69,9 +73,7 @@ export const SPINNER_SPEC: TunerSpec<SpinnerValues, SpinnerContext> = {
 		if (!load) throw new Error(`没有 ${style} 的 Spinner registry`);
 		return parseSpinnerSource((await load()).files);
 	},
-	previewCss: (scope, overrides, context) =>
-		spinnerCss(`${scope} [data-slot="spinner"]`, overrides, context),
-	pageCss: (overrides, context) =>
-		spinnerCss(`[data-slot="spinner"]${NOT_EDITOR}`, overrides, context),
+	previewCss: (scope, overrides, context) => spinnerCss(`${scope} ${ICON_SPINNER}`, overrides, context),
+	pageCss: (overrides, context) => spinnerCss(`${ICON_SPINNER}${NOT_EDITOR}`, overrides, context),
 	overrideClasses: spinnerOverrideClasses,
 };

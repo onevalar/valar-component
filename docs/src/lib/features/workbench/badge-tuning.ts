@@ -53,7 +53,7 @@ export function parseBadgeSource(files: { target: string; content: string }[]): 
 export function badgeOverrideClasses(overrides: BadgeOverrides): Record<string, string> {
 	const safe = valuesSchema.partial().parse(overrides);
 	const classes: string[] = [];
-	// The more-specific has-data-icon pl/pr utilities deliberately keep the icon side tighter.
+	// The icon-side utilities deliberately keep their side tighter.
 	if (safe.paddingX !== undefined) classes.push(`px-${spacing(safe.paddingX)}`);
 	if (safe.gap !== undefined) classes.push(`gap-${spacing(safe.gap)}`);
 	if (safe.radius !== undefined && safe.radius !== STYLE_VALUE)
@@ -67,8 +67,8 @@ function badgeCss(select: string, overrides: BadgeOverrides): string {
 	if (safe.paddingX !== undefined) {
 		// Mirror px-N without overriding either style's more-specific icon-side padding.
 		rules.push(
-			`${select}:not(:has([data-icon="inline-start"])) { padding-left: ${safe.paddingX}px; }`,
-			`${select}:not(:has([data-icon="inline-end"])) { padding-right: ${safe.paddingX}px; }`
+			`${select}:not(:has([data-icon="inline-start"])) { padding-inline-start: ${safe.paddingX}px; }`,
+			`${select}:not(:has([data-icon="inline-end"])) { padding-inline-end: ${safe.paddingX}px; }`
 		);
 	}
 	if (safe.gap !== undefined) rules.push(`${select} { gap: ${safe.gap}px; }`);

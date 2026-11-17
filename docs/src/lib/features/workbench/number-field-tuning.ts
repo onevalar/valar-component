@@ -186,8 +186,8 @@ export const NUMBER_FIELD_SPEC: TunerSpec<NumberFieldValues, NumberFieldContext>
 		return parseNumberFieldSource((await load()).files, context);
 	},
 	previewCss: (scope, overrides, context) =>
-		numberFieldCss((slot) => `${scope} [data-slot="${slot}"]`, overrides, context),
+		numberFieldCss((slot) => `${scope} [data-slot="${slot}"]:not([data-appearance="amount"])`, overrides, context),
 	pageCss: (overrides, context) =>
-		numberFieldCss((slot) => `[data-slot="${slot}"]${NOT_EDITOR}`, overrides, context),
+		numberFieldCss((slot) => `[data-slot="${slot}"]:not([data-appearance="amount"])${NOT_EDITOR}`, overrides, context),
 	overrideClasses: numberFieldOverrideClasses,
 };

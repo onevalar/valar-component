@@ -95,7 +95,16 @@ describe("layout editor baseline and installable geometry contracts", () => {
 			] as const) {
 				const source = files.find((entry) => entry.target === file)!.content;
 				expect(cn(...classArgs(source))).toBe("");
-				expect(source).not.toMatch(/(?:p[xy]?|bg|border|rounded|overflow)-/);
+				if (file === "aspect-ratio.svelte") {
+					const mediaBranch = source.indexOf("{#if media}");
+					expect(mediaBranch).toBeGreaterThan(0);
+					expect(source.slice(0, mediaBranch)).not.toMatch(/(?:p[xy]?|bg|border|rounded|overflow)-/);
+					expect(source.slice(mediaBranch)).toMatch(
+						/\{#if media\}[\s\S]*overflow-hidden[\s\S]*\{:else\}\s*\{@render frame\(\)\}/
+					);
+				} else {
+					expect(source).not.toMatch(/(?:p[xy]?|bg|border|rounded|overflow)-/);
+				}
 				expect(source).toContain("{...restProps}");
 			}
 			for (const file of ["collapsible.svelte", "collapsible-trigger.svelte"])

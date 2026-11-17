@@ -310,7 +310,12 @@ function cssLeaves(css: string): string[] {
 /** Execute the installed source's real prop defaults, not a reimplementation of them.
  * Svelte compilation is checked separately; this isolates the exported prop contract
  * from DOM positioning/timing (left to the browser integration suite). */
-function evaluateProps(source: string, props: Record<string, unknown>, expression: string) {
+function evaluateProps(
+	source: string,
+	props: Record<string, unknown>,
+	expression: string,
+	bindings: Record<string, unknown> = {}
+) {
 	const script = source
 		.match(/<script[^>]*>([\s\S]*?)<\/script>/)![1]
 		.replace(/^\s*import[\s\S]*?;\s*/gm, "");
@@ -319,10 +324,17 @@ function evaluateProps(source: string, props: Record<string, unknown>, expressio
 			compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
 		})
 		.outputText.replace(/\bexport\s*\{\s*\};?/g, "");
-	return new Function("$props", "$bindable", "$derived", `${js}\nreturn (${expression});`)(
+	return new Function(
+		"$props",
+		"$bindable",
+		"$derived",
+		...Object.keys(bindings),
+		`${js}\nreturn (${expression});`
+	)(
 		() => props,
 		(value: unknown) => value,
-		(value: unknown) => value
+		(value: unknown) => value,
+		...Object.values(bindings)
 	);
 }
 
@@ -634,18 +646,30 @@ describe("installable native component bundle", () => {
 		);
 		expect(tooltip).toContain("\t\t{sideOffset}\n\t\t{side}");
 		const accordion = source(bundle, "accordion/accordion.svelte");
-		expect(evaluateProps(accordion, {}, "rootProps")).toEqual({ type: "multiple", disabled: true });
+		let configuredAppearance: unknown;
+		const accordionContext = {
+			setAccordionAppearance: (getAppearance: () => unknown) => {
+				configuredAppearance = getAppearance();
+			},
+		};
+		expect(evaluateProps(accordion, {}, "rootProps", accordionContext)).toEqual({
+			type: "multiple",
+			disabled: true,
+		});
+		expect(configuredAppearance).toBe("default");
 		const onValueChange = () => {};
 		expect(
 			evaluateProps(
 				accordion,
-				{ type: "single", disabled: false, value: "one", onValueChange },
-				"{value, rootProps}"
+				{ type: "single", disabled: false, value: "one", onValueChange, appearance: "section" },
+				"{value, rootProps}",
+				accordionContext
 			)
 		).toEqual({ value: "one", rootProps: { type: "single", disabled: false, onValueChange } });
-		expect(evaluateProps(accordion, { type: undefined, disabled: undefined }, "rootProps")).toEqual(
-			{ type: "multiple", disabled: true }
-		);
+		expect(configuredAppearance).toBe("section");
+		expect(
+			evaluateProps(accordion, { type: undefined, disabled: undefined }, "rootProps", accordionContext)
+		).toEqual({ type: "multiple", disabled: true });
 		expect(accordion).toContain("bind:value={value as never}");
 		expect(accordion).toContain("{...rootProps}");
 	});
@@ -1440,8 +1464,8 @@ describe("Parallel editor installation contracts", () => {
 			expect(
 				parseTagsInputSource([{ target: "tags-input.svelte", content: baseline }]).values
 			).toEqual({
-				padding: 6,
-				gap: 6,
+				padding: 4,
+				gap: 4,
 				radius: "md",
 			});
 			for (const values of [
@@ -1726,7 +1750,7 @@ describe("Accordion editor installation contract", () => {
 				expect(trigger).toContain("group-aria-expanded/accordion-trigger:hidden");
 				const content = files[1].content;
 				expect(content).toContain(
-					"data-open:animate-accordion-down data-closed:animate-accordion-up"
+					"motion-safe:data-open:animate-accordion-down motion-safe:data-closed:animate-accordion-up"
 				);
 				expect(content).toContain("pt-0");
 				expect(content).toContain("[&_p:not(:last-child)]:mb-4");
@@ -2159,8 +2183,8 @@ describe("Native Select, Input Group and Input OTP editor installation contracts
 				const source = files.find((file) => file.target.endsWith("/native-select.svelte"))!.content;
 				expect(source).toContain("data-[size=default]:h-11.25");
 				expect(source).toContain("data-[size=sm]:h-6.75");
-				expect(source.match(/(?<![\w:-])pr-[\w.]+/g)).toEqual(
-					original.match(/(?<![\w:-])pr-[\w.]+/g)
+				expect(source.match(/(?<![\w:-])p[er]-[\w.]+/g)).toEqual(
+					original.match(/(?<![\w:-])p[er]-[\w.]+/g)
 				);
 				expect(source).toContain("data-[size=sm]:rounded-xl");
 			}
@@ -2467,7 +2491,7 @@ describe("Selection control write-back preserves state styling and linked geomet
 				gap: ["valar"].includes(style) ? 8 : 12,
 			});
 			const context = {
-				dotOffset: style === "sera" ? -1 : 0,
+				dotOffset: style === "valar" ? -4 : style === "sera" ? -1 : 0,
 				darkDotOffset: ["luma", "rhea"].includes(style) ? 2 : null,
 			};
 			expect(baseline.context).toEqual(context);

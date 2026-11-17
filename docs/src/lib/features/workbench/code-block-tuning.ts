@@ -20,7 +20,7 @@ export function parseCodeBlockSource(files: { target: string; content: string }[
 		const literal =
 			part === "line"
 				? /base:\s*"([^"]*)"/.exec(source)?.[1]
-				: /class=\{cn\(([\s\S]*?)\)\}/.exec(source)?.[1];
+				: /class(?:=\{|:\s*)cn\(([\s\S]*?)\)(?:\}|,)/.exec(source)?.[1];
 		if (literal === undefined) throw new Error(`Code Block registry 缺少 ${part} 样式`);
 		return part === "line"
 			? cn(literal)
@@ -96,9 +96,11 @@ const registries = import.meta.glob<{ files: { target: string; content: string }
 const NOT_EDITOR = ":not([data-component-tuner]):not([data-component-tuner] *)";
 function selector(scope: string, size: string, slot: string, exclusion = "") {
 	const root = `${scope}[data-slot="code-block"][data-size="${size}"]${exclusion}`;
-	return slot === "line"
-		? `${root} > [data-slot="code-block-content"] > [data-slot="code-block-code"] > [data-slot="code-block-line"]${exclusion}`
-		: `${root} > [data-slot="code-block-${slot}"]${exclusion}`;
+	const content = `${root} > [data-code-block-scroll-area] > [data-slot="scroll-area-viewport"]${exclusion}`;
+	if (slot === "line")
+		return `${content} > [data-scroll-area-content] > [data-slot="code-block-content"] > [data-slot="code-block-code"] > [data-slot="code-block-line"]${exclusion}`;
+	if (slot === "content") return content;
+	return `${root} > [data-slot="code-block-${slot}"]${exclusion}`;
 }
 export const CODE_BLOCK_SPEC: TunerSpec<CodeBlockValues, CodeBlockContext> = {
 	component: "code-block",

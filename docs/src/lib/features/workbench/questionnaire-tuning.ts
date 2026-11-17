@@ -78,6 +78,7 @@ const registries = import.meta.glob<{ files: { target: string; content: string }
 	{ import: "default" }
 );
 const NOT_EDITOR = ":not([data-component-tuner]):not([data-component-tuner] *)";
+const AGENT = '[data-slot="questionnaire"][data-appearance="agent"]';
 export const QUESTIONNAIRE_SPEC: TunerSpec<QuestionnaireValues, QuestionnaireContext> = {
 	component: "questionnaire",
 	title: "Questionnaire",
@@ -121,6 +122,9 @@ export const QUESTIONNAIRE_SPEC: TunerSpec<QuestionnaireValues, QuestionnaireCon
 	previewCss: (scope, overrides) =>
 		questionnaireCss((slot) => `${scope} [data-slot="${slot}"]`, overrides),
 	pageCss: (overrides) =>
-		questionnaireCss((slot) => `[data-slot="${slot}"]${NOT_EDITOR}`, overrides),
+		questionnaireCss(
+			(slot) => `[data-slot="${slot}"]${NOT_EDITOR}:not(${AGENT}, ${AGENT} *)`,
+			overrides
+		),
 	overrideClasses: questionnaireOverrideClasses,
 };

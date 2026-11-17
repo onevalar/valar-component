@@ -87,13 +87,13 @@ export const CAROUSEL_SPEC: TunerSpec<CarouselValues, CarouselContext> = {
 	},
 	previewCss: (scope, overrides) =>
 		carouselCss(
-			(slot, orientation) => `${scope} [data-slot="${slot}"][data-orientation="${orientation}"]`,
+			(slot, orientation) => `${scope} [data-slot="${slot}"][data-orientation="${orientation}"]:not([data-appearance="media"])`,
 			overrides
 		),
 	pageCss: (overrides) =>
 		carouselCss(
 			(slot, orientation) =>
-				`[data-slot="${slot}"][data-orientation="${orientation}"]${NOT_EDITOR}`,
+				`[data-slot="${slot}"][data-orientation="${orientation}"]:not([data-appearance="media"])${NOT_EDITOR}`,
 			overrides
 		),
 	overrideClasses: carouselOverrideClasses,

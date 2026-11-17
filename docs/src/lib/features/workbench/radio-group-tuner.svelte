@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Field from "$lib/registry/ui/field/index.js";
 	import * as RadioGroup from "$lib/registry/ui/radio-group/index.js";
+	import * as ScrollArea from "$lib/registry/ui/scroll-area/index.js";
 	import ComponentTuner from "./component-tuner.svelte";
 	import { RADIO_GROUP_SPEC } from "./radio-group-tuning.js";
 	import type { Snippet } from "svelte";
@@ -11,16 +12,16 @@
 		{ key: "vertical", label: "通知频率 · 纵向", orientation: "vertical" },
 		{ key: "horizontal", label: "通知频率 · 横向", orientation: "horizontal" },
 		{ key: "disabled", label: "通知频率 · 整组禁用", orientation: "vertical" },
-		{ key: "invalid", label: "通知频率 · 校验错误", orientation: "vertical" },
+		{ key: "invalid", label: "通知频率 · 校验错误", orientation: "vertical" }
 	] as const;
 	const options = [
 		{ value: "daily", label: "每天汇总" },
 		{ value: "instant", label: "即时通知" },
-		{ value: "weekly", label: "每周汇总" },
+		{ value: "weekly", label: "每周汇总" }
 	];
 	let values = $state({
 		current: { vertical: "daily", horizontal: "daily", disabled: "daily", invalid: "daily" },
-		before: { vertical: "daily", horizontal: "daily", disabled: "daily", invalid: "daily" },
+		before: { vertical: "daily", horizontal: "daily", disabled: "daily", invalid: "daily" }
 	});
 </script>
 
@@ -44,7 +45,12 @@
 							用上下方向键切换；即时通知暂不可用。
 						{/if}
 					</Field.Description>
-					<div class="max-w-full min-w-0 overflow-x-auto p-3">
+					<ScrollArea.Root
+						orientation="horizontal"
+						type="hover"
+						viewportLabel={group.orientation === "horizontal" ? "横向通知频率选项" : undefined}
+						viewportProps={{ class: "p-3" }}
+					>
 						<RadioGroup.Root
 							bind:value={values[pane][group.key]}
 							orientation={group.orientation}
@@ -84,7 +90,7 @@
 								</Field.Field>
 							{/each}
 						</RadioGroup.Root>
-					</div>
+					</ScrollArea.Root>
 					{#if group.key === "invalid"}
 						<Field.Error id={`${id}-${pane}-${group.key}-error`}>
 							当前通知方案暂不可用，请重新确认通知设置。
