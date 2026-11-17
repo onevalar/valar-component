@@ -92,7 +92,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 			});
 
 			test("My issues restores filter and issue detail focus", async ({ page }) => {
-				await page.goto(`${path}/my-issues`);
+				await page.goto(`${path}/my-issues`, { waitUntil: "networkidle" });
 				const filter = page.getByRole("button", { name: "添加筛选", exact: true });
 				const popup = page.getByRole("dialog", { name: "筛选问题" });
 				await openAndDismiss(page, filter, popup, popup.getByRole("combobox"));
