@@ -1,55 +1,78 @@
 # Linear 组件对齐清单
 
-2026-11-14 · 清单记录仓库中的基础组件、场景预览和验收进度。
+2026-11-17 · 清单记录仓库中的基础组件、场景预览和验收进度。
 
 逐项使用[组件设计规范](DESIGN.md)中的场景、状态、搭配、间距和验收规则。下表按开发顺序列出完整库存。组内每个组件独立记录状态，已测组中的其他成员仍需各自实测。
 
 ## 基础组件整体验收状态
 
-已有 40 项留下实现或场景验收记录。其中 33 项已验收并恢复目录入口，其他 7 项仍标为「部分对齐」。下表记录每项已落实的范围和优先补查项。批次记录保留当时验证过的状态，当前结论以本节为准。
+现有 80 个基础组件页，全部显示在中英文目录、导航和搜索。其中 69 项通过 Linear 对齐验收，11 项按 Valar 规范完成。见 [Valar 自有基础组件](#基础组件整体验收--valar-自有设计)和 [最后四项验收](#基础组件整体验收--分页进度加载与工具重试)。
 
 | 组件 | 已落实的范围 | 整体验收优先补查 |
 | --- | --- | --- |
-| Alert | 离线重连条、常驻提示和操作布局 | 危险提示采用 Valar 语义红，待找到同类 Linear 常驻错误样本 |
+| Accordion | Linear 工作区中的独立开合与编辑器折叠区块的三角、缩进、行高及间距，兼容单开、多开、禁用和调节器 | 已验收，通用 FAQ 外观沿用 Valar 规则 |
+| Alert | 离线重连条、常驻说明、文件超限通知及阻断导入流程的常驻错误，支持返回修正、步骤禁用及窄容器换行 | 已验收，本地复现失败和恢复 |
 | Alert Dialog | 草稿关闭、危险确认、紧凑和图文样式，焦点约束、取消归焦及本地失败重试 | 已验收；真实失败反馈未在 Linear 取样 |
+| Aspect Ratio | Issue 正文媒体完整显示、6 px 裁切边界、宽高上限及宽窄屏两种比例 | 已验收，播放与编辑仍由媒体控件提供 |
+| Attachment | 上传、已发送文件、非方形图片、移除、下载，超限时的中性文件行与错误通知，横向悬浮滚动 | 已验收，预览在本地模拟上传反馈 |
 | Avatar | 成员列表 24 px、订阅者 18 px、照片失败与恢复、状态标记、多人换行和溢出计数 | 已验收，多人头像是 Valar 的通用规则 |
-| Badge | Issue 分类标签 | 其他状态徽标、图标、长文本及可点击徽标 |
+| Badge | Issue 分类标签、普通状态与图标、长标签截断和链接键盘反馈 | 已验收，通用状态与长链接采用 Valar 规则 |
 | Breadcrumb | Issue 返回路径、三级父项、当前项语义、长标题裁切和回退归焦 | 已验收 |
+| Bubble | Agent 连续气泡及编辑、复制、行内链接，Issue 评论中的选中回应和计数 | 已验收，可点击气泡使用 Valar 的原生链接和按钮约定 |
 | Button | 工作区主次、透明、危险与禁用按钮，紧凑工具栏，内侧焦点和加载保护 | 已验收 |
-| Button Group | Issue 工具栏横向胶囊，两个图标操作补齐无障碍名称 | 其他组形态、混合动作和键盘操作 |
+| Button Group | Issue 工具栏拆分胶囊，混合输入对齐、双向拼接、键盘操作与菜单归焦 | 已验收，普通混合组采用 Valar 规则 |
 | Calendar | 普通与项目月历、今日和选中、内侧焦点、六行网格、翻月和年月下拉 | 已验收 |
 | Card | 常规和紧凑密度、设置行与分隔线、浅深表面、长说明与窄屏操作换行 | 已验收 |
+| Chart | 用量空坐标轴、Insights 堆叠柱悬停、明细下钻和表格键盘 | 已验收，非零费用用量仍待业务场景取样 |
 | Checkbox | 标签表格浅深色未选、选中及批量计数，全选、半选、表单校验和禁用 | 已验收，半选沿用 Valar 规则 |
+| Code Block | Issue 和 Agent 代码表面、行号、复制、换行、展开与横纵悬浮滚动 | 已验收，语言选择和编写由编辑器宿主处理 |
+| Color Picker | 标签预设色、Hex、二维选色和色相条，支持键盘调整、关闭归焦及短屏悬浮滚动 | 已验收，选色轴键盘操作采用 Valar 规则 |
 | Collapsible | 项目属性开合、普通按钮、禁用、短屏和减少动态效果 | 已验收 |
 | Combobox | 可安装基础组件，Issue 属性单选与标签多选、清空、禁用及本地异步反馈 | 已验收 |
 | Command | Cmd+K 弹窗和 My issues 紧凑筛选、长结果独立滚动、键盘选择和归焦 | 已验收 |
 | Context Menu | Issue 行右键、Status 搜索子面板、Copy 子菜单、危险确认、键盘及触屏 | 已验收，根菜单保留键盘首字搜索 |
+| Data Table | 导入记录 32 px 表头、44 px 数据行、筛选空态、排序和行尾命令 | 已验收，复用 Table 并在窄屏提供悬浮滚动 |
 | Date Picker | 项目日期和里程碑入口，输入识别精度、范围校验、清除、日历和周期选项 | 已验收 |
 | Dialog | 默认与编辑弹窗、滚动、固定操作区、取消、表单校验和本地提交反馈 | 已验收；普通紧凑壳为 Valar 的通用尺寸 |
+| Drawer | 手机工作区面板、透明点击层、外点关闭、键盘归焦、悬浮滚动及通用方向 | 已验收，触摸拖动和动效沿用 Valar 的 Vaul 实现 |
 | Dropdown Menu | 工作区、子菜单、单选、复选、禁用、行尾快捷键、危险确认和窄屏碰撞 | 已验收；半选及显式危险项沿用 Valar 规则 |
 | Empty | Assigned、筛选无结果、清除后归焦、普通空态和本地新建入口 | 已验收 |
 | Field | 主题与团队设置行、响应式分组、描述和错误关联、受限项语义 | 已验收 |
+| Gauge | Cycle 容量读数、16 px 环及 0% 和超额样本；通用弧表验证缺失和溢出 | 已验收，通用弧形沿用 Valar 规则 |
 | Hover Card | Issue 成员资料、进入和离开、边缘碰撞、短屏滚动、键盘和触屏资料入口 | 已验收，通用链接预览沿用 Valar 规则 |
 | Input | Profile 和团队标识的浅深外观、聚焦、默认尺寸与输入反馈，另验证文件、只读、禁用、错误和表单重置 | 已验收，内联错误等采用 Valar 规则 |
 | Input Group | 设置搜索、团队名称组合、清除归焦、图标菜单、多行与加载状态 | 已验收，异步验证使用本地示例 |
+| Issue Composer | 标题、富文本、草稿、属性选择、附件和连续创建，富文本支持内嵌图片和裁剪、视频播放器、Mermaid、LaTeX 和折叠区块 | 已验收，真实上传与工作区限额由宿主负责，多团队使用合成数据复验 |
+| Issue Detail | 路径、标题、描述、属性、活动、行内评论、选区保留、草稿确认和键盘归焦 | 已验收，保存与取消沿用 Valar 明确提交行为；从选区新建问题属于后续创建流程 |
 | Item | Issue 行高、标题截断、尾部信息、当前与归档状态、普通列表和操作 | 已验收 |
 | Kbd | 标准、菜单和工具提示三种样式均有 Linear 浅深实测。单键、组合键、按钮和输入组有独立示例 | 已验收 |
 | Label | 13 px／500 默认标签、输入关联、必填标记、禁用及复选项切换 | 已验收 |
+| Marker | Agent 思考文字的淡入、扫光、停止和减少动态效果，通用图标及分隔标记 | 已验收，通用标记采用 Valar 规则 |
+| Message | Agent 提问、回复、思考中、停止和复制反馈，通用头像、发送者和尾部状态 | 已验收，停止提示采用 Valar 的读屏反馈 |
+| Message Scroller | 回看保位、键盘跳到最新、减少动态效果和悬浮滑块 | 已验收，滚动条按 Valar 规范覆盖内容 |
+| Navigation Menu | 项目路由胶囊、当前页、键盘进入和浏览器返回、窄容器悬浮滚动 | 已验收，普通下拉面板采用 Valar 规则 |
+| Pagination | 用量探索的结果计数及上一页、下一页禁用状态，本地多页合成记录 | 部分对齐，待测非零结果和启用的分页按钮 |
 | Popover | 普通表单、工作区浮层和显示选项，独立滚动、嵌套选择、关闭顺序和归焦 | 已验收 |
-| Progress | 项目完成百分比读数，横条范围计算、未知进度和减少动态效果 | 通用横条的 Linear 实页外观与动效仍待取样 |
-| Resizable | Inbox 分栏分隔器 | 另一轴向、禁用、边界和不同布局 |
+| Progress | 项目完成百分比、横条范围计算、未知进度和减少动态效果；项目侧栏复测到 16 px 进度环 | 部分对齐，待补通用横条实页 |
+| Range Calendar | Cycle 单月及双月、两个范围端点、区间带、最早可用日、翻月和键盘 | 已验收，通用年月选择仍可用 |
+| Resizable | Inbox 横向分栏、上下分栏、轴向语义、尺寸边界与锁定 | 已验收，上下分栏沿用 Valar 规则 |
 | Scroll Area | 设置细滑块、横纵及双向视口、拖动、滚轮、键盘和可选滚动接力控制 | 已验收，双向示例采用 Valar 规则 |
 | Select | 设置表面、选项高亮与选值分离，空值、禁用、错误、长列表、分组及多选 | 已验收 |
 | Separator | Linear 设置卡片的浅深行间线落实到基础组件和设置页。横向、纵向及装饰语义有独立示例 | 已验收 |
 | Sheet | 项目时间线内嵌面板、独立滚动、窄屏堆叠、四方向模态和归焦 | 已验收；快捷键浮动壳另有取样 |
 | Sidebar | 工作区选中项、折叠分组、滚动、桌面图标模式与移动抽屉归焦 | 已验收 |
-| Sonner | 复制反馈 | 成功、错误、加载、撤销及堆叠 |
+| Skeleton | AI 筛选错峰骨架、列表保位、减少动态效果；通用头像、文章与表格占位 | 已验收，通用占位采用 Valar 规则 |
+| Slider | 主题 Contrast 的 6 px 轨道、20 px 拇指、读数、范围与步进，通用单值、多值、纵向和禁用 | 已验收，焦点描边改到内侧 |
+| Sonner | 复制反馈、成功、失败、加载替换、撤销及独立通知堆叠 | 已验收，复制以外的状态用 Valar 预览演示 |
+| Stepper | 导入向导的只读步骤轨道、当前和完成、失败停留、返回保留表单及窄屏滚动 | 已验收，普通可导航步骤沿用 Valar 规则 |
 | Switch | 常规和紧凑尺寸，轨道颜色、滑块时序、内侧焦点、禁用与等待 | 已验收，等待采用本地示例 |
 | Table | Issue 标签密度、排序和选择、无结果、普通表格与页脚、窄屏内滚动和键盘 | 已验收，无结果为 Valar 示例 |
 | Tabs | 时间线胶囊切换，键盘手动激活、默认与线型、垂直、禁用和窄屏滚动 | 已验收 |
 | Textarea | 团队描述固定 120 px、通用自动增长、只读、禁用、错误关联及字符限制 | 已验收，可见字数是 Valar 示例补充 |
-| Toggle Group | 富文本工具栏 | 其他单选和多选用法、禁用及键盘切换 |
+| Toggle | 评论格式工具、Inbox 未读筛选、键盘按下与释放、禁用及三档尺寸 | 已验收。文字与描边样式按 Valar 通用用法验证 |
+| Toggle Group | 富文本工具栏、单选与多选、禁用及方向键切换、双向拼接 | 已验收，通用单选与禁用采用 Valar 规则 |
 | Tooltip | 实测工具栏与底栏的表面及放置，默认 500 ms 悬停、即时开合、四方向定位、长文案换行和快捷键 | 已验收，保留 Valar 的键盘即时提示 |
+| Typography | Issue 描述里的正文、四级标题、引用、两类列表、分隔线、行内代码与链接；提供只读排版组件 | 已验收，键盘下划线与宽表格滚动沿用 Valar 规则 |
 
 ## 基础组件默认样式复核
 
@@ -330,7 +353,290 @@ Chromium 在浅深主题和窄屏验收重试、恢复、归焦、进度端点�
 
 1200 px 与 360 px 宽度下的浅深主题均已通过。Issue 详情、My issues 列表和项目详情分别接入 Breadcrumb、Item／Empty 和 Collapsible。图标折叠、归档不可用行和示例插图按 Valar 规则实现。
 
-下一批复核 Badge、Button Group、Toggle Group、Resizable 和 Sonner。优先对照 Issue 标签与工具栏、富文本操作、Inbox 分栏和复制反馈。
+## 基础组件整体验收 · 标签、操作组、分栏与通知
+
+2026-11-15 · 已重新取样 Issue 属性、提示词拆分按钮、评论格式工具栏、Inbox 分隔器与复制通知。测量值见[设计规范](DESIGN.md#标签拆分操作格式工具栏分栏与通知复测)。
+
+Badge、Button Group、Toggle Group、Resizable 和 Sonner 恢复中英文基础组件目录与搜索入口。Chromium 以 1200 px 和 390 px 宽分别复测浅深主题，检查长标签、混合组对齐、菜单归焦、禁用跳过、分栏边界与锁定、通知替换和撤销。注册表和共享包使用同一份组件源码。
+
+生产预览 27 项浏览器回归通过，其中 20 项覆盖五个组件在浅深色和两种宽度下的状态。251 项文档单元测试、2 项共享包测试、类型检查和生产构建通过。
+
+## 基础组件复查 · 告警、进度、加载与单选
+
+2026-11-15 · 复查 Linear 项目概览与里程碑、账单和额度、设置与全局搜索。已取得百分比链接及单选下拉的实页证据，见[设计规范](DESIGN.md#告警里程碑与加载反馈复测)。
+
+| 组件 | 本地交付 | 实页缺口 |
+| --- | --- | --- |
+| Alert | [基础预览](/zh/docs/components/alert)、`@valar/svelte-ui/alert`。常驻提示在窄容器内将按钮移到说明下方。 | 常驻危险错误提示仍缺样本 |
+| Progress | [基础预览](/zh/docs/components/progress)、`@valar/svelte-ui/progress`。无效范围或非有限值显示为未知进度。 | 里程碑仍用百分比；通用横条样本未找到 |
+| Skeleton | [基础预览](/zh/docs/components/skeleton)、`@valar/svelte-ui/skeleton`。系统减少动态效果时停止脉冲。 | 冷启动为文字加载，未找到对应骨架 |
+| Spinner | [基础预览](/zh/docs/components/spinner)、`@valar/svelte-ui/spinner`。系统减少动态效果时停止旋转。 | 未找到对应的独立转圈样本 |
+| Radio Group | [待验收预览](/zh/docs/components/radio-group)。保留原组件。 | 搜索排序是下拉单选；未找到独立单选按钮组 |
+
+Chromium 在浅深主题和 1200／390 px 视口复验，另将 Alert 嵌入 250 px 容器测量文案和操作距离。14 项浏览器回归通过，包括键盘重连及归焦、进度端点和未知状态、减少动态效果与调节器。251 项文档单元测试、2 项共享包测试、类型检查和生产构建通过。
+
+五项保留可直接访问的预览，待 Linear 对齐验收后进入目录。
+
+## Valar 基线验收记录
+
+2026-11-15 · 这批验证了本地组件的布局、交互和安装。设计依据及用法见[设计规范](DESIGN.md#valar-基线验收)。可安装组件保留原有注册表名和 `@valar/svelte-ui/<组件名>` 入口。Data Table 通过 Table 和文档示例组合，Typography 使用文档提供的排版工具类。
+
+| 组件 | 依据及验收范围 |
+| --- | --- |
+| Alert、Progress、Radio Group、Skeleton、Spinner | 常驻告警与百分比参考 Linear，通用危险提示、横条、单选和加载造型采用 Valar 规则。核对重连、返回焦点、未知进度、方向键与选中、加载定位及减少动态效果。 |
+| Native Select、Number Field、Input OTP、Slider、Slider Field、Tags Input、Color Picker、Range Calendar | 复用表单颜色、对齐和焦点规则。核对原生选择框双向布局、数字上下界、复合控件按键焦点、数值输入、粘贴与重置、日历对齐和区间。 |
+| Accordion、Drawer、Menubar、Navigation Menu、Pagination、Toggle、Stepper | 复用折叠、菜单、弹层和操作组规则。核对状态切换、按键导航、拖拽关闭、焦点恢复、分页换页和步骤状态。 |
+| Aspect Ratio、Carousel、Chart、Data Table、Marker、Typography | 使用 Valar 的容器、文本和信息层级。核对示例布局、标记与尾部操作、表格交互、图表数据和浮层，以及窄屏容器。 |
+| Attachment、Bubble、Code Block、Message、Message Scroller、Questionnaire、Trace | 参考 Linear Agent 和 Issue 编辑的相邻控件与排版，独立变体使用 Valar 规则。核对附件、对话排版、代码换行、滚动、可展开步骤和表单选择。 |
+| Gauge、Waffle Chart、Donut Chart、Sparkline、Ruler Slider、Tick Meter、Texture Fill | 按 Valar 扩展验收，沿用语义颜色。核对缺失数据、零值、满值、标签、图例、键盘和减少动态效果。 |
+| Issue Composer、Issue Detail | 复用已实测的 Linear 场景，增加基础页独立示例。复测弹窗校验、创建后归焦、标题编辑及草稿保存，完整协作流程由场景预览覆盖。 |
+
+Chromium 验证了 80 个组件页在中英文、浅深色及 390／1200 px 的 640 组渲染。各页示例均出现，外层预览容器无横向溢出。40 项浏览器回归、文档类型检查、253 项单元测试、2 项共享包测试和生产构建通过。这些结果记录 Valar 基线质量。
+
+## 历史记录 · 最后四项的 Linear 取样范围
+
+| 组件 | 已有实页证据及实现 | 当时未取得的 Linear 实页样本 |
+| --- | --- | --- |
+| [Trace](/zh/docs/components/trace) | Agent 搜索、完成摘要和展开步骤。离线送出的搜索在重连后执行成功。Valar 已提供同层独立链接、重试中、重试失败及恢复成功的可操作预览。 | Linear 工具行本身的失败、重试及链接动作。 |
+| [Progress](/zh/docs/components/progress) | Projects 的完成百分比和 Issue Composer 的 16 px 上传进度环已有实页证据。Valar 横条另复验了端点、未知、窄屏、双向和减少动态效果。 | 独立横条的确定、不确定、完成状态。当前工作区的 Cycles、Initiatives 尚无相关数据。 |
+| [Pagination](/zh/docs/components/pagination) | Usage explorer 的零计数、禁用方向按钮及间距已取样，本地三页预览可操作。 | 非零结果的真实计数格式、启用按钮、首尾页切换与焦点。 |
+| [Spinner](/zh/docs/components/spinner) | 官方 Demo 的同步文字后三点逐个亮起，减少动态效果时静止。`appearance="dots"` 已在基础源码和独立预览中实现。 | 独立转圈加载在各使用场景的样式和时序。 |
+
+本次新增的 Toggle、Bubble、Trace 和 Attachment 用法通过 Chromium 浅深色、390 px 及对应回归测试。13 项浏览器用例通过，包含按下反馈、键盘开合、下载、样式调节器以及中英文目录与搜索的发布范围。253 项文档单元测试、2 项共享包测试、类型检查和生产构建通过。
+
+2026-11-16 复测后，Toggle 通过独立预览和 Inbox 组合验收，已恢复目录和搜索。Bubble、Trace 和 Attachment 保留部分对齐。实测状态与未观察到的样本见[组件设计规范](DESIGN.md#2026-11-16-实页复测)。
+
+本轮生产预览的 15 项浏览器用例覆盖浅深色、390 px 窄屏、Inbox 筛选、气泡取消编辑、工具开合及附件下载和移除。中英文目录和搜索各有 39 项。253 项文档单元测试、2 项共享包测试、类型检查和生产构建通过。
+
+2026-11-16 · Agent 继续补测。Bubble 新增正文行内链接样式，Trace 新增可切换的工具运行示例，两者使用基础组件和同一份 Valar 主题源码。浅深主题下在 390 px 验证链接焦点与回车导航，在 320 px 验证运行行的宽度、间距、键盘切换与减少动态效果。另复验 Trace 共用预览框在 390／834 px 的浮动滚动条。8 项 Chromium 回归、253 项文档单元测试、2 项共享包测试、文档类型检查和生产构建通过。三项仍在待办，目录保持 39 项。
+
+
+## 基础组件整体验收 · Issue 与对话组件
+
+2026-11-16 · 在 Linear 的新建 Issue、测试 Issue 正文及合成 Agent 对话取样。记录了正文选区工具栏、草稿关闭、属性菜单、消息状态、最新消息入口和 Issue／Agent 两类代码块。实际尺寸及交互见[设计规范](DESIGN.md#2026-11-16-issue-与对话组件实测)。
+
+Code Block、Issue Detail、Message 和 Message Scroller 通过独立验收后恢复中英文基础组件目录、导航和搜索。Code Block 和 Message Scroller 在窄屏测得浮动滚动条显示前后视口宽度一致。Agent 区块使用同一份 Message 和 Message Scroller 源码。Issue Detail 的浮动格式工具栏显示时折叠固定栏中的重复操作。Issue Composer 的富文本草稿、元数据、清单与附件已有可交互预览，保留部分对齐状态。
+
+普通文档示例的共用预览框切换为悬浮 Scroll Area，修正长内容在 390 px 下居中后裁掉的顶部编辑入口。Issue Detail 的正文点击只避开正文内部的链接、按钮和代码滚动区，嵌套在外层滚动区域时仍可直接进入编辑。
+
+最终生产预览通过 52 项文档浏览器回归和 5 项共享应用浏览器回归，覆盖 320／390 px 窄屏、浅深色、键盘、滚动区域与目录搜索。253 项文档单元测试、2 项共享包测试与类型检查通过。注册表和共享包已重新生成，本地文档预览已更新至 5187 端口。
+
+## 基础组件整体验收 · 编辑器媒体、折叠、附件和回应
+
+2026-11-16 · 在已登录的 Linear 工作区用合成草稿和对话取样，核对图表与公式源码切换、折叠区块、图片裁剪、视频、附件超限和评论回应。实测尺寸与状态见[设计规范](DESIGN.md#2026-11-16-富文本插入附件与回应复测)。
+
+| 组件 | 实现与验收范围 |
+| --- | --- |
+| [Issue Composer](/zh/docs/components/issue-composer) | `issue-composer` 注册表和 `@valar/svelte-ui/issue-composer`。源码与渲染切换、语法错误、媒体取消和读取失败、裁剪保存及撤销、视频控件、草稿恢复和提交后回读。图片保留原文件和裁剪边界，实际上传、压缩和工作区限额由宿主处理。 |
+| [Accordion](/zh/docs/components/accordion) | `accordion` 注册表和 `@valar/svelte-ui/accordion`。文档区块、独立开合、焦点、禁用和单开／多开。 |
+| [Attachment](/zh/docs/components/attachment) | `attachment` 注册表和 `@valar/svelte-ui/attachment`。图片比例、下载与移除、超限反馈、横向悬浮滚动及窄屏无布局挤占。 |
+| [Bubble](/zh/docs/components/bubble) | `bubble` 注册表和 `@valar/svelte-ui/bubble`。连续提问间距与尾端对齐、评论回应按下状态、原生链接和按钮。Issue Detail 的回应使用同一组件。 |
+| [Alert](/zh/docs/components/alert) | `alert` 注册表和 `@valar/svelte-ui/alert`。已复测超限通知的圆角、内距、关闭及恢复动作，常驻危险提示仍待实页取样。保留部分对齐。 |
+
+Issue Composer、Accordion、Attachment 和 Bubble 恢复中英文基础组件目录、导航和搜索。编辑器、渲染预览和附件组使用悬浮 Scroll Area。窄屏实测滚动条出现前后，内容宽度一致。
+
+5187 端口的本地正式预览通过 51 项 Chromium 回归，其中 46 项验证文档预览、场景及调节器，5 项验证共享包应用。覆盖 320／375／390 px、浅深主题、键盘选择及关闭归焦，以及视频全屏前后的进度、静音和倍速。253 项文档单元测试、2 项共享包测试、类型检查、文档构建和共享包预览构建通过，已重新生成注册表。
+
+下一批优先复测 Trace 的失败和重试、Progress 的横条、Alert 的常驻危险条，以及 Skeleton 和 Radio Group 的对应场景。各项按找到的实页证据落实和验收。
+
+## 基础组件复查 · 失败恢复、进度和加载
+
+2026-11-16 · 在已登录的 Linear 工作区复测 Agent 搜索、导入失败、附件上传、项目和团队 Cycles 设置，以及偏好和 Agent 冷启动。具体状态和尺寸见[设计规范](DESIGN.md#2026-11-16-导入失败工具恢复进度和加载复测)。
+
+| 组件 | 基础实现和当前证据 |
+| --- | --- |
+| [Alert](/zh/docs/components/alert) | `alert` 注册表、`@valar/svelte-ui/alert`。常驻流程失败使用 `appearance="workflow-error"`，沿用实测的红图标、中性标题、说明表面和帮助区。浅深色示例可返回设置、重现错误并模拟恢复。 |
+| [Trace](/zh/docs/components/trace) | `trace` 注册表、`@valar/svelte-ui/trace`。`Trace.Action` 和 `Trace.Retry` 提供详情链接、异步重试、防重复和状态播报。本地可复现错误及恢复。Linear 本轮只复现离线排队及恢复后搜索，工具行失败和重试待取样。 |
+| [Progress](/zh/docs/components/progress) | 窄屏浅深色中复核区间、端点、未知状态、双向填充和减少动态效果。实页已看到百分比和附件上传环，独立横条待取样。 |
+| [Skeleton](/zh/docs/components/skeleton) | `skeleton` 注册表、`@valar/svelte-ui/skeleton`。基础占位可按容器收缩，保留 48 px 头像和 16 px 间隔。预览检查加载状态播报和减少动态效果。Linear 冷启动样本为文字，仍待骨架参考。 |
+| [Radio Group](/zh/docs/components/radio-group) | `radio-group` 注册表、`@valar/svelte-ui/radio-group`。修复六个示例的组名、说明和错误关联，覆核方向键、禁用项、窄屏与调节器浮动滚动条。Linear 独立单选组仍待取样。 |
+
+Alert 通过组件级验收，恢复中英文基础组件目录、导航和搜索。Trace 与 Progress 为部分对齐，Skeleton 与 Radio Group 为 Valar 基线。表内各项均可通过直达链接查看。
+
+5187 端口的正式预览通过 34 项 Chromium 回归，其中 32 项覆盖基础页、工作台、场景和中英文目录，2 项覆盖共享包应用。验证范围包括浅深色、320 px 窄屏、方向键和关闭归焦。Trace 与横向 Radio Group 的滚动条浮在内容上，显示时容器尺寸一致。253 项文档单元测试、2 项共享包测试、类型检查和本地正式构建通过，注册表已重新生成。
+
+下一轮优先从有现成失败运行的 Agent 会话和启用 Cycles／Initiatives 的工作区取样。加载与单选继续找能在真实交互中观测的独立对应控件。
+
+## 基础组件整体验收 · 导入、色板、导航和状态标记
+
+2026-11-16 · 在 Linear 实页复测 Asana 导入、导入记录、工作区标签、项目路由和 Agent 思考状态。测量值和适用范围见[设计规范](DESIGN.md#2026-11-16-导入步骤表格色板与项目导航)。
+
+| 组件 | 基础入口和验收内容 |
+| --- | --- |
+| [Stepper](/zh/docs/components/stepper) | `stepper` 注册表与 `@valar/svelte-ui/stepper`。五步导入示例核对轨道、返回、失败后留在当前步骤、恢复和到达确认。 |
+| [Data Table](/zh/docs/components/data-table) | TanStack Table 用法复用 `table` 注册表与 `@valar/svelte-ui/table`。合成导入记录支持真实排序、筛选、空态和行操作，支付示例也使用悬浮 Scroll Area。 |
+| [Color Picker](/zh/docs/components/color-picker) | `color-picker` 注册表与 `@valar/svelte-ui/color-picker`。标签色板、Hex 校验、二维选色和色相条支持指针和键盘，短屏内容可悬浮滚动。 |
+| [Navigation Menu](/zh/docs/components/navigation-menu) | `navigation-menu` 注册表与 `@valar/svelte-ui/navigation-menu`。项目路由胶囊显示当前页，窄屏可键盘滚动。普通下拉另有键盘关闭测试。 |
+| [Marker](/zh/docs/components/marker) | `marker` 注册表与 `@valar/svelte-ui/marker`。Agent 和独立预览共用思考标记，保留 300 ms 淡入、2.4 秒扫光与静态减少动态效果。 |
+
+五项通过浅色、深色、320 px 窄屏和键盘验收，恢复中英文基础目录、导航和搜索。生产预览通过 35 项浏览器测试，包含编辑器、消费包和 Agent 场景。文档类型检查无错误和警告，文档单元测试 253 项、组件包测试 2 项通过。
+
+下一批优先复核仍有直接参考的组件。Trace 工具失败、Progress 独立横条、Skeleton 骨架和独立 Radio Group 继续登记实页样本。
+
+## 基础组件整体验收 · Typography 与四项补测
+
+2026-11-16 · 样本来自已登录 Linear 的新建 Issue、Agent 测试对话、项目进度侧栏、搜索和团队设置。测量及未覆盖状态见[组件设计规范](DESIGN.md#2026-11-16-issue-排版与四项补测)。
+
+| 组件 | 实页观察和本地结论 |
+| --- | --- |
+| [Typography](/zh/docs/components/typography) | `typography` 注册表及 `@valar/svelte-ui/typography`。只读正文容器复用标题层级、段落、引用、列表、行内代码与链接的测量值。浅深色、320 px、键盘下划线与表格悬浮滚动通过，恢复中英文入口。 |
+| [Trace](/zh/docs/components/trace) | 查询不存在的合成 Issue，工具摘要显示 Looked at issue，正文报告空结果。真实工具失败行及重试仍待采样。Valar 失败、重试、恢复及预览滚动继续按现有用法验证，维持部分对齐。 |
+| [Progress](/zh/docs/components/progress) | 项目内加入已完成的合成 Issue 后，侧栏显示 100% 及 16 px 环。Usage explorer 为图表和结果列表。本地横条维持范围、未知、RTL 与减少动态效果规则，等待同用途横条，维持部分对齐。 |
+| [Skeleton](/zh/docs/components/skeleton) | 禁用缓存并降速重载 Issue 得到 Loading…；慢速搜索在查询与结果间也未观察到形状占位。六种本地预览复验，维持 Valar 基线。 |
+| [Radio Group](/zh/docs/components/radio-group) | 团队估算和新建工作区地区均使用组合框，Send flare 仅有文本和附件。方向键、禁用和错误状态继续按本地单选组验证，维持 Valar 基线。 |
+
+5187 生产预览通过 26 项 Chromium 回归，覆盖五项基础页、中英文目录和搜索、编辑器及共享包消费场景。文档类型检查无错误和警告，253 项文档单元测试和 2 项组件包测试通过。目录和搜索各显示 54 项，Typography 注册表入口已验证。
+
+下一批优先复测 Usage explorer 的上一页、下一页及结果计数，它提供了 Pagination 的实页入口。四项未覆盖状态继续保留待采样。
+
+## 基础组件整体验收 · 用量、滑块、抽屉与筛选骨架
+
+2026-11-17 · 样本来自已登录 Linear 的 Usage explorer、Preferences 和 My issues。尺寸、主题和动效见[组件设计规范](DESIGN.md#2026-11-17-用量结果主题滑块移动抽屉与筛选骨架)。
+
+| 组件 | 基础入口和验收内容 |
+| --- | --- |
+| [Pagination](/zh/docs/components/pagination) | `Pagination.Results` 共用 `pagination` 注册表与 `@valar/svelte-ui/pagination`。30／90 天实页都是零结果，两个方向按钮和 Export CSV 原生禁用。本地三页检验结果区间、按钮边界、方向键和悬浮滚动，保留部分对齐。 |
+| [Chart](/zh/docs/components/chart) | `chart` 注册表、`@valar/svelte-ui/chart`。已复现用量空图、坐标轴和可切换时段，真实柱形交互未覆盖，保留部分对齐。 |
+| [Slider](/zh/docs/components/slider) | `slider` 注册表、`@valar/svelte-ui/slider`。主题对比度范例采用无填充轨道与独立读数，键盘使用内描边，窄屏重排，保留原有通用滑块。 |
+| [Drawer](/zh/docs/components/drawer) | `drawer` 注册表、`@valar/svelte-ui/drawer`。工作区外观复现手机端侧边几何与外点关闭，Valar 继续使用 Vaul 拖动时序和键盘归焦。长内容使用悬浮 Scroll Area。 |
+| [Skeleton](/zh/docs/components/skeleton) | `skeleton` 注册表、`@valar/svelte-ui/skeleton`。筛选生成的三个占位错峰淡入并脉冲，减少动态效果时静态显示，保留现有通用占位。 |
+
+Slider、Drawer 与 Skeleton 通过浅深色、320 px 窄屏和键盘复验，已恢复中英文目录、导航和搜索。
+
+5187 生产预览通过 30 项 Chromium 回归，覆盖五项基础页、中英文目录与搜索、现有编辑器和共享包。文档类型检查无错误和警告，253 项文档单元测试、2 项组件包测试通过；五项注册表入口可访问。
+
+后续优先补有实际用量的分页和图表。Range Calendar 可从可访问的 Cycle 日期范围继续取样。独立 Radio Group、Trace 失败重试和 Progress 横条继续登记实页样本。
+
+## 基础组件整体验收 · Insights、周期范围和媒体
+
+2026-11-17 · 在 Linear 官方交互演示取样非零 Insights 和 Engineering Cycles，在登录工作区复测用量和未提交 Issue 图片。详细几何及状态见[组件设计规范](DESIGN.md#2026-11-17-insights-柱图周期范围和媒体比例)。
+
+| 组件 | 基础入口和验收内容 |
+| --- | --- |
+| [Pagination](/zh/docs/components/pagination) | 用量 30／90 天与 Spend／Sessions 均无记录。官方 Demo 有非零明细，列表未提供可实测的前后页，部分对齐保留，本地分页键盘复验。 |
+| [Chart](/zh/docs/components/chart) | `chart` 注册表、`@valar/svelte-ui/chart`。Insights 堆叠柱按实页配色、类别和数值，复现悬停计数、百分比和明细。键盘使用数据表按钮；横向可滚动内容使用悬浮 Scroll Area。 |
+| [Range Calendar](/zh/docs/components/range-calendar) | `range-calendar` 注册表、`@valar/svelte-ui/range-calendar`。Cycle 外观提供宽屏双月、窄屏单月、26 px 日期、区间带和端点色，保留范围选择、禁用日和通用日历语义。 |
+| [Gauge](/zh/docs/components/gauge) | `gauge` 注册表、`@valar/svelte-ui/gauge`。Cycle 容量环 16 px，零值保留轨道、过载使用红色并显示原始读数。键盘驱动本地示例，读数本身无额外焦点停留。 |
+| [Aspect Ratio](/zh/docs/components/aspect-ratio) | `aspect-ratio` 注册表、`@valar/svelte-ui/aspect-ratio`。Issue 正文媒体按比例随容器收窄、保持完整内容并限高，原有其它比例示例和调节器继续可用。 |
+
+Chart、Range Calendar、Gauge 与 Aspect Ratio 通过浅深色、320 px 及对应键盘验收，恢复中英文基础组件目录、导航和搜索。
+
+5187 生产预览通过 35 项 Chromium 回归，覆盖五项基础页、中英文目录和搜索、编排调节器及共享包消费。文档类型检查无错误和警告，253 项文档单元测试、2 项组件包测试通过，五项注册表入口可访问。
+
+真实的非零费用记录仍是 Usage explorer 分页和图表明细的待测入口。Progress 横条、Trace 失败重试及独立 Radio Group 继续登记实页结果。
+
+## 基础组件整体验收 · 导入单选和同步等待
+
+2026-11-17 · 核对登录后的 Jira 导入、Reviews、My issues 的 Agent Session 筛选和 Loops，并在 Linear 官方 Demo 查了有数据的项目、Cycles 和侧栏同步提示。[设计规范](DESIGN.md#2026-11-17-导入单选和同步等待)
+
+| 组件 | 实测结果与处理 |
+| --- | --- |
+| [Radio Group](/zh/docs/components/radio-group) | Jira 导入向导的独立单选可用鼠标和方向键切换。16 px 圆点控件、4 px 选中点和状态色落实到默认源码；`appearance="settings"` 提供实测的 16 px 组间距。说明、错误和禁用用法按 Valar 规则复验，横向调节器继续使用悬浮 Scroll Area。恢复中英文目录、导航和搜索。 |
+| [Spinner](/zh/docs/components/spinner) | 官方 Demo 侧栏的 `Syncing` 是文字加三点脉冲。新增 `appearance="dots"` 和键盘可操作的同步示例，覆盖运行、完成播报和减少动态效果。独立旋转图标仍待同用途取样，保留部分对齐。 |
+| [Pagination](/zh/docs/components/pagination) | Usage explorer 未取得可翻页的非零记录。Reviews 的引导页显示静态章节计数，进入实际审阅需要现有 GitHub 集成及可审阅 PR。此前已实现的结果条继续复验首尾页、结果计数、键盘和悬浮滚动。 |
+| [Progress](/zh/docs/components/progress) | 有实际数据的项目侧栏显示 Scope、Started、Completed 趋势图，里程碑给出百分比。Cycles 显示容量环及图表；Jira 导入起始页是步骤轨道。独立横条继续保留本地验收及部分对齐状态。 |
+| [Trace](/zh/docs/components/trace) | My issues 的 Agent Session → Error 无结果，Loops 无可检查的失败运行。既有 Agent 对话只返回工具不可用的正文。继续保留本地可操作的失败、重试和恢复，预览使用悬浮 Scroll Area。 |
+
+5187 生产预览通过 35 项 Chromium 回归，覆盖浅深色、320 px 窄屏、键盘、悬浮滚动、中英文目录和搜索，以及两个组件的调节器。253 项文档单元测试、2 项共享包测试和文档类型检查通过；文档站与 Playground 均已构建，Radio Group 和 Spinner 的注册表入口可用。
+
+## 基础组件整体验收 · Issue 媒体灯箱
+
+2026-11-17 · 在 Linear 的合成 Issue 正文打开两张图片的灯箱，实测前后切换、首尾状态、方向键、暗色窄屏和缩放。测试 Issue 已移入可恢复删除区。[设计规范](DESIGN.md#2026-11-17-媒体灯箱与等待状态补测)
+
+| 组件 | 结果 |
+| --- | --- |
+| [Carousel](/zh/docs/components/carousel) | `appearance="media"` 与 `Carousel.Toolbar` 提供图片浏览、双向导航与首尾禁用。基础组件页的灯箱使用两张合成图，可打开、切换、缩放和关闭归焦。注册表 `carousel`，共享包 `@valar/svelte-ui/carousel`。覆盖通用竖向、大小、间距、多张布局与播放控制。 |
+| [Spinner](/zh/docs/components/spinner) | 对实际图片请求单独限速后，正文及灯箱均只保留图像占位，未取得圆形加载样本。已验收的三点同步状态保留。 |
+| [Pagination](/zh/docs/components/pagination) | 账单无发票，Recently deleted 有数据但无页码或前后页控件，文档历史用下拉切换版本。实际列表翻页待测，本地三页及悬浮滚动条继续复验。 |
+| [Progress](/zh/docs/components/progress) | AI 用量和额度页的余额和支出限制入口未展示横条。继续等待可复现的进度横条并复验本地区间和未知状态。 |
+| [Trace](/zh/docs/components/trace) | Linear Code 没有现成的已配置环境，无法复现实际工具行失败后重试。现有本地失败／重试／恢复和悬浮预览继续复验。 |
+
+Carousel 通过浅深色、320／1280 px、键盘和缩放验收，并恢复中英文基础组件目录、导航和搜索。圆形加载、真实翻页、横条和工具行重试继续等待对应实页状态。
+
+5187 生产预览通过 38 项 Chromium 回归，包含媒体灯箱、通用轮播、悬浮滚动、调节器和中英文目录与搜索。253 项文档单元测试、2 项共享包测试和文档类型检查通过。文档站与 Playground 已构建，注册表已同步 Carousel 新源码。
+
+## 基础组件整体验收 · 工作区整美元金额
+
+2026-11-17 · 在登录后的 Linear 支出限额表单取样空值、占位、千分位、焦点和浅深色，并检查用户用量表、未缓存搜索及合成视频上传。[设计规范](DESIGN.md#2026-11-17-支出限额与加载补测)
+
+| 组件 | 本轮结果 |
+| --- | --- |
+| [Number Field](/zh/docs/components/number-field) | `appearance="amount"` 提供美元前缀、整数字符过滤、即时千分位、内侧焦点和无步进的输入。默认步进继续支持小数、本地化和表单重置。示例可在本地预览提交值，未改动 Linear 限额。 |
+| [Spinner](/zh/docs/components/spinner) | 全局搜索在限速和未缓存查询中保留静态搜索图标。视频上传另观察到 16 px 动画图集裁切的上传反馈，通用圆形加载仍待样本。三点同步和圆形通用样式按本地回归检查。 |
+| [Pagination](/zh/docs/components/pagination) | 有记录的成员用量表只展示列排序，未出现启用的前后翻页。Guide 官方资料确认章节前后操作，当前工作区缺少可读的 Guide。保留本地分页和悬浮 Scroll Area 回归。 |
+| [Progress](/zh/docs/components/progress) | 成员用量显示金额和限额列，暂无可取样的独立横条。编辑器上传图形为 16 px，区间、未知状态和窄屏继续按本地例验证。 |
+| [Trace](/zh/docs/components/trace) | 官方更新记录确认失败的 Loop 支持恢复和重跑。My loops 无实际失败记录，工具行一级的失败和重试继续待测。现有本地工具重试、键盘归焦与悬浮 Scroll Area 复验。 |
+
+整美元和默认步进模式通过浅深色、320／1280 px、键盘和表单验收，Number Field 恢复中英文目录、导航和搜索。入口为 `number-field` 注册表与 `@valar/svelte-ui/number-field`。金额预览同步修复了绑定初值为空时的报错。
+
+5187 生产预览通过 34 项 Chromium 回归，包括内侧焦点、样式调节器、分页与 Trace 的悬浮滚动，以及中英文目录和搜索。254 项文档单元测试、2 项共享包测试和文档类型检查通过。文档站与 Playground 已构建，注册表已更新。
+
+## 基础组件整体验收 · 原生选择、导航菜单、读数和趋势
+
+2026-11-17 · 五项分别取样于 Linear 公开表单、公开导航、偏好设置、合成 Agent 对话和 Demo 项目进度图。[设计规范](DESIGN.md#2026-11-17-原生选择导航菜单读数和趋势)
+
+| 组件 | 对应实现 |
+| --- | --- |
+| [Native Select](/zh/docs/components/native-select) | `appearance="contact"` 保留原生选项、键盘提交和表单语义，落实双箭头、末端空间和内侧焦点。浅色为 Valar 适配。 |
+| [Menubar](/zh/docs/components/menubar) | `appearance="navigation"` 提供胶囊入口、紧凑浮层和对应开合样式，保留各类命令、子菜单和默认调节器。 |
+| [Slider Field](/zh/docs/components/slider-field) | `appearance="readout"` 提供滑块和只读数值，窄屏整组换行。默认可编辑步进及原生表单继续覆盖。 |
+| [Questionnaire](/zh/docs/components/questionnaire) | `Questionnaire.AgentQuestion` 提供即时单选和选中回执，组合现有问卷输入、表单与跳过。实际 Agent 的多选控件另待样本。 |
+| [Sparkline](/zh/docs/components/sparkline) | `appearance="project"` 用 Valar 的紧凑尺寸呈现完整项目图的 Completed 系列样式，读数和数据在图旁可访问。 |
+
+上述五项的相关用法通过浅深色、320／1280 px、键盘及默认变体回归，恢复中英文基础组件目录、导航和搜索。注册表及共享包沿用组件名 `native-select`、`menubar`、`slider-field`、`questionnaire` 和 `sparkline`。取样用的合成 Agent 对话留在历史记录中。
+
+5187 生产预览通过 30 项 Chromium 回归，覆盖五个新变体、调节器、内侧焦点、悬浮滚动及中英文目录与搜索。258 项文档单元测试、2 项共享包测试和类型检查通过，文档站及 Playground 已构建，五个注册表入口均可访问。
+
+其余候选检查了 Issue 表单选项、搜索和标签筛选、验证码入口、Demo 时间线预测及仪表盘。当前标签筛选操作作用于整个筛选条件，验证码流程停在账户校验，仪表盘未观察到环形、多格占比或带纹理的同用途样本。Spinner、Pagination、Progress 和 Trace 本轮暂缓。
+
+## 基础组件取样 · 剩余七项
+
+2026-11-17 · 并行核对剩余七个 Valar 基线组件。本轮新增通过 0 项，基础组件目录维持 69／80。Spinner、Pagination、Progress 和 Trace 按本批范围暂缓。
+
+| 组件 | Linear 观察 | 尚待实测 |
+| --- | --- | --- |
+| Tags Input | 新建 Issue 的 Labels 是可搜索的工作区选项菜单。选中的 Bug 显示在触发器内，再次打开可见勾选。无匹配时菜单显示 “Create new label”。OAuth 应用草稿的多个回调地址在同一个文本域中按行输入。发布设置在已登录工作区要求 Business，公开 Demo 未呈现路径过滤编辑器。 [Linear 议题标签](https://linear.app/docs/issue-property#issue-labels) · [Linear 发布路径过滤](https://linear.app/docs/releases#set-path-filters) | 可以在同一字段录入并逐项删除自由文本值的实际交互，包括批量粘贴、重复值与键盘移动。 |
+| Input OTP | Linear 官方说明在发送登录邮件后提供 Enter code。当前采样未进入验证码输入态。 [Linear 登录方式](https://linear.app/docs/login-methods#email-login) | 输入格数、粘贴分发、无效码和重试的实际界面及焦点。 |
+| Ruler Slider | Demo Projects 的 Timeline 以时间轴呈现项目；平移浏览产生的是可见时间范围的变化。 | 固定指针下移动带刻度的数值标尺，包括步进和边界。 |
+| Texture Fill | 检查了 Demo 时间轴预测与项目更新进度。项目更新报告显示百分比和项目状态图标。 [Linear 项目更新](https://linear.app/docs/initiative-and-project-updates#progress-reports-for-initiatives-and-projects) | 以重复纹理编码数值的实页样本，包括填充边界及浅深主题。 |
+| Donut Chart | Demo 工程概览、项目健康和更新报告提供数字、状态图标或百分比。Demo Engineering 的 Active 视图和 Vendor Payments 的 Issues 以 Parent issues 筛选均为空。 [Linear Insights](https://linear.app/docs/insights) | 同一总量下多个类别分别占据环形扇区的界面。 |
+| Tick Meter | Demo 项目健康用状态点和数字，项目更新报告以文本列出比例变化。 [Linear 项目更新](https://linear.app/docs/initiative-and-project-updates#progress-reports-for-initiatives-and-projects) | 以独立径向刻线表达数值的样本。 |
+| Waffle Chart | Demo 概览和更新报告未显示按比例着色的方格。 [Linear Insights](https://linear.app/docs/insights) | 用等面积格表达总体占比的样本，以及格数与实际数值的关系。 |
+
+本轮只更新取样记录。组件源码、悬浮 Scroll Area 和目录配置沿用现有版本。浅深色、窄屏和键盘的 Linear 对齐验收等对应样本确认后再进行。
+
+## 基础组件整体验收 · Valar 自有设计
+
+2026-11-17 · 七项按 [Valar 组件设计规范](DESIGN.md#valar-自有基础组件)完成。对应的 Linear 取样范围见[剩余七项](#基础组件取样--剩余七项)。
+
+| 组件 | 源码与示例 |
+| --- | --- |
+| [Input OTP](/zh/docs/components/input-otp) | 统一验证码单元格和表单外观。验证表单提供明确的输入名称、错误关联、清除归焦和本地重试。保留数字、字母数字、自定义限制、分隔和禁用示例。 |
+| [Tags Input](/zh/docs/components/tags-input) | 标签、移除按钮与输入同组，长标签在窄屏换行。覆盖分隔粘贴、重复和上限反馈、IME、键盘选中及移除、只读、禁用与原生表单重置。 |
+| [Ruler Slider](/zh/docs/components/ruler-slider) | 固定指针配合可拖动标尺与精确读数。预算表单覆盖小数步进、非整步最大值、键盘范围操作、禁用和提交；减少动态效果时同步位置与读数。 |
+| [Tick Meter](/zh/docs/components/tick-meter) | 四个配额实例展示 0%、50%、100% 和 125%。60 根刻线遵循浅深主题及危险语义，图形限制到 100%，保留真实超限读数和可访问名称。 |
+| [Donut Chart](/zh/docs/components/donut-chart) | 固定分母，轨道保留未分配部分。图例提供每类计数、占比和总量，零分配时继续呈现容量。 |
+| [Waffle Chart](/zh/docs/components/waffle-chart) | 有数据时用 100 格表达占比，图例保留原始值。无数据时显示空框和说明，格距随图形尺寸收缩。 |
+| [Texture Fill](/zh/docs/components/texture-fill) | 五种纹理共用中性轨道与主题强调色，按书写方向填充。用 Slider Field 和文本展示 0–100% 的精确值，支持减少动态效果。 |
+
+七项沿用各组件的注册表名称和 `@valar/svelte-ui/<组件名>`。中英文组件页标注「Valar 设计」，同步进入目录、导航和搜索。
+
+5187 生产预览的 20 项 Chromium 回归通过，覆盖浅深色、320 px 窄屏、桌面图形布局、表单键盘与粘贴、指针拖动、减少动态效果、目录和搜索，以及不占布局宽度的悬浮 Scroll Area。七个注册表接口和共享包导出均可用。文档 261 项单元测试、共享包 2 项测试、类型检查及生产构建通过。此批结束时目录为 76 项。
+
+## 基础组件整体验收 · 分页、进度、加载与工具重试
+
+2026-11-17 · 保留 Linear 实测的三点同步、零结果分页、项目完成率与 Agent 摘要，在同一份基础源码补齐其余 Valar 状态。[组件设计规范](DESIGN.md#分页进度加载与工具重试)
+
+| 组件 | 更新与使用 |
+| --- | --- |
+| [Spinner](/zh/docs/components/spinner) | 通用图标在窄容器内保持尺寸，按钮中的 14 px 圆形指示不挤压文字。列表刷新示例有加载、完成反馈和重复激活保护，三点同步保留原样。 |
+| [Pagination](/zh/docs/components/pagination) | 32 px 页码与前后按钮统一成胶囊，24 px 结果工具条保持实测密度。边界处将焦点移到可用方向，零结果保留禁用反馈。编号行继续使用悬浮横向 Scroll Area。 |
+| [Progress](/zh/docs/components/progress) | 中性轨道和浅深强调色用于横条，涵盖等待、已知进度、未知进度、无效范围与完成。项目完成率仍可单独使用。 |
+| [Trace](/zh/docs/components/trace) | 重试中的圆形反馈与就绪图标共用空间。失败、进行中和完成通过单个状态区域播报。保留重试后的焦点、独立说明链接及悬浮 Scroll Area。 |
+
+四项以「Valar 设计」加入中英文目录、导航和搜索。使用各自的注册表条目及 `@valar/svelte-ui/<组件名>` 入口。
+
+本地 5187 生产预览通过 23 项 Chromium 回归，覆盖浅深色、320 px 窄屏、分页首尾归焦、双向进度填充、圆形与三点加载、工具失败恢复、减少动态效果和悬浮滚动。中英文目录与搜索各核对 80 项，四个注册表接口和共享包导出均可用。文档 261 项单元测试、共享包 2 项测试、类型检查与生产构建通过。
 
 ## 组合待办 · Projects 时间线直接操作
 
@@ -344,13 +650,13 @@ Chromium 在浅深主题和窄屏验收重试、恢复、归焦、进度端点�
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | 基础操作           | `button`、`button-group`、`kbd`                                                                                                                            | 新建 Issue、项目工具栏、快捷键提示；核对图标按钮、按钮群、待提交和危险操作        | Button 的 icon-sm、Button Group 的 pill 与 Kbd 默认外观已落实                                                           |
 | 设置与导航容器     | `sidebar`、`card`、`item`、`separator`、`scroll-area`、`breadcrumb`                                                                                        | 工作区导航、Issue 顶栏与列表、Preferences；继续核对设置行和侧栏拖动                  | Card 和 Separator 默认外观已调整；Sidebar、Item、Scroll Area 与 Breadcrumb 提供实测外观                       |
-| 输入与表单         | `field`、`form`、`label`、`input`、`input-group`、`textarea`、`switch`、`checkbox`、`radio-group`、`select`、`native-select`                               | Preferences、创建表单、筛选器；补校验、只读、禁用、选项面板及焦点                 | Input、Textarea、Select、Switch 和 Checkbox 已调整默认外观；Combobox、Input Group、Field 与 Label 已提供实测场景，Radio Group 待实测         |
-| 导航切换           | `tabs`、`toggle`、`toggle-group`、`navigation-menu`、`menubar`、`pagination`                                                                               | My issues、Projects 列表视图切换、工具栏、分页；区分跨路由链接与页内面板          | 页内 Tabs 的 capsule 与 Toggle Group 的 toolbar 已落实                                          |
+| 输入与表单         | `field`、`form`、`label`、`input`、`input-group`、`textarea`、`switch`、`checkbox`、`radio-group`、`select`、`native-select`、`number-field`                | Preferences、创建表单、筛选器与支出限额；补校验、只读、禁用、选项面板及焦点       | Input、Textarea、Select、Switch、Checkbox 和 Radio Group 已调整默认外观；Number Field 的整美元金额已验收                              |
+| 导航切换           | `tabs`、`toggle`、`toggle-group`、`navigation-menu`、`menubar`、`pagination`                                                                               | My issues、Projects 列表视图切换、工具栏、分页；区分跨路由链接与页内面板          | 页内 Tabs 的 capsule、Toggle Group 的 toolbar 与项目 Navigation Menu 已验收                                          |
 | 弹层               | `dialog`、`issue-composer`、`alert-dialog`、`popover`、`tooltip`、`hover-card`、`dropdown-menu`、`context-menu`、`sheet`、`drawer`、`command`              | 新建 Issue、帮助菜单、快捷键提示、右键菜单、快速操作；逐项核对碰撞、焦点和开合    | Dropdown Menu、Popover、Tooltip、Command 弹窗和 Context Menu 已调整；Dialog、Alert Dialog、Sheet 与 Hover Card 已提供实测外观 |
-| 列表与状态         | `table`、`avatar`、`badge`、`marker`、`alert`、`empty`、`skeleton`、`spinner`、`progress`、`sonner`                                                        | Issues、Projects、Inbox、项目更新与异步反馈；补加载、错误、选中、空状态和状态图标 | Badge 分类标签、Empty 问题列表、Table 设置表格与 Avatar 订阅者变体已落实 |
-| 折叠、日期和尺寸   | `accordion`、`collapsible`、`calendar`、`range-calendar`、`resizable`、`slider`、`slider-field`、`number-field`、`tags-input`、`color-picker`、`input-otp` | 项目属性折叠、日期选择、可调侧栏、标签编辑；逐项确认同类参考或按 Valar 扩展处理       | Collapsible 提供项目属性外观，其余候选待实测                                 |
+| 列表与状态         | `table`、`avatar`、`badge`、`marker`、`alert`、`empty`、`skeleton`、`spinner`、`progress`、`sonner`                                                        | Issues、Projects、Inbox、项目更新与异步反馈；补加载、错误、选中、空状态和状态图标 | Badge 分类标签、Empty 问题列表、Table 设置表格、导入记录 Data Table、Avatar 订阅者和 Agent Marker 已验收 |
+| 折叠、日期和尺寸   | `accordion`、`collapsible`、`calendar`、`range-calendar`、`resizable`、`slider`、`slider-field`、`number-field`、`tags-input`、`color-picker`、`input-otp` | 项目属性折叠、日期选择、可调侧栏、标签编辑；逐项确认同类参考或按 Valar 扩展处理       | Collapsible 的项目属性、Calendar 的项目月历、Resizable 的 Inbox 分栏和 Color Picker 的标签色板已验收                                 |
 | 内容、编辑与 Agent | `attachment`、`bubble`、`message`、`message-scroller`、`code-block`、`questionnaire`、`trace`                                                              | Agent 聊天、Issue 描述、附件与代码；补消息状态、滚动、反馈与工具内容              | Issue 详情与富文本编辑、Agent 对话组合已实现                              |
-| 统计与 Valar 扩展  | `chart`、`gauge`、`waffle-chart`、`donut-chart`、`sparkline`、`ruler-slider`、`tick-meter`、`texture-fill`、`stepper`、`aspect-ratio`、`carousel`          | 对照图表、时间线与步骤场景。无已确认参考的组件沿用统一的表面、密度和状态规范      | 待确认对应，按设计规范适配                                                |
+| 统计与 Valar 扩展  | `chart`、`gauge`、`waffle-chart`、`donut-chart`、`sparkline`、`ruler-slider`、`tick-meter`、`texture-fill`、`stepper`、`aspect-ratio`、`carousel`          | 对照图表、时间线、步骤和媒体场景。无已确认参考的组件沿用统一的表面、密度和状态规范 | Stepper 的导入轨道与 Carousel 的图片灯箱已验收，其余按组件记录跟踪                                                |
 
 ## 组合与能力缺口
 

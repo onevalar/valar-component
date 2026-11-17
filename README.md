@@ -21,7 +21,7 @@ pnpm --filter docs exec vite dev --host 127.0.0.1 --port 5186 --strictPort
 
 ## 源码目录
 
-- `docs/src/lib/registry/ui/`：79 个组件目录（含 Issue Composer 与 Issue Detail）。
+- `docs/src/lib/registry/ui/`：基础组件源码。中英文目录各有 80 个已验收页面。
 - `docs/src/lib/registry/examples/`、`blocks/`：示例与组合区块。
 - `docs/src/lib/registry/styles/`：唯一的组件风格 `valar`（2026-11-07 起，原上游 Nova；其余七套已移除）。
 - `docs/content/`：Valar 文档与组件用法。
