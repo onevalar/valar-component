@@ -1,15 +1,30 @@
+import type { IssueInlineMedia } from "./rich-text.js";
+import type { JSONContent } from "@tiptap/core";
+
 export const statuses = ["backlog", "todo", "progress", "done", "canceled"] as const;
 export const priorities = ["none", "urgent", "high", "medium", "low"] as const;
 
 export type IssueStatus = (typeof statuses)[number];
 export type IssuePriority = (typeof priorities)[number];
 
+export type IssueComposerOption = {
+	id: string;
+	label: string;
+	teamIds?: readonly string[];
+};
+
 export type IssueDraft = {
 	title: string;
 	description: string;
+	descriptionContent?: JSONContent;
 	status: IssueStatus;
 	priority: IssuePriority;
 	attachments: File[];
+	inlineMedia?: IssueInlineMedia[];
+	team?: string;
+	assignee?: string;
+	project?: string;
+	labels?: string[];
 };
 
 export const issueLabels = {

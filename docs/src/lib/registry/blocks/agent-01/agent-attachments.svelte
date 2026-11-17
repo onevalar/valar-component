@@ -22,10 +22,11 @@
 
 {#if files.length}
 	<Attachment.Group
+		orientation="vertical"
 		role="group"
 		aria-label={text("附件", "Attachments")}
-		tabindex={onRemove ? undefined : 0}
-		class="w-full flex-col items-stretch gap-1.5 overflow-x-hidden"
+		tabindex={onRemove ? -1 : 0}
+		class="w-full gap-1.5"
 	>
 		{#each files as item (item.id)}
 			<Attachment.Root

@@ -4,12 +4,14 @@
 	import { Button } from "$lib/registry/ui/button/index.js";
 	import { Input } from "$lib/registry/ui/input/index.js";
 	import {
+		DescriptionEditor,
 		IssueGlyph,
+		descriptionFromText,
 		issueLabels,
 		priorities,
 		statuses,
 	} from "$lib/registry/ui/issue-composer/index.js";
-	import DescriptionEditor from "./description-editor.svelte";
+	import DescriptionSelection from "./description-selection.svelte";
 	import IssueActivity from "./issue-activity.svelte";
 	import IssueProperty from "./issue-property.svelte";
 	import ReactionChips from "./reaction-chips.svelte";
@@ -17,7 +19,6 @@
 	import RichDescription from "./rich-description.svelte";
 	import { issueActivityChanges, type IssueActivityOptions } from "./activity-model.js";
 	import {
-		descriptionFromText,
 		type IssueDetailOption,
 		type IssueDetailUpdate,
 		type IssueDetailValue,
@@ -110,6 +111,21 @@
 		if (origin === "title") titleInput?.focus();
 	}
 
+	function openDescription(event: PointerEvent) {
+		if (
+			event.button !== 0 ||
+			!(event.target instanceof Element) ||
+			!(event.currentTarget instanceof Element) ||
+			!window.getSelection()?.isCollapsed
+		)
+			return;
+		const interactive = event.target.closest(
+			"a, button, video, [data-slot=scroll-area], [data-slot=issue-media-block], [data-slot=issue-source-block]"
+		);
+		if (interactive && event.currentTarget.contains(interactive)) return;
+		void beginEdit("description");
+	}
+
 	async function stopEdit() {
 		const origin = editing;
 		editing = undefined;
@@ -153,12 +169,18 @@
 			!form.contains(event.target)
 		)
 			return;
+		editContentKeys(event);
+	}
+
+	function editContentKeys(event: KeyboardEvent) {
+		if (event.defaultPrevented || event.isComposing) return false;
 		if (event.key === "Escape") {
 			event.preventDefault();
+			event.stopPropagation();
 			void stopEdit();
-			return;
+			return true;
 		}
-		submitWithShortcut(event);
+		return submitWithShortcut(event);
 	}
 
 	function updateIssue(update: IssueDetailUpdate) {
@@ -353,14 +375,28 @@
 
 			<div class="min-w-0 space-y-3 @min-[860px]:col-start-1 @min-[860px]:row-start-2">
 				{#if editing}
-					<DescriptionEditor
-						bind:editor
-						{content}
-						{chinese}
-						focusOnMount={editing === "description"}
-						onEditorKeyDown={submitWithShortcut}
-						onChange={() => (changedDescription = true)}
-					/>
+					<div
+						class="min-w-0 has-[[data-slot=issue-description-selection-actions]]:[&_[data-inline-mark]]:hidden"
+					>
+						<DescriptionEditor
+							bind:editor
+							{content}
+							{chinese}
+							inlineMedia={issue.inlineMedia}
+							{portal}
+							focusOnMount={editing === "description"}
+							onEditorKeyDown={editContentKeys}
+							onChange={() => (changedDescription = true)}
+						/>
+						{#if editor && activity}
+							<DescriptionSelection
+								{editor}
+								{chinese}
+								{portal}
+								onPost={(draft) => activity?.onAction({ type: "post", draft })}
+							/>
+						{/if}
+					</div>
 					<div class="flex justify-end gap-2">
 						<Button size="sm" variant="outline" onclick={stopEdit}>{text("取消", "Cancel")}</Button>
 						<Button
@@ -372,12 +408,23 @@
 						>
 					</div>
 				{:else}
-					{#if issue.descriptionContent || issue.description}<RichDescription {content} />{/if}
+					{#if issue.descriptionContent || issue.description}
+						<!-- svelte-ignore a11y_no_static_element_interactions (Edit description provides the keyboard entry and allows text selection and inline links.) -->
+						<div class="cursor-text" onpointerup={openDescription}>
+							<RichDescription {content} {chinese} inlineMedia={issue.inlineMedia} {portal} />
+						</div>
+					{/if}
 					<Button
 						bind:ref={descriptionButton}
 						size="sm"
 						variant="ghost"
-						class="-ms-2 px-2 text-xs {propertyButton}"
+						class={[
+							"-ms-2 px-2",
+							propertyButton,
+							issue.descriptionContent || issue.description
+								? "text-xs"
+								: "h-6 text-[15px] leading-6",
+						]}
 						onclick={() => beginEdit("description")}
 					>
 						{issue.descriptionContent || issue.description

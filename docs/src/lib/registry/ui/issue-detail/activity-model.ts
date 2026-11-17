@@ -13,6 +13,8 @@ export type IssueCommentDraft = {
 	body: string;
 	content?: JSONContent;
 	attachments?: readonly File[];
+	/** Selected description text quoted by an inline comment. */
+	descriptionExcerpt?: string;
 };
 
 export type IssueComment = IssueCommentDraft & {

@@ -3,8 +3,7 @@
 	import * as Alert from "$lib/registry/ui/alert-dialog/index.js";
 	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
 	import { Button } from "$lib/registry/ui/button/index.js";
-	import DescriptionEditor from "./description-editor.svelte";
-	import { descriptionFromText } from "./model.js";
+	import { DescriptionEditor, descriptionFromText } from "$lib/registry/ui/issue-composer/index.js";
 	import type { IssueComment, IssueCommentDraft } from "./activity-model.js";
 	import type { Editor } from "@tiptap/core";
 
@@ -16,7 +15,7 @@
 		onCommit,
 		onCancel,
 	}: {
-		mode: "post" | "reply" | "edit";
+		mode: "post" | "reply" | "edit" | "inline";
 		chinese: boolean;
 		portal: { to: string };
 		initial?: IssueComment;
@@ -33,14 +32,20 @@
 				: text("评论", "Comment")
 	);
 	const emptyLabel = $derived(
-		mode === "reply" ? text("回复此线程…", "Leave a reply…") : text("发表评论…", "Leave a comment…")
+		mode === "reply"
+			? text("回复此线程…", "Leave a reply…")
+			: mode === "inline"
+				? text("添加评论…", "Add a comment…")
+				: text("发表评论…", "Leave a comment…")
 	);
 	const submitLabel = $derived(
 		mode === "reply"
 			? text("发表回复", "Post reply")
 			: mode === "edit"
 				? text("保存评论", "Save comment")
-				: text("发表评论", "Post comment")
+				: mode === "inline"
+					? text("提交评论", "Submit comment")
+					: text("发表评论", "Post comment")
 	);
 	const iconButton =
 		"size-6 shrink-0 rounded-full p-0 text-muted-foreground hover:text-foreground [&_svg]:size-3.5";
@@ -49,7 +54,7 @@
 	);
 	let files = $state<File[]>(untrack(() => [...(initial?.attachments ?? [])]));
 	let editor = $state.raw<Editor | null>(null);
-	let opened = $state(untrack(() => mode === "edit"));
+	let opened = $state(untrack(() => mode === "edit" || mode === "inline"));
 	let body = $state(untrack(() => initial?.body ?? ""));
 	let contentChanged = $state(false);
 	let discardOpen = $state(false);
@@ -80,7 +85,7 @@
 			content: editor && !editor.isEmpty ? editor.getJSON() : undefined,
 			attachments: [...files],
 		});
-		if (mode === "edit") return;
+		if (mode === "edit" || mode === "inline") return;
 		files = [];
 		body = "";
 		contentChanged = false;
@@ -91,7 +96,7 @@
 	async function discard() {
 		discardConfirmed = true;
 		discardOpen = false;
-		if (mode === "edit") {
+		if (mode === "edit" || mode === "inline") {
 			onCancel?.();
 			return;
 		}
@@ -226,6 +231,11 @@
 					aria-hidden="true"
 				/>
 			</Button>
+			{#if mode === "inline"}
+				<Button type="button" variant="ghost" size="xs" onclick={cancel}>
+					{text("取消", "Cancel")}
+				</Button>
+			{/if}
 			{#if mode === "edit"}
 				<Button
 					type="button"
@@ -274,7 +284,11 @@
 		}}
 	>
 		<Alert.Header>
-			<Alert.Title>{text("放弃评论修改？", "Discard comment changes?")}</Alert.Title>
+			<Alert.Title
+				>{mode === "inline"
+					? text("放弃评论？", "Discard comment?")
+					: text("放弃评论修改？", "Discard comment changes?")}</Alert.Title
+			>
 			<Alert.Description
 				>{text(
 					"草稿中的修改将被清除。",

@@ -36,18 +36,18 @@
 	}
 </script>
 
-<Message.Root role="group" aria-label={text("Agent 回复", "Agent reply")}>
-	<Message.Content class="gap-2">
+<Message.Root appearance="agent" role="group" aria-label={text("Agent 回复", "Agent reply")}>
+	<Message.Content>
 		{#if turn.phase === "thinking"}
-			<Marker.Root class="text-[13px] text-muted-foreground motion-safe:animate-pulse">
-				{text("思考中…", "Thinking…")}
+			<Marker.Root appearance="thinking">
+				<Marker.Content>{text("思考中…", "Thinking…")}</Marker.Content>
 			</Marker.Root>
 		{/if}
 		{#if turn.tool && turn.phase !== "thinking" && (!stopped || turn.toolDone)}
 			<Trace.Root class="motion-reduce:[&_[data-slot=trace-collapsible-content]]:animate-none">
 				<Trace.Collapsible>
 					<Trace.CollapsibleTrigger
-						class="rounded-sm py-0.5 text-[13px] focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring"
+						class="rounded-sm py-0.5 text-[13px] focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-inset"
 					>
 						{#if turn.workedSeconds}
 							{text(
@@ -93,8 +93,8 @@
 			</Trace.Root>
 		{/if}
 		{#if turn.reply.length}
-			<Bubble.Root variant="ghost" class="w-full">
-				<Bubble.Content class="w-full border-0 text-[15px] leading-6">
+			<Bubble.Root appearance="agent-assistant">
+				<Bubble.Content>
 					{#each turn.reply as paragraph, index (index)}
 						<p class="mb-3 last:mb-0">{paragraph}</p>
 					{/each}
@@ -112,7 +112,7 @@
 				{text("已停止回复", "Response stopped")}
 			</p>{/if}
 		{#if turn.phase === "done" || (stopped && turn.reply.length)}
-			<Message.Footer class="flex items-center gap-1">
+			<Message.Footer>
 				<Button
 					size="icon-xs"
 					variant="ghost"

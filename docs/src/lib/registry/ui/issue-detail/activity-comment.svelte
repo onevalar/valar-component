@@ -135,6 +135,14 @@
 		{/if}
 	</header>
 	<div class={reply ? "mt-1 min-w-0 ps-[26px]" : "mt-1 min-w-0"}>
+		{#if comment.descriptionExcerpt}
+			<blockquote
+				data-slot="issue-comment-excerpt"
+				class="mb-2 border-s-2 border-border ps-2 text-xs leading-5 wrap-anywhere text-muted-foreground"
+			>
+				{comment.descriptionExcerpt}
+			</blockquote>
+		{/if}
 		{#if editing}
 			<CommentComposer
 				mode="edit"
@@ -149,7 +157,7 @@
 			/>
 		{:else}
 			{#if comment.content}
-				<RichDescription content={comment.content} slot="issue-comment-body" />
+				<RichDescription content={comment.content} slot="issue-comment-body" {chinese} />
 			{:else if comment.body}
 				<p
 					data-slot="issue-comment-body"
