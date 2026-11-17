@@ -7,7 +7,7 @@
 <Example title="Disabled">
 	<Field.Field>
 		<Field.Label for="disabled">Disabled</Field.Label>
-		<InputOTP.Root id="disabled" maxlength={6} disabled value="123456">
+		<InputOTP.Root inputId="disabled" maxlength={6} disabled value="123456">
 			{#snippet children({ cells })}
 				<InputOTP.Group>
 					{#each cells.slice(0, 3) as cell (cell)}

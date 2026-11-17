@@ -66,6 +66,16 @@ Copy and paste the following code into your project.
 <Spinner />
 ```
 
+## Sync status
+
+Set `appearance="dots"` and provide the visible `label` for an inline waiting status. The three periods keep their spacing across animation and stay fully visible with reduced motion. When a persistent live region announces the text, give the inner Spinner `role="none"` so the status is announced once.
+
+<ComponentPreview name="spinner-syncing">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Customization
 
 You can replace the default spinner icon with any other icon by editing the `Spinner` component.
@@ -107,6 +117,8 @@ Use the `size-*` utility class to change the size of the spinner.
 ## Button
 
 Add a spinner to a button to indicate a loading state. Place the `<Spinner />` before the label with `data-icon="inline-start"` for a start position, or after the label with `data-icon="inline-end"` for an end position.
+
+Use Button's `loading` state to keep keyboard focus and block repeated activation. When a neighboring status announces the update, set `aria-hidden="true"` on the spinner.
 
 <ComponentPreview name="spinner-button-demo">
 

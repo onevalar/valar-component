@@ -9,7 +9,8 @@
 			"keywords": ["原生下拉", "native select", "select", "下拉框", "optgroup"],
 			"whenToUse": [
 				"需要浏览器原生行为：移动端系统选择器、更好的性能",
-				"选项可用 NativeSelect.OptGroup 分组"
+				"选项可用 NativeSelect.OptGroup 分组",
+				"联系表单使用铺满一行的标准单选字段"
 			],
 			"whenNotToUse": [
 				{

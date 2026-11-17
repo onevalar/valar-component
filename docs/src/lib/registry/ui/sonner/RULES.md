@@ -6,3 +6,4 @@
 - 按结果选择 `toast.success`、`toast.error`、`toast.info`、`toast.warning`，等待中的操作用 `toast.promise` 或 `toast.loading`；不要用自定义颜色区分类型。
 - 文案写结果本身，不写“操作成功”这类空话；可撤销的操作通过 `action: { label: "撤销", onClick }` 提供撤销，并保证停留时间足够点击。
 - 不要每次输入、每次自动保存都弹通知；同一结果连续触发时复用同一个 `id` 更新已有通知。
+- 工作区复制反馈使用 `appearance="workspace"`。该样式将关闭与撤销放在通知内部，并在窄屏保留两侧留白。加载完成后用同一个 ID 更新原通知，独立事件分别入栈。

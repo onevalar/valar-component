@@ -70,6 +70,16 @@ links:
 </AspectRatio>
 ```
 
+## 问题正文媒体
+
+需要完整显示图片或视频时使用 `appearance="media"`。用 `ratio` 指定内容宽高比，用 `mediaWidth` 指定目标显示宽度（CSS px）。媒体会根据可用宽度和 600 px 的高度上限等比缩小，圆角为 6 px。
+
+<ComponentPreview name="aspect-ratio-media">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 正方形
 
 通过 `ratio={1 / 1}` 属性设置 1:1 的宽高比。适合以正方形展示图片。

@@ -28,6 +28,16 @@ links:
 
 当 `captionLayout="dropdown"` 时，年月选择使用和 Calendar 相同的 Valar Select。窄容器中，年月控件会排到翻月按钮下方。
 
+## 循环日期范围
+
+横向的日期范围日历可使用 `appearance="cycle"`。它复用 Linear 循环日期选择中的 26 px 日期圆形、周内色带、日期禁用色和内侧键盘焦点。示例将 2026 年 11 月和 12 月并排，窄容器只显示一个月，可以用箭头翻月。Linear 弹窗每次修改一个端点，这个示例可按方向键和回车连续选择两个端点。
+
+<ComponentPreview name="range-calendar-cycle">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 关于
 
 `<RangeCalendar />` 基于 [Bits UI Range Calendar](https://www.bits-ui.com/docs/components/range-calendar) 组件构建，日期处理由 [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/index.html) 包负责。

@@ -27,6 +27,16 @@ For a styled select component, see the [Select](/docs/components/select) compone
 
 <ComponentPreview name="native-select-demo" />
 
+## Contact form
+
+Use `appearance="contact"` for a full-width 40 px form field. The company-size example uses the operating system’s picker and keeps ordinary keyboard selection, labels, and form validation. Contact sales on Linear’s website uses the same dark field in either system theme. Valar supplies a light palette for light interfaces and uses an inset keyboard focus outline.
+
+<ComponentPreview name="native-select-contact">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Installation
 
 <InstallTabs>
@@ -112,6 +122,7 @@ The main select component that wraps the native HTML select element.
 | Prop    | Type     | Default |
 | ------- | -------- | ------- |
 | `class` | `string` |         |
+| `appearance` | `"default" \| "contact"` | `"default"` |
 
 All other props are passed through to the underlying `<select>` element.
 

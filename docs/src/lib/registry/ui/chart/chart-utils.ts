@@ -3,6 +3,9 @@ import type { Tooltip } from "layerchart";
 
 export const THEMES = { light: "", dark: ".dark" } as const;
 
+export const insightPriorityColors =
+	"[--insight-priority-none:rgb(106_106_115)] [--insight-priority-high:rgb(242_201_76)] [--insight-priority-medium:rgb(120_229_118)] [--insight-priority-low:rgb(84_201_210)]";
+
 export type ChartConfig = {
 	[k in string]: {
 		label?: string;

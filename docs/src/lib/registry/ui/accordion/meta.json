@@ -9,6 +9,7 @@
 			"keywords": ["手风琴", "accordion", "折叠面板", "FAQ", "展开收起"],
 			"whenToUse": [
 				"把多段内容收成标题列表，如常见问题、设置分组",
+				"appearance=section 在文档和问题描述中使用前置三角图标",
 				"type=multiple 允许同时展开多项"
 			],
 			"whenNotToUse": [

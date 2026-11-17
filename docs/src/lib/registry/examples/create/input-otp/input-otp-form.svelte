@@ -33,7 +33,7 @@
 							Resend Code
 						</Button.Root>
 					</div>
-					<InputOTP.Root maxlength={6} id="otp-verification" required>
+					<InputOTP.Root maxlength={6} inputId="otp-verification" required>
 						{#snippet children({ cells })}
 							<InputOTP.Group
 								class="*:data-[slot=input-otp-slot]:text-xl style-valar:*:data-[slot=input-otp-slot]:h-12 style-valar:*:data-[slot=input-otp-slot]:w-11"

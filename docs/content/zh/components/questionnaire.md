@@ -24,6 +24,18 @@ links:
 
 </ComponentPreview>
 
+## Agent 提问
+
+用 `Questionnaire.AgentQuestion` 显示选中即提交的单选问题。选项组有可访问名称，支持 Tab、Enter 和空格。作答后只保留带对勾的已选项。用 `onAnswer` 把焦点移到下一题或对话输入框。示例进入可跳过的自由回答，并在页面内预览结果。
+
+外层 `Questionnaire.Root` 设置 `appearance="agent"` 使用紧凑间距。可修改答案的单选题、多选题和可回看的步骤继续使用 `Item` 和 `Choice`。
+
+<ComponentPreview name="questionnaire-agent">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 安装
 
 <InstallTabs>

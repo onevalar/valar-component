@@ -9,7 +9,7 @@
 	<Field.Field>
 		<Field.Label for="alphanumeric">Alphanumeric</Field.Label>
 		<Field.Description>Accepts both letters and numbers.</Field.Description>
-		<InputOTP.Root id="alphanumeric" maxlength={6} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}>
+		<InputOTP.Root inputId="alphanumeric" maxlength={6} pattern={REGEXP_ONLY_DIGITS_AND_CHARS} inputmode="text">
 			{#snippet children({ cells })}
 				<InputOTP.Group>
 					{#each cells.slice(0, 3) as cell (cell)}

@@ -20,6 +20,14 @@ links:
 	let { viewerData } = $props();
 </script>
 
+<ComponentPreview name="toggle-linear">
+
+<div></div>
+
+</ComponentPreview>
+
+Use `appearance="formatting"` for an icon button in an editor toolbar. Use `appearance="toolbar"` for a persistent workspace filter, such as showing only unread Inbox items. Both keep their size when pressed.
+
 <ComponentPreview name="toggle-demo">
 
 <div></div>

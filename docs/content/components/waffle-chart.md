@@ -11,6 +11,10 @@ component: true
 
 <ComponentPreview name="waffle-chart-demo"><div></div></ComponentPreview>
 
+## Usage
+
+Use the grid for a quick view of how a measured total is divided. Each colored cell approximates one percent of the sum. Put the exact category names, values and shares beside the chart. With no positive data, the grid shows an empty frame. Pair it with a short explanation of why there's nothing to plot.
+
 ## Installation
 
 <PMAddComp name="waffle-chart" />
@@ -19,4 +23,4 @@ component: true
 
 `import { WaffleChart, type WaffleCategory } from '@valar/svelte-ui/waffle-chart'`.
 
-Required `data: { key: string; value: number; color: string }[]`, `label: string`; native div attributes forward. Finite values, negative contributions treated as zero. Positive total allocates exactly 100 cells using largest remainders (ties preserve input order), filling bottom-left up each column. Empty/zero total draws zero cells. Caller supplies colors and a nearby exact accessible legend. No selection, tooltips or animation.
+Required `data: { key: string; value: number; color: string }[]` and `label: string`. Native div attributes forward. Negative and non-finite contributions count as zero. A positive sum allocates exactly 100 cells using largest remainders, preserving input order for ties and filling up each column from the bottom-left. Choose colors that remain distinguishable on light and dark surfaces. The chart is read-only.

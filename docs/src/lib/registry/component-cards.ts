@@ -87,6 +87,7 @@ export const REQUIRED_CARDS = [
 	"stepper",
 	"table",
 	"trace",
+	"typography",
 	"code-block",
 	"gauge",
 	"waffle-chart",

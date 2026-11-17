@@ -19,16 +19,21 @@
 
 <div
 	data-slot="waffle-chart"
+	data-empty={cells.length === 0 ? "" : undefined}
 	role="img"
 	aria-label={label}
-	class={cn("grid aspect-square w-full grid-cols-10 grid-rows-10 gap-[3px]", className)}
+	class={cn(
+		"grid aspect-square w-full min-w-0 grid-cols-10 grid-rows-10 gap-[min(3px,1.5%)]",
+		"data-empty:rounded-lg data-empty:border data-empty:border-dashed data-empty:bg-muted/30",
+		className
+	)}
 	{...rest}
 >
 	{#each cells as cell, index}
 		<span
 			aria-hidden="true"
 			data-category={cell.key}
-			class="min-h-0 min-w-0 rounded-[22%]"
+			class="min-h-0 min-w-0 rounded-[min(3px,22%)]"
 			style:grid-column={Math.floor(index / 10) + 1}
 			style:grid-row={10 - (index % 10)}
 			style:background={cell.color}

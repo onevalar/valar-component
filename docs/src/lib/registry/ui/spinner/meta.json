@@ -2,7 +2,7 @@
 	"name": "spinner",
 	"type": "registry:ui",
 	"title": "Spinner 加载指示",
-	"description": "表示正在加载的旋转图标。",
+	"description": "表示加载中的旋转图标或行内三点状态。",
 	"categories": ["反馈"],
 	"meta": {
 		"valar": {
@@ -18,7 +18,7 @@
 					"use": "skeleton"
 				}
 			],
-			"accessibility": ["默认 role=status、aria-label=加载中，能更具体时改 aria-label"],
+			"accessibility": ["状态只播报一次；图标使用 aria-label，行内三点使用可见标签并隐藏标点"],
 			"responsive": ["用 size-* 调整大小"],
 			"related": ["progress", "skeleton", "button"]
 		}

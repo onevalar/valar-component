@@ -149,6 +149,23 @@ it("disconnects observers/media and drops frames on destroy", () => {
 	renderer = undefined;
 });
 
+it("draws from inline start and resets safely when a value becomes non-finite", () => {
+	renderer = createTextureFill(el, canvas, "solid", 50, false);
+	const first = lastImage().data[3];
+	const last = lastImage().data[(canvas.width - 1) * 4 + 3];
+	expect(first).toBe(255);
+	expect(last).toBe(0);
+
+	el.dir = "rtl";
+	el.style.direction = "rtl";
+	recolor([], {} as MutationObserver);
+	expect(lastImage().data[3]).toBe(last);
+	expect(lastImage().data[(canvas.width - 1) * 4 + 3]).toBe(first);
+
+	renderer.update(Number.NaN);
+	expect(lastImage().data.every((value, index) => index % 4 !== 3 || value === 0)).toBe(true);
+});
+
 it("throws explicitly when Canvas 2D is unavailable", () => {
 	vi.mocked(HTMLCanvasElement.prototype.getContext).mockReturnValue(null);
 	expect(() => createTextureFill(el, canvas, "solid", 50, false)).toThrow(

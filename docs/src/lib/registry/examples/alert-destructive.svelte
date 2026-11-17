@@ -3,8 +3,8 @@
 	import * as Alert from "$lib/registry/ui/alert/index.js";
 </script>
 
-<Alert.Root variant="destructive" class="max-w-md">
-	<CircleAlertIcon />
+<Alert.Root variant="destructive" class="max-w-md" role="group" aria-label="Payment error example">
+	<CircleAlertIcon aria-hidden="true" />
 	<Alert.Title>Payment failed</Alert.Title>
 	<Alert.Description>
 		Your payment could not be processed. Please check your payment method and try again.

@@ -17,6 +17,14 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+<ComponentPreview name="attachment-agent">
+
+<div></div>
+
+</ComponentPreview>
+
+已发送的文件卡片用 `appearance="agent-file"`，展示文件名、大小和下载操作。草稿中的行内图片用 `appearance="agent-image"` 保持原有比例。
+
 <ComponentPreview name="attachment-demo" class="bg-surface dark:bg-background" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
 
 <div></div>
@@ -40,7 +48,7 @@ links:
 
 </Step>
 
-<PMAddComp name="button" />
+<PMAddComp name="button scroll-area" />
 
 <Step>
 
@@ -109,7 +117,7 @@ Attachment.Group
 - 五种上传状态：`idle`、`uploading`、`processing`、`error` 和 `done`，内置对应样式，处理中带微光动画
 - 三种尺寸，支持横向与纵向排列
 - `Attachment.Trigger` 覆盖整张卡片，可打开链接或对话框，操作按钮仍可单独点击
-- `Attachment.Group` 可滚动、带吸附效果与边缘渐隐
+- `Attachment.Group` 使用悬浮滚动条，横向排列时带吸附与边缘渐隐
 - 每个部件都接受 `class` 属性，可自定义样式
 
 ## 图片
@@ -132,6 +140,16 @@ Attachment.Group
 
 </ComponentPreview>
 
+## 文件大小限制
+
+文件超出大小限制时，附件卡片保持中性色，在单独的提示中说明原因。用户可以移除所选文件或重新选择。本例按 Linear 实页中的 10 MB 限制验证本地文件。
+
+<ComponentPreview name="attachment-rejection">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 尺寸
 
 用 `size` 在 `default`、`sm` 和 `xs` 之间切换。
@@ -144,7 +162,7 @@ Attachment.Group
 
 ## 分组
 
-用 `Attachment.Group` 包裹附件，排成可横向滚动、带吸附效果与边缘渐隐的一行。
+用 `Attachment.Group` 把附件排成一行，使用悬浮滚动条、横向吸附和边缘渐隐。纵向列表使用 `orientation="vertical"`。
 
 <ComponentPreview name="attachment-group" class="bg-surface dark:bg-background" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
 
@@ -215,7 +233,7 @@ Attachment.Group
 
 ### 键盘滚动
 
-`Attachment.Group` 横向滚动。附件可交互（带触发器或操作按钮）时，键盘用户通过 Tab 键到达屏幕外的项。若这一行附件仅用于展示，则给分组本身加上 `tabindex={0}`、`role="group"` 和 `aria-label`，让它可聚焦、可滚动。
+用 `aria-label` 命名 `Attachment.Group` 的滚动视口，让它可聚焦并用键盘滚动。按 Tab 可到达视口外的附件操作和触发器。
 
 ### 颜色之外的含义
 
@@ -295,8 +313,10 @@ Attachment.Group
 
 ### Attachment.Group
 
-把附件排成可横向滚动、带吸附效果的一行。
+用悬浮滚动条展示一行或一列附件。
 
-| 属性    | 类型     | 默认值 | 说明                   |
-| ------- | -------- | ------ | ---------------------- |
-| `class` | `string` | -      | 附加到分组的类名。     |
+| 属性          | 类型                         | 默认值         | 说明                   |
+| ------------- | ---------------------------- | -------------- | ---------------------- |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | 横向或纵向排列。       |
+| `aria-label`   | `string`                     | -              | 命名键盘可滚动视口。   |
+| `class`        | `string`                     | -              | 附加到分组框的布局类。 |

@@ -3,7 +3,7 @@
 	"name": "spinner",
 	"title": "Spinner 加载指示",
 	"type": "registry:ui",
-	"description": "表示正在加载的旋转图标。",
+	"description": "表示加载中的旋转图标或行内三点状态。",
 	"meta": {
 		"valar": {
 			"keywords": [
@@ -27,7 +27,7 @@
 				}
 			],
 			"accessibility": [
-				"默认 role=status、aria-label=加载中，能更具体时改 aria-label"
+				"状态只播报一次；图标使用 aria-label，行内三点使用可见标签并隐藏标点"
 			],
 			"responsive": [
 				"用 size-* 调整大小"
@@ -41,7 +41,7 @@
 	},
 	"files": [
 		{
-			"content": "# Spinner 设计规范\n\n- 用于无法估计进度的短暂等待；可以计算进度时用 Progress，内容区域加载用 Skeleton。\n- Spinner 自带 `role=\"status\"`，默认读屏名称是“加载中”：能说明具体在做什么时传更具体的 `aria-label`（如“正在保存”）。\n- 放在按钮中表示提交中时，同时禁用按钮并保留按钮文字（“保存中…”），不要只换成 Spinner。\n- 尺寸用 `size-*` 档位类，颜色继承文字颜色，不要单独设色。\n",
+			"content": "# Spinner 设计规范\n\n- 用于无法估计进度的短暂等待；可以计算进度时用 Progress，内容区域加载用 Skeleton。\n- 图标 Spinner 自带 `role=\"status\"`，默认读屏名称是“加载中”。能说明具体在做什么时传更具体的 `aria-label`（如“正在保存”）。\n- 行内同步反馈可用 `appearance=\"dots\"`，用 `label` 提供状态文字。保持 24 px 行高与三个点的固定占位，三点按约 1 秒周期错峰；开启减少动态效果时静态完整显示。消息由外层状态区域播报时，为内层 Spinner 传 `role=\"none\"`。\n- 放在按钮中表示提交中时，同时禁用按钮并保留按钮文字（“保存中…”），不要只换成 Spinner。\n- 尺寸用 `size-*` 档位类，颜色继承文字颜色，不要单独设色。\n",
 			"type": "registry:file",
 			"target": "spinner/RULES.md"
 		},
@@ -51,7 +51,7 @@
 			"target": "spinner/index.ts"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport IconPlaceholder from \"$lib/components/icon-placeholder/icon-placeholder.svelte\";\n\timport { cn } from \"$UTILS$.js\";\n\timport type { SVGAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tclass: className,\n\t\trole = \"status\",\n\t\t// we add name, color, and stroke for compatibility with different icon libraries props.\n\t\t// only forward them when set, otherwise `stroke: undefined` overrides the icon's `currentColor`\n\t\tname,\n\t\tcolor,\n\t\tstroke,\n\t\tclassName: legacyClassName,\n\t\t\"aria-label\": ariaLabel = \"加载中\",\n\t\t...restProps\n\t}: SVGAttributes<SVGSVGElement> = $props();\n\t// Keep caller-owned dimensions out of default-size previews, including size-4 itself.\n\tconst explicitSize = $derived(/(?:^|\\s)(?:\\S+:)?!?(?:size|w|h)-/.test(cn(className)));\n</script>\n\n<IconPlaceholder\n\tlucide=\"Loader2Icon\"\n\ttabler=\"IconLoader\"\n\thugeicons=\"Loading03Icon\"\n\tphosphor=\"SpinnerIcon\"\n\tremixicon=\"RiLoaderLine\"\n\tdata-slot=\"spinner\"\n\t{role}\n\t{...name != null ? { name } : {}}\n\t{...color != null ? { color } : {}}\n\t{...stroke != null ? { stroke } : {}}\n\t{...legacyClassName != null ? { className: legacyClassName } : {}}\n\taria-label={ariaLabel}\n\tclass={cn(\"size-4 animate-spin\", \"\", className)}\n\t{...restProps}\n\tdata-spinner-size-explicit={explicitSize ? \"\" : undefined}\n/>\n",
+			"content": "<svelte:options css=\"injected\" />\n\n<script lang=\"ts\">\n\timport IconPlaceholder from \"$lib/components/icon-placeholder/icon-placeholder.svelte\";\n\timport { cn } from \"$UTILS$.js\";\n\timport type { HTMLAttributes, SVGAttributes } from \"svelte/elements\";\n\n\ttype IconProps = SVGAttributes<SVGSVGElement> & { appearance?: \"icon\" };\n\ttype DotsProps = HTMLAttributes<HTMLSpanElement> & { appearance: \"dots\"; label?: string };\n\tlet props: IconProps | DotsProps = $props();\n\t// Keep caller-owned dimensions out of default-size previews, including size-4 itself.\n\tconst explicitSize = $derived(/(?:^|\\s)(?:\\S+:)?!?(?:size|w|h)-/.test(cn(props.class)));\n</script>\n\n{#if props.appearance === \"dots\"}\n\t{@const { appearance, label = \"加载中\", role = \"status\", class: className, ...restProps } = props}\n\t<span\n\t\tdata-slot=\"spinner\"\n\t\tdata-appearance={appearance}\n\t\t{role}\n\t\tclass={cn(\n\t\t\t\"inline-flex h-6 min-w-0 max-w-full items-center text-xs font-medium text-[lch(9.444%_0_282)] dark:text-[lch(100%_0_272)]\",\n\t\t\tclassName\n\t\t)}\n\t\t{...restProps}\n\t>\n\t\t<span class=\"inline-flex min-w-0 items-baseline\">\n\t\t\t<span class=\"truncate\" data-slot=\"spinner-label\">{label}</span>\n\t\t\t<span aria-hidden=\"true\" class=\"inline-flex shrink-0 font-mono text-[8px]/none\" dir=\"ltr\">\n\t\t\t\t<span data-slot=\"spinner-dot\">.</span><span data-slot=\"spinner-dot\">.</span><span data-slot=\"spinner-dot\">.</span>\n\t\t\t</span>\n\t\t</span>\n\t</span>\n{:else}\n\t{@const {\n\t\tappearance,\n\t\tclass: className,\n\t\trole = \"status\",\n\t\tname,\n\t\tcolor,\n\t\tstroke,\n\t\tclassName: legacyClassName,\n\t\t\"aria-label\": ariaLabel = \"加载中\",\n\t\t...restProps\n\t} = props}\n\t<IconPlaceholder\n\t\tlucide=\"Loader2Icon\"\n\t\ttabler=\"IconLoader\"\n\t\thugeicons=\"Loading03Icon\"\n\t\tphosphor=\"SpinnerIcon\"\n\t\tremixicon=\"RiLoaderLine\"\n\t\tdata-slot=\"spinner\"\n\t\tdata-appearance={appearance ?? \"icon\"}\n\t\t{role}\n\t\t{...name != null ? { name } : {}}\n\t\t{...color != null ? { color } : {}}\n\t\t{...stroke != null ? { stroke } : {}}\n\t\t{...legacyClassName != null ? { className: legacyClassName } : {}}\n\t\taria-label={ariaLabel}\n\t\tclass={cn(\"size-4 shrink-0 motion-safe:animate-spin\", \"\", className)}\n\t\t{...restProps}\n\t\tdata-spinner-size-explicit={explicitSize ? \"\" : undefined}\n\t/>\n{/if}\n\n<style>\n\t[data-slot=\"spinner-dot\"] {\n\t\twidth: 4.8px;\n\t\ttext-align: center;\n\t}\n\n\t@media (prefers-reduced-motion: no-preference) {\n\t\t[data-slot=\"spinner-dot\"] {\n\t\t\topacity: 0.3;\n\t\t\tanimation: spinner-dot 1s ease-in-out infinite;\n\t\t}\n\n\t\t[data-slot=\"spinner-dot\"]:nth-child(2) {\n\t\t\tanimation-delay: 166ms;\n\t\t}\n\n\t\t[data-slot=\"spinner-dot\"]:nth-child(3) {\n\t\t\tanimation-delay: 332ms;\n\t\t}\n\t}\n\n\t@keyframes spinner-dot {\n\t\t0%, 37%, 100% { opacity: 0.3; }\n\t\t17% { opacity: 1; }\n\t}\n</style>\n",
 			"type": "registry:file",
 			"target": "spinner/spinner.svelte"
 		}

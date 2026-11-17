@@ -33,14 +33,14 @@ const variables = {
 	contentGap: "--valar-toast-gap",
 } as const;
 
-/** Read only the default toast class: callers' explicit toastOptions remain a whole replacement. */
+/** Read the default toast classes before caller-provided classes are merged. */
 export function parseSonnerSource(files: { target: string; content: string }[]): {
 	values: SonnerValues;
 	context: SonnerContext;
 } {
 	const source = files.find((file) => file.target.split("/").at(-1) === "sonner.svelte")?.content;
 	if (source === undefined) throw new Error("Sonner registry 缺少 sonner.svelte");
-	const classes = /\btoast:\s*"([^"]*)"/.exec(source)?.[1];
+	const classes = /\btoast:\s*(?:cn\(\s*)?"([^"]*)"/.exec(source)?.[1];
 	if (!classes?.split(/\s+/).includes("cn-toast")) {
 		throw new Error("Sonner registry 缺少默认 cn-toast 样式");
 	}

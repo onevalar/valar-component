@@ -21,6 +21,14 @@ links:
 
 手动安装需要 `cn` 和 `@internationalized/number`，并复制组件目录。组件只依赖 Svelte，不包含 Vue 或 React 运行时。
 
+## Whole-dollar amount
+
+<ComponentPreview name="number-field-amount"><div></div></ComponentPreview>
+
+Use `appearance="amount"` for a compact workspace spending limit in US dollars. The label names the currency and the field displays a dollar prefix. Empty stays blank. The sample uses `1,000` as its placeholder.
+
+The editable value groups digits immediately, keeps its grouping on blur, and ignores non-digit characters. The field accepts zero and integers that JavaScript can represent exactly. Up and Down do not step the amount, and Tab moves to the next control. `min`, `max`, and `required` still validate the draft. The amount uses fixed US grouping and submits the underlying unformatted number. Use the default appearance for decimal, localized, or stepped input.
+
 ## 用法
 
 ```svelte

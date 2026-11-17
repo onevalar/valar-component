@@ -17,7 +17,7 @@
 
 <PaginationPrimitive.NextButton
 	bind:ref
-	aria-label="下一页"
+	aria-label={label}
 	class={cn(buttonVariants({ variant: "ghost", size: "default" }), "cn-pagination-next", className)}
 	{...restProps}
 >
@@ -29,6 +29,7 @@
 		phosphor="CaretRightIcon"
 		remixicon="RiArrowRightSLine"
 		data-icon="inline-end"
+		aria-hidden="true"
 		class="cn-rtl-flip"
 	/>
 </PaginationPrimitive.NextButton>

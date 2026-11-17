@@ -1,19 +1,20 @@
 <script lang="ts">
 	import * as RadioGroup from "$lib/registry/ui/radio-group/index.js";
 	import { Label } from "$lib/registry/ui/label/index.js";
+	const id = $props.id();
 </script>
 
-<RadioGroup.Root value="comfortable" class="w-fit">
+<RadioGroup.Root value="comfortable" aria-label="Display density" class="w-fit">
 	<div class="flex items-center gap-3">
-		<RadioGroup.Item value="default" id="r1" />
-		<Label for="r1">Default</Label>
+		<RadioGroup.Item value="default" id={`${id}-default`} />
+		<Label for={`${id}-default`}>Default</Label>
 	</div>
 	<div class="flex items-center gap-3">
-		<RadioGroup.Item value="comfortable" id="r2" />
-		<Label for="r2">Comfortable</Label>
+		<RadioGroup.Item value="comfortable" id={`${id}-comfortable`} />
+		<Label for={`${id}-comfortable`}>Comfortable</Label>
 	</div>
 	<div class="flex items-center gap-3">
-		<RadioGroup.Item value="compact" id="r3" />
-		<Label for="r3">Compact</Label>
+		<RadioGroup.Item value="compact" id={`${id}-compact`} />
+		<Label for={`${id}-compact`}>Compact</Label>
 	</div>
 </RadioGroup.Root>

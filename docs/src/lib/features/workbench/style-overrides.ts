@@ -125,7 +125,9 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	"cn-input": INPUT_UTILITY,
 	"cn-textarea": TEXTAREA_UTILITY,
 	"cn-select-trigger": SELECT_TRIGGER_UTILITY,
-	"cn-native-select": SELECT_TRIGGER_UTILITY,
+	"cn-native-select": new RegExp(
+		`^(?:data-\\[size=(?:default|sm)\\]:h-${N}|p[ls]-${N}|(?:data-\\[size=sm\\]:)?rounded-${RADIUS})$`
+	),
 	"cn-input-group": INPUT_GROUP_UTILITY,
 	"cn-input-group-addon": /^(?:gap)-(?:[0-5](?:\.5)?|6)$/,
 	"cn-input-group-addon-align-inline-start": new RegExp(`^(?:pl|ps)-${CARD_SPACING}$`),
@@ -353,7 +355,7 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 		`^(?:data-\\[size=sm\\]:|data-\\[spacing=0\\]:data-\\[variant=outline\\]:)?rounded-${RADIUS}$`
 	),
 	"cn-toggle-group-item": new RegExp(
-		`^(?:group-data-\\[spacing=0\\]/toggle-group:(?:px-(?:[0-9](?:\\.5)?|1[01](?:\\.5)?|12)|rounded-none)|(?:group-data-horizontal/toggle-group:data-\\[spacing=0\\]:(?:first:rounded-l|last:rounded-r)|group-data-vertical/toggle-group:data-\\[spacing=0\\]:(?:first:rounded-t|last:rounded-b))-${RADIUS})$`
+		`^(?:group-data-\\[spacing=0\\]/toggle-group:(?:px-(?:[0-9](?:\\.5)?|1[01](?:\\.5)?|12)|rounded-none)|(?:group-data-horizontal/toggle-group:data-\\[spacing=0\\]:(?:first:rounded-[sl]|last:rounded-[er])|group-data-vertical/toggle-group:data-\\[spacing=0\\]:(?:first:rounded-t|last:rounded-b))-${RADIUS})$`
 	),
 	"cn-slider-track": new RegExp(
 		`^(?:(?:data-horizontal:h|data-vertical:w)-(?:0\\.5|[1-3](?:\\.5)?|4)|rounded-${RADIUS})$`

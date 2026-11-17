@@ -23,10 +23,10 @@
 	let currency = $state("$");
 </script>
 
-<ButtonGroup.Root>
-	<ButtonGroup.Root>
+<ButtonGroup.Root aria-label="Payment actions">
+	<ButtonGroup.Root aria-label="Payment amount">
 		<Select.Root type="single" bind:value={currency}>
-			<Select.Trigger class="font-mono">
+			<Select.Trigger aria-label="Currency" class="font-mono">
 				{currency}
 			</Select.Trigger>
 			<Select.Content align="start">
@@ -40,7 +40,7 @@
 				</Select.Group>
 			</Select.Content>
 		</Select.Root>
-		<Input placeholder="10.00" pattern="[0-9]*" />
+		<Input aria-label="Amount" placeholder="10.00" inputmode="decimal" />
 	</ButtonGroup.Root>
 	<ButtonGroup.Root>
 		<Button aria-label="Send" size="icon" variant="outline">

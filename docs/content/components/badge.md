@@ -17,6 +17,8 @@ links:
 	let { viewerData } = $props();
 </script>
 
+Long labels can use `truncate`. The full text still names the link.
+
 <ComponentPreview name="badge-demo">
 
 <div></div>

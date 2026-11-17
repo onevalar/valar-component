@@ -5,15 +5,21 @@
 	let {
 		ref = $bindable(null),
 		class: className,
+		appearance,
 		children,
 		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & { appearance?: "agent" } = $props();
 </script>
 
 <div
 	bind:this={ref}
 	data-slot="bubble-group"
-	class={cn("cn-bubble-group flex min-w-0 flex-col", className)}
+	data-appearance={appearance}
+	class={cn(
+		"flex min-w-0 flex-col",
+		appearance === "agent" ? "cn-bubble-group-agent" : "cn-bubble-group",
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}

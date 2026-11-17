@@ -8,7 +8,7 @@
 <Example title="Digits Only">
 	<Field.Field>
 		<Field.Label for="digits-only">Digits Only</Field.Label>
-		<InputOTP.Root id="digits-only" maxlength={6} pattern={REGEXP_ONLY_DIGITS}>
+		<InputOTP.Root inputId="digits-only" maxlength={6} pattern={REGEXP_ONLY_DIGITS}>
 			{#snippet children({ cells })}
 				<InputOTP.Group>
 					{#each cells as cell (cell)}

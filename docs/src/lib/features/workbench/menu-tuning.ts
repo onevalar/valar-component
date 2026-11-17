@@ -375,6 +375,11 @@ export function createMenuSpec<K extends keyof MenuValues = keyof MenuValues>(
 		slots.flatMap((slot) =>
 			component !== "dropdown-menu" && slot === "label" ? ["label", "group-heading"] : [slot]
 		);
+	const slotSelector = (slot: string) =>
+		`[data-slot="${component}-${slot}"]` +
+		(component === "menubar"
+			? ':not([data-appearance="navigation"]):not([data-appearance="navigation"] *)'
+			: "");
 	// A consumer can expose only geometry without copying the menu derivation contract.
 	const selectedSchema = keys
 		? valuesSchema.pick(
@@ -469,7 +474,7 @@ export function createMenuSpec<K extends keyof MenuValues = keyof MenuValues>(
 				component,
 				(slots, suffix = "") =>
 					slotsFor(slots)
-						.map((slot) => `${scope} [data-slot="${component}-${slot}"]${suffix}`)
+						.map((slot) => `${scope} ${slotSelector(slot)}${suffix}`)
 						.join(", "),
 				validate(overrides),
 				context
@@ -479,7 +484,7 @@ export function createMenuSpec<K extends keyof MenuValues = keyof MenuValues>(
 				component,
 				(slots, suffix = "") =>
 					slotsFor(slots)
-						.map((slot) => `[data-slot="${component}-${slot}"]${suffix}${NOT_EDITOR}`)
+						.map((slot) => `${slotSelector(slot)}${suffix}${NOT_EDITOR}`)
 						.join(", "),
 				validate(overrides),
 				context

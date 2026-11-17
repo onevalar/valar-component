@@ -7,8 +7,15 @@ links:
 ---
 
 <script>
+	import ComponentPreview from "$lib/components/component-preview.svelte";
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
+
+<ComponentPreview name="issue-detail-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 [Try Issue Detail in My issues](/themes/my-issues). Open an issue row or use the details button.
 
@@ -47,6 +54,8 @@ Save or press Command/Ctrl+Enter to commit the title and description draft. Canc
 
 The description accepts plain text or a Tiptap document in `descriptionContent`. Saving a rich-text edit returns the structured document and its plain-text counterpart. Store the structured value to preserve formatting.
 
+Click description text or use the Edit description button to open the draft. Links remain independently actionable. Read-only code blocks support horizontal scrolling with the Valar Scroll Area.
+
 ## Activity and comments
 
 Pass `activity` to show the activity section. The host provides chronological `IssueActivityEntry[]`, the current `viewer`, and an `onAction` callback for posts, replies, edits, and property changes. Comments carry plain text, an optional Tiptap document, and attachments. Previews can use `applyIssueActivityAction` to apply actions to local state.
@@ -75,6 +84,8 @@ Pass `activity` to show the activity section. The host provides chronological `I
 ```
 
 Authors can edit their own comments. Command/Ctrl+Enter posts or saves the draft. Cancelling a changed draft asks for confirmation.
+
+Select text while editing the description and choose Comment in the selection toolbar. The selected words stay highlighted while the comment form is open. Submission sends the host a separate activity action with `draft.descriptionExcerpt`, which the thread displays as a quote. The description draft stays open and receives focus again after posting or discarding the comment.
 
 ## Subscriptions, reactions, and threads
 

@@ -9,7 +9,8 @@
 			"keywords": ["数字输入", "number field", "数量", "步进", "stepper input", "金额", "百分比"],
 			"whenToUse": [
 				"输入数量、金额、百分比等可步进的数值",
-				"需要按地区格式化显示（formatOptions），提交时仍是纯数值"
+				"需要按地区格式化显示（formatOptions），提交时仍是纯数值",
+				"输入带美元前缀、实时千位分组的整美元上限"
 			],
 			"whenNotToUse": [
 				{

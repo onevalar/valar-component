@@ -24,6 +24,18 @@ links:
 
 </ComponentPreview>
 
+## Agent questions
+
+Use `Questionnaire.AgentQuestion` for a single choice that commits as soon as the user picks an option. The named group supports Tab, Enter and Space. After the answer, the chosen pill stays visible with a check and the remaining choices disappear. Use `onAnswer` to move focus to the next question or to the conversation composer. The example moves to an optional freeform answer and previews the result locally.
+
+Set `appearance="agent"` on the surrounding root to use the compact question spacing. Continue to use `Item` and `Choice` for editable answers, multiple choices, and reviewable steps.
+
+<ComponentPreview name="questionnaire-agent">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Installation
 
 <InstallTabs>

@@ -10,7 +10,7 @@
 			"whenToUse": ["在精简摘要旁显示不插值的日历序列趋势"],
 			"whenNotToUse": [{ "case": "需要坐标轴和逐点读取", "use": "chart" }],
 			"accessibility": ["SVG 为装饰；相邻文字提供趋势摘要和精确数据"],
-			"responsive": ["可通过原生 SVG 宽高调整，默认 50.4 × 28"],
+			"responsive": ["默认 50.4 × 28，项目趋势外观为 104 × 32，可通过原生 SVG 宽高调整"],
 			"related": ["chart", "table"]
 		}
 	}

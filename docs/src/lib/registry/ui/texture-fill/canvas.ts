@@ -8,6 +8,7 @@ const BAND = 46,
 	STIFFNESS = 140,
 	TRACK = 0.55;
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+const fraction = (value: number) => (Number.isFinite(value) ? clamp(value / 100, 0, 1) : 0);
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const smooth = (a: number, b: number, x: number) => {
 	const t = clamp((x - a) / (b - a), 0, 1);
@@ -67,9 +68,10 @@ export function createTextureFill(
 	colorCanvas.width = colorCanvas.height = 1;
 	const colorContext = colorCanvas.getContext("2d");
 	if (!colorContext) throw new Error("TextureFill requires a Canvas 2D color context");
+	const initial = fraction(value);
 	const s = {
-		pos: intro && !motion.matches ? 0 : clamp(value / 100, 0, 1),
-		target: clamp(value / 100, 0, 1),
+		pos: intro && !motion.matches ? 0 : initial,
+		target: initial,
 		vel: 0,
 		spread: 0,
 		w: 0,
@@ -83,7 +85,7 @@ export function createTextureFill(
 	let disposed = false;
 	function draw() {
 		if (!image || disposed) return;
-		const color = getComputedStyle(el).color;
+		const { color, direction } = getComputedStyle(el);
 		if (color !== s.color) {
 			s.color = color;
 			colorContext!.fillStyle = color;
@@ -108,13 +110,16 @@ export function createTextureFill(
 		}
 		for (let y = 0, offset = 0; y < height; y++) {
 			for (let x = 0; x < width; x++, offset += 4) {
-				const amount = fill[x];
+				const column = direction === "rtl" ? width - x - 1 : x;
+				const amount = fill[column];
 				data[offset] = s.rgb[0];
 				data[offset + 1] = s.rgb[1];
 				data[offset + 2] = s.rgb[2];
 				data[offset + 3] =
-					(amount > 0.995 ? 1 : cover[texture]((x + 0.5) * px, (y + 0.5) * px, amount, px)) *
-					alpha[x];
+					(amount > 0.995
+						? 1
+						: cover[texture]((column + 0.5) * px, (y + 0.5) * px, amount, px)) *
+					alpha[column];
 			}
 		}
 		ctx!.putImageData(image, 0, 0);
@@ -177,7 +182,9 @@ export function createTextureFill(
 	resize();
 	return {
 		update(next: number) {
-			s.target = clamp(next / 100, 0, 1);
+			const target = fraction(next);
+			if (target === s.target) return;
+			s.target = target;
 			kick();
 		},
 		destroy() {

@@ -6,6 +6,7 @@
 		ref = $bindable(null),
 		value = $bindable(),
 		orientation = "horizontal",
+		appearance = "default",
 		"aria-label": ariaLabel,
 		"aria-labelledby": ariaLabelledby,
 		"aria-valuetext": ariaValueText,
@@ -14,10 +15,13 @@
 		class: className,
 		...restProps
 	}: WithoutChildrenOrChild<SliderPrimitive.RootProps> & {
+		appearance?: "default" | "settings";
 		thumbLabels?: string[];
 		/** Opt in to custom scalar keyboard navigation with this Page/Shift step. */
 		largeStep?: number;
 	} = $props();
+
+	const settings = $derived(appearance === "settings" && orientation === "horizontal");
 
 	function keyboard(event: KeyboardEvent, fallback: unknown) {
 		// Leave app/browser shortcuts untouched, including their defaultPrevented state.
@@ -76,9 +80,11 @@ get along, so we shut typescript up by casting `value` to `never`.
 	bind:ref
 	bind:value={value as never}
 	data-slot="slider"
+	data-appearance={settings ? "settings" : undefined}
 	{orientation}
 	class={cn(
 		"cn-slider relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-vertical:h-full data-vertical:w-auto data-vertical:flex-col",
+		settings && "h-8 min-w-0",
 		className
 	)}
 	{...restProps}
@@ -88,15 +94,16 @@ get along, so we shut typescript up by casting `value` to `never`.
 			data-slot="slider-track"
 			data-orientation={orientation}
 			class={cn(
-				"cn-slider-track relative grow overflow-hidden data-horizontal:w-full data-vertical:h-full"
+				"cn-slider-track relative grow overflow-hidden data-horizontal:w-full data-vertical:h-full",
+				settings && "data-horizontal:h-1.5 rounded-full bg-[#e3e3e3] dark:bg-[#2f312f]"
 			)}
 		>
-			<SliderPrimitive.Range
-				data-slot="slider-range"
-				class={cn(
-					"cn-slider-range absolute select-none data-horizontal:h-full data-vertical:w-full"
-				)}
-			/>
+			{#if !settings}
+				<SliderPrimitive.Range
+					data-slot="slider-range"
+					class="cn-slider-range absolute select-none data-horizontal:h-full data-vertical:w-full"
+				/>
+			{/if}
 		</span>
 		{#each thumbItems as thumb (thumb.index)}
 			<SliderPrimitive.Thumb
@@ -108,7 +115,19 @@ get along, so we shut typescript up by casting `value` to `never`.
 				class="cn-slider-thumb block shrink-0 select-none disabled:pointer-events-none disabled:opacity-50"
 			>
 				{#snippet child({ props })}
-					<span {...props} onkeydown={(event) => keyboard(event, props.onkeydown)}></span>
+					{@const thumbClass = props.class as string | undefined}
+					<span
+						{...props}
+						class={settings
+							? cn(
+									thumbClass,
+									"relative size-5 rounded-full border-0 bg-white hover:bg-white active:bg-white",
+									"shadow-[0_0_0_1px_rgba(0,0,0,0.086),0_3px_6px_-2px_rgba(0,0,0,0.02),0_1px_1px_rgba(0,0,0,0.04)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.16),0_0.5px_1px_1px_rgba(0,0,0,0.298)]",
+									"focus-visible:ring-0 focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-[#6d77d4]"
+								)
+							: thumbClass}
+						onkeydown={(event) => keyboard(event, props.onkeydown)}
+					></span>
 				{/snippet}
 			</SliderPrimitive.Thumb>
 		{/each}

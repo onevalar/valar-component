@@ -4,6 +4,7 @@
 	"title": "Stepper 步骤条",
 	"description": "带校验门禁、可取消异步校验的分步流程。",
 	"categories": ["导航"],
+	"registryDependencies": ["scroll-area"],
 	"meta": {
 		"valar": {
 			"keywords": ["步骤条", "stepper", "向导", "wizard", "多步表单", "流程"],
@@ -26,10 +27,11 @@
 				}
 			],
 			"accessibility": [
-				"步骤为原生按钮列表，当前步骤 aria-current=step，切换后聚焦内容区",
+				"当前步骤使用 aria-current=step，切换后聚焦内容区",
+				"导入外观的步骤标记为只读，用内容区的操作按钮导航",
 				"方向键移动焦点，Enter／Space 激活，Home／End 到首尾"
 			],
-			"responsive": ["横向步骤在窄屏折为竖排，键盘方向仍以 orientation 为准"],
+			"responsive": ["普通横向步骤在窄屏折为竖排；导入步骤在悬浮 Scroll Area 中横向排列"],
 			"related": ["tabs", "questionnaire", "progress"]
 		}
 	}

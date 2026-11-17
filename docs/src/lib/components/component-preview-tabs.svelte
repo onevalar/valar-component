@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as ScrollArea from "$lib/registry/ui/scroll-area/index.js";
 	import AccordionTuner from "$lib/features/workbench/accordion-tuner.svelte";
 	import AlertDialogTuner from "$lib/features/workbench/alert-dialog-tuner.svelte";
 	import AlertTuner from "$lib/features/workbench/alert-tuner.svelte";
@@ -117,14 +118,24 @@
 
 {#snippet Framed()}
 	{#if bare}
-		<div
-			class={cn(
-				"flex max-h-[28rem] min-h-32 w-full items-center justify-center overflow-auto rounded-xl border p-6",
-				name === "calendar-custom-days" && "max-h-none px-2 py-4"
-			)}
+		<ScrollArea.Root
+			type="hover"
+			orientation="both"
+			class="w-full overflow-clip rounded-xl border"
+			viewportLabel={t("docs.preview")}
+			viewportProps={{
+				class: name === "calendar-custom-days" ? "h-auto" : "h-auto max-h-[calc(28rem-2px)]",
+			}}
 		>
-			{@render PreviewExample()}
-		</div>
+			<div
+				class={cn(
+					"flex min-h-[calc(8rem-2px)] w-full min-w-0 items-center justify-center p-6",
+					name === "calendar-custom-days" && "px-2 py-4"
+				)}
+			>
+				{@render PreviewExample()}
+			</div>
+		</ScrollArea.Root>
 	{:else}
 		{@render PreviewExample()}
 	{/if}

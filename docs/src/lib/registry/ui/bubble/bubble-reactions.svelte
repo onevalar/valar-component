@@ -32,11 +32,13 @@
 		class: className,
 		side = "bottom",
 		align = "end",
+		appearance,
 		children,
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		side?: BubbleReactionsSide;
 		align?: BubbleReactionsAlign;
+		appearance?: "comment";
 	} = $props();
 </script>
 
@@ -45,7 +47,13 @@
 	data-slot="bubble-reactions"
 	data-align={align}
 	data-side={side}
-	class={cn(bubbleReactionsVariants({ side, align }), className)}
+	data-appearance={appearance}
+	class={cn(
+		appearance === "comment"
+			? "cn-bubble-reactions-comment flex w-fit max-w-full flex-wrap items-center"
+			: bubbleReactionsVariants({ side, align }),
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}

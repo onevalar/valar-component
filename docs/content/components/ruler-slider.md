@@ -11,6 +11,12 @@ component: true
 
 <ComponentPreview name="ruler-slider-demo"><div></div></ComponentPreview>
 
+## Budget form
+
+Use a ruler when users adjust a bounded value against visible ticks. In a settings card, put the field label and current value above the tape, with the form actions after the fields. Use Slider Field when users also need to type the exact value.
+
+<ComponentPreview name="ruler-slider-budget"><div></div></ComponentPreview>
+
 ## Installation
 
 <PMAddComp name="ruler-slider" />
@@ -23,6 +29,6 @@ Required `label`; `value`/`bind:value`, `defaultValue` (min), `onValueChange(num
 
 Drag moves the tape inversely by `spacing / step`, independent of viewport width. A tap glides the chosen tick to the fixed center needle. Fresh flicks coast to a snapped value; grabbing the tape catches it. Ends rubber-band up to 44px, then settle. Pointer cancellation/lost capture settles without a flick. Horizontal-dominant wheel input adjusts; vertical wheel scroll stays untouched. Label ticks follow the complete configured range, so choose a sensible labelled interval for large ranges.
 
-All arrows step; PageUp/Down and Shift+arrows use largeStep (default step × majorEvery). Home/End reach the bounds. Alt/Ctrl/Meta shortcuts pass through. format and unit also produce aria-valuetext on the slider viewport.
+All arrows step; PageUp/Down and Shift+arrows use largeStep (default step × majorEvery). Home/End reach the bounds, including a maximum between two regular ticks. Alt/Ctrl/Meta shortcuts pass through. format and unit also produce aria-valuetext on the slider viewport. The 64 px tape uses an 8 px radius and an inside keyboard focus indicator. On narrow widths, long labels and readouts wrap and the tape retains its height.
 
 `onValueChange` follows snapped ticks during drag/coast. `onValueCommit` fires once after drag settlement, immediately for a tap/key target (matching the actual source implementation), and after 120ms of wheel inactivity. External values retarget without emitting events. Native RAF/timers/listeners are disposed on unmount; reduced motion snaps without inertia or elastic extension. Only `animateReadout={false}` is accepted: rolling-digit animation remains unsupported; precise readout is synchronous.

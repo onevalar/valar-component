@@ -20,13 +20,13 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="progress-project">
+<ComponentPreview name="progress-demo">
 
 <div></div>
 
 </ComponentPreview>
 
-用 `appearance="project"` 显示只读的项目完成百分比。调整滑块可预览不同进度。为指示器提供可访问名称，并将项目状态操作放在独立控件中。
+上传、导入等可以量化的任务使用横条，旁边显示具体条数或百分比。
 
 ## 安装
 
@@ -70,7 +70,11 @@ links:
 <Progress value={33} aria-label="Import progress" />
 ```
 
-<ComponentPreview name="progress-demo">
+## 项目完成率
+
+用 `appearance="project"` 显示只读的项目完成百分比。调整滑块可预览不同进度。为指示器提供可访问名称，并将项目状态操作放在独立控件中。
+
+<ComponentPreview name="progress-project">
 
 <div></div>
 

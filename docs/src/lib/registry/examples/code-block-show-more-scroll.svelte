@@ -60,7 +60,8 @@ export function Chat() {
 		<CodeBlock.Content
 			{id}
 			lineNumbers
-			class={expanded ? "max-h-96 scroll-fade-y" : "max-h-64 scroll-fade-y overflow-y-hidden"}
+			scrollOrientation={expanded ? undefined : "horizontal"}
+			class={expanded ? "max-h-96 scroll-fade-y" : "max-h-64 scroll-fade-y"}
 		>
 			{#each lines.current as line, index (index)}
 				<CodeBlock.Line code={line} />

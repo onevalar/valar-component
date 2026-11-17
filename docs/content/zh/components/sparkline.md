@@ -11,6 +11,12 @@ component: true
 
 <ComponentPreview name="sparkline-demo"><div></div></ComponentPreview>
 
+## 项目完成趋势
+
+项目进度摘要可用 `appearance="project"`。细靛蓝线、渐隐面积和末端圆点取自 Linear 项目进度图的 Completed 序列。104 × 32 px 是 Valar 的紧凑尺寸，示例使用合成的每周数据。面积分段落在零基线上，缺失周在线和面积上都留下空位。精确读数放在图形旁边。 [Linear 项目进度图](https://linear.app/docs/project-graph)
+
+<ComponentPreview name="sparkline-project"><div></div></ComponentPreview>
+
 ## 安装
 
 <PMAddComp name="sparkline" />

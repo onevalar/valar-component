@@ -11,7 +11,7 @@
 		<Bubble.Root variant="tinted" align="end">
 			<Bubble.Content>
 				{#snippet child({ props })}
-					<button {...props} onclick={() => toast("You clicked forgot password")}>
+					<button type="button" {...props} onclick={() => toast("You clicked forgot password")}>
 						I forgot my password
 					</button>
 				{/snippet}
@@ -20,7 +20,11 @@
 		<Bubble.Root variant="tinted" align="end">
 			<Bubble.Content>
 				{#snippet child({ props })}
-					<button {...props} onclick={() => toast("You clicked help with subscription")}>
+					<button
+						type="button"
+						{...props}
+						onclick={() => toast("You clicked help with subscription")}
+					>
 						I need help with my subscription
 					</button>
 				{/snippet}
@@ -29,7 +33,11 @@
 		<Bubble.Root variant="tinted" align="end">
 			<Bubble.Content>
 				{#snippet child({ props })}
-					<button {...props} onclick={() => toast("You clicked something else. Talk to a human.")}>
+					<button
+						type="button"
+						{...props}
+						onclick={() => toast("You clicked something else. Talk to a human.")}
+					>
 						Something else. Talk to a human.
 					</button>
 				{/snippet}

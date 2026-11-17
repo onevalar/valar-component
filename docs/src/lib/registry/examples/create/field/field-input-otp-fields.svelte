@@ -12,7 +12,7 @@
 	<Field.Group>
 		<Field.Field>
 			<Field.Label for="otp-basic">Verification Code</Field.Label>
-			<InputOTP.Root id="otp-basic" maxlength={6}>
+			<InputOTP.Root inputId="otp-basic" maxlength={6}>
 				{#snippet children({ cells })}
 					<InputOTP.Group>
 						{#each cells as cell (cell)}
@@ -24,7 +24,7 @@
 		</Field.Field>
 		<Field.Field>
 			<Field.Label for="otp-with-desc">Enter OTP</Field.Label>
-			<InputOTP.Root id="otp-with-desc" maxlength={6} bind:value>
+			<InputOTP.Root inputId="otp-with-desc" maxlength={6} bind:value>
 				{#snippet children({ cells })}
 					<InputOTP.Group>
 						{#each cells as cell (cell)}
@@ -37,7 +37,7 @@
 		</Field.Field>
 		<Field.Field>
 			<Field.Label for="otp-separator">Two-Factor Authentication</Field.Label>
-			<InputOTP.Root id="otp-separator" maxlength={6}>
+			<InputOTP.Root inputId="otp-separator" maxlength={6}>
 				{#snippet children({ cells })}
 					<InputOTP.Group>
 						{#each cells.slice(0, 3) as cell (cell)}
@@ -56,7 +56,7 @@
 		</Field.Field>
 		<Field.Field>
 			<Field.Label for="otp-pin">PIN Code</Field.Label>
-			<InputOTP.Root id="otp-pin" maxlength={4} pattern={REGEXP_ONLY_DIGITS} bind:value={pinValue}>
+			<InputOTP.Root inputId="otp-pin" maxlength={4} pattern={REGEXP_ONLY_DIGITS} bind:value={pinValue}>
 				{#snippet children({ cells })}
 					<InputOTP.Group>
 						{#each cells as cell (cell)}
@@ -69,11 +69,11 @@
 		</Field.Field>
 		<Field.Field data-invalid>
 			<Field.Label for="otp-invalid">Invalid OTP</Field.Label>
-			<InputOTP.Root id="otp-invalid" maxlength={6}>
+			<InputOTP.Root inputId="otp-invalid" maxlength={6} aria-invalid>
 				{#snippet children({ cells })}
 					<InputOTP.Group>
 						{#each cells as cell (cell)}
-							<InputOTP.Slot {cell} aria-invalid />
+							<InputOTP.Slot {cell} />
 						{/each}
 					</InputOTP.Group>
 				{/snippet}
@@ -82,7 +82,7 @@
 		</Field.Field>
 		<Field.Field data-disabled>
 			<Field.Label for="otp-disabled-field">Disabled OTP</Field.Label>
-			<InputOTP.Root id="otp-disabled-field" maxlength={6} disabled>
+			<InputOTP.Root inputId="otp-disabled-field" maxlength={6} disabled>
 				{#snippet children({ cells })}
 					<InputOTP.Group>
 						{#each cells as cell (cell)}

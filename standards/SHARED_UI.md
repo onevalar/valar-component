@@ -7,7 +7,7 @@
 业务应用与组件库放在同一个 pnpm workspace，以 `@valar/svelte-ui: workspace:*` 引用共享组件。应用不再通过 CLI 各自复制一套组件源码。
 
 - **唯一维护源**位于 `docs/src/lib/registry/` 下的 `ui/`、`blocks/`、`hooks/`、`lib/` 和 `styles/`。
-- `packages/ui/` 以 `valar` 风格生成 79 个组件和六个组合区块。生成时展开样式和写回覆盖、替换 Lucide 图标并解析内部依赖。`dist/` 由构建生成。
+- `packages/ui/` 以 `valar` 风格生成组件和六个组合区块。生成时展开样式和写回覆盖、替换 Lucide 图标并解析内部依赖。`dist/` 由构建生成。中英文文档各有 80 个已验收的基础组件页面。
 - `apps/playground/` 是独立 SvelteKit 消费应用，仅导入公共包；不加载文档站、编辑器或文档图标 provider。
 - 应用使用 valar 风格（原 Nova）、neutral 浅／深主题和 Lucide。不再有其他风格；其他基础色板／图标库的包级配置尚未提供。
 - 自有包继续 `private`，没有 npm 发布、生产域名或自动部署。组件文档／CLI 安装方式仍保留，但已复制到外部项目的源码不会因此自动同步。

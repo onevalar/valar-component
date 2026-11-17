@@ -59,6 +59,8 @@ links:
 {/snippet}
 </InstallTabs>
 
+工作区组件包的入口为 `@valar/svelte-ui/drawer`。
+
 ## 用法
 
 ```svelte showLineNumbers
@@ -90,6 +92,26 @@ links:
 可选值为 `top`、`right`、`bottom` 和 `left`。
 
 <ComponentPreview name="drawer-sides">
+
+<div></div>
+
+</ComponentPreview>
+
+## 工作区导航
+
+移动端工作区导航使用 `direction="left"` 与 `Drawer.Content appearance="workspace"`。面板最多宽 330 px，填满视口高度，窄屏仍留至少 24 px 的页面可见。工作区外观对应 Linear 的菜单布局，过渡与拖拽由 Vaul 提供。
+
+<ComponentPreview name="drawer-workspace">
+
+<div></div>
+
+</ComponentPreview>
+
+## 可滚动内容
+
+标题和操作留在滚动区域之外。长内容放在 `ScrollArea.Root`，提供 `viewportLabel` 并添加 `data-vaul-no-drag`，让滚动或拖动滑块独立于抽屉手势。
+
+<ComponentPreview name="drawer-scrollable-content">
 
 <div></div>
 

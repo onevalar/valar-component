@@ -31,12 +31,14 @@
 		state = "done",
 		size = "default",
 		orientation = "horizontal",
+		appearance,
 		children,
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		state?: AttachmentState;
 		size?: AttachmentSize;
 		orientation?: AttachmentOrientation;
+		appearance?: "agent-file" | "agent-image";
 	} = $props();
 </script>
 
@@ -46,7 +48,16 @@
 	data-state={state}
 	data-size={size}
 	data-orientation={orientation}
-	class={cn(attachmentVariants({ size, orientation }), className)}
+	data-appearance={appearance}
+	aria-busy={state === "uploading" || state === "processing" || undefined}
+	class={cn(
+		appearance === "agent-file"
+			? "cn-attachment-agent-file group/attachment relative flex w-full min-w-0 items-center"
+			: appearance === "agent-image"
+				? "cn-attachment-agent-image group/attachment"
+				: attachmentVariants({ size, orientation }),
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}

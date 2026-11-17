@@ -16,6 +16,7 @@
 				],
 				"whenToUse": [
 					"把多段内容收成标题列表，如常见问题、设置分组",
+					"appearance=section 在文档和问题描述中使用前置三角图标",
 					"type=multiple 允许同时展开多项"
 				],
 				"whenNotToUse": [
@@ -182,7 +183,8 @@
 		"type": "registry:ui",
 		"description": "显示文件或图片附件，包含缩略图、名称、上传状态和操作。",
 		"registryDependencies": [
-			"button"
+			"button",
+			"scroll-area"
 		],
 		"meta": {
 			"valar": {
@@ -214,10 +216,10 @@
 				"accessibility": [
 					"只有图标的 Attachment.Action 和覆盖整卡的 Attachment.Trigger 都要加 aria-label",
 					"error 状态要在 Attachment.Description 写明原因，不能只靠颜色",
-					"纯展示的 Attachment.Group 加 tabindex=0、role=group 和 aria-label，便于键盘滚动"
+					"为纯展示的 Attachment.Group 提供 aria-label，使实际滚动视口可通过键盘操作"
 				],
 				"responsive": [
-					"Attachment.Group 横向滚动、吸附，边缘渐隐",
+					"Attachment.Group 使用悬浮 Scroll Area，横向吸附，也可改为纵向排列",
 					"size（default、sm、xs）与 orientation 适应紧凑空间"
 				],
 				"related": [
@@ -625,7 +627,8 @@
 					"滑动浏览"
 				],
 				"whenToUse": [
-					"横向或纵向滑动浏览一组同类内容，如图片、卡片"
+					"横向或纵向滑动浏览一组同类内容，如图片、卡片",
+					"全屏浏览工单图片，按原文件顺序翻页或缩放"
 				],
 				"whenNotToUse": [
 					{
@@ -643,11 +646,13 @@
 				],
 				"accessibility": [
 					"根元素 role=region、aria-roledescription=carousel，每项为 slide",
-					"上一项／下一项按钮支持方向键；不要无暂停地自动播放"
+					"上一项／下一项按钮支持方向键；不要无暂停地自动播放",
+					"全屏媒体首尾禁用且保留按键焦点；Esc 关闭后返回打开预览的缩略图"
 				],
 				"responsive": [
 					"用 basis-* 控制每屏显示几项，可按断点设置",
-					"支持触摸滑动"
+					"支持触摸滑动",
+					"全屏媒体在 320 px 视口保持工具栏可用，图片缩放限制在可用空间"
 				],
 				"related": [
 					"scroll-area",
@@ -755,6 +760,7 @@
 		"type": "registry:ui",
 		"description": "展示代码、终端输出和 diff，可带标题栏、行号和复制按钮。",
 		"registryDependencies": [
+			"scroll-area",
 			"use-highlighted-code",
 			"button"
 		],
@@ -848,7 +854,8 @@
 		"type": "registry:ui",
 		"description": "用色盘、十六进制输入或预设色块选择颜色，值为 #rrggbb。",
 		"registryDependencies": [
-			"popover"
+			"popover",
+			"scroll-area"
 		],
 		"meta": {
 			"valar": {
@@ -1192,10 +1199,12 @@
 					"drawer",
 					"底部弹出",
 					"bottom sheet",
-					"拖动关闭"
+					"拖动关闭",
+					"移动导航"
 				],
 				"whenToUse": [
 					"移动端从底部弹出的选项、简短表单或详情，支持手势拖动关闭",
+					"移动端工作区从屏幕左边缘打开导航",
 					"需要在面板内再打开一层（Drawer.NestedRoot）"
 				],
 				"whenNotToUse": [
@@ -1218,7 +1227,7 @@
 				],
 				"responsive": [
 					"常与 dialog 搭配：窄屏用 drawer、宽屏用 dialog",
-					"direction 可选 top、right、bottom、left；内容超出时在面板内部滚动",
+					"direction 可选 top、right、bottom、left；内容超出时使用面板内的悬浮 Scroll Area",
 					"modal={false} 时可与页面交互，点击外部不会关闭"
 				],
 				"related": [
@@ -1421,7 +1430,7 @@
 		"name": "gauge",
 		"title": "Gauge 仪表",
 		"type": "registry:ui",
-		"description": "静态百分比仪表和可组合的 SVG 弧线，保留超限读数。",
+		"description": "静态百分比仪表、紧凑迭代容量和可组合的 SVG 弧线，保留超限读数。",
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -1429,10 +1438,13 @@
 					"gauge",
 					"仪表",
 					"百分比",
-					"quota"
+					"quota",
+					"迭代容量",
+					"capacity"
 				],
 				"whenToUse": [
-					"显示一个只读配额百分比或组合独立同心弧线"
+					"显示一个只读配额百分比或组合独立同心弧线",
+					"在迭代列表同一行显示容量和超限读数"
 				],
 				"whenNotToUse": [
 					{
@@ -1444,7 +1456,8 @@
 					"label 和 valueText 由调用方本地化；超限读数保留在文字中"
 				],
 				"responsive": [
-					"宽度由容器控制，保持 100:90 比例"
+					"通用仪表保持 100:90 比例",
+					"迭代容量使用 16 px 弧线，说明可换行"
 				],
 				"related": [
 					"tick-meter",
@@ -1640,12 +1653,12 @@
 				],
 				"accessibility": [
 					"基于 Bits UI PinInput，保留粘贴和键盘删除行为",
-					"用 Field 的可见标签说明位数和用途",
+					"用 inputId 连接 Field 的可见标签，用 aria-describedby 连接错误文字",
 					"用 pattern 限制可输入字符（如仅数字）"
 				],
 				"responsive": [
 					"默认 inputmode=numeric，移动端弹出数字键盘",
-					"格子多时窄屏注意总宽度，可用 InputOTP.Separator 分组"
+					"常用 4 位或 6 位按 32 px 表单尺寸；可用 InputOTP.Group 和 Separator 分组"
 				],
 				"related": [
 					"input",
@@ -1660,16 +1673,28 @@
 		"name": "issue-composer",
 		"title": "Issue Composer 问题编辑弹窗",
 		"type": "registry:ui",
-		"description": "紧凑和展开两种布局的创建表单，包含标题、描述、可搜索的状态与优先级选择，以及连续创建。",
+		"description": "紧凑和展开两种布局的创建表单，支持富文本描述、可搜索的属性、附件、草稿和连续创建。",
+		"dependencies": [
+			"@tiptap/core@^3.33.1",
+			"@tiptap/extension-list@^3.33.1",
+			"@tiptap/pm@^3.33.1",
+			"@tiptap/starter-kit@^3.33.1",
+			"katex@^0.16.47",
+			"mermaid@^11.17.2"
+		],
 		"registryDependencies": [
 			"command",
-			"dialog",
 			"popover",
-			"tooltip",
+			"scroll-area",
 			"button",
 			"input",
+			"alert-dialog",
+			"dialog",
+			"tooltip",
 			"switch",
-			"textarea"
+			"attachment",
+			"dropdown-menu",
+			"slider"
 		],
 		"meta": {
 			"valar": {
@@ -1691,17 +1716,17 @@
 				],
 				"accessibility": [
 					"打开聚焦标题，关闭恢复到触发器",
-					"状态和优先级可用键盘选择，空标题错误可被读出"
+					"属性可用键盘选择，空标题错误可被读出，关闭改动过的表单时可保存或放弃草稿"
 				],
 				"responsive": [
-					"窄屏保留 12 px 侧边间距，长描述在编辑区滚动"
+					"窄屏保留 12 px 侧边间距，主体和选项列表使用悬浮 Scroll Area"
 				],
 				"related": [
 					"dialog",
 					"command",
 					"popover",
 					"switch",
-					"textarea"
+					"scroll-area"
 				]
 			}
 		},
@@ -1718,11 +1743,15 @@
 			"dropdown-menu",
 			"alert-dialog",
 			"button",
-			"input",
+			"popover",
 			"breadcrumb",
+			"input",
 			"combobox",
 			"command",
-			"popover"
+			"bubble",
+			"scroll-area",
+			"accordion",
+			"code-block"
 		],
 		"meta": {
 			"valar": {
@@ -1927,7 +1956,7 @@
 					}
 				],
 				"accessibility": [
-					"进行中的状态设 role=status，并配合 spinner",
+					"进行中的状态设 role=status，Agent 思考外观已包含状态语义",
 					"带文字的分隔不要加 role=separator，否则文字不会被朗读",
 					"Marker.Icon 对读屏隐藏，含义写在 Marker.Content"
 				],
@@ -2049,6 +2078,7 @@
 		"type": "registry:ui",
 		"description": "聊天记录滚动容器：跟随流式回复、加载历史不跳动、可跳转到任意消息。",
 		"registryDependencies": [
+			"scroll-area",
 			"button"
 		],
 		"meta": {
@@ -2105,7 +2135,8 @@
 				],
 				"whenToUse": [
 					"需要浏览器原生行为：移动端系统选择器、更好的性能",
-					"选项可用 NativeSelect.OptGroup 分组"
+					"选项可用 NativeSelect.OptGroup 分组",
+					"联系表单使用铺满一行的标准单选字段"
 				],
 				"whenNotToUse": [
 					{
@@ -2142,8 +2173,10 @@
 		"name": "navigation-menu",
 		"title": "Navigation Menu 导航菜单",
 		"type": "registry:ui",
-		"description": "网站顶部的导航链接，可展开为带说明的分组面板。",
-		"registryDependencies": [],
+		"description": "网站导航和项目子路由链接，支持分组面板和横向悬浮滚动。",
+		"registryDependencies": [
+			"scroll-area"
+		],
 		"meta": {
 			"valar": {
 				"keywords": [
@@ -2154,7 +2187,8 @@
 					"站点导航"
 				],
 				"whenToUse": [
-					"网站顶部导航，部分入口展开为分组链接面板"
+					"网站顶部导航，部分入口展开为分组链接面板",
+					"项目视图之间切换路由"
 				],
 				"whenNotToUse": [
 					{
@@ -2176,7 +2210,7 @@
 				],
 				"responsive": [
 					"内容面板在 md 及以上绝对定位，窄屏占满宽度",
-					"移动端通常改用 sheet 或 drawer 承载导航"
+					"项目链接在窄容器中使用悬浮 Scroll Area，站点主导航可用 Sheet 或 Drawer"
 				],
 				"related": [
 					"sidebar",
@@ -2206,7 +2240,8 @@
 				],
 				"whenToUse": [
 					"输入数量、金额、百分比等可步进的数值",
-					"需要按地区格式化显示（formatOptions），提交时仍是纯数值"
+					"需要按地区格式化显示（formatOptions），提交时仍是纯数值",
+					"输入带美元前缀、实时千位分组的整美元上限"
 				],
 				"whenNotToUse": [
 					{
@@ -2247,7 +2282,7 @@
 		"name": "pagination",
 		"title": "Pagination 分页",
 		"type": "registry:ui",
-		"description": "页码与上一页、下一页导航。",
+		"description": "页码导航和带结果计数的前后翻页。",
 		"registryDependencies": [
 			"button"
 		],
@@ -2261,7 +2296,8 @@
 					"下一页"
 				],
 				"whenToUse": [
-					"把长列表或表格分成多页浏览"
+					"把长列表或表格分成多页浏览",
+					"在用量记录或表格结果显示当前范围与总数"
 				],
 				"whenNotToUse": [
 					{
@@ -2279,11 +2315,13 @@
 				],
 				"accessibility": [
 					"当前页带 aria-current=page",
-					"上一页／下一页默认中文文字和 aria-label，其他语言传 label 和 aria-label 覆盖"
+					"上一页／下一页默认中文文字和 aria-label，其他语言传 label 和 aria-label 覆盖",
+					"结果计数随翻页播报，零结果和单页禁用前后按钮"
 				],
 				"responsive": [
 					"上一页／下一页的文字在 sm 以下隐藏，只留图标",
-					"窄屏减少显示的页码数"
+					"窄屏减少显示的页码数",
+					"紧凑结果栏和相邻操作可换行"
 				],
 				"related": [
 					"table",
@@ -2408,7 +2446,8 @@
 				],
 				"whenToUse": [
 					"逐题作答的问卷：单选、多选、自由回答、可跳过",
-					"需要条件题、校验、进度、恢复作答"
+					"需要条件题、校验、进度、恢复作答",
+					"Agent 对话内选中即提交的单选问题"
 				],
 				"whenNotToUse": [
 					{
@@ -2473,11 +2512,11 @@
 					}
 				],
 				"accessibility": [
-					"整组有 legend 或 aria-label",
-					"方向键在选项间移动"
+					"整组通过 aria-labelledby 引用 legend 或设置 aria-label",
+					"方向键在选项间移动，使用 aria-describedby 关联说明和错误"
 				],
 				"responsive": [
-					"窄屏下纵向排列"
+					"窄屏优先纵向排列，必须横排的长组使用悬浮 Scroll Area"
 				],
 				"related": [
 					"select",
@@ -2962,7 +3001,7 @@
 		"name": "slider-field",
 		"title": "Slider Field 滑块数值",
 		"type": "registry:ui",
-		"description": "滑块与数值输入框组合，拖动调整或直接输入精确数值。",
+		"description": "滑块搭配数字输入框或只读数值。",
 		"registryDependencies": [
 			"number-field",
 			"slider"
@@ -2977,7 +3016,7 @@
 					"参数调节"
 				],
 				"whenToUse": [
-					"在已知范围内调整数值，并需要精确输入"
+					"在已知范围内调整数值，并需要精确输入或显示当前值"
 				],
 				"whenNotToUse": [
 					{
@@ -2985,16 +3024,17 @@
 						"use": "number-field"
 					},
 					{
-						"case": "只需粗略拖动",
+						"case": "无需显示当前数值",
 						"use": "slider"
 					}
 				],
 				"accessibility": [
-					"标签同时命名滑块和输入框",
+					"可见标签命名滑块和可编辑输入框",
+					"读数模式的键盘焦点停留在滑块",
 					"超出范围的输入标为无效而不是静默截断"
 				],
 				"responsive": [
-					"窄屏下滑块与输入框保持同一行，空间不足时换行"
+					"读数模式下滑块与数值作为一组，空间不足时换到标签下方"
 				],
 				"related": [
 					"slider",
@@ -3074,7 +3114,7 @@
 					"SVG 为装饰；相邻文字提供趋势摘要和精确数据"
 				],
 				"responsive": [
-					"可通过原生 SVG 宽高调整，默认 50.4 × 28"
+					"默认 50.4 × 28，项目趋势外观为 104 × 32，可通过原生 SVG 宽高调整"
 				],
 				"related": [
 					"chart",
@@ -3088,7 +3128,7 @@
 		"name": "spinner",
 		"title": "Spinner 加载指示",
 		"type": "registry:ui",
-		"description": "表示正在加载的旋转图标。",
+		"description": "表示加载中的旋转图标或行内三点状态。",
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -3113,7 +3153,7 @@
 					}
 				],
 				"accessibility": [
-					"默认 role=status、aria-label=加载中，能更具体时改 aria-label"
+					"状态只播报一次；图标使用 aria-label，行内三点使用可见标签并隐藏标点"
 				],
 				"responsive": [
 					"用 size-* 调整大小"
@@ -3132,7 +3172,9 @@
 		"title": "Stepper 步骤条",
 		"type": "registry:ui",
 		"description": "带校验门禁、可取消异步校验的分步流程。",
-		"registryDependencies": [],
+		"registryDependencies": [
+			"scroll-area"
+		],
 		"meta": {
 			"valar": {
 				"keywords": [
@@ -3162,11 +3204,12 @@
 					}
 				],
 				"accessibility": [
-					"步骤为原生按钮列表，当前步骤 aria-current=step，切换后聚焦内容区",
+					"当前步骤使用 aria-current=step，切换后聚焦内容区",
+					"导入外观的步骤标记为只读，用内容区的操作按钮导航",
 					"方向键移动焦点，Enter／Space 激活，Home／End 到首尾"
 				],
 				"responsive": [
-					"横向步骤在窄屏折为竖排，键盘方向仍以 orientation 为准"
+					"普通横向步骤在窄屏折为竖排；导入步骤在悬浮 Scroll Area 中横向排列"
 				],
 				"related": [
 					"tabs",
@@ -3225,7 +3268,9 @@
 		"title": "Table 表格",
 		"type": "registry:ui",
 		"description": "展示行列结构化数据的表格。",
-		"registryDependencies": [],
+		"registryDependencies": [
+			"scroll-area"
+		],
 		"meta": {
 			"valar": {
 				"keywords": [
@@ -3626,7 +3671,9 @@
 		"type": "registry:ui",
 		"description": "展示 agent 推理、工具调用、来源等步骤的行列表。",
 		"registryDependencies": [
-			"collapsible"
+			"button",
+			"collapsible",
+			"spinner"
 		],
 		"meta": {
 			"valar": {
@@ -3653,21 +3700,65 @@
 					}
 				],
 				"accessibility": [
-					"本身不加角色，语义来自包裹它的触发器（如 Trace.CollapsibleTrigger 带 aria-expanded）",
+					"步骤行从包裹它的触发器获得语义，独立重试按钮用状态区域宣布结果",
 					"Trace.Title 是可访问名称，要写成完整的一句话，状态也写进标题",
 					"运行中的闪烁效果在“减少动态效果”时停止"
 				],
 				"responsive": [
-					"支持嵌套，摘要可展开为步骤"
+					"支持嵌套，摘要可展开为步骤，重试反馈按剩余宽度换行"
 				],
 				"related": [
 					"message",
 					"marker",
+					"button",
 					"collapsible"
 				]
 			}
 		},
 		"relativeUrl": "trace.json"
+	},
+	{
+		"name": "typography",
+		"title": "Typography 排版",
+		"type": "registry:ui",
+		"description": "文章、问题描述与富文本内容的只读排版。",
+		"registryDependencies": [],
+		"meta": {
+			"valar": {
+				"keywords": [
+					"排版",
+					"typography",
+					"prose",
+					"文章",
+					"富文本"
+				],
+				"whenToUse": [
+					"以原生 HTML 标题、段落、列表和引用展示富文本"
+				],
+				"whenNotToUse": [
+					{
+						"case": "编辑问题描述",
+						"use": "issue-composer"
+					},
+					{
+						"case": "表单字段说明",
+						"use": "field"
+					}
+				],
+				"accessibility": [
+					"保持标题层级和列表语义；可用键盘聚焦并打开文章链接"
+				],
+				"responsive": [
+					"长链接和行内代码随容器宽度换行；宽表格使用 Table 的悬浮滚动"
+				],
+				"related": [
+					"code-block",
+					"issue-detail",
+					"table"
+				]
+			}
+		},
+		"relativeUrl": "typography.json"
 	},
 	{
 		"name": "waffle-chart",
@@ -4817,6 +4908,7 @@
 			"tooltip",
 			"button",
 			"input",
+			"toggle",
 			"field",
 			"popover",
 			"select",

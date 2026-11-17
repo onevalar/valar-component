@@ -4,6 +4,7 @@
 	"title": "Message Scroller 消息滚动区",
 	"description": "聊天记录滚动容器：跟随流式回复、加载历史不跳动、可跳转到任意消息。",
 	"categories": ["展示"],
+	"registryDependencies": ["scroll-area"],
 	"meta": {
 		"valar": {
 			"keywords": ["消息滚动", "message scroller", "聊天记录", "chat scroll", "流式", "transcript"],

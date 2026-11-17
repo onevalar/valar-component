@@ -2,12 +2,12 @@
 	"name": "navigation-menu",
 	"type": "registry:ui",
 	"title": "Navigation Menu 导航菜单",
-	"description": "网站顶部的导航链接，可展开为带说明的分组面板。",
+	"description": "网站导航和项目子路由链接，支持分组面板和横向悬浮滚动。",
 	"categories": ["导航"],
 	"meta": {
 		"valar": {
 			"keywords": ["导航菜单", "navigation menu", "顶部导航", "mega menu", "站点导航"],
-			"whenToUse": ["网站顶部导航，部分入口展开为分组链接面板"],
+			"whenToUse": ["网站顶部导航，部分入口展开为分组链接面板", "项目视图之间切换路由"],
 			"whenNotToUse": [
 				{
 					"case": "应用内的侧边导航",
@@ -28,7 +28,7 @@
 			],
 			"responsive": [
 				"内容面板在 md 及以上绝对定位，窄屏占满宽度",
-				"移动端通常改用 sheet 或 drawer 承载导航"
+				"项目链接在窄容器中使用悬浮 Scroll Area，站点主导航可用 Sheet 或 Drawer"
 			],
 			"related": ["sidebar", "breadcrumb", "menubar"]
 		}

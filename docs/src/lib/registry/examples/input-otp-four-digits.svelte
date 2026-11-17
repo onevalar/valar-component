@@ -3,7 +3,7 @@
 	import * as InputOTP from "$lib/registry/ui/input-otp/index.js";
 </script>
 
-<InputOTP.Root maxlength={4} pattern={REGEXP_ONLY_DIGITS}>
+<InputOTP.Root maxlength={4} pattern={REGEXP_ONLY_DIGITS} aria-label="Four-digit PIN">
 	{#snippet children({ cells })}
 		<InputOTP.Group>
 			{#each cells as cell (cell)}

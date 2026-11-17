@@ -50,6 +50,35 @@ it("keeps slider and number box in sync and ignores out-of-range or empty typing
 	expect(new FormData(form).get("height")).toBe("45");
 });
 
+it("submits the current readout value and exposes its unit on the slider", () => {
+	const form = document.createElement("form");
+	document.body.append(form);
+	const onValueChange = vi.fn();
+	app = mount(SliderField, {
+		target: form,
+		props: {
+			appearance: "readout",
+			label: "Contrast",
+			value: 30,
+			min: 15,
+			max: 100,
+			unit: "%",
+			name: "contrast",
+			onValueChange,
+		},
+	});
+	flushSync();
+	const slider = form.querySelector('[role="slider"]')!;
+	expect(form.querySelector('[role="spinbutton"]')).toBeNull();
+	expect(form.querySelector('[data-slot="slider-field-readout"]')?.textContent?.trim()).toBe("30%");
+	expect(slider.getAttribute("aria-valuetext")).toBe("30 %");
+	slider.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+	flushSync();
+	expect(slider.getAttribute("aria-valuetext")).toBe("31 %");
+	expect(onValueChange).toHaveBeenCalledExactlyOnceWith(31);
+	expect(new FormData(form).get("contrast")).toBe("31");
+});
+
 it("normalizes only three- and six-digit hex colors", () => {
 	expect(normalizeHex("#ABC")).toBe("#aabbcc");
 	expect(normalizeHex(" 1E40AF ")).toBe("#1e40af");

@@ -1,14 +1,19 @@
 <script lang="ts">
+	import { Root as ScrollArea } from "$lib/registry/ui/scroll-area/index.js";
 	import { cn, type WithElementRef } from "$lib/utils.js";
 	import CodeBlockLine from "./code-block-line.svelte";
 	import type { HTMLAttributes } from "svelte/elements";
 
 	let {
 		ref = $bindable(null),
+		viewportRef = $bindable(null),
 		class: className,
 		style,
+		"aria-label": viewportLabel = "代码",
+		tabindex = 0,
 		code,
 		wrap = false,
+		scrollOrientation,
 		lineNumbers = false,
 		startLine = 1,
 		children,
@@ -17,6 +22,9 @@
 		/** Plain text to render. Split into lines when `lineNumbers` is set. */
 		code?: string;
 		wrap?: boolean;
+		/** Restricts an axis when the surrounding UI clips rather than scrolls it. */
+		scrollOrientation?: "horizontal" | "vertical" | "both";
+		viewportRef?: HTMLElement | null;
 		lineNumbers?: boolean;
 		startLine?: number;
 	} = $props();
@@ -45,17 +53,30 @@
 {/snippet}
 
 <!-- Whitespace inside a <pre> is rendered, so its content is a snippet defined outside it, where Svelte trims whitespace as usual. -->
-<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-<pre
-	bind:this={ref}
-	data-slot="code-block-content"
-	data-wrap={wrap || undefined}
-	data-numbered={lineNumbers || undefined}
+<ScrollArea
+	bind:viewportRef
+	data-code-block-scroll-area=""
 	dir="ltr"
-	tabindex={0}
-	style="counter-reset: line {startLine - 1};{style ?? ''}"
-	class={cn(
-		"cn-code-block-content min-h-0 min-w-0 scroll-fade-x scrollbar-thin overflow-auto text-start font-mono outline-none data-wrap:scroll-fade-y data-wrap:wrap-break-word data-wrap:whitespace-pre-wrap",
-		className
-	)}
-	{...restProps}>{@render content()}</pre>
+	type="hover"
+	orientation={scrollOrientation ?? (wrap ? "vertical" : "both")}
+	viewportLabel={viewportLabel ?? undefined}
+	viewportProps={{
+		tabindex,
+		style,
+		"data-wrap": wrap || undefined,
+		class: cn(
+			"cn-code-block-content scroll-fade-x h-auto min-h-0 min-w-0 text-start font-mono data-wrap:scroll-fade-y data-wrap:wrap-anywhere",
+			className
+		),
+	}}
+>
+	<pre
+		bind:this={ref}
+		data-slot="code-block-content"
+		data-wrap={wrap || undefined}
+		data-numbered={lineNumbers || undefined}
+		dir="ltr"
+		style:counter-reset="line {startLine - 1}"
+		class="m-0 min-w-0 [font:inherit] data-wrap:whitespace-pre-wrap"
+		{...restProps}>{@render content()}</pre>
+</ScrollArea>

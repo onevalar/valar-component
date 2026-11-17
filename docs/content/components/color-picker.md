@@ -1,6 +1,6 @@
 ---
 title: Color Picker
-description: 选择颜色：色盘、十六进制输入与预设色块，值为 #rrggbb。
+description: Choose a hexadecimal color using a color well, input, or label palette.
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/color-picker
@@ -13,13 +13,13 @@ links:
 
 <ComponentPreview name="color-picker-demo"><div></div></ComponentPreview>
 
-## 安装
+## Installation
 
 <PMAddComp name="color-picker" />
 
-依赖 Valar 的 Popover，CLI 会一并安装。
+The CLI also installs Popover and Scroll Area.
 
-## 用法
+## Usage
 
 ```svelte
 <script lang="ts">
@@ -28,19 +28,23 @@ links:
 </script>
 
 <ColorPicker
-  label="主色"
+  label="Primary color"
   bind:value={color}
   presets={["#0f172a", "#2563eb"]}
 />
 ```
 
-## 行为合同
+## Label palette
 
-- `value` 始终是小写六位十六进制 `#rrggbb`；外部传入的三位简写会被展开，无效值显示为 `#000000`。导出的 `normalizeHex` 可在其他地方复用同一规则。
-- 弹层内提供浏览器原生色盘（Chromium 等浏览器自带取色器）、十六进制输入和可选预设色块，三者实时同步。
-- 十六进制输入：输入满六位时立即生效；三位简写在 Enter 或失焦时展开生效；未完成的输入不会修改当前值，失焦后恢复为当前值。出现非十六进制字符时提示错误。
-- 预设色块是带 `aria-pressed` 的按钮，当前颜色处于按下状态。弹层的打开、关闭、焦点归还和 Esc 行为来自 Bits UI Popover。
-- `contentProps` 透传 Popover.Content 的配置（不含 `children`／`child`），例如 `sideOffset`、`class` 或 `portalProps`；默认仍使用 Portal，只有需要容器内渲染时才传 `portalProps={{ disabled: true }}`。面板样式只影响 Color Picker，不修改全局 Popover。
-- 根节点 `class` 与 `contentProps.class` 中的显式工具类优先于各自默认类；面板使用专属 `data-slot="color-picker-content"`，包括默认 Portal 渲染时。
-- 传入 `name` 时以 `#rrggbb` 参与原生表单提交。
-- 当前不支持透明度、OKLCH／HSL 等其他色彩空间的直接编辑；原生色盘的外观由浏览器决定。
+<ComponentPreview name="color-picker-label"><div></div></ComponentPreview>
+
+Use `appearance="label"` beside a label name. Presets accept hex strings or `{ color, label }` objects. Tab visits each color and the custom-color button. Selecting a preset or pressing Enter on a valid custom hex value closes the picker and restores focus to its trigger. Custom color also offers a pointer-driven saturation/brightness area and hue strip. Arrow keys adjust either control. Use `labels` to localize the custom panel.
+
+## Behavior
+
+- The displayed and submitted value is a lowercase six-digit `#rrggbb`. `normalizeHex` expands shorthand, and an invalid external value displays `#000000`.
+- The default panel synchronizes the native color well, hex input, and optional presets. Six-digit input applies immediately. Shorthand applies on Enter or blur; incomplete input restores the current value on blur.
+- Preset buttons expose their current state with `aria-pressed`. Escape returns focus to the trigger. A constrained panel uses an overlay scrollbar.
+- `contentProps` forwards Popover.Content options such as `sideOffset`, `class`, and `portalProps`. The default portal is enabled. Use `portalProps={{ disabled: true }}` for an inline panel.
+- Root `class` and `contentProps.class` can override layout utilities. The panel uses `data-slot="color-picker-content"` in both appearances.
+- Set `name` to submit the current `#rrggbb` with a native form. The native color well’s appearance depends on the browser.

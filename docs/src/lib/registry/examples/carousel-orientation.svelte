@@ -8,7 +8,8 @@
 		align: "start",
 	}}
 	orientation="vertical"
-	class="w-full max-w-xs"
+	aria-label="Vertical cards"
+	class="w-full max-w-xs py-9"
 >
 	<Carousel.Content class="-mt-1 h-[270px]">
 		{#each Array(5) as _, i (i)}
@@ -23,6 +24,6 @@
 			</Carousel.Item>
 		{/each}
 	</Carousel.Content>
-	<Carousel.Previous />
-	<Carousel.Next />
+	<Carousel.Previous class="top-0" />
+	<Carousel.Next class="bottom-0" />
 </Carousel.Root>

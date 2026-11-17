@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onDestroy, tick } from "svelte";
-	import { prefersReducedMotion } from "svelte/motion";
 	import * as Bubble from "$lib/registry/ui/bubble/index.js";
 	import * as Card from "$lib/registry/ui/card/index.js";
 	import * as Command from "$lib/registry/ui/command/index.js";
@@ -35,7 +34,6 @@
 		--agent-composer: light-dark(#fff, #181819);
 		--agent-reply: light-dark(#fff, #1e1f21);
 		--agent-file: light-dark(#f2f2f4, #252628);
-		--agent-bubble: light-dark(#ebebee, #222325);
 		--agent-placeholder: light-dark(#77777c, #929296);
 		--agent-send: light-dark(#585ec3, #6268ce);
 		--agent-focus: light-dark(#6d74d6, #858bf1);
@@ -386,20 +384,14 @@
 									{#each chat.turns as turn (turn.id)}
 										<Scroller.Item messageId={turn.id + "-user"} scrollAnchor>
 											<Message.Root
+												appearance="agent"
 												align="end"
 												role="group"
 												aria-label={text("你的消息", "Your message")}
 											>
 												<Message.Content class="items-end">
-													<Bubble.Root
-														variant="muted"
-														align="end"
-														style="--muted: var(--agent-bubble)"
-														class="max-w-[92%] sm:max-w-[77%]"
-													>
-														<Bubble.Content
-															class="space-y-2 rounded-lg border-0 bg-(--agent-bubble) px-3 py-2 text-[15px] leading-6"
-														>
+													<Bubble.Root appearance="agent-user">
+														<Bubble.Content class="space-y-2">
 															{#if turn.files.length}<AgentAttachments
 																	files={turn.files}
 																	{chinese}
@@ -424,20 +416,12 @@
 								</Scroller.Content>
 							</Scroller.Viewport>
 							<Scroller.Button
-								aria-label={text("跳到最新消息", "Scroll to latest")}
-								behavior={prefersReducedMotion.current ? "instant" : "smooth"}
-								class="bottom-2 h-7 w-auto gap-1 rounded-full border bg-(--agent-bubble) px-2.5 text-xs shadow-sm motion-reduce:transition-none"
-							>
-								<IconPlaceholder
-									lucide="ArrowDownIcon"
-									tabler="IconArrowDown"
-									hugeicons="ArrowDown02Icon"
-									phosphor="ArrowDownIcon"
-									remixicon="RiArrowDownLine"
-									aria-hidden="true"
-								/>
-								{text("最新", "Latest")}
-							</Scroller.Button>
+								aria-label={running
+									? text("Agent 正在处理，跳到最新消息", "Agent working. Scroll to latest")
+									: text("跳到最新消息", "Scroll to latest")}
+								appearance="latest"
+								label={text("最新", "Latest")}
+							/>
 						</Scroller.Root>
 						<div class="mx-auto w-full max-w-[848px] shrink-0 px-3 pb-3 sm:px-4">
 							{@render inputPanel(true)}

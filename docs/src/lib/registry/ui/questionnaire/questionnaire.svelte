@@ -4,11 +4,13 @@
 
 	let {
 		class: className,
+		appearance = "default",
 		item = $bindable(undefined),
 		ref = $bindable(null),
 		messages,
 		...restProps
-	}: QuestionnairePrimitive.RootProps = $props();
+	}: QuestionnairePrimitive.RootProps & { appearance?: "default" | "agent" } = $props();
+	const agentSpacing = "gap-2";
 
 	// Valar: Chinese defaults for the texts the primitive generates; `messages` still overrides each one.
 	const merged = $derived({
@@ -24,7 +26,12 @@
 	bind:item
 	bind:ref
 	data-slot="questionnaire"
+	data-appearance={appearance}
 	messages={merged}
-	class={cn("cn-questionnaire flex w-full min-w-0 flex-col", className)}
+	class={cn(
+		"cn-questionnaire flex w-full min-w-0 flex-col",
+		appearance !== "default" && agentSpacing,
+		className
+	)}
 	{...restProps}
 />

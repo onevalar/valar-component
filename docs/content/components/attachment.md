@@ -17,6 +17,14 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+<ComponentPreview name="attachment-agent">
+
+<div></div>
+
+</ComponentPreview>
+
+Use `appearance="agent-file"` on a sent file card with a name, size, and download action. Use `appearance="agent-image"` to keep the original proportions of an inline image in a draft.
+
 <ComponentPreview name="attachment-demo" class="bg-surface dark:bg-background" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
 
 <div></div>
@@ -40,7 +48,7 @@ Install the required Valar Svelte dependencies:
 
 </Step>
 
-<PMAddComp name="button" />
+<PMAddComp name="button scroll-area" />
 
 <Step>
 
@@ -109,7 +117,7 @@ Attachment.Group
 - Upload states: `idle`, `uploading`, `processing`, `error`, and `done` with built-in styling and a shimmer while in progress
 - Three sizes and horizontal or vertical orientation
 - A full-card `Attachment.Trigger` that opens a link or dialog while the actions stay independently clickable
-- Scrollable, snapping `Attachment.Group` with an edge fade
+- Floating scrollbar on `Attachment.Group`, with snapping and an edge fade in horizontal rows
 - Customizable styling through the `class` prop on every part
 
 ## Image
@@ -132,6 +140,16 @@ Set `state` to reflect the upload lifecycle. `uploading` and `processing` shimme
 
 </ComponentPreview>
 
+## Size limits
+
+Keep the file card neutral when selection is rejected by a size limit. Announce the rejection in a separate alert and let the user remove the selected file or choose another. This preview validates local files using the 10 MB limit observed in Linear.
+
+<ComponentPreview name="attachment-rejection">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Sizes
 
 Use `size` to switch between `default`, `sm`, and `xs`.
@@ -144,7 +162,7 @@ Use `size` to switch between `default`, `sm`, and `xs`.
 
 ## Group
 
-Wrap attachments in `Attachment.Group` to lay them out in a horizontally scrollable, snapping row with an edge fade.
+Wrap attachments in `Attachment.Group` for a horizontally snapping row with a floating scrollbar and an edge fade. Set `orientation="vertical"` for a stacked list.
 
 <ComponentPreview name="attachment-group" class="bg-surface dark:bg-background" previewClassName="h-auto theme-blue bg-surface dark:bg-background">
 
@@ -215,7 +233,7 @@ The trigger sits behind the actions in the stacking order, so an `Attachment.Act
 
 ### Keyboard scrolling
 
-An `Attachment.Group` scrolls horizontally. When its attachments are interactive (a trigger or actions), keyboard users reach off-screen items by tabbing to them. For a row of presentational attachments, make the group itself focusable and scrollable by adding `tabindex={0}`, `role="group"`, and an `aria-label`.
+Give `Attachment.Group` an `aria-label` to name the keyboard-scrollable viewport. Tab reaches off-screen attachment actions and triggers.
 
 ### Meaning beyond color
 
@@ -295,8 +313,10 @@ A full-card overlay that activates the attachment. Renders a `<button>` by defau
 
 ### Attachment.Group
 
-Lays out attachments in a horizontally scrollable, snapping row.
+Lays out attachments in a row or stack with a floating scrollbar.
 
-| Prop    | Type     | Default | Description                               |
-| ------- | -------- | ------- | ----------------------------------------- |
-| `class` | `string` | -       | Additional classes to apply to the group. |
+| Prop          | Type                         | Default        | Description                                |
+| ------------- | ---------------------------- | -------------- | ------------------------------------------ |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Lay out attachments in a row or a stack.   |
+| `aria-label`   | `string`                     | -              | Names the keyboard-scrollable viewport.    |
+| `class`        | `string`                     | -              | Applies layout classes to the group frame. |

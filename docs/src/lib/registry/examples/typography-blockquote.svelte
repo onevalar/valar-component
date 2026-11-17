@@ -1,4 +1,9 @@
-<blockquote class="mt-6 border-s-2 ps-6 italic">
-	"After all," he said, "everyone enjoys a good joke, so it's only fair that they should pay for the
-	privilege."
-</blockquote>
+<script lang="ts">
+	import { Typography } from "$lib/registry/ui/typography/index.js";
+</script>
+
+<Typography class="w-full max-w-xl">
+	<blockquote>
+		<p>Leave the tab open until queued edits finish syncing.</p>
+	</blockquote>
+</Typography>

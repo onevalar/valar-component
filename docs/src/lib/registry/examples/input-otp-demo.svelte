@@ -4,7 +4,7 @@
 	let value = $state("123456");
 </script>
 
-<InputOTP.Root maxlength={6} bind:value>
+<InputOTP.Root maxlength={6} bind:value aria-label="One-time code">
 	{#snippet children({ cells })}
 		<InputOTP.Group>
 			{#each cells as cell (cell)}

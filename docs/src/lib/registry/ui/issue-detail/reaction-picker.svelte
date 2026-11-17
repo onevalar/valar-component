@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Popover from "$lib/registry/ui/popover/index.js";
+	import * as ScrollArea from "$lib/registry/ui/scroll-area/index.js";
 	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
 	import { Input } from "$lib/registry/ui/input/index.js";
 	import { emojiMatches, emojiName } from "./reaction-emoji.js";
@@ -104,27 +105,32 @@
 			placeholder={text("搜索或粘贴表情…", "Search or paste emoji…")}
 			class="h-9 rounded-b-none border-x-0 border-t-0 bg-transparent px-3 text-xs shadow-none focus-visible:border-border focus-visible:ring-0"
 		/>
-		<div class="max-h-60 overflow-auto px-2 pt-2 pb-2.5">
-			{#if matches.length}
-				<p class="px-1 pb-1 text-xs text-muted-foreground">
-					{query.trim() ? text("搜索结果", "Search results") : text("常用表情", "Common emoji")}
-				</p>
-				<div bind:this={results} class="grid grid-cols-8">
-					{#each matches as value (value)}
-						<button
-							type="button"
-							class="grid aspect-square place-items-center rounded text-base hover:bg-accent focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring"
-							aria-label={emojiName(value, chinese)}
-							title={emojiName(value, chinese)}
-							onclick={() => pick(value)}>{value}</button
-						>
-					{/each}
-				</div>
-			{:else}
-				<p role="status" class="px-2 py-3 text-center text-xs text-muted-foreground">
-					{text("没有匹配的表情", "No matching emoji")}
-				</p>
-			{/if}
-		</div>
+		<ScrollArea.Root
+			type="hover"
+			class="[&>[data-slot=scroll-area-viewport]]:max-h-[min(15rem,max(4rem,calc(var(--bits-popover-content-available-height)-2.25rem)))]"
+		>
+			<div class="px-2 pt-2 pb-2.5">
+				{#if matches.length}
+					<p class="px-1 pb-1 text-xs text-muted-foreground">
+						{query.trim() ? text("搜索结果", "Search results") : text("常用表情", "Common emoji")}
+					</p>
+					<div bind:this={results} class="grid grid-cols-8">
+						{#each matches as value (value)}
+							<button
+								type="button"
+								class="grid aspect-square place-items-center rounded text-base hover:bg-accent focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring"
+								aria-label={emojiName(value, chinese)}
+								title={emojiName(value, chinese)}
+								onclick={() => pick(value)}>{value}</button
+							>
+						{/each}
+					</div>
+				{:else}
+					<p role="status" class="px-2 py-3 text-center text-xs text-muted-foreground">
+						{text("没有匹配的表情", "No matching emoji")}
+					</p>
+				{/if}
+			</div>
+		</ScrollArea.Root>
 	</Popover.Content>
 </Popover.Root>

@@ -6,3 +6,9 @@
 - 固定选项用 `Questionnaire.Choice`（多选题在 `Questionnaire.Item` 上设 `multiple`），不要自己写单选、复选框；可以跳过的题用 `Questionnaire.Skip` 明确跳过。
 - 导航按钮的样式用 `size`、`variant` 属性；需要服务端渲染时传 `items`。
 - 进度文字、进度的读屏名称和默认错误提示是中文（“第 1 题，共 3 题”等）；其他语言给 `Questionnaire.Root` 传 `messages`。
+
+## Agent 提问
+
+- 即时提交的单选用 `Questionnaire.AgentQuestion`。用 `question` 命名问题，传入有稳定 `value` 的 `choices`。需要显示必答提示时设置 `required` 和对应语言的 `requiredLabel`。在宿主中通过 `onAnswer` 进入下一题或对话输入框，通过 `bind:answer` 保存已提交答案。
+- 选项为 32 px 胶囊，间距 6 px，容器两端各留 10 px。标题 15 px／450，选项 13 px／500。窄屏换行，键盘聚焦用内侧描边。
+- 提交后保留已选项和对勾，其余答案收起。已选项 `aria-pressed="true"` 且禁用。编辑答案、多选、返回检查和异常处理使用标准表单题及其动作。

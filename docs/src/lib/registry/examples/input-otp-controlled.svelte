@@ -5,7 +5,7 @@
 </script>
 
 <div class="space-y-2">
-	<InputOTP.Root maxlength={6} bind:value>
+	<InputOTP.Root maxlength={6} bind:value aria-label="Controlled code">
 		{#snippet children({ cells })}
 			<InputOTP.Group>
 				{#each cells.slice(0, 6) as cell (cell)}

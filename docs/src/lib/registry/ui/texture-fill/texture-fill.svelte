@@ -31,10 +31,11 @@
 
 <span
 	bind:this={wrap}
-	data-slot="texture-fill"
-	aria-hidden="true"
-	class={cn("block size-full overflow-hidden text-primary", className)}
 	{...rest}
+	data-slot="texture-fill"
+	data-texture={texture}
+	aria-hidden="true"
+	class={cn("block size-full min-w-0 overflow-clip rounded-md bg-muted text-ring", className)}
 >
 	<canvas bind:this={canvas} class="block size-full"></canvas>
 </span>

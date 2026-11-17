@@ -1,6 +1,6 @@
 ---
 title: 滑块输入
-description: 滑块与数值输入框的组合，拖动调整或直接输入精确数值。
+description: 用滑块调节数值，搭配可编辑数字框或只读数值。
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/slider-field
@@ -12,6 +12,14 @@ links:
 </script>
 
 <ComponentPreview name="slider-field-demo"><div></div></ComponentPreview>
+
+## 设置项读数
+
+主题对比度等设置可用 `appearance="readout"` 在滑块旁展示当前值。轨道和滑块沿用 Linear 对比度设置的外观。空间不足时，滑块与读数一起换到标签下方。
+
+<ComponentPreview name="slider-field-readout" tunable={false}><div></div></ComponentPreview>
+
+Tab 只停在滑块上，方向键调整时焦点留在滑块。设置 `name` 可提交当前数字。禁用示例沿用 Valar 的 Slider 行为。
 
 ## 安装
 

@@ -1,1 +1,6 @@
-export { default as ColorPicker, normalizeHex, type ColorPickerProps } from "./color-picker.svelte";
+export {
+	default as ColorPicker,
+	normalizeHex,
+	type ColorPickerPreset,
+	type ColorPickerProps
+} from "./color-picker.svelte";

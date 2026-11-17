@@ -13,7 +13,10 @@
 <span
 	bind:this={ref}
 	data-slot="marker-content"
-	class={cn("cn-marker-content min-w-0 wrap-break-word", className)}
+	class={cn(
+		"cn-marker-content min-w-0 wrap-break-word motion-safe:group-data-[appearance=thinking]/marker:shimmer group-data-[appearance=thinking]/marker:shimmer-duration-2400 group-data-[appearance=thinking]/marker:shimmer-color-primary",
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}

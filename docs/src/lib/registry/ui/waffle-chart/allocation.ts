@@ -3,9 +3,13 @@ export type WaffleCategory = { key: string; value: number; color: string };
 
 /** Largest remainders; equal shares preserve source order. Zero total has no cells. */
 export function allocate(data: WaffleCategory[]): number[] {
-	const total = data.reduce((sum, item) => sum + Math.max(0, item.value), 0);
-	if (total <= 0) return data.map(() => 0);
-	const exact = data.map((item) => (Math.max(0, item.value) / total) * 100);
+	const weights = data.map(({ value }) => (Number.isFinite(value) && value > 0 ? value : 0));
+	const maximum = weights.reduce((largest, weight) => Math.max(largest, weight), 0);
+	if (maximum === 0) return weights;
+	// Scale first so that even very large finite categories have a finite sum.
+	const scaled = weights.map((weight) => weight / maximum);
+	const total = scaled.reduce((sum, weight) => sum + weight, 0);
+	const exact = scaled.map((weight) => (weight / total) * 100);
 	const counts = exact.map(Math.floor);
 	const left = 100 - counts.reduce((sum, count) => sum + count, 0);
 	const order = exact

@@ -14,7 +14,7 @@
 	<InputGroup.Root>
 		<InputGroup.Textarea placeholder="Send a message..." disabled />
 		<InputGroup.Addon align="block-end">
-			<Spinner /> Validating...
+			<Spinner aria-hidden="true" /> Validating...
 			<InputGroup.Button class="ms-auto" variant="default">
 				<ArrowUpIcon />
 				<span class="sr-only">Send</span>

@@ -6,7 +6,9 @@ import NextButton from "./pagination-next-button.svelte";
 import Next from "./pagination-next.svelte";
 import PrevButton from "./pagination-prev-button.svelte";
 import Previous from "./pagination-previous.svelte";
+import Results from "./pagination-results.svelte";
 import Root from "./pagination.svelte";
+export type { PaginationResultRange } from "./pagination-results.svelte";
 
 export {
 	Root,
@@ -18,6 +20,7 @@ export {
 	Ellipsis,
 	Previous,
 	Next,
+	Results,
 	//
 	Root as Pagination,
 	Content as PaginationContent,
@@ -28,4 +31,5 @@ export {
 	Ellipsis as PaginationEllipsis,
 	Previous as PaginationPrevious,
 	Next as PaginationNext,
+	Results as PaginationResults,
 };

@@ -20,6 +20,16 @@ links:
 	let { viewerData } = $props();
 </script>
 
+## 项目导航
+
+<ComponentPreview name="navigation-menu-project" align="start">
+
+</ComponentPreview>
+
+项目视图之间用 `appearance="project"` 布置链接，根据当前 URL 设置 `active`。窄屏链接在横向悬浮 Scroll Area 内滚动。传入 `scrollLabel` 可命名支持键盘滚动的视口。示例用 URL 片段在三个本地视图间切换。
+
+## 带下拉面板的导航
+
 <ComponentPreview name="navigation-menu-demo" align="start">
 
 </ComponentPreview>

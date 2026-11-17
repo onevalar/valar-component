@@ -6,9 +6,10 @@
 	"categories": ["弹层"],
 	"meta": {
 		"valar": {
-			"keywords": ["抽屉", "drawer", "底部弹出", "bottom sheet", "拖动关闭"],
+			"keywords": ["抽屉", "drawer", "底部弹出", "bottom sheet", "拖动关闭", "移动导航"],
 			"whenToUse": [
 				"移动端从底部弹出的选项、简短表单或详情，支持手势拖动关闭",
+				"移动端工作区从屏幕左边缘打开导航",
 				"需要在面板内再打开一层（Drawer.NestedRoot）"
 			],
 			"whenNotToUse": [
@@ -31,7 +32,7 @@
 			],
 			"responsive": [
 				"常与 dialog 搭配：窄屏用 drawer、宽屏用 dialog",
-				"direction 可选 top、right、bottom、left；内容超出时在面板内部滚动",
+				"direction 可选 top、right、bottom、left；内容超出时使用面板内的悬浮 Scroll Area",
 				"modal={false} 时可与页面交互，点击外部不会关闭"
 			],
 			"related": ["dialog", "sheet", "alert-dialog"]

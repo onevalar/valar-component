@@ -7,12 +7,12 @@
 			variant: {
 				default: "cn-marker-variant-default",
 				separator: "cn-marker-variant-separator",
-				border: "cn-marker-variant-border",
-			},
+				border: "cn-marker-variant-border"
+			}
 		},
 		defaultVariants: {
-			variant: "default",
-		},
+			variant: "default"
+		}
 	});
 
 	export type MarkerVariant = VariantProps<typeof markerVariants>["variant"];
@@ -27,18 +27,27 @@
 		ref = $bindable(null),
 		class: className,
 		variant = "default",
+		appearance,
 		child,
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		variant?: MarkerVariant;
+		appearance?: "thinking";
 		child?: Snippet<[{ props: Record<string, unknown> }]>;
 	} = $props();
 
 	const mergedProps = $derived({
-		class: cn(markerVariants({ variant }), className),
+		class: cn(
+			markerVariants({ variant }),
+			appearance === "thinking" &&
+				"min-h-[15.5px] text-[13px]/[15.5px] font-medium text-[rgb(94_94_95)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-300 dark:text-[rgb(92_92_95)] motion-reduce:dark:text-muted-foreground",
+			className
+		),
 		"data-slot": "marker",
 		"data-variant": variant,
-		...restProps,
+		"data-appearance": appearance,
+		role: appearance === "thinking" ? ("status" as const) : undefined,
+		...restProps
 	});
 </script>
 

@@ -104,6 +104,16 @@ links:
 
 </ComponentPreview>
 
+## 文档折叠区块
+
+使用 `appearance="section"` 整理文档或问题描述中的辅助信息。左侧三角图标与标题共用一个按钮，正文与标题对齐。各区块需要独立开合时使用 `type="multiple"`。展开一项时需要关闭其他项则使用 `type="single"`。
+
+<ComponentPreview name="accordion-sections">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 禁用
 
 在 `Accordion.Item` 上传入 `disabled` 属性，可单独禁用某一项。

@@ -104,6 +104,16 @@ Use `type="multiple"` to allow multiple items to be open at the same time.
 
 </ComponentPreview>
 
+## Document sections
+
+Use `appearance="section"` to group optional information in a document or issue description. The leading triangle and the section title make up one button. The body starts under the title. Use `type="multiple"` when sections should open independently, or `type="single"` when opening one section should close the others.
+
+<ComponentPreview name="accordion-sections">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Disabled
 
 Use the `disabled` prop on `Accordion.Item` to disable individual items.

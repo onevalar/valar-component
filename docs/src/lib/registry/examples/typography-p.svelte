@@ -1,4 +1,7 @@
-<p class="leading-7 [&:not(:first-child)]:mt-6">
-	The king, seeing how much happier his subjects were, realized the error of his ways and repealed
-	the joke tax.
-</p>
+<script lang="ts">
+	import { Typography } from "$lib/registry/ui/typography/index.js";
+</script>
+
+<Typography class="w-full max-w-xl">
+	<p>The offline queue keeps unsent edits on this device and retries after reconnecting.</p>
+</Typography>

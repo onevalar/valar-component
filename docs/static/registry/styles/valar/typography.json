@@ -1,0 +1,59 @@
+{
+	"$schema": "http://127.0.0.1:5186/schema/registry-item.json",
+	"name": "typography",
+	"title": "Typography 排版",
+	"type": "registry:ui",
+	"description": "文章、问题描述与富文本内容的只读排版。",
+	"meta": {
+		"valar": {
+			"keywords": [
+				"排版",
+				"typography",
+				"prose",
+				"文章",
+				"富文本"
+			],
+			"whenToUse": [
+				"以原生 HTML 标题、段落、列表和引用展示富文本"
+			],
+			"whenNotToUse": [
+				{
+					"case": "编辑问题描述",
+					"use": "issue-composer"
+				},
+				{
+					"case": "表单字段说明",
+					"use": "field"
+				}
+			],
+			"accessibility": [
+				"保持标题层级和列表语义；可用键盘聚焦并打开文章链接"
+			],
+			"responsive": [
+				"长链接和行内代码随容器宽度换行；宽表格使用 Table 的悬浮滚动"
+			],
+			"related": [
+				"code-block",
+				"issue-detail",
+				"table"
+			]
+		}
+	},
+	"files": [
+		{
+			"content": "# Typography 设计规范\n\n- 将 Typography 用于只读问题描述、文档正文或独立文章，内部保留原生标题、段落、列表、引用、链接和分隔线。\n- 按页面中的层级选择标题。正文用 15 px／22.5 px、450 字重。链接使用主题链接色，悬停和键盘焦点以下划线提示。\n- 词组和短命令使用行内 `code`。多行代码使用 Code Block，宽表格使用 `Table.Root scroll=\"overlay\"` 并提供 `scrollLabel`。\n- 控件标签、导航标题和提示说明分别依照对应组件的排版规则。\n",
+			"type": "registry:file",
+			"target": "typography/RULES.md"
+		},
+		{
+			"content": "import Typography from \"./typography.svelte\";\n\nexport { Typography };\n",
+			"type": "registry:file",
+			"target": "typography/index.ts"
+		},
+		{
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();\n\tconst classes = $derived(\n\t\tcn(\n\t\t\t\"flow-root min-w-0 text-[15px]/[22.5px] font-[450] wrap-anywhere\",\n\t\t\t\"[--valar-prose-body:lch(20%_1_282)] [--valar-prose-heading:lch(10%_0_282)] [--valar-prose-link:lch(50%_80_288.43)] [--valar-prose-code:lch(20%_50_286.91_/_5%)] [--valar-prose-rule:lch(86.5%_0_282)]\",\n\t\t\t\"dark:[--valar-prose-body:lch(90.826%_1.425_272)] dark:[--valar-prose-heading:lch(100%_0_272)] dark:[--valar-prose-link:lch(80%_80_288.43)] dark:[--valar-prose-code:rgb(255_255_255_/_7.5%)] dark:[--valar-prose-rule:lch(20.032%_1.93_272)]\",\n\t\t\t\"text-[color:var(--valar-prose-body)] [&_p]:tracking-[-0.1px] [&_p+p]:mt-[22px]\",\n\n\t\t\t\"[&_:is(h1,h2,h3,h4)]:font-semibold [&_:is(h1,h2,h3,h4)]:text-[color:var(--valar-prose-heading)]\",\n\t\t\t\"[&_h1]:mt-8 [&_h1]:mb-4 [&_h1]:text-[22px]/[29.6px] [&_h1]:tracking-[-0.07px]\",\n\t\t\t\"[&_h2]:mt-8 [&_h2]:mb-4 [&_h2]:text-[19px]/[28px] [&_h2]:tracking-[0.05px]\",\n\t\t\t\"[&_h3]:mt-6 [&_h3]:mb-1.5 [&_h3]:text-[17px]/[24px] [&_h3]:tracking-[0.1px]\",\n\t\t\t\"[&_h4]:mt-[22px] [&_h4]:mb-1.5 [&_h4]:text-[15px]/[24px]\",\n\n\t\t\t\"[&_blockquote]:relative [&_blockquote]:mt-[22px] [&_blockquote]:ps-4\",\n\t\t\t\"[&_blockquote]:before:absolute [&_blockquote]:before:inset-y-0 [&_blockquote]:before:start-0 [&_blockquote]:before:w-1 [&_blockquote]:before:rounded-[2px] [&_blockquote]:before:bg-[color:var(--valar-prose-rule)]\",\n\t\t\t\"[&_:is(ol,ul)]:my-4 [&_:is(ol,ul)]:ps-6 [&_ol]:list-decimal [&_ul]:list-disc [&_li+li]:mt-1.5 [&_blockquote+ul]:mt-[22px]\",\n\t\t\t\"[&_hr]:my-[22px] [&_hr]:border-t [&_hr]:border-[color:var(--valar-prose-rule)]\",\n\t\t\t\"[&>_:first-child]:mt-0 [&>_:last-child]:mb-0\",\n\n\t\t\t\"[&_a[href]]:text-[color:var(--valar-prose-link)] [&_a[href]]:no-underline [&_a[href]]:underline-offset-2\",\n\t\t\t\"[&_a[href]:hover]:underline [&_a[href]:focus-visible]:underline [&_a[href]:focus-visible]:outline-none\",\n\t\t\t\"[&_code:not(pre_code)]:rounded-[0.2em] [&_code:not(pre_code)]:bg-[color:var(--valar-prose-code)] [&_code:not(pre_code)]:px-[0.25em] [&_code:not(pre_code)]:py-[0.5px] [&_code:not(pre_code)]:font-mono [&_code:not(pre_code)]:text-[0.9375em]/[1.3]\",\n\t\t\tclassName,\n\t\t),\n\t);\n</script>\n\n<article bind:this={ref} data-slot=\"typography\" class={classes} {...restProps}>\n\t{@render children?.()}\n</article>\n",
+			"type": "registry:file",
+			"target": "typography/typography.svelte"
+		}
+	]
+}

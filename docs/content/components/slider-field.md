@@ -1,6 +1,6 @@
 ---
 title: Slider Field
-description: 滑块与数值输入框的组合，拖动调整或直接输入精确数值。
+description: Adjust a value with a slider and pair it with an editable field or numeric readout.
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/slider-field
@@ -12,6 +12,14 @@ links:
 </script>
 
 <ComponentPreview name="slider-field-demo"><div></div></ComponentPreview>
+
+## Settings readout
+
+Use `appearance="readout"` when a setting needs to show its current value next to the slider. The reference is Linear’s theme contrast setting. The controls wrap together beneath the label when space is tight.
+
+<ComponentPreview name="slider-field-readout" tunable={false}><div></div></ComponentPreview>
+
+The slider is the sole keyboard stop. Arrow keys adjust the value and keep focus on the thumb. Setting `name` submits the current number. The disabled example uses Valar’s shared slider behavior.
 
 ## 安装
 

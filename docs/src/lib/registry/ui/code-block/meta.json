@@ -4,7 +4,7 @@
 	"title": "Code Block 代码块",
 	"description": "展示代码、终端输出和 diff，可带标题栏、行号和复制按钮。",
 	"categories": ["展示"],
-	"registryDependencies": ["use-highlighted-code"],
+	"registryDependencies": ["scroll-area", "use-highlighted-code"],
 	"meta": {
 		"valar": {
 			"keywords": ["代码块", "code block", "代码", "终端输出", "diff", "语法高亮"],

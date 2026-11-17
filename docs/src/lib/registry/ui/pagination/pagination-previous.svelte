@@ -17,7 +17,7 @@
 
 <PaginationPrimitive.PrevButton
 	bind:ref
-	aria-label="上一页"
+	aria-label={label}
 	class={cn(
 		buttonVariants({ variant: "ghost", size: "default" }),
 		"cn-pagination-previous",
@@ -32,6 +32,7 @@
 		phosphor="CaretLeftIcon"
 		remixicon="RiArrowLeftSLine"
 		data-icon="inline-start"
+		aria-hidden="true"
 		class="cn-rtl-flip"
 	/>
 	<span class="cn-pagination-previous-text hidden sm:block">{label}</span>

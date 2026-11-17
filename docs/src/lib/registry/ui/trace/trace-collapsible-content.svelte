@@ -14,7 +14,7 @@
 <Collapsible.Content
 	bind:ref
 	data-slot="trace-collapsible-content"
-	class="cn-trace-collapsible-content min-w-0 overflow-hidden [--bits-accordion-content-height:var(--bits-collapsible-content-height)] data-open:animate-accordion-down data-closed:animate-accordion-up"
+	class="cn-trace-collapsible-content min-w-0 overflow-hidden [--bits-accordion-content-height:var(--bits-collapsible-content-height)] motion-safe:data-open:animate-accordion-down motion-safe:data-closed:animate-accordion-up"
 	{...restProps}
 >
 	<div

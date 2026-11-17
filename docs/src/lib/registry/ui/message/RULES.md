@@ -4,3 +4,4 @@
 - 自己发送的消息设 `align="end"`；同一发送者连续的消息放进 `Message.Group`，前几条放空的 `Message.Avatar` 保持对齐。
 - 发送者名称放 `Message.Header`，发送状态、时间等放 `Message.Footer`；Footer 里只有图标的操作按钮都要有 `aria-label`（检查规则 `valar/icon-button-label`）。
 - 进行中的消息用 `<Marker.Root role="status">` 表达状态，读屏器才会播报。
+- Agent 消息行使用 `appearance="agent"`。正文基准 15 px／24 px。用户气泡靠末端，助手回复使用透明气泡，已完成回复的复制按钮放在底部，图标按钮为 24 × 24 px。

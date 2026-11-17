@@ -8,6 +8,7 @@
 	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
 	import { Button } from "$lib/registry/ui/button/index.js";
 	import { Input } from "$lib/registry/ui/input/index.js";
+	import { Toggle } from "$lib/registry/ui/toggle/index.js";
 	import {
 		IssueGlyph,
 		issueLabels,
@@ -549,19 +550,17 @@
 							{portal}
 						>
 							{#snippet trigger({ props })}
-								<Button
+								<Toggle
 									{...props}
 									bind:ref={unreadButton}
-									variant="ghost"
-									aria-pressed={unreadOnly}
+									bind:pressed={unreadOnly}
+									appearance="toolbar"
 									aria-label={unreadOnly
 										? text("显示已读", "Show read")
 										: text("仅显示未读", "Show unreads only")}
 									title={unreadOnly
 										? text("显示已读", "Show read")
 										: text("仅显示未读", "Show unreads only")}
-									class={iconButton}
-									onclick={() => (unreadOnly = !unreadOnly)}
 								>
 									<IconPlaceholder
 										lucide="InboxIcon"
@@ -571,7 +570,7 @@
 										remixicon="RiInboxLine"
 										aria-hidden="true"
 									/>
-								</Button>
+								</Toggle>
 							{/snippet}
 						</Tooltip.Hint>
 						<InboxFilter

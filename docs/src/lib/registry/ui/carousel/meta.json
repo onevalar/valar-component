@@ -7,7 +7,7 @@
 	"meta": {
 		"valar": {
 			"keywords": ["轮播", "carousel", "幻灯片", "slider", "滑动浏览"],
-			"whenToUse": ["横向或纵向滑动浏览一组同类内容，如图片、卡片"],
+			"whenToUse": ["横向或纵向滑动浏览一组同类内容，如图片、卡片", "全屏浏览工单图片，按原文件顺序翻页或缩放"],
 			"whenNotToUse": [
 				{
 					"case": "只需在区域内滚动",
@@ -24,9 +24,10 @@
 			],
 			"accessibility": [
 				"根元素 role=region、aria-roledescription=carousel，每项为 slide",
-				"上一项／下一项按钮支持方向键；不要无暂停地自动播放"
+				"上一项／下一项按钮支持方向键；不要无暂停地自动播放",
+				"全屏媒体首尾禁用且保留按键焦点；Esc 关闭后返回打开预览的缩略图"
 			],
-			"responsive": ["用 basis-* 控制每屏显示几项，可按断点设置", "支持触摸滑动"],
+			"responsive": ["用 basis-* 控制每屏显示几项，可按断点设置", "支持触摸滑动", "全屏媒体在 320 px 视口保持工具栏可用，图片缩放限制在可用空间"],
 			"related": ["scroll-area", "card", "aspect-ratio"]
 		}
 	}

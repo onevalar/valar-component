@@ -27,6 +27,16 @@ links:
 
 <ComponentPreview name="native-select-demo" />
 
+## 联系表单
+
+用 `appearance="contact"` 显示宽度随容器变化、高 40 px 的表单选择器。公司规模示例沿用系统选择器，保留键盘选择、标签和表单校验。Linear 的联系销售页始终使用深色字段。Valar 为浅色界面提供配色，并把键盘聚焦提示放在边框内侧。
+
+<ComponentPreview name="native-select-contact">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 安装
 
 <InstallTabs>
@@ -112,6 +122,7 @@ links:
 | 属性    | 类型     | 默认值 |
 | ------- | -------- | ------- |
 | `class` | `string` |         |
+| `appearance` | `"default" \| "contact"` | `"default"` |
 
 其余属性透传给底层的 `<select>` 元素。
 

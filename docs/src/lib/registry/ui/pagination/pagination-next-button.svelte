@@ -24,13 +24,14 @@
 		hugeicons="ArrowRightIcon"
 		phosphor="CaretRightIcon"
 		remixicon="RiArrowRightSLine"
-		class={cn("cn-rtl-flip size-4", className)}
+		aria-hidden="true"
+		class="cn-rtl-flip size-4"
 	/>
 {/snippet}
 
 <PaginationPrimitive.NextButton
 	bind:ref
-	aria-label="下一页"
+	aria-label={label}
 	class={cn(buttonVariants({ variant: "ghost" }), "cn-pagination-next", className)}
 	{...restProps}
 >

@@ -25,6 +25,7 @@ export type CarouselProps = {
 	plugins?: CarouselPlugins;
 	setApi?: (api: CarouselAPI | undefined) => void;
 	orientation?: "horizontal" | "vertical";
+	appearance?: "default" | "media";
 } & WithElementRef<HTMLAttributes<HTMLDivElement>>;
 
 const EMBLA_CAROUSEL_CONTEXT = Symbol("EMBLA_CAROUSEL_CONTEXT");
@@ -32,6 +33,7 @@ const EMBLA_CAROUSEL_CONTEXT = Symbol("EMBLA_CAROUSEL_CONTEXT");
 export type EmblaContext = {
 	api: CarouselAPI | undefined;
 	orientation: "horizontal" | "vertical";
+	appearance: "default" | "media";
 	scrollNext: () => void;
 	scrollPrev: () => void;
 	canScrollNext: boolean;

@@ -7,8 +7,15 @@ links:
 ---
 
 <script>
+	import ComponentPreview from "$lib/components/component-preview.svelte";
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
+
+<ComponentPreview name="issue-detail-demo">
+
+<div></div>
+
+</ComponentPreview>
 
 [在 My issues 试用问题详情](/zh/themes/my-issues)。点击问题行或使用详情按钮打开。
 
@@ -48,6 +55,8 @@ links:
 
 描述可传入纯文本或 `descriptionContent` 中的 Tiptap 文档。保存富文本时会同时返回结构化文档和纯文本。保存结构化字段可保留格式。
 
+点击正文或使用「编辑描述」按钮可打开描述草稿。正文链接可独立操作。只读代码块通过 Valar Scroll Area 横向滚动。
+
 ## 活动与评论
 
 传入 `activity` 启用活动区。宿主管理按时间排列的 `IssueActivityEntry[]`，提供当前用户 `viewer`，并通过 `onAction` 处理发表、回复、编辑和属性变更。评论包含纯文本、可选的 Tiptap 文档和附件。示例可用 `applyIssueActivityAction` 把操作合并进本地状态。
@@ -77,6 +86,8 @@ links:
 ```
 
 只有作者的评论显示编辑入口。按 Command/Ctrl+Enter 发表或保存。脏草稿在取消时要求确认。
+
+编辑描述时选中文字，在选区工具栏选择「评论」。评论框打开期间保留文字高亮。提交会发送单独的活动操作，`draft.descriptionExcerpt` 保存选中文字，并在活动线程里作为引用展示。发表或放弃评论后回到尚未保存的描述草稿。
 
 ## 订阅、回应与线程
 

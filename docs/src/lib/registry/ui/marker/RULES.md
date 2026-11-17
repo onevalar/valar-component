@@ -5,3 +5,4 @@
 - `Marker.Icon` 对读屏器隐藏，含义写在 `Marker.Content` 里；只有图标时给 `Marker.Root` 设 `aria-label`。
 - 可点击时用 `child` snippet 渲染为 Button 或链接。
 - Marker 的文字是弱化色，放在里面的 outline、ghost 按钮会继承这个颜色而显得不可点击；给按钮加 `class="text-foreground"`。
+- `appearance="thinking"` 用于 Agent 回复前的简短状态。采用 13 px／500 文字、300 ms 淡入和 2.4 秒扫光。默认播报状态，减少动态效果时只显示文字。进入工具处理或停止时卸载该标记。

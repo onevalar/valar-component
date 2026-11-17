@@ -86,7 +86,7 @@ links:
 
 ## 垂直
 
-传入 `direction="vertical"` 切换为垂直方向调整。
+用 `direction="vertical"` 创建上下分栏。方向键在面板限制内调节高度，也可锁定分隔线。
 
 <ComponentPreview name="resizable-vertical">
 

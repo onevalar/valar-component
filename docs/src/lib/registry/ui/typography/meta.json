@@ -1,0 +1,26 @@
+{
+	"name": "typography",
+	"type": "registry:ui",
+	"title": "Typography 排版",
+	"description": "文章、问题描述与富文本内容的只读排版。",
+	"categories": ["展示"],
+	"meta": {
+		"valar": {
+			"keywords": ["排版", "typography", "prose", "文章", "富文本"],
+			"whenToUse": ["以原生 HTML 标题、段落、列表和引用展示富文本"],
+			"whenNotToUse": [
+				{
+					"case": "编辑问题描述",
+					"use": "issue-composer"
+				},
+				{
+					"case": "表单字段说明",
+					"use": "field"
+				}
+			],
+			"accessibility": ["保持标题层级和列表语义；可用键盘聚焦并打开文章链接"],
+			"responsive": ["长链接和行内代码随容器宽度换行；宽表格使用 Table 的悬浮滚动"],
+			"related": ["code-block", "issue-detail", "table"]
+		}
+	}
+}

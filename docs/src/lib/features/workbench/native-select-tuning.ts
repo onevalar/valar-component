@@ -37,7 +37,9 @@ export function parseNativeSelectSource(
 ): { values: NativeSelectValues; context: NativeSelectContext } {
 	const file =
 		files.find((file) => file.target.split("/").at(-1) === "native-select.svelte")?.content ?? "";
-	const classes = /<select\b[\s\S]*?\bclass="([^"]*)"/.exec(file)?.[1];
+	const selectClasses =
+		/<select\b[\s\S]*?\bclass=(?:"([^"]*)"|\{[^}]*:\s*"([^"]*)"\s*\})/.exec(file);
+	const classes = selectClasses?.[1] ?? selectClasses?.[2];
 	if (classes === undefined) throw new Error("Native Select registry 缺少闭合控件样式");
 	const words = classes.split(/\s+/);
 	const read = (prefix: string, utility: string) => {
@@ -70,7 +72,7 @@ export function parseNativeSelectSource(
 				])
 			),
 			radius,
-			paddingStart: pixels(read("", "pl")),
+			paddingStart: pixels(read("", "ps") ?? read("", "pl")),
 		}),
 		context,
 	};
@@ -89,7 +91,7 @@ export function nativeSelectOverrideClasses(
 	const radius = radiusLevel(safe.radius);
 	// Replace the more specific small-size utility as well (including Nova's capped radius).
 	if (radius !== undefined) classes.push(`rounded-${radius}`, `data-[size=sm]:rounded-${radius}`);
-	if (safe.paddingStart !== undefined) classes.push(`pl-${spacing(safe.paddingStart)}`);
+	if (safe.paddingStart !== undefined) classes.push(`ps-${spacing(safe.paddingStart)}`);
 	return classes.length ? { "cn-native-select": classes.join(" ") } : {};
 }
 
@@ -107,7 +109,7 @@ function nativeSelectCss(
 	const radius = radiusLevel(safe.radius);
 	if (radius !== undefined) rules.push(`${select} { border-radius: ${radiusCss(radius)}; }`);
 	if (safe.paddingStart !== undefined)
-		rules.push(`${select} { padding-left: ${safe.paddingStart}px; }`);
+		rules.push(`${select} { padding-inline-start: ${safe.paddingStart}px; }`);
 	return rules.join("\n");
 }
 
@@ -152,8 +154,8 @@ export const NATIVE_SELECT_SPEC: TunerSpec<NativeSelectValues, NativeSelectConte
 		return parseNativeSelectSource((await load()).files, context);
 	},
 	previewCss: (scope, overrides, context) =>
-		nativeSelectCss(`${scope} [data-slot="native-select"]`, overrides, context),
+		nativeSelectCss(`${scope} [data-slot="native-select"]:not([data-appearance="contact"])`, overrides, context),
 	pageCss: (overrides, context) =>
-		nativeSelectCss(`[data-slot="native-select"]${NOT_EDITOR}`, overrides, context),
+		nativeSelectCss(`[data-slot="native-select"]:not([data-appearance="contact"])${NOT_EDITOR}`, overrides, context),
 	overrideClasses: nativeSelectOverrideClasses,
 };

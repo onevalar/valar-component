@@ -17,6 +17,35 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+<ComponentPreview name="bubble-agent">
+
+<div></div>
+
+</ComponentPreview>
+
+Use `appearance="agent-user"` for a right-aligned message from the user and `appearance="agent-assistant"` for a reply on the conversation surface.
+Use a regular link in `Bubble.Content` for a reference within a sentence. It follows the message line height and shows an underline on keyboard focus.
+
+## Consecutive prompts
+
+<ComponentPreview name="bubble-agent-grouped">
+
+<div></div>
+
+</ComponentPreview>
+
+`Bubble.Group` with `appearance="agent"` leaves 16 px between consecutive prompts from the same sender.
+
+## Comment reactions
+
+<ComponentPreview name="bubble-comment">
+
+<div></div>
+
+</ComponentPreview>
+
+Use `Bubble.Reactions` with `appearance="comment"` to place reactions below the text. Pass the viewer's current state to `Bubble.Reaction` with `pressed`, and give each control an accessible name.
+
 <ComponentPreview name="bubble-demo" previewClassName="h-auto theme-blue">
 
 <div></div>

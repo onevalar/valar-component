@@ -113,6 +113,24 @@ it("does not invent waffle cells for empty/zero/negative data", () => {
 	expect(document.querySelectorAll("[data-category]")).toHaveLength(0);
 });
 
+it("allocates finite waffle shares even if their unscaled sum overflows", () => {
+	app = mount(WaffleChart, {
+		target: document.body,
+		props: {
+			label: "Equal shares with one missing value",
+			data: [
+				{ key: "a", value: Number.MAX_VALUE, color: "red" },
+				{ key: "b", value: Number.MAX_VALUE, color: "blue" },
+				{ key: "missing", value: NaN, color: "gray" },
+			],
+		},
+	});
+	flushSync();
+	expect(document.querySelectorAll('[data-category="a"]')).toHaveLength(50);
+	expect(document.querySelectorAll('[data-category="b"]')).toHaveLength(50);
+	expect(document.querySelector('[data-category="missing"]')).toBeNull();
+});
+
 it("keeps the donut's fixed denominator and represents a full turn without a seam", () => {
 	app = mount(StaticDonut, {
 		target: document.body,
@@ -130,13 +148,16 @@ it("keeps the donut's fixed denominator and represents a full turn without a sea
 	expect(document.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
 });
 
-it("sparkline leaves null calendar gaps and retains a zero/isolated point", () => {
-	app = mount(StaticSparkline, { target: document.body, props: { values: [0, null, 2] } });
-	flushSync();
-	expect(document.querySelector("path")?.getAttribute("d")).toBe("M4.00,36.00  M68.00,4.00");
-	expect(document.querySelectorAll("circle")).toHaveLength(2);
-	expect(document.querySelector("circle")?.getAttribute("r")).toBe("2");
-});
+it.each([null, NaN])(
+	"sparkline leaves a gap for %s and retains a zero/isolated point",
+	(missing) => {
+		app = mount(StaticSparkline, { target: document.body, props: { values: [0, missing, 2] } });
+		flushSync();
+		expect(document.querySelector("path")?.getAttribute("d")).toBe("M4.00,36.00  M68.00,4.00");
+		expect(document.querySelectorAll("circle")).toHaveLength(2);
+		expect(document.querySelector("circle")?.getAttribute("r")).toBe("2");
+	}
+);
 
 it("ruler tape submits a number, localizes spoken values and commits keyboard edits", () => {
 	const form = document.createElement("form");

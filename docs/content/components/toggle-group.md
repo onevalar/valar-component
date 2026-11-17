@@ -74,7 +74,7 @@ Copy and paste the following code into your project.
 
 ## Formatting toolbar
 
-Use `appearance="toolbar"` for compact icon toggles. In this example, Bold and Italic can be applied together. Use the arrow keys to move focus and press Space to toggle a format.
+Use `appearance="toolbar"` for compact icon toggles. Use the arrow keys to move focus past unavailable commands and press Space to toggle a format. Bold and Italic can be applied together.
 
 <ComponentPreview name="toggle-group-toolbar">
 

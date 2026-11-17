@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { tick, type Snippet } from "svelte";
 	import * as Pagination from "$lib/registry/ui/pagination/index.js";
+	import * as ScrollArea from "$lib/registry/ui/scroll-area/index.js";
 	import ComponentTuner from "./component-tuner.svelte";
 	import { PAGINATION_SPEC } from "./pagination-tuning.js";
 
@@ -38,7 +39,13 @@
 				{/each}
 			</ul>
 		</section>
-		<div class="min-w-0 overflow-x-auto p-1 pb-3">
+		<ScrollArea.Root
+			orientation="horizontal"
+			type="hover"
+			class="w-full"
+			viewportLabel="滚动分页"
+			viewportProps={{ class: "p-1" }}
+		>
 			<Pagination.Root
 				id={`${id}-${pane}-pagination`}
 				class="min-w-max"
@@ -65,7 +72,7 @@
 					</Pagination.Content>
 				{/snippet}
 			</Pagination.Root>
-		</div>
+		</ScrollArea.Root>
 		<p role="status" class="text-xs text-muted-foreground">
 			显示 {(pages[pane] - 1) * perPage + 1}–{Math.min(pages[pane] * perPage, records.length)} 条，共
 			{records.length} 条。

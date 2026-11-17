@@ -17,6 +17,35 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+<ComponentPreview name="bubble-agent">
+
+<div></div>
+
+</ComponentPreview>
+
+用户消息用 `appearance="agent-user"` 靠右显示。助手回复用 `appearance="agent-assistant"`，跟随会话表面。
+正文中的引用直接在 `Bubble.Content` 内使用链接。链接沿用消息行高，键盘聚焦时显示下划线。
+
+## 连续提问
+
+<ComponentPreview name="bubble-agent-grouped">
+
+<div></div>
+
+</ComponentPreview>
+
+同一发送者的连续提问可以放在 `appearance="agent"` 的 `Bubble.Group` 内，两条气泡相隔 16 px。
+
+## 评论回应
+
+<ComponentPreview name="bubble-comment">
+
+<div></div>
+
+</ComponentPreview>
+
+`Bubble.Reactions` 使用 `appearance="comment"` 时，回应排列在正文下方。每个 `Bubble.Reaction` 提供可访问名称，并用 `pressed` 同步当前用户的选择状态。
+
 <ComponentPreview name="bubble-demo" previewClassName="h-auto theme-blue">
 
 <div></div>
