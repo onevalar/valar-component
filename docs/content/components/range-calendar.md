@@ -28,6 +28,16 @@ links:
 
 With `captionLayout="dropdown"`, month and year controls use the same Valar Select as Calendar. In narrow containers, these controls move below the month navigation buttons.
 
+## Cycle dates
+
+Use `appearance="cycle"` for the 26 px round day controls, weekly highlight band, disabled dates, and inset keyboard focus of the Cycle date picker. The example shows November and December 2026 side by side and switches to one navigable month in a narrow container. The Linear dialog moves one endpoint at a time. This example lets you set both with arrow keys and Enter.
+
+<ComponentPreview name="range-calendar-cycle">
+
+<div></div>
+
+</ComponentPreview>
+
 ## About
 
 The `<RangeCalendar />` component is built on top of the [Bits Range Calendar](https://www.bits-ui.com/docs/components/range-calendar) component, which uses the [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/index.html) package to handle dates.

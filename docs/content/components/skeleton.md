@@ -58,7 +58,19 @@ Copy and paste the following code into your project.
 <Skeleton class="h-[20px] w-[100px] rounded-full" />
 ```
 
+## Issue filters
+
+Use `appearance="filter"` for the 24 px placeholders shown while Linear generates issue filters. Set widths to match the eventual filters and `delay` in milliseconds to stagger their appearance. The local example reserves space for the filters, keeps the issue list visible, and announces when generation has finished.
+
+<ComponentPreview name="skeleton-filter">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Avatar
+
+Keep the avatar at its intended diameter and let the text lines shrink to fit the available width. Set `aria-busy="true"` on the container while content is loading.
 
 <ComponentPreview name="skeleton-avatar">
 

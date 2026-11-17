@@ -139,7 +139,7 @@ links:
 
 ## 无效状态
 
-在插槽上设置 `aria-invalid` 显示错误状态。
+在 `InputOTP.Root` 上设置 `aria-invalid`，并通过 `aria-describedby` 关联错误文字。用 `inputId` 将可见标签关联到原生输入框。当前输入格在自身边框内显示错误或聚焦反馈。
 
 <ComponentPreview name="input-otp-invalid">
 
@@ -174,3 +174,5 @@ PIN 码的常见形式，使用 `pattern={REGEXP_ONLY_DIGITS}` 属性。
 <div></div>
 
 </ComponentPreview>
+
+表单预览使用本地示例验证码，可体验错误提示和重新输入。分组输入格沿用表单表面及焦点颜色，窄屏时保留控件间距。验证码的发送与校验由应用处理。

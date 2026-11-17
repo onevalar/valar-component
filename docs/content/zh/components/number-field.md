@@ -21,6 +21,14 @@ links:
 
 手动安装需要 `cn` 和 `@internationalized/number`，并复制组件目录。组件只依赖 Svelte，不包含 Vue 或 React 运行时。
 
+## 整美元金额
+
+<ComponentPreview name="number-field-amount"><div></div></ComponentPreview>
+
+在工作区支出上限等整美元设置中使用 `appearance="amount"`。可见标签说明币种，控件内显示美元前缀。清空后保留空值，示例中的 `1,000` 是占位文字。
+
+输入的数字即时按千位分组，失焦后保留分组，非数字字符被忽略。可输入零和 JavaScript 能精确表示的整数。上下键不步进，Tab 前往下一个控件。`min`、`max` 和 `required` 仍校验草稿，固定用美式千位分组，表单提交原始数值。小数、本地化、步进使用默认外观。
+
 ## 用法
 
 ```svelte

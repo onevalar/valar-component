@@ -21,6 +21,7 @@
 					],
 					"whenToUse": [
 						"把多段内容收成标题列表，如常见问题、设置分组",
+						"appearance=section 在文档和问题描述中使用前置三角图标",
 						"type=multiple 允许同时展开多项"
 					],
 					"whenNotToUse": [
@@ -50,8 +51,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/accordion",
 			"install": "pnpm exec valar-svelte add accordion",
-			"markdown": "# Accordion 手风琴\n\n一组可展开的标题，每项展开后显示对应内容。\n\n- 分类：展示\n- 关键词：手风琴、accordion、折叠面板、FAQ、展开收起\n- 安装：`pnpm exec valar-svelte add accordion`\n\n## 何时使用\n\n- 把多段内容收成标题列表，如常见问题、设置分组\n- type=multiple 允许同时展开多项\n\n## 何时不用\n\n- 只有一个区域需要展开收起：改用 `collapsible`\n- 并列视图切换且一次只看一个：改用 `tabs`\n\n## 无障碍\n\n- 标题是按钮，Bits UI 提供 aria-expanded 和键盘操作\n- 不要把必须看到的信息或关键操作藏在折叠内容里\n\n## 响应式\n\n- 窄屏下比 tabs 更适合较长的标题\n- 内容展开后随页面滚动\n\n## 相关组件\n\n- `collapsible`\n- `tabs`\n- `card`\n",
-			"rules": "# Accordion 设计规范\n\n- 用于可以按需展开的次要内容（常见问题、分组设置）；用户必须看到的内容不要折叠起来。只有一块可展开内容时用 Collapsible。\n- `Accordion.Root` 必须设 `type=\"single\"`（同时只展开一项）或 `type=\"multiple\"`；每个 `Accordion.Item` 设唯一的 `value`。\n- `Accordion.Trigger` 外层渲染为标题，用 `level` 属性设成与页面结构相符的标题级别（默认 3），不要再在 Trigger 里套 `<h3>`。\n- 标题写成能看出内容的短句；展开动效、间距跟随组件样式和组件参数，不要用 `class` 改 `duration-*` 或内边距。\n"
+			"markdown": "# Accordion 手风琴\n\n一组可展开的标题，每项展开后显示对应内容。\n\n- 分类：展示\n- 关键词：手风琴、accordion、折叠面板、FAQ、展开收起\n- 安装：`pnpm exec valar-svelte add accordion`\n\n## 何时使用\n\n- 把多段内容收成标题列表，如常见问题、设置分组\n- appearance=section 在文档和问题描述中使用前置三角图标\n- type=multiple 允许同时展开多项\n\n## 何时不用\n\n- 只有一个区域需要展开收起：改用 `collapsible`\n- 并列视图切换且一次只看一个：改用 `tabs`\n\n## 无障碍\n\n- 标题是按钮，Bits UI 提供 aria-expanded 和键盘操作\n- 不要把必须看到的信息或关键操作藏在折叠内容里\n\n## 响应式\n\n- 窄屏下比 tabs 更适合较长的标题\n- 内容展开后随页面滚动\n\n## 相关组件\n\n- `collapsible`\n- `tabs`\n- `card`\n",
+			"rules": "# Accordion 设计规范\n\n- 用于可以按需展开的次要内容（常见问题、分组设置）；用户必须看到的内容不要折叠起来。只有一块可展开内容时用 Collapsible。\n- `Accordion.Root` 必须设 `type=\"single\"`（同时只展开一项）或 `type=\"multiple\"`；每个 `Accordion.Item` 设唯一的 `value`。\n- `Accordion.Trigger` 外层渲染为标题，用 `level` 属性设成与页面结构相符的标题级别（默认 3），不要再在 Trigger 里套 `<h3>`。\n- 标题写成能看出内容的短句；展开动效、间距跟随组件样式和组件参数，不要用 `class` 改 `duration-*` 或内边距。\n- 文档折叠区块使用 `appearance=\"section\"`。三角图标区域为 21 × 20 px，与标题相隔 3 px；正文与标题对齐并相隔 16 px。Enter 和 Space 切换开合，焦点留在标题按钮。\n- 标题可换行，三角图标大小固定。长内容随页面滚动；有独立高度限制时使用悬浮 Scroll Area。\n"
 		},
 		{
 			"name": "alert",
@@ -99,7 +100,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/alert",
 			"install": "pnpm exec valar-svelte add alert",
 			"markdown": "# Alert 提示条\n\n页面内的提示信息块，用于需要用户注意的状态说明。\n\n- 分类：反馈\n- 关键词：提示、alert、警告、通知、横幅\n- 安装：`pnpm exec valar-svelte add alert`\n\n## 何时使用\n\n- 持续显示在页面中的状态或警告\n\n## 何时不用\n\n- 操作后的短暂通知：改用 `sonner`\n- 需要用户确认：改用 `alert-dialog`\n\n## 无障碍\n\n- 重要提示使用 role=alert\n- 不只靠颜色区分类型，配合图标和文字\n\n## 响应式\n\n- 窄屏下图标与文字保持对齐，文字可换行\n\n## 相关组件\n\n- `sonner`\n- `card`\n",
-			"rules": "# Alert 设计规范\n\n- Alert 自带 `role=\"alert\"`，插入页面时会被读屏器立即播报；页面加载时就存在、只是说明性质的提示，传 `role=\"status\"` 或改用普通文字、Card。\n- 类型只用 `variant`（`default`、`destructive`），不要自定义背景色；同时配合图标和文字说明，不要只靠颜色区分。\n- 结构用 `Alert.Title` 写要点、`Alert.Description` 写细节和解决办法；图标作为第一个子元素放在 Alert 内；相关操作放进 `Alert.Action`。\n- 操作完成后的短暂反馈用 Sonner，需要用户确认的操作用 Alert Dialog。\n"
+			"rules": "# Alert 设计规范\n\n- Alert 自带 `role=\"alert\"`，用于需要立即播报的动态告警；静态说明用 `role=\"group\"` 配合可访问名称，非紧急的动态反馈用 `role=\"status\"`。\n- 类型只用 `variant`（`default`、`destructive`），不要自定义背景色；同时配合图标和文字说明，不要只靠颜色区分。\n- 结构用 `Alert.Title` 写要点、`Alert.Description` 写细节和解决办法；图标作为第一个子元素放在 Alert 内；相关操作放进 `Alert.Action`。\n- 操作完成后的短暂反馈用 Sonner，需要用户确认的操作用 Alert Dialog。\n- 操作默认放在内容尾侧；当提示框的内容区窄于 17rem 时移至文案下方，不挤压标题和说明。\n- 上传失败通知可用 `appearance=\"notification\"`。采用中性表面、12 px 内边距和 8 px 内容间距。关闭按钮作为直属子项，设置 `data-slot=\"alert-dismiss\"` 及可访问名称。恢复操作放在正文下方。显示时长以及关闭后归焦的位置由宿主控制。\n- 阻断流程的常驻错误使用 `appearance=\"workflow-error\"`。前导图标负责危险色，标题用中性正文色。`Alert.Description` 内用 `data-slot=\"alert-recovery-details\"` 包住排查说明，可用 `Alert.Action` 提供带分隔线的帮助区。将返回与下一步留在流程操作栏，恢复操作和焦点由宿主管理。\n"
 		},
 		{
 			"name": "alert-dialog",
@@ -195,7 +196,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/aspect-ratio",
 			"install": "pnpm exec valar-svelte add aspect-ratio",
 			"markdown": "# Aspect Ratio 宽高比\n\n让内容按固定宽高比显示。\n\n- 分类：展示\n- 关键词：宽高比、aspect ratio、比例、图片容器、16:9\n- 安装：`pnpm exec valar-svelte add aspect-ratio`\n\n## 何时使用\n\n- 图片、视频、地图按固定比例占位，避免加载时布局跳动\n\n## 何时不用\n\n- 用户头像：改用 `avatar`\n- 一组可滑动浏览的图片：改用 `carousel`\n\n## 无障碍\n\n- 内部图片要写 alt 文字\n\n## 响应式\n\n- 宽度随容器变化，高度按 ratio 计算\n\n## 相关组件\n\n- `avatar`\n- `carousel`\n- `card`\n",
-			"rules": "# Aspect Ratio 设计规范\n\n- 用 `ratio` 属性（如 `ratio={16 / 9}`）固定媒体的宽高比，不要用 padding 技巧或固定高度。\n- 内部的图片、视频设 `size-full object-cover`（需要完整显示时用 `object-contain`），图片要有 `alt`（检查规则 `valar/image-alt`）。\n"
+			"rules": "# Aspect Ratio 设计规范\n\n- 用 `ratio` 属性（如 `ratio={16 / 9}`）固定媒体的宽高比，不要用 padding 技巧或固定高度。\n- 内部的图片、视频设 `size-full object-cover`（需要完整显示时用 `object-contain`），图片要有 `alt`（检查规则 `valar/image-alt`）。\n- Issue 正文和其他需完整显示的媒体可用 `appearance=\"media\"`。提供媒体比例和目标显示宽度 `mediaWidth`，按可用宽度和 600 px 高度上限等比缩小。媒体用 6 px 圆角和 `object-contain`。需要实际播放时由视频控件提供键盘操作。\n"
 		},
 		{
 			"name": "attachment",
@@ -204,6 +205,10 @@
 			"description": "显示文件或图片附件，包含缩略图、名称、上传状态和操作。",
 			"categories": [
 				"展示"
+			],
+			"registryDependencies": [
+				"button",
+				"scroll-area"
 			],
 			"meta": {
 				"valar": {
@@ -235,10 +240,10 @@
 					"accessibility": [
 						"只有图标的 Attachment.Action 和覆盖整卡的 Attachment.Trigger 都要加 aria-label",
 						"error 状态要在 Attachment.Description 写明原因，不能只靠颜色",
-						"纯展示的 Attachment.Group 加 tabindex=0、role=group 和 aria-label，便于键盘滚动"
+						"为纯展示的 Attachment.Group 提供 aria-label，使实际滚动视口可通过键盘操作"
 					],
 					"responsive": [
-						"Attachment.Group 横向滚动、吸附，边缘渐隐",
+						"Attachment.Group 使用悬浮 Scroll Area，横向吸附，也可改为纵向排列",
 						"size（default、sm、xs）与 orientation 适应紧凑空间"
 					],
 					"related": [
@@ -250,8 +255,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/attachment",
 			"install": "pnpm exec valar-svelte add attachment",
-			"markdown": "# Attachment 附件\n\n显示文件或图片附件，包含缩略图、名称、上传状态和操作。\n\n- 分类：展示\n- 关键词：附件、attachment、文件、上传、图片附件\n- 安装：`pnpm exec valar-svelte add attachment`\n\n## 何时使用\n\n- 聊天输入框、消息或上传列表中的文件／图片\n- 展示上传状态 idle、uploading、processing、error、done\n\n## 何时不用\n\n- 普通的内容列表项：改用 `item`\n- 只展示图片：改用 `aspect-ratio`\n- 需要显示具体百分比的进度：改用 `progress`\n\n## 无障碍\n\n- 只有图标的 Attachment.Action 和覆盖整卡的 Attachment.Trigger 都要加 aria-label\n- error 状态要在 Attachment.Description 写明原因，不能只靠颜色\n- 纯展示的 Attachment.Group 加 tabindex=0、role=group 和 aria-label，便于键盘滚动\n\n## 响应式\n\n- Attachment.Group 横向滚动、吸附，边缘渐隐\n- size（default、sm、xs）与 orientation 适应紧凑空间\n\n## 相关组件\n\n- `message`\n- `item`\n- `progress`\n",
-			"rules": "# Attachment 设计规范\n\n- 用于聊天输入框、消息和上传列表中的文件或图片；多个附件放进 `Attachment.Group`，它会横向滚动。\n- 上传过程用 `state` 表达（`idle`、`uploading`、`processing`、`error`、`done`），不要自己加颜色；出错时在 `Attachment.Description` 写明原因，不要只靠红色。\n- `Attachment.Action` 默认只有图标，每个都要有说明动作和对象的 `aria-label`（如“移除 report.pdf”）；`Attachment.Trigger` 覆盖整张卡片且没有文字，也必须有 `aria-label`（检查规则 `valar/icon-button-label`）。\n- 图片附件在 `<Attachment.Media variant=\"image\">` 中放 `<img>` 并写 `alt`（检查规则 `valar/image-alt`）。\n- 尺寸用 `size`（`default`、`sm`、`xs`），排列用 `orientation`，不要用 `class` 改宽高。\n- 只用于展示的附件行没有可聚焦元素时，给 `Attachment.Group` 设 `tabindex={0}`、`role=\"group\"` 和 `aria-label`，键盘用户才能滚动它。\n"
+			"markdown": "# Attachment 附件\n\n显示文件或图片附件，包含缩略图、名称、上传状态和操作。\n\n- 分类：展示\n- 关键词：附件、attachment、文件、上传、图片附件\n- 安装：`pnpm exec valar-svelte add attachment`\n\n## 何时使用\n\n- 聊天输入框、消息或上传列表中的文件／图片\n- 展示上传状态 idle、uploading、processing、error、done\n\n## 何时不用\n\n- 普通的内容列表项：改用 `item`\n- 只展示图片：改用 `aspect-ratio`\n- 需要显示具体百分比的进度：改用 `progress`\n\n## 无障碍\n\n- 只有图标的 Attachment.Action 和覆盖整卡的 Attachment.Trigger 都要加 aria-label\n- error 状态要在 Attachment.Description 写明原因，不能只靠颜色\n- 为纯展示的 Attachment.Group 提供 aria-label，使实际滚动视口可通过键盘操作\n\n## 响应式\n\n- Attachment.Group 使用悬浮 Scroll Area，横向吸附，也可改为纵向排列\n- size（default、sm、xs）与 orientation 适应紧凑空间\n\n## 相关组件\n\n- `message`\n- `item`\n- `progress`\n",
+			"rules": "# Attachment 设计规范\n\n- 用于聊天输入框、消息和上传列表中的文件或图片。多个附件放进 `Attachment.Group`，悬浮滚动条覆盖内容。默认横向吸附，纵向堆叠用 `orientation=\"vertical\"`。\n- 上传过程用 `state` 表达（`idle`、`uploading`、`processing`、`error`、`done`），不要自己加颜色；出错时在 `Attachment.Description` 写明原因，不要只靠红色。\n- `Attachment.Action` 默认只有图标，每个都要有说明动作和对象的 `aria-label`（如“移除 report.pdf”）；`Attachment.Trigger` 覆盖整张卡片且没有文字，也必须有 `aria-label`（检查规则 `valar/icon-button-label`）。\n- 图片附件在 `<Attachment.Media variant=\"image\">` 中放 `<img>` 并写 `alt`（检查规则 `valar/image-alt`）。\n- Agent 文件卡片用 `appearance=\"agent-file\"`，草稿里的行内图片用 `appearance=\"agent-image\"` 保持比例。通用附件用 `size` 与 `orientation` 控制尺寸和排列。\n- 文件大小不合格时，保留中性色的本地选择卡，用独立的通知提示原因。提供移除或重新选择入口。\n- 只用于展示的附件行使用 `aria-label` 命名分组的滚动视口，支持聚焦和键盘滚动。\n"
 		},
 		{
 			"name": "avatar",
@@ -354,7 +359,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/badge",
 			"install": "pnpm exec valar-svelte add badge",
 			"markdown": "# Badge 徽标\n\n简短的状态、分类或计数标签。\n\n- 分类：展示\n- 关键词：徽标、badge、标签、状态、tag\n- 安装：`pnpm exec valar-svelte add badge`\n\n## 何时使用\n\n- 显示状态、分类或数量\n- 用 href 渲染为链接\n\n## 何时不用\n\n- 用户输入、可删除的多个标签：改用 `tags-input`\n- 需要说明的提示信息：改用 `alert`\n- 可点击的操作：改用 `button`\n\n## 无障碍\n\n- 含义要用文字表达，不能只靠颜色\n- 作为链接时文字要说明去向\n\n## 响应式\n\n- 文字保持简短，避免换行\n\n## 相关组件\n\n- `button`\n- `tags-input`\n- `avatar`\n",
-			"rules": "# Badge 设计规范\n\n- 用于状态、分类、计数等简短标记；用 `variant` 选择用途相符的样式。\n- 已应用的问题标签用 `variant=\"label\"`。胶囊高 24 px，左右留白 8 px，文字 12 px／450。可传入标签数据中的 `labelColor`，在 14 px 标记位内绘制 9 px 圆点，和文字相隔 6 px。浅深色沿用 My issues 实测值，描边为 0.5 CSS px，设备像素对齐由浏览器处理。\n- 标签的描边色、文字色和底色过渡为 150 ms。开启系统的减少动态效果后即时切换。\n- Badge 不是按钮：需要点击执行操作时用 `Button size=\"xs\"` 等小号按钮；需要跳转时给 Badge 设 `href`，它会渲染为链接。\n- 文字保持一两个词；用颜色表示状态时文字本身也要说明状态（“已失败”），不要只靠颜色。\n"
+			"rules": "# Badge 设计规范\n\n- 用于状态、分类、计数等简短标记；用 `variant` 选择用途相符的样式。\n- 已应用的问题标签用 `variant=\"label\"`。胶囊高 24 px，左右留白 8 px，文字 12 px／450。可传入标签数据中的 `labelColor`，在 14 px 标记位内绘制 9 px 圆点，和文字相隔 6 px。浅深色沿用 My issues 实测值，描边为 0.5 CSS px，设备像素对齐由浏览器处理。\n- 标签的描边色、文字色和底色过渡为 150 ms。开启系统的减少动态效果后即时切换。\n- Badge 不是按钮：需要点击执行操作时用 `Button size=\"xs\"` 等小号按钮；需要跳转时给 Badge 设 `href`，它会渲染为链接。\n- 文字保持一两个词；用颜色表示状态时文字本身也要说明状态（“已失败”），不要只靠颜色。\n- 宽度由邻近内容限制时，用 `truncate` 为长标签显示省略号。完整文字仍是链接名称或静态文本。方向随表单语言切换。\n"
 		},
 		{
 			"name": "breadcrumb",
@@ -461,7 +466,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/bubble",
 			"install": "pnpm exec valar-svelte add bubble",
 			"markdown": "# Bubble 消息气泡\n\n对话中的消息气泡，支持多种变体、对齐、分组和表情反应。\n\n- 分类：展示\n- 关键词：消息气泡、bubble、聊天、chat、对话、reaction\n- 安装：`pnpm exec valar-svelte add bubble`\n\n## 何时使用\n\n- 聊天文字、引用回复、建议和反应的气泡外观\n\n## 何时不用\n\n- 完整的消息行（头像、名字、时间、操作）：改用 `message`\n- 系统提示或日期分隔：改用 `marker`\n- agent 的推理和工具调用步骤：改用 `trace`\n\n## 无障碍\n\n- 表情反应整组设 role=img 和描述性 aria-label，只读一次\n- 可点击的气泡用 child 渲染为真实 button 或 a\n- 变体颜色之外配合文字或对齐表达含义\n\n## 响应式\n\n- 气泡宽度随内容，最多占容器 80%；ghost 变体不限宽\n\n## 相关组件\n\n- `message`\n- `marker`\n- `message-scroller`\n",
-			"rules": "# Bubble 设计规范\n\n- 用于聊天中带框的消息内容；一条消息的整行布局（头像、对齐、发送者）交给 Message，左右对齐写在 `Message.Root` 的 `align` 上，而不是 Bubble。\n- 样式只用 `variant`（`default`、`secondary`、`muted`、`tinted`、`outline`、`ghost`、`destructive`）；助手的长文本、富内容用 `ghost` 占满整行。不要只靠颜色表示含义，`destructive` 气泡的错误原因要写在文字里。\n- 同一发送者连续的气泡放进 `Bubble.Group`。\n- 表情回应用 `Bubble.Reactions`（`side`、`align` 定位），只展示时给它设 `role=\"img\"` 和概括全部回应的 `aria-label`；可点击时改用带 `aria-label` 的图标按钮。回应会压在气泡边缘，行间要留出间距。\n- 整个气泡需要可点击时，用 `Bubble.Content` 的 `child` snippet 渲染为 Button 或链接，不要给 div 加 `onclick`。\n"
+			"rules": "# Bubble 设计规范\n\n- 用于聊天中带框的消息内容；一条消息的整行布局（头像、对齐、发送者）交给 Message，左右对齐写在 `Message.Root` 的 `align` 上，而不是 Bubble。\n- 通用样式使用 `variant`，助手的长文本可用 `ghost` 占满整行。Agent 用户和助手消息使用对应的 `appearance`，同一气泡只选择一种外观。用文字说明 `destructive` 气泡的错误原因。\n- Agent 用户气泡用 `Bubble.Actions` 放置复制和编辑。操作使用带 `aria-label` 的 Button，并设置 `data-slot=\"bubble-action\"` 取得 24 px 尺寸；编辑结束应把焦点交回触发编辑的按钮。\n- Agent 正文内的原生链接沿用 15 px／24 px 行高，浅深主题分别使用对应强调色。键盘焦点用下划线，长链接可在窄处换行。\n- 同一发送者连续的气泡放进 `Bubble.Group`。\n- Agent 连续提问使用 `Bubble.Group appearance=\"agent\"`，相邻气泡表面间距 16 px。\n- 表情回应用 `Bubble.Reactions`（`side`、`align` 定位），只展示时给它设 `role=\"img\"` 和概括全部回应的 `aria-label`；可点击时改用带 `aria-label` 的图标按钮。回应会压在气泡边缘，行间要留出间距。\n- 评论回应使用 `Bubble.Reactions appearance=\"comment\"` 放在正文下方 8 px。单项使用 28 px 高的 `Bubble.Reaction`，用 `pressed` 和计数表达当前用户的选择，键盘焦点使用内描边。\n- 整个气泡需要可点击时，用 `Bubble.Content` 的 `child` snippet 渲染为 Button 或链接，不要给 div 加 `onclick`。\n"
 		},
 		{
 			"name": "button",
@@ -566,7 +571,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/button-group",
 			"install": "pnpm exec valar-svelte add button-group",
 			"markdown": "# Button Group 按钮组\n\n把相关的操作按钮组合在一起，样式连贯。\n\n- 分类：操作\n- 关键词：按钮组、button group、分段按钮、split button、工具栏\n- 安装：`pnpm exec valar-svelte add button-group`\n\n## 何时使用\n\n- 把相关操作的按钮组合在一起，如按钮加下拉菜单\n\n## 何时不用\n\n- 切换状态而不是执行操作：改用 `toggle-group`\n- 输入框旁边的按钮：改用 `input-group`\n\n## 无障碍\n\n- 根元素 role=group，用 aria-label 或 aria-labelledby 命名\n- 用 Tab 在按钮间移动\n\n## 响应式\n\n- 窄屏可改 orientation=vertical\n- 嵌套 ButtonGroup 形成带间距的分组\n\n## 相关组件\n\n- `button`\n- `toggle-group`\n- `input-group`\n",
-			"rules": "# Button Group 设计规范\n\n- 用于一组紧密相关、连在一起的按钮（如分段操作、按钮加下拉菜单）；只是并排的独立按钮用普通 flex 间距排列即可。\n- `ButtonGroup.Root` 渲染 `role=\"group\"`，要用 `aria-label` 说明这组按钮做什么。\n- 组内按钮使用相同的 `size`；方向用 `orientation`，组之间需要间距时嵌套多个 ButtonGroup，不要给按钮单独改圆角或边框（组件已处理相邻按钮的圆角和边框）。\n- 组内的说明文字用 `ButtonGroup.Text`，分隔用 `ButtonGroup.Separator`；Input、Select 等控件也可以放进组内。\n- 横向胶囊拆分按钮使用 `variant=\"pill\"`，配两个 `size=\"icon-sm\"` 的图标按钮和 `ButtonGroup.Separator`。样式参考 Linear Issue 顶栏的提示词操作组。两个动作各自命名，键盘焦点在按钮边界内显示。\n"
+			"rules": "# Button Group 设计规范\n\n- 用于一组紧密相关、连在一起的按钮（如分段操作、按钮加下拉菜单）；只是并排的独立按钮用普通 flex 间距排列即可。\n- `ButtonGroup.Root` 渲染 `role=\"group\"`，要用 `aria-label` 说明这组按钮做什么。\n- 组内按钮使用相同的 `size`；方向用 `orientation`，组之间需要间距时嵌套多个 ButtonGroup，不要给按钮单独改圆角或边框（组件已处理相邻按钮的圆角和边框）。\n- 组内的说明文字用 `ButtonGroup.Text`，分隔用 `ButtonGroup.Separator`；Input、Select 等控件也可以放进组内。\n- 横向胶囊拆分按钮使用 `variant=\"pill\"`，配两个 `size=\"icon-sm\"` 的图标按钮和 `ButtonGroup.Separator`。样式参考 Linear Issue 顶栏的提示词操作组。两个动作各自命名，键盘焦点在按钮边界内显示。\n- 横向组从书写方向的起始侧拼接。文字按钮和图标按钮使用同一高度档，普通 Select 与普通 Input 同组时对齐为 32 px。每个动作保留独立 Tab 停靠点。\n"
 		},
 		{
 			"name": "calendar",
@@ -684,7 +689,8 @@
 						"滑动浏览"
 					],
 					"whenToUse": [
-						"横向或纵向滑动浏览一组同类内容，如图片、卡片"
+						"横向或纵向滑动浏览一组同类内容，如图片、卡片",
+						"全屏浏览工单图片，按原文件顺序翻页或缩放"
 					],
 					"whenNotToUse": [
 						{
@@ -702,11 +708,13 @@
 					],
 					"accessibility": [
 						"根元素 role=region、aria-roledescription=carousel，每项为 slide",
-						"上一项／下一项按钮支持方向键；不要无暂停地自动播放"
+						"上一项／下一项按钮支持方向键；不要无暂停地自动播放",
+						"全屏媒体首尾禁用且保留按键焦点；Esc 关闭后返回打开预览的缩略图"
 					],
 					"responsive": [
 						"用 basis-* 控制每屏显示几项，可按断点设置",
-						"支持触摸滑动"
+						"支持触摸滑动",
+						"全屏媒体在 320 px 视口保持工具栏可用，图片缩放限制在可用空间"
 					],
 					"related": [
 						"scroll-area",
@@ -717,8 +725,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/carousel",
 			"install": "pnpm exec valar-svelte add carousel",
-			"markdown": "# Carousel 轮播\n\n可滑动浏览一组内容的轮播，基于 Embla。\n\n- 分类：展示\n- 关键词：轮播、carousel、幻灯片、slider、滑动浏览\n- 安装：`pnpm exec valar-svelte add carousel`\n\n## 何时使用\n\n- 横向或纵向滑动浏览一组同类内容，如图片、卡片\n\n## 何时不用\n\n- 只需在区域内滚动：改用 `scroll-area`\n- 并列视图切换：改用 `tabs`\n- 每项都必须被看到的重要内容：改用 `card`\n\n## 无障碍\n\n- 根元素 role=region、aria-roledescription=carousel，每项为 slide\n- 上一项／下一项按钮支持方向键；不要无暂停地自动播放\n\n## 响应式\n\n- 用 basis-* 控制每屏显示几项，可按断点设置\n- 支持触摸滑动\n\n## 相关组件\n\n- `scroll-area`\n- `card`\n- `aspect-ratio`\n",
-			"rules": "# Carousel 设计规范\n\n- `Carousel.Root` 渲染 `role=\"region\"`，必须用 `aria-label` 说明轮播的内容；每个 `Carousel.Item` 已标为一张幻灯片。\n- 用 `Carousel.Previous`、`Carousel.Next` 提供翻页按钮，它们的读屏文字默认是“上一张”“下一张”，其他语言用 `label` 改。\n- 行为用 `opts`（Embla 选项，如 `loop`、`align`）和 `plugins` 配置；需要读取当前页或跳转时用 `setApi` 拿到 API，不要自己监听滚动。\n- 自动播放会打断阅读：使用自动播放插件时必须提供暂停按钮，并在悬停和聚焦时暂停。\n- 重要内容不要只放在后面几张幻灯片里，用户很少翻到最后。\n"
+			"markdown": "# Carousel 轮播\n\n可滑动浏览一组内容的轮播，基于 Embla。\n\n- 分类：展示\n- 关键词：轮播、carousel、幻灯片、slider、滑动浏览\n- 安装：`pnpm exec valar-svelte add carousel`\n\n## 何时使用\n\n- 横向或纵向滑动浏览一组同类内容，如图片、卡片\n- 全屏浏览工单图片，按原文件顺序翻页或缩放\n\n## 何时不用\n\n- 只需在区域内滚动：改用 `scroll-area`\n- 并列视图切换：改用 `tabs`\n- 每项都必须被看到的重要内容：改用 `card`\n\n## 无障碍\n\n- 根元素 role=region、aria-roledescription=carousel，每项为 slide\n- 上一项／下一项按钮支持方向键；不要无暂停地自动播放\n- 全屏媒体首尾禁用且保留按键焦点；Esc 关闭后返回打开预览的缩略图\n\n## 响应式\n\n- 用 basis-* 控制每屏显示几项，可按断点设置\n- 支持触摸滑动\n- 全屏媒体在 320 px 视口保持工具栏可用，图片缩放限制在可用空间\n\n## 相关组件\n\n- `scroll-area`\n- `card`\n- `aspect-ratio`\n",
+			"rules": "# Carousel 设计规范\n\n- `Carousel.Root` 渲染 `role=\"region\"`，必须用 `aria-label` 说明轮播的内容；每个 `Carousel.Item` 已标为一张幻灯片。\n- 用 `Carousel.Previous`、`Carousel.Next` 提供翻页按钮，它们的读屏文字默认是“上一张”“下一张”，其他语言用 `label` 改。\n- 行为用 `opts`（Embla 选项，如 `loop`、`align`）和 `plugins` 配置；需要读取当前页或跳转时用 `setApi` 拿到 API，不要自己监听滚动。\n- 自动播放会打断阅读：使用自动播放插件时必须提供暂停按钮，并在悬停和聚焦时暂停。\n- 重要内容不要只放在后面几张幻灯片里，用户很少翻到最后。\n\n## 全屏媒体\n\n- 全屏图片查看器使用 `Carousel.Root appearance=\"media\"`、`Carousel.Toolbar` 和 `Carousel.Item index={index}`，覆盖 Linear 工单图片查看器的上一张、下一张、缩放与关闭组合。保持首尾禁用、每次切换一张、图片居中、窄屏不横向溢出。\n- 媒体预览用 Dialog 包裹。Next（向下）放在 Previous（向上）前方。右／下键前进，左／上键后退。关闭后焦点返回启动预览的缩略图，当前图片用 live status 播报，隐藏的图片不进入焦点顺序。\n- 工具栏高 40 px，内边距上下 6 px、左右 8 px，使用 28 px 按钮、14 px 图标、0.5 px 分隔线，按钮组与关闭控件间距 4 px。使用内嵌聚焦描边。\n- 当前图片的缩放由查看器管理，切图复位。媒体视口裁切相邻画面，键盘、按钮和手势负责切换。启用减少动态效果时，使用即时切换。\n"
 		},
 		{
 			"name": "chart",
@@ -769,7 +777,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/chart",
 			"install": "pnpm exec valar-svelte add chart",
 			"markdown": "# Chart 图表\n\n基于 LayerChart 的图表容器与提示框，统一配色和样式。\n\n- 分类：展示\n- 关键词：图表、chart、柱状图、折线图、数据可视化、layerchart\n- 安装：`pnpm exec valar-svelte add chart`\n\n## 何时使用\n\n- 展示数据的趋势、对比或分布\n\n## 何时不用\n\n- 需要逐项查看精确数值：改用 `table`\n- 只显示一项完成度：改用 `progress`\n\n## 无障碍\n\n- 颜色之外提供图例或数据标签\n- 在图表旁提供文字摘要或数据表\n\n## 响应式\n\n- Chart.Container 默认 aspect-video，可改为固定最小高度\n- 窄屏减少刻度和图例项\n\n## 相关组件\n\n- `table`\n- `card`\n- `progress`\n",
-			"rules": "# Chart 设计规范\n\n- 每个图表都定义 `ChartConfig`，每个系列写 `label` 和 `color`；颜色用主题 token `var(--chart-1)`～`var(--chart-5)`，不要写十六进制或调色板色值（检查规则 `valar/chart-color-token`）。\n- 图表放在 `Chart.Container` 中，传入 `config`；容器默认按 `aspect-video` 比例取高度，需要其他高度时用 `aspect-*`、`h-*` 档位类。\n- 悬停数值用 `Chart.Tooltip`，系列名和颜色从 config 读取，不要另写一份。\n- `null`／`undefined` 是缺失值，Tooltip 不显示该系列的数值行；`0` 是有效数值，必须保留。不要把缺失值显示成零或沿用上次悬停的数值。\n- 图表本身对读屏器不友好：在标题或说明中写出结论（如“本月访问量比上月高 12%”），关键数据另外提供表格或文字。\n- 不要只靠颜色区分系列：系列多于两个时显示图例，必要时配合不同的线型或直接标注数值。\n"
+			"rules": "# Chart 设计规范\n\n- 每个图表都定义 `ChartConfig`，每个系列写 `label` 和 `color`；颜色用主题 token `var(--chart-1)`～`var(--chart-5)`，不要写十六进制或调色板色值（检查规则 `valar/chart-color-token`）。\n- 图表放在 `Chart.Container` 中，传入 `config`；容器默认按 `aspect-video` 比例取高度，需要其他高度时用 `aspect-*`、`h-*` 档位类。\n- 用量图可用 `appearance=\"usage\"`，容器高 320 px、底色透明，刻度使用 450 字重。右侧金额刻度为 11 px，日期刻度为 12 px。由 LayerChart 设置右侧金额轴、水平虚线和时间范围。无用量时保留坐标轴，提供可读的时间段和总额。\n- 工作量洞察可用 `Chart.Container appearance=\"insights\"`（桌面图高约 281 px）与 `Chart.Tooltip appearance=\"insights\"`。保留右轴、水平虚线和窄柱，优先级系列使用局部 `--insight-priority-*` 色值。浮层显示系列、计数和组内百分比。柱形下钻与数值表共享分组，给表格提供键盘入口，关闭详情回到对应数值。窄屏详情排列在图表下方，数据表横向滚动使用悬浮 Scroll Area。\n- 悬停数值用 `Chart.Tooltip`，系列名和颜色从 config 读取，不要另写一份。\n- `null`／`undefined` 是缺失值，Tooltip 不显示该系列的数值行；`0` 是有效数值，必须保留。不要把缺失值显示成零或沿用上次悬停的数值。\n- 图表本身对读屏器不友好：在标题或说明中写出结论（如“本月访问量比上月高 12%”），关键数据另外提供表格或文字。\n- 不要只靠颜色区分系列：系列多于两个时显示图例，必要时配合不同的线型或直接标注数值。\n"
 		},
 		{
 			"name": "checkbox",
@@ -830,6 +838,7 @@
 				"展示"
 			],
 			"registryDependencies": [
+				"scroll-area",
 				"use-highlighted-code"
 			],
 			"meta": {
@@ -875,7 +884,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/code-block",
 			"install": "pnpm exec valar-svelte add code-block",
 			"markdown": "# Code Block 代码块\n\n展示代码、终端输出和 diff，可带标题栏、行号和复制按钮。\n\n- 分类：展示\n- 关键词：代码块、code block、代码、终端输出、diff、语法高亮\n- 安装：`pnpm exec valar-svelte add code-block`\n\n## 何时使用\n\n- 展示代码片段、终端输出、日志或 diff\n- 在消息或 trace 中显示工具输出（流式追加时只高亮新行）\n\n## 何时不用\n\n- 显示键盘按键或快捷键：改用 `kbd`\n- 行列结构化数据：改用 `table`\n\n## 无障碍\n\n- 内容区可聚焦，键盘可滚动；浮动操作在获得焦点时也会显示\n- 复制按钮默认名称“复制”／“已复制”，其他语言用 copyLabel、copiedLabel 改\n- diff 行带 +／− 标记，不只靠颜色；换行切换按钮要设 aria-pressed\n\n## 响应式\n\n- 默认不换行、横向滚动；窄屏可开启 wrap\n- 内容始终从左到右显示，标题栏跟随页面方向\n\n## 相关组件\n\n- `trace`\n- `message`\n- `kbd`\n",
-			"rules": "# Code Block 设计规范\n\n- 用于展示代码和命令；行内的短代码用 `<code>`，键盘按键用 Kbd。\n- 代码文本传给 `CodeBlock.Content` 的 `code` 属性，需要行号时设 `lineNumbers`（可配合 `startLine`），长行需要换行时设 `wrap`；不要手写行号。\n- 复制按钮用 `CodeBlock.CopyButton` 并传 `value`；读屏名称和复制后的提示默认是中文（“复制”“已复制”），其他语言用 `copyLabel`、`copiedLabel` 改。\n- 文件名或语言写在 `CodeBlock.Header` 的 `CodeBlock.Title` 中；出错的输出用 `variant=\"destructive\"`，同时在文字中说明错误。\n- 紧凑场景用 `size=\"sm\"`；代码内容固定从左到右排版，不要改 `dir`。\n"
+			"rules": "# Code Block 设计规范\n\n- 用于展示代码和命令；行内的短代码用 `<code>`，键盘按键用 Kbd。\n- 代码文本传给 `CodeBlock.Content` 的 `code` 属性，需要行号时设 `lineNumbers`（可配合 `startLine`），长行需要换行时设 `wrap`；不要手写行号。\n- 复制按钮用 `CodeBlock.CopyButton` 并传 `value`；读屏名称和复制后的提示默认是中文（“复制”“已复制”），其他语言用 `copyLabel`、`copiedLabel` 改。\n- 文件名或语言写在 `CodeBlock.Header` 的 `CodeBlock.Title` 中；出错的输出用 `variant=\"destructive\"`，同时在文字中说明错误。\n- 紧凑场景用 `size=\"sm\"`；代码内容固定从左到右排版，不要改 `dir`。\n- Issue 描述与 Agent 回复可分别使用 `appearance=\"issue\"` 和 `appearance=\"agent\"`。它们复用实测的紧凑代码表面、等宽排版和行号留白。语言标签使用 `CodeBlock.Title`，只提供当前界面可用的操作。\n- 内容溢出由 Scroll Area 渲染悬浮滚动条。设置 `max-h-*` 可限制视口高度。需要先裁切再展开时，只在收起状态使用 `scrollOrientation=\"horizontal\"`，避免纵向滚动绕过展开状态。\n- `ref` 指向语义 `pre`，`viewportRef` 指向实际滚动视口。给视口设置清楚的 `aria-label`，并从键盘验证长行、焦点边界和复制反馈。\n"
 		},
 		{
 			"name": "collapsible",
@@ -966,7 +975,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/color-picker",
 			"install": "pnpm exec valar-svelte add color-picker",
 			"markdown": "# Color Picker 颜色选择\n\n用色盘、十六进制输入或预设色块选择颜色，值为 #rrggbb。\n\n- 分类：表单\n- 关键词：颜色、color、取色、色板、picker\n- 安装：`pnpm exec valar-svelte add color-picker`\n\n## 何时使用\n\n- 选择任意颜色或从预设色中挑选\n\n## 何时不用\n\n- 只在少数固定颜色间选择：改用 `radio-group`\n\n## 无障碍\n\n- 触发器读出标签和当前色值\n- 十六进制输入有错误提示\n\n## 响应式\n\n- 面板在窄屏下保持在视口内\n\n## 相关组件\n\n- `slider-field`\n- `popover`\n",
-			"rules": "# Color Picker 设计规范\n\n- 用于让用户选择任意颜色的数据（标签色、品牌色、主题编辑）；只在少数固定颜色间选择时用 Radio Group。界面本身的颜色仍然只用语义 token，不要把 Color Picker 选出的值写进组件样式。\n- `label` 必填，它同时命名触发按钮、色盘、十六进制输入框和预设组，并显示为可见标签；不要在外面再包 Field.Label。\n- 值始终是小写的六位十六进制（`#rrggbb`）；三位简写会被展开，无效输入不会改变值。需要其他格式时在使用处自行转换。\n- 常用颜色放在 `presets`；放在表单中提交时设 `name`。\n"
+			"rules": "# Color Picker 设计规范\n\n- 用于让用户选择任意颜色的数据（标签色、品牌色、主题编辑）；只在少数固定颜色间选择时用 Radio Group。界面本身的颜色仍然只用语义 token，不要把 Color Picker 选出的值写进组件样式。\n- `label` 必填，供触发按钮和预设组识别。通用模式显示该标签；标签行的紧凑模式把标签留给辅助技术，并让相邻文字标识业务标签。\n- 值始终是小写的六位十六进制（`#rrggbb`）；三位简写会被展开，无效输入不会改变值。需要其他格式时在使用处自行转换。\n- 常用颜色放在 `presets`；放在表单中提交时设 `name`。\n- 标签行使用 `appearance=\"label\"`。触发器 25 px，当前色点 9 px，预设按钮 22 px。预设增加命名时使用 `{ color, label }`。预设面板以 16 px 排列，在窄屏中换行。自定义区域支持方向键和指针，Hex 用 Enter 确认，Escape 返回触发器。\n- 面板使用悬浮 Scroll Area 处理受限高度。所有键盘反馈画在控件内部。\n"
 		},
 		{
 			"name": "combobox",
@@ -1277,7 +1286,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/donut-chart",
 			"install": "pnpm exec valar-svelte add donut-chart",
 			"markdown": "# Static Donut 静态环图\n\n保留固定总量分母的装饰性 SVG 环图，不对隐藏类别重新归一化。\n\n- 分类：展示\n- 关键词：donut、环图、占比、static\n- 安装：`pnpm exec valar-svelte add donut-chart`\n\n## 何时使用\n\n- 已有可访问精确图例，需要固定分母的静态环图\n\n## 何时不用\n\n- 需要交互提示或复杂坐标轴：改用 `chart`\n\n## 无障碍\n\n- SVG 为装饰；调用方必须提供类别名称和精确数据\n\n## 响应式\n\n- 208 单位 viewBox 由外层宽高控制\n\n## 相关组件\n\n- `waffle-chart`\n- `table`\n",
-			"rules": "# Static Donut Design Rules\n\n- Caller validates unique keys, finite nonnegative parts and a positive fixed total; the sum must not exceed that total.\n- Never renormalize when hiding a legend row. Unallocated space represents the fixed denominator, not a new category.\n- Decorative SVG: supply exact values and names in a nearby accessible legend.\n- No minimum slice enlargement, animation, tooltips or hover resizing.\n"
+			"rules": "# Static Donut Design Rules\n\n- Caller validates unique keys, finite nonnegative parts and a positive fixed total; the sum must not exceed that total.\n- Keep the original denominator when hiding a legend row. The neutral track is the unallocated share of that total.\n- Decorative SVG: supply exact values and names in a nearby accessible legend.\n- No minimum slice enlargement, animation, tooltips or hover resizing.\n"
 		},
 		{
 			"name": "drawer",
@@ -1294,10 +1303,12 @@
 						"drawer",
 						"底部弹出",
 						"bottom sheet",
-						"拖动关闭"
+						"拖动关闭",
+						"移动导航"
 					],
 					"whenToUse": [
 						"移动端从底部弹出的选项、简短表单或详情，支持手势拖动关闭",
+						"移动端工作区从屏幕左边缘打开导航",
 						"需要在面板内再打开一层（Drawer.NestedRoot）"
 					],
 					"whenNotToUse": [
@@ -1320,7 +1331,7 @@
 					],
 					"responsive": [
 						"常与 dialog 搭配：窄屏用 drawer、宽屏用 dialog",
-						"direction 可选 top、right、bottom、left；内容超出时在面板内部滚动",
+						"direction 可选 top、right、bottom、left；内容超出时使用面板内的悬浮 Scroll Area",
 						"modal={false} 时可与页面交互，点击外部不会关闭"
 					],
 					"related": [
@@ -1332,8 +1343,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/drawer",
 			"install": "pnpm exec valar-svelte add drawer",
-			"markdown": "# Drawer 抽屉\n\n从屏幕边缘拉出、可拖动关闭的面板，适合移动端。\n\n- 分类：弹层\n- 关键词：抽屉、drawer、底部弹出、bottom sheet、拖动关闭\n- 安装：`pnpm exec valar-svelte add drawer`\n\n## 何时使用\n\n- 移动端从底部弹出的选项、简短表单或详情，支持手势拖动关闭\n- 需要在面板内再打开一层（Drawer.NestedRoot）\n\n## 何时不用\n\n- 桌面端从侧边滑出的辅助面板：改用 `sheet`\n- 桌面端需要专注完成的对话框：改用 `dialog`\n- 确认危险操作：改用 `alert-dialog`\n\n## 无障碍\n\n- 必须有标题（Drawer.Title）；Esc 关闭并把焦点还给触发按钮\n- 除拖动外提供可见的关闭按钮（Drawer.Close），不能只靠手势\n\n## 响应式\n\n- 常与 dialog 搭配：窄屏用 drawer、宽屏用 dialog\n- direction 可选 top、right、bottom、left；内容超出时在面板内部滚动\n- modal={false} 时可与页面交互，点击外部不会关闭\n\n## 相关组件\n\n- `dialog`\n- `sheet`\n- `alert-dialog`\n",
-			"rules": "# Drawer 设计规范\n\n- 用于移动端从底部拉起、可拖拽关闭的面板；桌面端同样的内容通常改用 Dialog 或 Sheet，按屏幕宽度切换（见 Drawer 文档“Responsive”示例）。\n- 每个 `Drawer.Content` 都要有 `Drawer.Title`，不显示时加 `class=\"sr-only\"`（检查规则 `valar/overlay-title`）。\n- 方向用 `Drawer.Root` 的 `direction` 属性；拖拽把手只在 `bottom` 方向显示，其他方向要提供 `Drawer.Close` 按钮。\n- 需要停在几个固定高度时用 `snapPoints` 和 `bind:activeSnapPoint`，不要自己计算高度。\n- 背景缩放（`shouldScaleBackground`，默认开启）需要应用根元素带 `data-vaul-drawer-wrapper` 属性才生效；不需要时设为 `false`。\n- 内容区高度有上限，长内容放在 `Drawer.Header` 与 `Drawer.Footer` 之间的可滚动容器中（`overflow-y-auto`）。\n- 打开它的按钮通过 `Drawer.Trigger` 的 `child` snippet 渲染 Button（检查规则 `valar/trigger-child-snippet`）。\n"
+			"markdown": "# Drawer 抽屉\n\n从屏幕边缘拉出、可拖动关闭的面板，适合移动端。\n\n- 分类：弹层\n- 关键词：抽屉、drawer、底部弹出、bottom sheet、拖动关闭、移动导航\n- 安装：`pnpm exec valar-svelte add drawer`\n\n## 何时使用\n\n- 移动端从底部弹出的选项、简短表单或详情，支持手势拖动关闭\n- 移动端工作区从屏幕左边缘打开导航\n- 需要在面板内再打开一层（Drawer.NestedRoot）\n\n## 何时不用\n\n- 桌面端从侧边滑出的辅助面板：改用 `sheet`\n- 桌面端需要专注完成的对话框：改用 `dialog`\n- 确认危险操作：改用 `alert-dialog`\n\n## 无障碍\n\n- 必须有标题（Drawer.Title）；Esc 关闭并把焦点还给触发按钮\n- 除拖动外提供可见的关闭按钮（Drawer.Close），不能只靠手势\n\n## 响应式\n\n- 常与 dialog 搭配：窄屏用 drawer、宽屏用 dialog\n- direction 可选 top、right、bottom、left；内容超出时使用面板内的悬浮 Scroll Area\n- modal={false} 时可与页面交互，点击外部不会关闭\n\n## 相关组件\n\n- `dialog`\n- `sheet`\n- `alert-dialog`\n",
+			"rules": "# Drawer 设计规范\n\n- 用于移动端从屏幕边缘拉出、可拖拽关闭的面板。桌面端同样的内容通常改用 Dialog 或 Sheet。\n- 工作区导航使用 `Drawer.Root direction=\"left\"` 和 `Drawer.Content appearance=\"workspace\"`。面板填满高度，宽度最多 330 px，窄屏至少留 24 px；开放侧圆角为 12 px，页眉水平内边距为 12 px。\n- 每个 `Drawer.Content` 都要有 `Drawer.Title`，不显示时加 `class=\"sr-only\"`（检查规则 `valar/overlay-title`）。\n- 方向用 `Drawer.Root` 的 `direction` 属性；拖拽把手只在 `bottom` 方向显示，其他方向要提供 `Drawer.Close` 按钮。\n- 需要停在几个固定高度时用 `snapPoints` 和 `bind:activeSnapPoint`，不要自己计算高度。\n- 背景缩放（`shouldScaleBackground`，默认开启）需要应用根元素带 `data-vaul-drawer-wrapper` 属性才生效；不需要时设为 `false`。\n- 长内容放在 `Drawer.Header` 与 `Drawer.Footer` 之间的悬浮 Scroll Area，给视口可读名称。给滚动区域添加 `data-vaul-no-drag`，让指针滚动与滑块拖动独立于面板拖拽。\n- 打开它的按钮通过 `Drawer.Trigger` 的 `child` snippet 渲染 Button（检查规则 `valar/trigger-child-snippet`）。\n"
 		},
 		{
 			"name": "dropdown-menu",
@@ -1540,7 +1551,7 @@
 			"name": "gauge",
 			"type": "registry:ui",
 			"title": "Gauge 仪表",
-			"description": "静态百分比仪表和可组合的 SVG 弧线，保留超限读数。",
+			"description": "静态百分比仪表、紧凑迭代容量和可组合的 SVG 弧线，保留超限读数。",
 			"categories": [
 				"展示"
 			],
@@ -1550,10 +1561,13 @@
 						"gauge",
 						"仪表",
 						"百分比",
-						"quota"
+						"quota",
+						"迭代容量",
+						"capacity"
 					],
 					"whenToUse": [
-						"显示一个只读配额百分比或组合独立同心弧线"
+						"显示一个只读配额百分比或组合独立同心弧线",
+						"在迭代列表同一行显示容量和超限读数"
 					],
 					"whenNotToUse": [
 						{
@@ -1565,7 +1579,8 @@
 						"label 和 valueText 由调用方本地化；超限读数保留在文字中"
 					],
 					"responsive": [
-						"宽度由容器控制，保持 100:90 比例"
+						"通用仪表保持 100:90 比例",
+						"迭代容量使用 16 px 弧线，说明可换行"
 					],
 					"related": [
 						"tick-meter",
@@ -1575,8 +1590,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/gauge",
 			"install": "pnpm exec valar-svelte add gauge",
-			"markdown": "# Gauge 仪表\n\n静态百分比仪表和可组合的 SVG 弧线，保留超限读数。\n\n- 分类：展示\n- 关键词：gauge、仪表、百分比、quota\n- 安装：`pnpm exec valar-svelte add gauge`\n\n## 何时使用\n\n- 显示一个只读配额百分比或组合独立同心弧线\n\n## 何时不用\n\n- 需要让用户调整数值：改用 `slider`\n\n## 无障碍\n\n- label 和 valueText 由调用方本地化；超限读数保留在文字中\n\n## 响应式\n\n- 宽度由容器控制，保持 100:90 比例\n\n## 相关组件\n\n- `tick-meter`\n- `progress`\n",
-			"rules": "# Gauge Design Rules\n\n- Read-only percentage, not a completion target; never add confetti or goal states.\n- Supply localized label and valueText. Only the arc and numeric ARIA range clamp; the displayed number/valueText retain overflow.\n- GaugeArc belongs inside an SVG; radius defaults to 42 in a 100-unit viewBox. Null draws a dashed missing track and no value arc.\n- Accent uses primary, danger uses destructive. Size through class; use a separate legend for comparisons.\n"
+			"markdown": "# Gauge 仪表\n\n静态百分比仪表、紧凑迭代容量和可组合的 SVG 弧线，保留超限读数。\n\n- 分类：展示\n- 关键词：gauge、仪表、百分比、quota、迭代容量、capacity\n- 安装：`pnpm exec valar-svelte add gauge`\n\n## 何时使用\n\n- 显示一个只读配额百分比或组合独立同心弧线\n- 在迭代列表同一行显示容量和超限读数\n\n## 何时不用\n\n- 需要让用户调整数值：改用 `slider`\n\n## 无障碍\n\n- label 和 valueText 由调用方本地化；超限读数保留在文字中\n\n## 响应式\n\n- 通用仪表保持 100:90 比例\n- 迭代容量使用 16 px 弧线，说明可换行\n\n## 相关组件\n\n- `tick-meter`\n- `progress`\n",
+			"rules": "# Gauge Design Rules\n\n- Read-only percentage, not a completion target; never add confetti or goal states.\n- Supply localized label and valueText. Only the arc and numeric ARIA range clamp; the displayed number/valueText retain overflow.\n- GaugeArc belongs inside an SVG; radius defaults to 42 in a 100-unit viewBox. Null draws a dashed missing track and no value arc.\n- Accent uses primary, danger uses destructive. Size through class; use a separate legend for comparisons.\n- Use `appearance=\"capacity\"` in a cycle-capacity row. The ring is 16 px, followed by the percentage and an optional localized `suffix`, with 8 px between each part. The zero position keeps a small accent endpoint. Over-capacity uses a red ring and displays the entire number.\n- Keep the meter non-interactive. Use a separate Slider to adjust preview values.\n"
 		},
 		{
 			"name": "hover-card",
@@ -1777,12 +1792,12 @@
 					],
 					"accessibility": [
 						"基于 Bits UI PinInput，保留粘贴和键盘删除行为",
-						"用 Field 的可见标签说明位数和用途",
+						"用 inputId 连接 Field 的可见标签，用 aria-describedby 连接错误文字",
 						"用 pattern 限制可输入字符（如仅数字）"
 					],
 					"responsive": [
 						"默认 inputmode=numeric，移动端弹出数字键盘",
-						"格子多时窄屏注意总宽度，可用 InputOTP.Separator 分组"
+						"常用 4 位或 6 位按 32 px 表单尺寸；可用 InputOTP.Group 和 Separator 分组"
 					],
 					"related": [
 						"input",
@@ -1793,16 +1808,24 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/input-otp",
 			"install": "pnpm exec valar-svelte add input-otp",
-			"markdown": "# Input OTP 验证码输入\n\n按位输入固定长度的验证码或一次性密码，支持整串粘贴。\n\n- 分类：表单\n- 关键词：验证码、otp、一次性密码、pin、pin input、短信验证码\n- 安装：`pnpm exec valar-svelte add input-otp`\n\n## 何时使用\n\n- 输入固定位数的短信验证码、一次性密码或 PIN\n\n## 何时不用\n\n- 长度不固定的文本：改用 `input`\n- 可步进的数值：改用 `number-field`\n\n## 无障碍\n\n- 基于 Bits UI PinInput，保留粘贴和键盘删除行为\n- 用 Field 的可见标签说明位数和用途\n- 用 pattern 限制可输入字符（如仅数字）\n\n## 响应式\n\n- 默认 inputmode=numeric，移动端弹出数字键盘\n- 格子多时窄屏注意总宽度，可用 InputOTP.Separator 分组\n\n## 相关组件\n\n- `input`\n- `field`\n- `number-field`\n",
+			"markdown": "# Input OTP 验证码输入\n\n按位输入固定长度的验证码或一次性密码，支持整串粘贴。\n\n- 分类：表单\n- 关键词：验证码、otp、一次性密码、pin、pin input、短信验证码\n- 安装：`pnpm exec valar-svelte add input-otp`\n\n## 何时使用\n\n- 输入固定位数的短信验证码、一次性密码或 PIN\n\n## 何时不用\n\n- 长度不固定的文本：改用 `input`\n- 可步进的数值：改用 `number-field`\n\n## 无障碍\n\n- 基于 Bits UI PinInput，保留粘贴和键盘删除行为\n- 用 inputId 连接 Field 的可见标签，用 aria-describedby 连接错误文字\n- 用 pattern 限制可输入字符（如仅数字）\n\n## 响应式\n\n- 默认 inputmode=numeric，移动端弹出数字键盘\n- 常用 4 位或 6 位按 32 px 表单尺寸；可用 InputOTP.Group 和 Separator 分组\n\n## 相关组件\n\n- `input`\n- `field`\n- `number-field`\n",
 			"rules": "# Input OTP 设计规范\n\n- 只用于验证码、一次性密码等固定位数的输入；其他文本用 Input。\n- 显式设置 `maxlength`（默认值未必等于你的验证码位数），`InputOTP.Slot` 的数量与之相同；只允许数字时设 `pattern={REGEXP_ONLY_DIGITS}`（从 `bits-ui` 导入）。\n- 组件内有一个真实的输入框：用 `aria-label` 命名，或用 `inputId` 设它的 `id` 后由 `Field.Label for` 关联；在 `Field.Description` 中说明验证码发到了哪里。\n- 保留默认的 `autocomplete=\"one-time-code\"`，移动端才能从短信自动填入；粘贴整段验证码会自动拆分到各格，不要另做处理。\n- 分组用 `InputOTP.Group`，组间用 `InputOTP.Separator`；输满后用 `onComplete` 自动提交时，提交期间设 `disabled`。\n- 错误时给每个 `InputOTP.Slot` 设 `aria-invalid`，各格才会显示错误状态；同时用 `Field.Error` 说明原因。\n"
 		},
 		{
 			"name": "issue-composer",
 			"type": "registry:ui",
 			"title": "Issue Composer 问题编辑弹窗",
-			"description": "紧凑和展开两种布局的创建表单，包含标题、描述、可搜索的状态与优先级选择，以及连续创建。",
+			"description": "紧凑和展开两种布局的创建表单，支持富文本描述、可搜索的属性、附件、草稿和连续创建。",
 			"categories": [
 				"弹层"
+			],
+			"dependencies": [
+				"@tiptap/core@^3.33.1",
+				"@tiptap/extension-list@^3.33.1",
+				"@tiptap/pm@^3.33.1",
+				"@tiptap/starter-kit@^3.33.1",
+				"katex@^0.16.47",
+				"mermaid@^11.17.2"
 			],
 			"meta": {
 				"valar": {
@@ -1824,24 +1847,24 @@
 					],
 					"accessibility": [
 						"打开聚焦标题，关闭恢复到触发器",
-						"状态和优先级可用键盘选择，空标题错误可被读出"
+						"属性可用键盘选择，空标题错误可被读出，关闭改动过的表单时可保存或放弃草稿"
 					],
 					"responsive": [
-						"窄屏保留 12 px 侧边间距，长描述在编辑区滚动"
+						"窄屏保留 12 px 侧边间距，主体和选项列表使用悬浮 Scroll Area"
 					],
 					"related": [
 						"dialog",
 						"command",
 						"popover",
 						"switch",
-						"textarea"
+						"scroll-area"
 					]
 				}
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/issue-composer",
 			"install": "pnpm exec valar-svelte add issue-composer",
-			"markdown": "# Issue Composer 问题编辑弹窗\n\n紧凑和展开两种布局的创建表单，包含标题、描述、可搜索的状态与优先级选择，以及连续创建。\n\n- 分类：弹层\n- 关键词：新建问题、issue、composer、展开编辑、连续创建\n- 安装：`pnpm exec valar-svelte add issue-composer`\n\n## 何时使用\n\n- 从问题列表、空状态或全局入口创建工作项\n\n## 何时不用\n\n- 字段与问题创建无关的表单：改用 `dialog`\n\n## 无障碍\n\n- 打开聚焦标题，关闭恢复到触发器\n- 状态和优先级可用键盘选择，空标题错误可被读出\n\n## 响应式\n\n- 窄屏保留 12 px 侧边间距，长描述在编辑区滚动\n\n## 相关组件\n\n- `dialog`\n- `command`\n- `popover`\n- `switch`\n- `textarea`\n",
-			"rules": "# Issue Composer\n\n用于从问题列表、空状态或全局入口创建问题。标题和描述纵向排列，状态与优先级放在编辑区下方。底部左侧添加附件，右侧依次放置继续创建开关和主操作。紧凑和展开模式使用同一份草稿。\n\n- 打开时聚焦标题。关闭后通过 `returnFocus` 回到触发器。切换大小时保持表单值和焦点所在的控件。\n- 状态和优先级菜单支持搜索、方向键、Enter、数字快捷键与 Escape。输入搜索词时，数字用于搜索。\n- 保留空白表单的提交入口。提交空标题时聚焦标题并读出错误。继续创建保留状态和优先级，并清空标题、描述与附件。\n- 通过 `onCreate` 交付表单和本地文件。预览用多行纯文本描述，持久化和上传由宿主处理。\n- 颜色、尺寸和动画作用于弹窗自身。窄屏保留 12 px 侧边间距，减少动态效果时取消尺寸过渡。\n"
+			"markdown": "# Issue Composer 问题编辑弹窗\n\n紧凑和展开两种布局的创建表单，支持富文本描述、可搜索的属性、附件、草稿和连续创建。\n\n- 分类：弹层\n- 关键词：新建问题、issue、composer、展开编辑、连续创建\n- 安装：`pnpm exec valar-svelte add issue-composer`\n\n## 何时使用\n\n- 从问题列表、空状态或全局入口创建工作项\n\n## 何时不用\n\n- 字段与问题创建无关的表单：改用 `dialog`\n\n## 无障碍\n\n- 打开聚焦标题，关闭恢复到触发器\n- 属性可用键盘选择，空标题错误可被读出，关闭改动过的表单时可保存或放弃草稿\n\n## 响应式\n\n- 窄屏保留 12 px 侧边间距，主体和选项列表使用悬浮 Scroll Area\n\n## 相关组件\n\n- `dialog`\n- `command`\n- `popover`\n- `switch`\n- `scroll-area`\n",
+			"rules": "# Issue Composer\n\n用于从问题列表、空状态或全局入口创建问题。标题和描述纵向排列，状态、优先级、负责人、项目和标签放在编辑区下方。属性控件高 24 px，间距 6 px，窄屏按组换行。底部左侧添加附件，右侧依次放置继续创建开关和主操作。紧凑和展开模式使用同一份草稿。\n\n- 打开时聚焦标题。关闭后通过 `returnFocus` 回到触发器。切换大小时保持表单值和焦点所在的控件。\n- 状态和优先级菜单支持搜索、方向键、Enter、数字快捷键与 Escape。输入搜索词时，数字用于搜索。\n- 团队超过一个时才可切换。宿主通过 `teamIds` 限定候选项，换团队时清除不可用的已选值。标签支持连续多选，Escape 关闭菜单并恢复到该属性控件。\n- 描述为 15 px／22.5 px 富文本。空段落按 `/` 可插入一至三级标题、列表、检查清单、引用和代码块，或打开同一个附件选择器。Ctrl+K 或 Command+K 编辑链接。代码输入在编辑区内换行。\n- 图示用 Mermaid 源码，公式用 LaTeX。两者共用 31 px 胶囊操作栏，空源码禁用预览和复制，源码区最小高度 120 px。预览、错误状态和全屏沿用同一块内容。全屏关闭时归焦到对应按钮。\n- 折叠区块把标题和正文保存在同一个富文本节点。初始展开，标题和正文从前导 21 × 20 px 三角按钮内缩 24 px，两者相距 16 px。Space 和 Enter 切换并保留焦点。\n- 媒体命令触发本地媒体选择器。图片保持原始比例和 6 px 圆角，窄屏把操作收进菜单。裁剪保留原文件，边界写入媒体节点。全屏裁剪包含 8 个 24 px 热区和 10 px 控制点，以方向键移动 1 px、Shift 配合方向键移动 10 px。焦点用内描边，保存后回到触发按钮。视频使用独立的播放、进度、音量和倍速控件。\n- 富文本用 ID 引用 `inlineMedia` 中的文件，正文的持久地址由宿主上传后写入。上传策略和文件大小限制由消费应用决定。\n- 保留空白表单的提交入口。提交空标题时聚焦标题并读出错误。继续创建保留属性，并清空标题、描述与附件。\n- 关闭改动过的表单时可放弃、取消或保存为草稿，默认聚焦保存。用 `onSaveDraft` 接收草稿，用 `onCreate` 接收提交。两者均传递纯文本 `description`、富文本 `descriptionContent` 和本地选中的 `File`，持久化和上传由宿主处理。\n- 表单主体和选项列表使用悬浮 Scroll Area。内容溢出时底部操作栏保持在可视范围，不为滚动条额外留宽。\n- 颜色、尺寸和动画作用于弹窗自身。窄屏保留 12 px 侧边间距，减少动态效果时取消尺寸过渡。\n"
 		},
 		{
 			"name": "issue-detail",
@@ -1887,7 +1910,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/issue-detail",
 			"install": "pnpm exec valar-svelte add issue-detail",
 			"markdown": "# Issue Detail 问题详情\n\n行内编辑问题标题与富文本描述，并通过响应式属性栏更新状态、优先级、负责人、标签和项目。\n\n- 分类：展示\n- 关键词：问题详情、编辑问题、富文本、issue detail\n- 安装：`pnpm exec valar-svelte add issue-detail`\n\n## 何时使用\n\n- 从问题列表打开具体工作项并更新内容或属性\n\n## 何时不用\n\n- 创建一个全新的问题：改用 `issue-composer`\n\n## 无障碍\n\n- 编辑时提供明确的保存与取消动作，菜单支持键盘搜索\n- 退出编辑时焦点返回编辑入口\n\n## 响应式\n\n- 宽容器右置属性栏，窄容器将属性排列为标题下方的胶囊\n\n## 相关组件\n\n- `issue-composer`\n- `button`\n- `input`\n- `popover`\n- `command`\n",
-			"rules": "# Issue Detail\n\n用于从问题列表打开并编辑一个工作项。标题与描述共用一份编辑草稿。保存或 Cmd/Ctrl+Enter 提交，取消或 Escape 放弃内容草稿。属性选择即时提交，宿主通过 onUpdate 合并局部更新。\n\n- 宽容器在右侧展示属性、标签和项目。窄容器把同一批控件排到标题下方，保持键盘操作和可访问名称。\n- 只读描述使用结构化富文本；旧数据可以直接传入纯文本。编辑器保存时同时给出结构化内容及纯文本。\n- 由宿主提供负责人、项目和标签选项，以及保存和返回行为。预览状态仅保存在当前页面。\n- 嵌入有自己标题栏的区域时，使用 `embedded` 隐藏详情的边框与默认标题栏。宿主负责提供标题栏和返回入口。\n\n- 传入 `activity` 显示活动、评论与一级线程。宿主持有按时间排列的条目，通过 `onAction` 处理操作，按问题 ID 保存状态。\n- 评论编辑权限由作者 ID 决定。发布或保存支持 Cmd/Ctrl+Enter。取消有改动的草稿时先确认，放弃或保存后焦点回到评论菜单。\n- 评论草稿和问题标题／描述使用独立表单。回车可在评论中换行，提交只作用于当前表单。\n\n- 传入 `activity.collaboration` 后，活动标题同行显示订阅与订阅者头像，问题、评论和回复分别保存各自的回应。回应按钮用 `aria-pressed` 表示当前用户的状态，移除最后一个回应时把焦点还给添加回应入口。\n- 解决线程后折叠为可展开的摘要，解决状态保存在宿主，展开状态属于当前界面。摘要保留条数、作者和选中的结论。重新打开后恢复评论、回应及回复入口。\n"
+			"rules": "# Issue Detail\n\n用于从问题列表打开并编辑一个工作项。标题与描述共用一份编辑草稿。保存或 Cmd/Ctrl+Enter 提交，取消或 Escape 放弃内容草稿。属性选择即时提交，宿主通过 onUpdate 合并局部更新。\n\n- 宽容器在右侧展示属性、标签和项目。窄容器把同一批控件排到标题下方，保持键盘操作和可访问名称。\n- 只读描述使用结构化富文本；旧数据可以直接传入纯文本。编辑器保存时同时给出结构化内容及纯文本。\n- 点击正文或使用「编辑描述」进入草稿。正文链接和代码视口保持独立交互。只读代码和表情选择器的溢出由悬浮 Scroll Area 处理。\n- 由宿主提供负责人、项目和标签选项，以及保存和返回行为。预览状态仅保存在当前页面。\n- 嵌入有自己标题栏的区域时，使用 `embedded` 隐藏详情的边框与默认标题栏。宿主负责提供标题栏和返回入口。\n\n- 传入 `activity` 显示活动、评论与一级线程。宿主持有按时间排列的条目，通过 `onAction` 处理操作，按问题 ID 保存状态。\n- 评论编辑权限由作者 ID 决定。发布或保存支持 Cmd/Ctrl+Enter。取消有改动的草稿时先确认，放弃或保存后焦点回到评论菜单。\n- 评论草稿和问题标题／描述使用独立表单。回车可在评论中换行，提交只作用于当前表单。\n- 提供 `activity` 时，编辑描述并选中文本可打开选区评论。工具栏操作为 26 × 26 px、圆角 4 px。评论草稿打开时高亮选区；发表或放弃后归焦描述编辑器。宿主保存 `draft.descriptionExcerpt`，供活动线程引用。\n\n- 传入 `activity.collaboration` 后，活动标题同行显示订阅与订阅者头像，问题、评论和回复分别保存各自的回应。回应按钮用 `aria-pressed` 表示当前用户的状态，移除最后一个回应时把焦点还给添加回应入口。\n- 解决线程后折叠为可展开的摘要，解决状态保存在宿主，展开状态属于当前界面。摘要保留条数、作者和选中的结论。重新打开后恢复评论、回应及回复入口。\n"
 		},
 		{
 			"name": "item",
@@ -2072,7 +2095,7 @@
 						}
 					],
 					"accessibility": [
-						"进行中的状态设 role=status，并配合 spinner",
+						"进行中的状态设 role=status，Agent 思考外观已包含状态语义",
 						"带文字的分隔不要加 role=separator，否则文字不会被朗读",
 						"Marker.Icon 对读屏隐藏，含义写在 Marker.Content"
 					],
@@ -2088,8 +2111,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/marker",
 			"install": "pnpm exec valar-svelte add marker",
-			"markdown": "# Marker 对话标记\n\n对话中的状态提示、系统说明、带边框的行或带文字的分隔线。\n\n- 分类：反馈\n- 关键词：对话标记、marker、系统消息、状态、日期分隔、思考中\n- 安装：`pnpm exec valar-svelte add marker`\n\n## 何时使用\n\n- 对话中的进行中状态（如“思考中…”）、系统说明、日期分隔\n\n## 何时不用\n\n- 用户或助手的消息内容：改用 `message`\n- agent 的工具调用等步骤：改用 `trace`\n- 没有文字的普通分隔线：改用 `separator`\n\n## 无障碍\n\n- 进行中的状态设 role=status，并配合 spinner\n- 带文字的分隔不要加 role=separator，否则文字不会被朗读\n- Marker.Icon 对读屏隐藏，含义写在 Marker.Content\n\n## 响应式\n\n- 宽度随对话列表\n\n## 相关组件\n\n- `message`\n- `trace`\n- `separator`\n",
-			"rules": "# Marker 设计规范\n\n- 用于对话中的状态、系统提示、带边框的行或带文字的分隔；样式只用 `variant`（`default`、`border`、`separator`）。\n- Marker 默认没有角色，按用途选择：进行中的状态（“正在思考…”）设 `role=\"status\"`；带文字的分隔（日期）不要加 `role=\"separator\"`，否则文字不会被读出。\n- `Marker.Icon` 对读屏器隐藏，含义写在 `Marker.Content` 里；只有图标时给 `Marker.Root` 设 `aria-label`。\n- 可点击时用 `child` snippet 渲染为 Button 或链接。\n- Marker 的文字是弱化色，放在里面的 outline、ghost 按钮会继承这个颜色而显得不可点击；给按钮加 `class=\"text-foreground\"`。\n"
+			"markdown": "# Marker 对话标记\n\n对话中的状态提示、系统说明、带边框的行或带文字的分隔线。\n\n- 分类：反馈\n- 关键词：对话标记、marker、系统消息、状态、日期分隔、思考中\n- 安装：`pnpm exec valar-svelte add marker`\n\n## 何时使用\n\n- 对话中的进行中状态（如“思考中…”）、系统说明、日期分隔\n\n## 何时不用\n\n- 用户或助手的消息内容：改用 `message`\n- agent 的工具调用等步骤：改用 `trace`\n- 没有文字的普通分隔线：改用 `separator`\n\n## 无障碍\n\n- 进行中的状态设 role=status，Agent 思考外观已包含状态语义\n- 带文字的分隔不要加 role=separator，否则文字不会被朗读\n- Marker.Icon 对读屏隐藏，含义写在 Marker.Content\n\n## 响应式\n\n- 宽度随对话列表\n\n## 相关组件\n\n- `message`\n- `trace`\n- `separator`\n",
+			"rules": "# Marker 设计规范\n\n- 用于对话中的状态、系统提示、带边框的行或带文字的分隔；样式只用 `variant`（`default`、`border`、`separator`）。\n- Marker 默认没有角色，按用途选择：进行中的状态（“正在思考…”）设 `role=\"status\"`；带文字的分隔（日期）不要加 `role=\"separator\"`，否则文字不会被读出。\n- `Marker.Icon` 对读屏器隐藏，含义写在 `Marker.Content` 里；只有图标时给 `Marker.Root` 设 `aria-label`。\n- 可点击时用 `child` snippet 渲染为 Button 或链接。\n- Marker 的文字是弱化色，放在里面的 outline、ghost 按钮会继承这个颜色而显得不可点击；给按钮加 `class=\"text-foreground\"`。\n- `appearance=\"thinking\"` 用于 Agent 回复前的简短状态。采用 13 px／500 文字、300 ms 淡入和 2.4 秒扫光。默认播报状态，减少动态效果时只显示文字。进入工具处理或停止时卸载该标记。\n"
 		},
 		{
 			"name": "menubar",
@@ -2144,7 +2167,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/menubar",
 			"install": "pnpm exec valar-svelte add menubar",
 			"markdown": "# Menubar 菜单栏\n\n桌面应用风格的常驻菜单栏，集中提供文件、编辑、视图等命令。\n\n- 分类：导航\n- 关键词：菜单栏、menubar、顶部菜单、应用菜单、文件菜单\n- 安装：`pnpm exec valar-svelte add menubar`\n\n## 何时使用\n\n- 编辑器、工具类应用顶部常驻的一组命令菜单\n- 命令带复选项、单选项、子菜单或快捷键提示\n\n## 何时不用\n\n- 网站页面之间的导航链接：改用 `navigation-menu`\n- 单个按钮触发的少量操作：改用 `dropdown-menu`\n- 以移动端为主的界面：改用 `dropdown-menu`\n\n## 无障碍\n\n- 保留 Bits UI 的键盘操作：左右键在菜单间切换，上下键选择，Esc 关闭\n- Menubar.Shortcut 只显示快捷键，快捷键本身需另行实现\n\n## 响应式\n\n- 菜单横向排列，窄屏空间有限，菜单数量要少，否则改用 dropdown-menu\n- 菜单内容靠近边缘时自动调整位置\n\n## 相关组件\n\n- `dropdown-menu`\n- `context-menu`\n- `navigation-menu`\n",
-			"rules": "# Menubar 设计规范\n\n- 只用于桌面应用式界面（编辑器、设计工具）顶部常驻的“文件／编辑／视图”菜单；网站导航用 Navigation Menu，单个按钮的操作菜单用 Dropdown Menu。\n- 菜单栏在窄屏下不会自动折叠；移动端改用 Dropdown Menu 或 Sheet 提供同样的操作。\n- 菜单项写法与 Dropdown Menu 相同：操作用 `onSelect`，危险项设 `variant=\"destructive\"`，可勾选项用 `CheckboxItem`、`RadioItem`。\n- `Menubar.Shortcut` 显示的快捷键必须真正实现，并与系统和浏览器的常用快捷键不冲突。\n"
+			"rules": "# Menubar 设计规范\n\n- 用于桌面应用顶部常驻的“文件／编辑／视图”等分组命令。单个按钮的操作菜单用 Dropdown Menu，直接跳转的页面链接用 Navigation Menu。\n- 顶部带少量分组菜单时可用 `appearance=\"navigation\"`。触发器高 32 px、横向留白 12 px，弹层圆角 14 px、边线 1 px。深色取样来自 Linear 公开页顶部导航，浅色及内侧焦点使用 Valar token。\n- 菜单栏在窄屏下不会自动折叠；移动端改用 Dropdown Menu 或 Sheet 提供同样的操作。\n- 顶部导航外观允许按行换行，弹层保留视口边距。长菜单组需要限制高度时，使用浮动 Scroll Area。\n- 菜单项写法与 Dropdown Menu 相同：操作用 `onSelect`，危险项设 `variant=\"destructive\"`，可勾选项用 `CheckboxItem`、`RadioItem`。\n- `Menubar.Shortcut` 显示的快捷键必须真正实现，并与系统和浏览器的常用快捷键不冲突。\n"
 		},
 		{
 			"name": "message",
@@ -2199,7 +2222,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/message",
 			"install": "pnpm exec valar-svelte add message",
 			"markdown": "# Message 消息\n\n对话中的一条消息行，负责头像、对齐、头部和底部。\n\n- 分类：展示\n- 关键词：消息、message、聊天、chat、对话、AI 回复\n- 安装：`pnpm exec valar-svelte add message`\n\n## 何时使用\n\n- 对话中的一条消息，带头像、发送者、时间和操作\n- Message.Group 叠放同一发送者的连续消息\n\n## 何时不用\n\n- 只需要气泡外观：改用 `bubble`\n- agent 的推理与工具调用步骤：改用 `trace`\n- 系统提示与分隔：改用 `marker`\n\n## 无障碍\n\n- Message.Footer 中只有图标的操作按钮要加 aria-label\n- 进行中的状态用 marker 并设 role=status\n\n## 响应式\n\n- align=end 让自己的消息排在另一侧，头像随之移动\n\n## 相关组件\n\n- `bubble`\n- `message-scroller`\n- `marker`\n",
-			"rules": "# Message 设计规范\n\n- Message 负责一条消息的整行布局：头像、对齐、发送者和元信息；带框的消息正文用 Bubble，代理执行的步骤用 Trace，状态和分隔用 Marker。\n- 自己发送的消息设 `align=\"end\"`；同一发送者连续的消息放进 `Message.Group`，前几条放空的 `Message.Avatar` 保持对齐。\n- 发送者名称放 `Message.Header`，发送状态、时间等放 `Message.Footer`；Footer 里只有图标的操作按钮都要有 `aria-label`（检查规则 `valar/icon-button-label`）。\n- 进行中的消息用 `<Marker.Root role=\"status\">` 表达状态，读屏器才会播报。\n"
+			"rules": "# Message 设计规范\n\n- Message 负责一条消息的整行布局：头像、对齐、发送者和元信息；带框的消息正文用 Bubble，代理执行的步骤用 Trace，状态和分隔用 Marker。\n- 自己发送的消息设 `align=\"end\"`；同一发送者连续的消息放进 `Message.Group`，前几条放空的 `Message.Avatar` 保持对齐。\n- 发送者名称放 `Message.Header`，发送状态、时间等放 `Message.Footer`；Footer 里只有图标的操作按钮都要有 `aria-label`（检查规则 `valar/icon-button-label`）。\n- 进行中的消息用 `<Marker.Root role=\"status\">` 表达状态，读屏器才会播报。\n- Agent 消息行使用 `appearance=\"agent\"`。正文基准 15 px／24 px。用户气泡靠末端，助手回复使用透明气泡，已完成回复的复制按钮放在底部，图标按钮为 24 × 24 px。\n"
 		},
 		{
 			"name": "message-scroller",
@@ -2208,6 +2231,9 @@
 			"description": "聊天记录滚动容器：跟随流式回复、加载历史不跳动、可跳转到任意消息。",
 			"categories": [
 				"展示"
+			],
+			"registryDependencies": [
+				"scroll-area"
 			],
 			"meta": {
 				"valar": {
@@ -2247,7 +2273,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/message-scroller",
 			"install": "pnpm exec valar-svelte add message-scroller",
 			"markdown": "# Message Scroller 消息滚动区\n\n聊天记录滚动容器：跟随流式回复、加载历史不跳动、可跳转到任意消息。\n\n- 分类：展示\n- 关键词：消息滚动、message scroller、聊天记录、chat scroll、流式、transcript\n- 安装：`pnpm exec valar-svelte add message-scroller`\n\n## 何时使用\n\n- 聊天记录：新回合锚定、跟随流式回复、加载更早消息时保持位置\n- 打开保存的会话时定位到合适位置\n\n## 何时不用\n\n- 普通内容的滚动区域：改用 `scroll-area`\n\n## 无障碍\n\n- Viewport 默认 role=region、aria-label=消息、可聚焦；其他语言要改 aria-label\n- Content 为 role=log，新行会被朗读；流式输出时可传 aria-busy\n- MessageScroller.Button 无内容可滚时设为 inert，不占焦点\n\n## 响应式\n\n- 填满父元素，必须放在有确定高度的容器内\n\n## 相关组件\n\n- `message`\n- `scroll-area`\n- `marker`\n",
-			"rules": "# Message Scroller 设计规范\n\n- 结构为 `MessageScroller.Provider` > `MessageScroller.Root` > `MessageScroller.Viewport` > `MessageScroller.Content`，`MessageScroller.Button` 放在 Root 内；不要自己写聊天滚动逻辑。\n- 它会填满父元素：放在高度受限的容器中（如 `flex h-screen flex-col` 里设 `flex-1`），否则无法滚动。\n- `MessageScroller.Content` 的每个直接子元素都包一层 `MessageScroller.Item`，并设稳定的 `messageId`（消息 id，不要用数组下标）。\n- 用 `scrollAnchor` 标记开启新一轮对话的行（通常是用户的消息），新一轮会停在视口上方并保留上一轮的一部分；输入提示、加载更多等行不要设为锚点。\n- 不要自动滚到底部打断阅读；跳到指定消息用 `useMessageScroller` 提供的方法。\n"
+			"rules": "# Message Scroller 设计规范\n\n- 结构为 `MessageScroller.Provider` > `MessageScroller.Root` > `MessageScroller.Viewport` > `MessageScroller.Content`，`MessageScroller.Button` 放在 Root 内；不要自己写聊天滚动逻辑。\n- 它会填满父元素：放在高度受限的容器中（如 `flex h-screen flex-col` 里设 `flex-1`），否则无法滚动。\n- `MessageScroller.Content` 的每个直接子元素都包一层 `MessageScroller.Item`，并设稳定的 `messageId`（消息 id，不要用数组下标）。\n- 用 `scrollAnchor` 标记开启新一轮对话的行（通常是用户的消息），新一轮会停在视口上方并保留上一轮的一部分；输入提示、加载更多等行不要设为锚点。\n- 不要自动滚到底部打断阅读；跳到指定消息用 `useMessageScroller` 提供的方法。\n- 默认视口复用悬浮 Scroll Area。只有内容溢出时才在悬停显示滑块，出现和消失时内容宽度一致。\n- 回看 Agent 记录时，末尾按钮设 `appearance=\"latest\"`，高度 28 px，离滚动框底部 12 px。跳到末尾后隐藏，键盘触发时焦点回滚动视口。减少动态效果时直接到达末尾。\n"
 		},
 		{
 			"name": "native-select",
@@ -2268,7 +2294,8 @@
 					],
 					"whenToUse": [
 						"需要浏览器原生行为：移动端系统选择器、更好的性能",
-						"选项可用 NativeSelect.OptGroup 分组"
+						"选项可用 NativeSelect.OptGroup 分组",
+						"联系表单使用铺满一行的标准单选字段"
 					],
 					"whenNotToUse": [
 						{
@@ -2301,14 +2328,14 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/native-select",
 			"install": "pnpm exec valar-svelte add native-select",
-			"markdown": "# Native Select 原生下拉选择\n\n带统一样式的原生 HTML select，使用浏览器自带的下拉行为。\n\n- 分类：表单\n- 关键词：原生下拉、native select、select、下拉框、optgroup\n- 安装：`pnpm exec valar-svelte add native-select`\n\n## 何时使用\n\n- 需要浏览器原生行为：移动端系统选择器、更好的性能\n- 选项可用 NativeSelect.OptGroup 分组\n\n## 何时不用\n\n- 需要自定义选项外观、动画或复杂交互：改用 `select`\n- 选项 2–5 个且需要一眼看全：改用 `radio-group`\n- 需要搜索大量选项：改用 `command`\n\n## 无障碍\n\n- 原生 select 自带键盘和读屏支持\n- 用 Field 提供可见标签；校验错误用 aria-invalid\n\n## 响应式\n\n- 移动端使用系统原生选择器\n- 窄屏下占满容器宽度\n\n## 相关组件\n\n- `select`\n- `field`\n- `radio-group`\n",
-			"rules": "# Native Select 设计规范\n\n- 用于需要浏览器原生行为的场景：移动端系统选择器、无 JavaScript 的表单、很长的简单列表。需要自定义选项样式或分组标题时用 Select。\n- `NativeSelect.Root` 设 `id` 并用 `Field.Label for={id}` 关联，或提供 `aria-label`（检查规则 `valar/input-label`）；错误状态用 `aria-invalid=\"true\"`（检查规则 `valar/invalid-via-aria`）。\n- 选项用 `NativeSelect.Option`，分组用 `NativeSelect.OptGroup`；没有默认值时第一项写成 `value=\"\"` 的提示项。\n- 尺寸用 `size` 属性（`sm`、`default`）；不要再写原生 `<select>`（检查规则 `valar/use-form-component`）。\n"
+			"markdown": "# Native Select 原生下拉选择\n\n带统一样式的原生 HTML select，使用浏览器自带的下拉行为。\n\n- 分类：表单\n- 关键词：原生下拉、native select、select、下拉框、optgroup\n- 安装：`pnpm exec valar-svelte add native-select`\n\n## 何时使用\n\n- 需要浏览器原生行为：移动端系统选择器、更好的性能\n- 选项可用 NativeSelect.OptGroup 分组\n- 联系表单使用铺满一行的标准单选字段\n\n## 何时不用\n\n- 需要自定义选项外观、动画或复杂交互：改用 `select`\n- 选项 2–5 个且需要一眼看全：改用 `radio-group`\n- 需要搜索大量选项：改用 `command`\n\n## 无障碍\n\n- 原生 select 自带键盘和读屏支持\n- 用 Field 提供可见标签；校验错误用 aria-invalid\n\n## 响应式\n\n- 移动端使用系统原生选择器\n- 窄屏下占满容器宽度\n\n## 相关组件\n\n- `select`\n- `field`\n- `radio-group`\n",
+			"rules": "# Native Select 设计规范\n\n- 用于需要浏览器原生行为的场景：移动端系统选择器、无 JavaScript 的表单、很长的简单列表。需要自定义选项样式或分组标题时用 Select。\n- `NativeSelect.Root` 设 `id` 并用 `Field.Label for={id}` 关联，或提供 `aria-label`（检查规则 `valar/input-label`）；错误状态用 `aria-invalid=\"true\"`（检查规则 `valar/invalid-via-aria`）。\n- 选项用 `NativeSelect.Option`，分组用 `NativeSelect.OptGroup`；没有默认值时第一项写成 `value=\"\"` 的提示项。\n- 尺寸用 `size` 属性（`sm`、`default`）；不要再写原生 `<select>`（检查规则 `valar/use-form-component`）。\n\n## 联系表单\n\n- `appearance=\"contact\"` 取样于 Linear 联系销售表单的公司规模。闭合控件保持 40 px 高、8 px 圆角，铺满所在行。起始留白 10 px，双箭头 16 px、距末端 10 px，文字为图标另留空间。\n- 窄屏文字 16 px／24 px 行高，宽屏 14 px／21 px 行高，均为 400 字重。深色沿用采样颜色，浅色复用 Valar 语义颜色。键盘聚焦使用内侧描边。\n- 浏览器继续负责选项列表、键盘、系统弹窗和表单语义。使用 `dir` 或从外层继承方向时，图标和文字留白随方向交换。\n"
 		},
 		{
 			"name": "navigation-menu",
 			"type": "registry:ui",
 			"title": "Navigation Menu 导航菜单",
-			"description": "网站顶部的导航链接，可展开为带说明的分组面板。",
+			"description": "网站导航和项目子路由链接，支持分组面板和横向悬浮滚动。",
 			"categories": [
 				"导航"
 			],
@@ -2322,7 +2349,8 @@
 						"站点导航"
 					],
 					"whenToUse": [
-						"网站顶部导航，部分入口展开为分组链接面板"
+						"网站顶部导航，部分入口展开为分组链接面板",
+						"项目视图之间切换路由"
 					],
 					"whenNotToUse": [
 						{
@@ -2344,7 +2372,7 @@
 					],
 					"responsive": [
 						"内容面板在 md 及以上绝对定位，窄屏占满宽度",
-						"移动端通常改用 sheet 或 drawer 承载导航"
+						"项目链接在窄容器中使用悬浮 Scroll Area，站点主导航可用 Sheet 或 Drawer"
 					],
 					"related": [
 						"sidebar",
@@ -2355,8 +2383,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/navigation-menu",
 			"install": "pnpm exec valar-svelte add navigation-menu",
-			"markdown": "# Navigation Menu 导航菜单\n\n网站顶部的导航链接，可展开为带说明的分组面板。\n\n- 分类：导航\n- 关键词：导航菜单、navigation menu、顶部导航、mega menu、站点导航\n- 安装：`pnpm exec valar-svelte add navigation-menu`\n\n## 何时使用\n\n- 网站顶部导航，部分入口展开为分组链接面板\n\n## 何时不用\n\n- 应用内的侧边导航：改用 `sidebar`\n- 执行命令的菜单：改用 `menubar`\n- 同一页面内切换视图：改用 `tabs`\n\n## 无障碍\n\n- 保留 Bits UI 的键盘操作（方向键、回车、Esc）\n- 用 NavigationMenu.Link 的 href 渲染真实链接；普通链接可用 navigationMenuTriggerStyle() 统一外观\n\n## 响应式\n\n- 内容面板在 md 及以上绝对定位，窄屏占满宽度\n- 移动端通常改用 sheet 或 drawer 承载导航\n\n## 相关组件\n\n- `sidebar`\n- `breadcrumb`\n- `menubar`\n",
-			"rules": "# Navigation Menu 设计规范\n\n- 只用于网站的主导航（带下拉面板的顶部导航）；页面内的操作菜单用 Dropdown Menu，应用式菜单栏用 Menubar。\n- 每个入口都是 `NavigationMenu.Link`（设 `href`）；有子菜单的项用 `NavigationMenu.Trigger` + `NavigationMenu.Content`，Trigger 本身不跳转，子菜单中要包含该栏目的入口链接。\n- 当前页面的链接设 `active`（会带 `aria-current=\"page\"`），不要只改颜色。\n- 窄屏下不要强行横排：移动端改用 Sheet 或 Drawer 承载同样的链接。\n- 下拉面板默认渲染在共享的 viewport 中（`viewport`，默认开启）；不需要时设 `viewport={false}`，不要自己写定位。\n"
+			"markdown": "# Navigation Menu 导航菜单\n\n网站导航和项目子路由链接，支持分组面板和横向悬浮滚动。\n\n- 分类：导航\n- 关键词：导航菜单、navigation menu、顶部导航、mega menu、站点导航\n- 安装：`pnpm exec valar-svelte add navigation-menu`\n\n## 何时使用\n\n- 网站顶部导航，部分入口展开为分组链接面板\n- 项目视图之间切换路由\n\n## 何时不用\n\n- 应用内的侧边导航：改用 `sidebar`\n- 执行命令的菜单：改用 `menubar`\n- 同一页面内切换视图：改用 `tabs`\n\n## 无障碍\n\n- 保留 Bits UI 的键盘操作（方向键、回车、Esc）\n- 用 NavigationMenu.Link 的 href 渲染真实链接；普通链接可用 navigationMenuTriggerStyle() 统一外观\n\n## 响应式\n\n- 内容面板在 md 及以上绝对定位，窄屏占满宽度\n- 项目链接在窄容器中使用悬浮 Scroll Area，站点主导航可用 Sheet 或 Drawer\n\n## 相关组件\n\n- `sidebar`\n- `breadcrumb`\n- `menubar`\n",
+			"rules": "# Navigation Menu 设计规范\n\n- 用于网站主导航或跨路由的项目页导航。页面内的操作菜单用 Dropdown Menu，应用式菜单栏用 Menubar。\n- 每个入口都是 `NavigationMenu.Link`（设 `href`）；有子菜单的项用 `NavigationMenu.Trigger` + `NavigationMenu.Content`，Trigger 本身不跳转，子菜单中要包含该栏目的入口链接。\n- 当前页面的链接设 `active`（会带 `aria-current=\"page\"`），不要只改颜色。\n- 窄屏下不要强行横排：移动端改用 Sheet 或 Drawer 承载同样的链接。\n- 下拉面板默认渲染在共享的 viewport 中（`viewport`，默认开启）；不需要时设 `viewport={false}`，不要自己写定位。\n- 项目子路由用 `appearance=\"project\"`，链接为 28 px 胶囊，相隔 4 px。短容器通过悬浮 Scroll Area 露出后续链接，导航中的 `scrollLabel` 指定滚动视口名称。用常规外观组织需要下拉面板的导航。\n"
 		},
 		{
 			"name": "number-field",
@@ -2379,7 +2407,8 @@
 					],
 					"whenToUse": [
 						"输入数量、金额、百分比等可步进的数值",
-						"需要按地区格式化显示（formatOptions），提交时仍是纯数值"
+						"需要按地区格式化显示（formatOptions），提交时仍是纯数值",
+						"输入带美元前缀、实时千位分组的整美元上限"
 					],
 					"whenNotToUse": [
 						{
@@ -2416,14 +2445,14 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/number-field",
 			"install": "pnpm exec valar-svelte add number-field",
-			"markdown": "# Number Field 数字输入\n\n可编辑、可步进的本地化数值输入，支持原生表单提交。\n\n- 分类：表单\n- 关键词：数字输入、number field、数量、步进、stepper input、金额、百分比\n- 安装：`pnpm exec valar-svelte add number-field`\n\n## 何时使用\n\n- 输入数量、金额、百分比等可步进的数值\n- 需要按地区格式化显示（formatOptions），提交时仍是纯数值\n\n## 何时不用\n\n- 已知范围、希望拖动调整：改用 `slider-field`\n- 验证码等逐位输入的数字：改用 `input-otp`\n- 电话号码、编号等不做运算的数字串：改用 `input`\n- 任意精度的金融运算（组件使用 JavaScript number）\n\n## 无障碍\n\n- 上下键步进，PageUp／PageDown 十格，Home／End 到最小／最大值\n- 加减按钮名称用 decrementLabel、incrementLabel 本地化\n- 无效输入设置 aria-invalid 并阻止提交，不静默恢复旧值\n\n## 响应式\n\n- 不响应滚轮和长按自动重复，避免滚动页面时误改数值\n- 加减按钮是原生按钮，支持触摸点击\n\n## 相关组件\n\n- `slider-field`\n- `input`\n- `field`\n",
-			"rules": "# Number Field 设计规范\n\n- 用于需要精确输入的数字（数量、金额、端口号），代替 `<Input type=\"number\">`；有明确范围且适合拖动时用 Slider Field。\n- 设 `id` 并用 `Field.Label for={id}` 关联可见标签（检查规则 `valar/input-label`）。\n- 按需设 `min`、`max`、`step`；超出范围或无法解析的输入会自动标为无效，不要再自己用颜色标错（检查规则 `valar/invalid-via-aria`）。\n- 加减按钮名称（`decrementLabel`、`incrementLabel`）和 `invalidMessage` 默认是中文，其他语言的界面传对应文案；数字格式默认 `locale=\"zh-CN\"`，其他语言的界面传对应 `locale`。\n- 金额、百分比、单位用 `formatOptions`（`Intl.NumberFormatOptions`）格式化，不要把单位拼进值里；值始终是数字或 `undefined`（输入框为空）。\n- 放在表单中提交时设 `name`，提交的是未格式化的数字。\n"
+			"markdown": "# Number Field 数字输入\n\n可编辑、可步进的本地化数值输入，支持原生表单提交。\n\n- 分类：表单\n- 关键词：数字输入、number field、数量、步进、stepper input、金额、百分比\n- 安装：`pnpm exec valar-svelte add number-field`\n\n## 何时使用\n\n- 输入数量、金额、百分比等可步进的数值\n- 需要按地区格式化显示（formatOptions），提交时仍是纯数值\n- 输入带美元前缀、实时千位分组的整美元上限\n\n## 何时不用\n\n- 已知范围、希望拖动调整：改用 `slider-field`\n- 验证码等逐位输入的数字：改用 `input-otp`\n- 电话号码、编号等不做运算的数字串：改用 `input`\n- 任意精度的金融运算（组件使用 JavaScript number）\n\n## 无障碍\n\n- 上下键步进，PageUp／PageDown 十格，Home／End 到最小／最大值\n- 加减按钮名称用 decrementLabel、incrementLabel 本地化\n- 无效输入设置 aria-invalid 并阻止提交，不静默恢复旧值\n\n## 响应式\n\n- 不响应滚轮和长按自动重复，避免滚动页面时误改数值\n- 加减按钮是原生按钮，支持触摸点击\n\n## 相关组件\n\n- `slider-field`\n- `input`\n- `field`\n",
+			"rules": "# Number Field 设计规范\n\n- 用于需要精确输入的数字（数量、金额、端口号），代替 `<Input type=\"number\">`；有明确范围且适合拖动时用 Slider Field。\n- 设 `id` 并用 `Field.Label for={id}` 关联可见标签（检查规则 `valar/input-label`）。\n- 按需设 `min`、`max`、`step`；超出范围或无法解析的输入会自动标为无效，不要再自己用颜色标错（检查规则 `valar/invalid-via-aria`）。\n- 加减按钮名称（`decrementLabel`、`incrementLabel`）和 `invalidMessage` 默认是中文，其他语言的界面传对应文案；数字格式默认 `locale=\"zh-CN\"`，其他语言的界面传对应 `locale`。\n- 金额、百分比、单位用 `formatOptions`（`Intl.NumberFormatOptions`）格式化，不要把单位拼进值里；值始终是数字或 `undefined`（输入框为空）。\n- 放在表单中提交时设 `name`，提交的是未格式化的数字。\n\n## 整美元金额\n\n- 用 `appearance=\"amount\"` 表达 Linear Settings → Usage & limits → Spend limits 的整美元上限。28 px 高、最大宽 96 px，8 px 圆角，透明底色，左右 10 px，前缀和数字间隔 4 px。金额和美元符号均为 12 px／450。\n- 前缀为装饰，给表单标签写明币种。数字按美式千位分组。空白对应 `undefined`，实际输入和提交都不含美元符号。组件不定义业务金额上限，调用方传入的范围和必填规则继续生效。\n- 作为单个文本框参与 Tab 顺序，手机唤起数字键盘。上下箭头沿用文本框行为。聚焦仅调整边线和内描边，窄屏宽度由外层限制。\n"
 		},
 		{
 			"name": "pagination",
 			"type": "registry:ui",
 			"title": "Pagination 分页",
-			"description": "页码与上一页、下一页导航。",
+			"description": "页码导航和带结果计数的前后翻页。",
 			"categories": [
 				"导航"
 			],
@@ -2437,7 +2466,8 @@
 						"下一页"
 					],
 					"whenToUse": [
-						"把长列表或表格分成多页浏览"
+						"把长列表或表格分成多页浏览",
+						"在用量记录或表格结果显示当前范围与总数"
 					],
 					"whenNotToUse": [
 						{
@@ -2455,11 +2485,13 @@
 					],
 					"accessibility": [
 						"当前页带 aria-current=page",
-						"上一页／下一页默认中文文字和 aria-label，其他语言传 label 和 aria-label 覆盖"
+						"上一页／下一页默认中文文字和 aria-label，其他语言传 label 和 aria-label 覆盖",
+						"结果计数随翻页播报，零结果和单页禁用前后按钮"
 					],
 					"responsive": [
 						"上一页／下一页的文字在 sm 以下隐藏，只留图标",
-						"窄屏减少显示的页码数"
+						"窄屏减少显示的页码数",
+						"紧凑结果栏和相邻操作可换行"
 					],
 					"related": [
 						"table",
@@ -2470,8 +2502,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/pagination",
 			"install": "pnpm exec valar-svelte add pagination",
-			"markdown": "# Pagination 分页\n\n页码与上一页、下一页导航。\n\n- 分类：导航\n- 关键词：分页、pagination、页码、上一页、下一页\n- 安装：`pnpm exec valar-svelte add pagination`\n\n## 何时使用\n\n- 把长列表或表格分成多页浏览\n\n## 何时不用\n\n- 显示层级位置：改用 `breadcrumb`\n- 有顺序的流程步骤：改用 `stepper`\n- 少量内容的轮换浏览：改用 `carousel`\n\n## 无障碍\n\n- 当前页带 aria-current=page\n- 上一页／下一页默认中文文字和 aria-label，其他语言传 label 和 aria-label 覆盖\n\n## 响应式\n\n- 上一页／下一页的文字在 sm 以下隐藏，只留图标\n- 窄屏减少显示的页码数\n\n## 相关组件\n\n- `table`\n- `breadcrumb`\n- `button`\n",
-			"rules": "# Pagination 设计规范\n\n- 用 `Pagination.Root` 的 `count`（总条数）、`perPage` 和 `bind:page` 驱动页码，`siblingCount` 控制当前页两侧显示几页；不要自己计算页码列表。\n- 页码用 `Pagination.Link`（当前页设 `isActive`，带 `aria-current=\"page\"`），前后翻页用 `Pagination.Previous`、`Pagination.Next`，省略用 `Pagination.Ellipsis`。\n- 默认文案是中文（导航名称“分页”，按钮“上一页”／“下一页”，省略号“更多页”）：其他语言给 Root 传 `aria-label`，给前后按钮传 `label` 和 `aria-label`，给省略号传 `label`。\n- 翻页后把焦点或滚动位置移回列表开头；页码需要出现在网址中时同步到查询参数，刷新后保持当前页。\n- 条目很少时不显示分页；“加载更多”的无限列表不要用 Pagination。\n"
+			"markdown": "# Pagination 分页\n\n页码导航和带结果计数的前后翻页。\n\n- 分类：导航\n- 关键词：分页、pagination、页码、上一页、下一页\n- 安装：`pnpm exec valar-svelte add pagination`\n\n## 何时使用\n\n- 把长列表或表格分成多页浏览\n- 在用量记录或表格结果显示当前范围与总数\n\n## 何时不用\n\n- 显示层级位置：改用 `breadcrumb`\n- 有顺序的流程步骤：改用 `stepper`\n- 少量内容的轮换浏览：改用 `carousel`\n\n## 无障碍\n\n- 当前页带 aria-current=page\n- 上一页／下一页默认中文文字和 aria-label，其他语言传 label 和 aria-label 覆盖\n- 结果计数随翻页播报，零结果和单页禁用前后按钮\n\n## 响应式\n\n- 上一页／下一页的文字在 sm 以下隐藏，只留图标\n- 窄屏减少显示的页码数\n- 紧凑结果栏和相邻操作可换行\n\n## 相关组件\n\n- `table`\n- `breadcrumb`\n- `button`\n",
+			"rules": "# Pagination 设计规范\n\n- 用 `Pagination.Root` 的 `count`（总条数）、`perPage` 和 `bind:page` 驱动页码，`siblingCount` 控制当前页两侧显示几页；不要自己计算页码列表。\n- 页码用 `Pagination.Link`（当前页设 `isActive`，带 `aria-current=\"page\"`），前后翻页用 `Pagination.Previous`、`Pagination.Next`，省略用 `Pagination.Ellipsis`。\n- 默认文案是中文（导航名称“分页”，按钮“上一页”／“下一页”，省略号“更多页”）：其他语言给 Root 传 `aria-label`，给前后按钮传 `label` 和 `aria-label`，给省略号传 `label`。\n- 用量或表格结果只需前后浏览时，使用 `Pagination.Results`。箭头各为 24 px，间隔 2 px，结果文字距离按钮组 8 px。结果区旁可放 28 px 的导出按钮，窄屏允许换行。\n- 通过 `formatResults` 本地化范围文字，通过 `previousLabel` 和 `nextLabel` 本地化图标按钮。零结果和单页禁用两端按钮；筛选或更换每页条数后重置页码。\n- 连续浏览时让焦点留在翻页按钮。到达边界时，`Pagination.Results` 将焦点交给仍可用的方向键；两端都不可用时回到具名的分页区域。页码需要出现在网址中时同步到查询参数，刷新后保持当前页。\n- 只用页码的分页在条目很少时可以隐藏；结果栏可以保留禁用的浏览键和计数，让零结果、单页及多页的结构一致。使用“加载更多”的无限列表采用其对应控件。\n"
 		},
 		{
 			"name": "popover",
@@ -2575,7 +2607,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/progress",
 			"install": "pnpm exec valar-svelte add progress",
 			"markdown": "# Progress 进度条\n\n显示任务的完成进度。\n\n- 分类：反馈\n- 关键词：进度条、progress、进度、完成度、上传进度\n- 安装：`pnpm exec valar-svelte add progress`\n\n## 何时使用\n\n- 显示可度量的任务完成度，如上传、导入\n\n## 何时不用\n\n- 无法估计进度的等待：改用 `spinner`\n- 内容加载占位：改用 `skeleton`\n- 用户调整数值：改用 `slider`\n\n## 无障碍\n\n- 用 Field 提供标签或加 aria-label，让进度条有名称\n- 完成度要能用文字读到，如“已上传 60%”\n\n## 响应式\n\n- 占满容器宽度\n\n## 相关组件\n\n- `spinner`\n- `skeleton`\n- `slider`\n",
-			"rules": "# Progress 设计规范\n\n- 用于上传、导入等异步任务。已知范围时用 `value`、`min` 和 `max` 表达进度。任务已经开始且总量仍未知时传 `value={null}`。\n- 通过 `aria-label` 提供名称，或用 `aria-labelledby` 指向旁边的说明文字。\n- 旁边用文字显示百分比或“3／10”等具体进度，不要只靠条的长度。\n- 高度和圆角跟随组件样式，不要用 `class` 改。\n- Projects 列表的只读百分比使用 `appearance=\"project\"`。\n"
+			"rules": "# Progress 设计规范\n\n- 用于上传、导入等异步任务。已知范围时用 `value`、`min` 和 `max` 表达进度。任务已经开始且总量仍未知时传 `value={null}`。\n- 数值超出有效范围时按端点显示；无有效范围或收到非有限数值时显示未知进度，省略 `aria-valuenow`。\n- 通过 `aria-label` 提供名称，或用 `aria-labelledby` 指向旁边的说明文字。\n- 旁边用文字显示百分比或“3／10”等具体进度，不要只靠条的长度。\n- 普通横条使用 4 px 高的中性轨道和主题强调色，保持满值和未知状态的形状。未知进度在开启减少动态效果时保留静态短条。\n- Projects 列表的只读百分比使用 `appearance=\"project\"`。\n"
 		},
 		{
 			"name": "questionnaire",
@@ -2597,7 +2629,8 @@
 					],
 					"whenToUse": [
 						"逐题作答的问卷：单选、多选、自由回答、可跳过",
-						"需要条件题、校验、进度、恢复作答"
+						"需要条件题、校验、进度、恢复作答",
+						"Agent 对话内选中即提交的单选问题"
 					],
 					"whenNotToUse": [
 						{
@@ -2630,8 +2663,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/questionnaire",
 			"install": "pnpm exec valar-svelte add questionnaire",
-			"markdown": "# Questionnaire 问卷\n\n逐题作答的多步问卷，支持单选、多选、自由回答和跳过。\n\n- 分类：表单\n- 关键词：问卷、questionnaire、调查、survey、多步、答题\n- 安装：`pnpm exec valar-svelte add questionnaire`\n\n## 何时使用\n\n- 逐题作答的问卷：单选、多选、自由回答、可跳过\n- 需要条件题、校验、进度、恢复作答\n\n## 何时不用\n\n- 一般的多步表单流程：改用 `stepper`\n- 单页表单：改用 `field`\n- 只有一个选择题：改用 `radio-group`\n\n## 无障碍\n\n- Questionnaire.Item 是 fieldset，Title 是 legend；错误与 aria-invalid 关联到当前题\n- 切换后焦点到新题，校验失败聚焦答案控件\n- Questionnaire.Input 必须有可访问名称，placeholder 不算标签\n\n## 响应式\n\n- 可放进 card 或 dialog 中使用\n\n## 相关组件\n\n- `stepper`\n- `radio-group`\n- `progress`\n",
-			"rules": "# Questionnaire 设计规范\n\n- 用于一次只显示一题、按顺序回答的问卷；结构为 `Questionnaire.Root` > `Questionnaire.Progress`、`Questionnaire.Item`（`Title`、`Description`、`Choices`／`Input`、`Error`）和 `Questionnaire.Actions`（`Previous`、`Skip`、`Next`、`Submit`）。\n- 题目、答案状态、校验、进度和导航都交给 Questionnaire；关闭、取消、保存进度、提交到服务器和题目跳转逻辑由外层页面、卡片或对话框负责。\n- 每个 `Questionnaire.Input` 都要有名称：可见标签、`aria-label` 或 `aria-labelledby`，`placeholder` 不能代替。\n- 固定选项用 `Questionnaire.Choice`（多选题在 `Questionnaire.Item` 上设 `multiple`），不要自己写单选、复选框；可以跳过的题用 `Questionnaire.Skip` 明确跳过。\n- 导航按钮的样式用 `size`、`variant` 属性；需要服务端渲染时传 `items`。\n- 进度文字、进度的读屏名称和默认错误提示是中文（“第 1 题，共 3 题”等）；其他语言给 `Questionnaire.Root` 传 `messages`。\n"
+			"markdown": "# Questionnaire 问卷\n\n逐题作答的多步问卷，支持单选、多选、自由回答和跳过。\n\n- 分类：表单\n- 关键词：问卷、questionnaire、调查、survey、多步、答题\n- 安装：`pnpm exec valar-svelte add questionnaire`\n\n## 何时使用\n\n- 逐题作答的问卷：单选、多选、自由回答、可跳过\n- 需要条件题、校验、进度、恢复作答\n- Agent 对话内选中即提交的单选问题\n\n## 何时不用\n\n- 一般的多步表单流程：改用 `stepper`\n- 单页表单：改用 `field`\n- 只有一个选择题：改用 `radio-group`\n\n## 无障碍\n\n- Questionnaire.Item 是 fieldset，Title 是 legend；错误与 aria-invalid 关联到当前题\n- 切换后焦点到新题，校验失败聚焦答案控件\n- Questionnaire.Input 必须有可访问名称，placeholder 不算标签\n\n## 响应式\n\n- 可放进 card 或 dialog 中使用\n\n## 相关组件\n\n- `stepper`\n- `radio-group`\n- `progress`\n",
+			"rules": "# Questionnaire 设计规范\n\n- 用于一次只显示一题、按顺序回答的问卷；结构为 `Questionnaire.Root` > `Questionnaire.Progress`、`Questionnaire.Item`（`Title`、`Description`、`Choices`／`Input`、`Error`）和 `Questionnaire.Actions`（`Previous`、`Skip`、`Next`、`Submit`）。\n- 题目、答案状态、校验、进度和导航都交给 Questionnaire；关闭、取消、保存进度、提交到服务器和题目跳转逻辑由外层页面、卡片或对话框负责。\n- 每个 `Questionnaire.Input` 都要有名称：可见标签、`aria-label` 或 `aria-labelledby`，`placeholder` 不能代替。\n- 固定选项用 `Questionnaire.Choice`（多选题在 `Questionnaire.Item` 上设 `multiple`），不要自己写单选、复选框；可以跳过的题用 `Questionnaire.Skip` 明确跳过。\n- 导航按钮的样式用 `size`、`variant` 属性；需要服务端渲染时传 `items`。\n- 进度文字、进度的读屏名称和默认错误提示是中文（“第 1 题，共 3 题”等）；其他语言给 `Questionnaire.Root` 传 `messages`。\n\n## Agent 提问\n\n- 即时提交的单选用 `Questionnaire.AgentQuestion`。用 `question` 命名问题，传入有稳定 `value` 的 `choices`。需要显示必答提示时设置 `required` 和对应语言的 `requiredLabel`。在宿主中通过 `onAnswer` 进入下一题或对话输入框，通过 `bind:answer` 保存已提交答案。\n- 选项为 32 px 胶囊，间距 6 px，容器两端各留 10 px。标题 15 px／450，选项 13 px／500。窄屏换行，键盘聚焦用内侧描边。\n- 提交后保留已选项和对勾，其余答案收起。已选项 `aria-pressed=\"true\"` 且禁用。编辑答案、多选、返回检查和异常处理使用标准表单题及其动作。\n"
 		},
 		{
 			"name": "radio-group",
@@ -2667,11 +2700,11 @@
 						}
 					],
 					"accessibility": [
-						"整组有 legend 或 aria-label",
-						"方向键在选项间移动"
+						"整组通过 aria-labelledby 引用 legend 或设置 aria-label",
+						"方向键在选项间移动，使用 aria-describedby 关联说明和错误"
 					],
 					"responsive": [
-						"窄屏下纵向排列"
+						"窄屏优先纵向排列，必须横排的长组使用悬浮 Scroll Area"
 					],
 					"related": [
 						"select",
@@ -2682,8 +2715,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/radio-group",
 			"install": "pnpm exec valar-svelte add radio-group",
-			"markdown": "# Radio Group 单选组\n\n从少量互斥选项中选一个，所有选项同时可见。\n\n- 分类：表单\n- 关键词：单选、radio、单选组、选项\n- 安装：`pnpm exec valar-svelte add radio-group`\n\n## 何时使用\n\n- 2–5 个互斥选项，需要用户比较后选择\n\n## 何时不用\n\n- 选项很多：改用 `select`\n- 可以多选：改用 `checkbox`\n- 切换视图或模式：改用 `tabs`\n\n## 无障碍\n\n- 整组有 legend 或 aria-label\n- 方向键在选项间移动\n\n## 响应式\n\n- 窄屏下纵向排列\n\n## 相关组件\n\n- `select`\n- `checkbox`\n- `toggle-group`\n",
-			"rules": "# Radio Group 设计规范\n\n- 用于 2–5 个互斥选项且需要一眼看全的场景；选项更多时用 Select，可以多选用 Checkbox，切换视图或模式用 Tabs 或 Toggle Group。\n- 整组要有名称：放在 `Field.Set` 中并用 `Field.Legend` 写组名，或给 `RadioGroup.Root` 设 `aria-label`。\n- 每个 `RadioGroup.Item` 设 `id` 和 `value`，并用 `Field.Label for={id}` 关联可点击的标签（检查规则 `valar/input-label`）；每项放在 `<Field.Field orientation=\"horizontal\">` 中。\n- 用 `bind:value` 绑定选中值；需要默认选中时给出初始值，不要让必选组初始为空又不提示。\n- 方向用 `orientation` 属性；方向键在选项间移动，不要给每个选项单独加 Tab 停留。\n"
+			"markdown": "# Radio Group 单选组\n\n从少量互斥选项中选一个，所有选项同时可见。\n\n- 分类：表单\n- 关键词：单选、radio、单选组、选项\n- 安装：`pnpm exec valar-svelte add radio-group`\n\n## 何时使用\n\n- 2–5 个互斥选项，需要用户比较后选择\n\n## 何时不用\n\n- 选项很多：改用 `select`\n- 可以多选：改用 `checkbox`\n- 切换视图或模式：改用 `tabs`\n\n## 无障碍\n\n- 整组通过 aria-labelledby 引用 legend 或设置 aria-label\n- 方向键在选项间移动，使用 aria-describedby 关联说明和错误\n\n## 响应式\n\n- 窄屏优先纵向排列，必须横排的长组使用悬浮 Scroll Area\n\n## 相关组件\n\n- `select`\n- `checkbox`\n- `toggle-group`\n",
+			"rules": "# Radio Group 设计规范\n\n- 用于 2–5 个互斥选项且需要一眼看全的场景；选项更多时用 Select，可以多选用 Checkbox，切换视图或模式用 Tabs 或 Toggle Group。\n- 整组要有名称：用 `aria-labelledby` 指向 `Field.Legend`，或给 `RadioGroup.Root` 设 `aria-label`。\n- 每个 `RadioGroup.Item` 设 `id` 和 `value`，并用 `Field.Label for={id}` 关联可点击的标签（检查规则 `valar/input-label`）；每项放在 `<Field.Field orientation=\"horizontal\">` 中。\n- 用 `aria-describedby` 关联各选项的说明或错误。可点击卡片的名称引用标题，说明单独关联。示例或列表中重复挂载时用 `$props.id()` 生成每组的 ID 前缀。\n- 用 `bind:value` 绑定选中值；需要默认选中时给出初始值，不要让必选组初始为空又不提示。\n- 方向用 `orientation` 属性；方向键在选项间移动，不要给每个选项单独加 Tab 停留。保留横排且窄屏需要滚动时用悬浮 Scroll Area。\n- Valar 的默认圆形单选框直径 16 px，未选为透明底和 1 px 描边，选中后用主题强调色填充与 4 px 浅色圆点。键盘以 1 px 内描边提示焦点。\n- 类似 Jira 导入的连续设置选项可用 `appearance=\"settings\"`，组内行间距 16 px。13 px 标签放在控件右侧，相隔 12 px；允许长标签换行，控件保持 16 px。\n"
 		},
 		{
 			"name": "range-calendar",
@@ -2733,7 +2766,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/range-calendar",
 			"install": "pnpm exec valar-svelte add range-calendar",
 			"markdown": "# Range Calendar 日期范围\n\n在月历上选择开始和结束日期。\n\n- 分类：表单\n- 关键词：日期范围、range calendar、起止日期、date range、时间段\n- 安装：`pnpm exec valar-svelte add range-calendar`\n\n## 何时使用\n\n- 选择预订、报表等的起止日期\n\n## 何时不用\n\n- 只选一个日期：改用 `calendar`\n- 页面空间有限，点击后再弹出：改用 `popover`\n\n## 无障碍\n\n- 保留 Bits UI 的键盘操作（方向键移动日期、回车选择起止）\n- locale 默认 zh-CN，其他语言要设置 locale\n\n## 响应式\n\n- 显示多个月份时窄屏应减少月数\n- 用 --cell-size 控制格子大小，可按断点设置不同值\n\n## 相关组件\n\n- `calendar`\n- `popover`\n- `input`\n",
-			"rules": "# Range Calendar 设计规范\n\n- 只用于选择起止日期区间；选择单个或多个独立日期用 Calendar。\n- 值是 `{ start, end }`，两端都是 `@internationalized/date` 的日期对象；用 `bind:value` 绑定，处理时注意用户只选了起点（`end` 为空）的状态。\n- 默认 `locale=\"zh-CN\"`；其他语言的界面传对应 `locale`；需要周一开始时设 `weekStartsOn={1}`。\n- 可选范围用 `minValue`、`maxValue`，不可选的日期用 `isDateDisabled`；区间较长时用 `numberOfMonths={2}` 并排显示两个月。\n- 放在 Popover 中作为日期区间选择器时，触发按钮显示已选区间，未选完时提示“选择结束日期”。\n- `captionLayout=\"dropdown\"` 复用 Calendar 的 Valar Select，长列表在面板内滚动。月历内容宽度小于 275 px 时，年月选择器排在翻月按钮下方，留出 8 px 间距。日期仍与星期按七列对齐。用 `minValue`、`maxValue` 或 `years` 限定范围。\n- 使用样式自带的格子尺寸。需要调整时通过 `--cell-size` 显式设置。\n- 区间起止日期是实心主色底、反色数字，不要加会改文字颜色的悬停样式，否则鼠标停在上面会变成黑块。\n\n- 年月选择器与翻月箭头至少留 8 px。选择器所在月份列较窄时，箭头与年月分行。嵌入卡片时，为卡片提供受父容器约束的宽度，让日期和星期列一起缩小。\n"
+			"rules": "# Range Calendar 设计规范\n\n- 只用于选择起止日期区间；选择单个或多个独立日期用 Calendar。\n- 值是 `{ start, end }`，两端都是 `@internationalized/date` 的日期对象；用 `bind:value` 绑定，处理时注意用户只选了起点（`end` 为空）的状态。\n- 默认 `locale=\"zh-CN\"`；其他语言的界面传对应 `locale`；需要周一开始时设 `weekStartsOn={1}`。\n- 可选范围用 `minValue`、`maxValue`，不可选的日期用 `isDateDisabled`；区间较长时用 `numberOfMonths={2}` 并排显示两个月。\n- 放在 Popover 中作为日期区间选择器时，触发按钮显示已选区间，未选完时提示“选择结束日期”。\n- `captionLayout=\"dropdown\"` 复用 Calendar 的 Valar Select，长列表在面板内滚动。月历内容宽度小于 275 px 时，年月选择器排在翻月按钮下方，留出 8 px 间距。日期仍与星期按七列对齐。用 `minValue`、`maxValue` 或 `years` 限定范围。\n- 使用样式自带的格子尺寸。需要调整时通过 `--cell-size` 显式设置。\n- 区间起止日期是实心主色底、反色数字，不要加会改文字颜色的悬停样式，否则鼠标停在上面会变成黑块。\n\n- 年月选择器与翻月箭头至少留 8 px。选择器所在月份列较窄时，箭头与年月分行。嵌入卡片时，为卡片提供受父容器约束的宽度，让日期和星期列一起缩小。\n- 循环日期可用 `appearance=\"cycle\"`。日历日期使用 26 px 圆形，同周连续日期以浅深主题对应的中性色带连接，起止保持反色文字。两个完整月份需要 492 px 并排，循环日期示例根据可用宽度切换至一个月并保留翻月。固定展示多月时可在窄容器上下排列。用 `minValue` 与 `maxValue` 限制可选日期。\n"
 		},
 		{
 			"name": "resizable",
@@ -2782,7 +2815,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/resizable",
 			"install": "pnpm exec valar-svelte add resizable",
 			"markdown": "# Resizable 可调分栏\n\n可拖动调整大小的面板分栏，基于 PaneForge。\n\n- 分类：展示\n- 关键词：可调分栏、resizable、分栏、split pane、拖动调整\n- 安装：`pnpm exec valar-svelte add resizable`\n\n## 何时使用\n\n- 用户可拖动调整大小的分栏，如编辑器、三栏邮件\n\n## 何时不用\n\n- 应用的侧边导航：改用 `sidebar`\n- 固定比例的内容：改用 `aspect-ratio`\n\n## 无障碍\n\n- 分隔把手可键盘聚焦并用方向键调整\n- withHandle 显示可见把手，便于发现\n\n## 响应式\n\n- 窄屏不适合多栏拖动，改为单栏或 direction=vertical\n\n## 相关组件\n\n- `sidebar`\n- `scroll-area`\n- `separator`\n",
-			"rules": "# Resizable 设计规范\n\n- 结构为 `Resizable.PaneGroup`（`direction` 设 `horizontal` 或 `vertical`）> `Resizable.Pane` 和 `Resizable.Handle`；不要自己写拖拽调整宽度。\n- 每个 Pane 设 `defaultSize`，并用 `minSize` 保证内容不会被拖到不可用；可以收起的面板设 `collapsible`。\n- 需要让拖动结果在刷新后保留时，给 PaneGroup 设唯一的 `autoSaveId`。\n- 分隔条可以用键盘方向键调整，需要明显的拖拽提示时设 `withHandle`；窄屏下考虑改为上下堆叠或用 Tabs 切换。\n- 工作区的列表与详情使用 `Resizable.Handle appearance=\"workspace\"`，两侧 Pane 保留自身的布局边界。悬停和拖动显示 0.5 px 线，键盘聚焦显示 1 px 强调线。给分隔线添加说明其调整对象的 `aria-label`，左右分栏的分隔线设置 `aria-orientation=\"vertical\"`。\n"
+			"rules": "# Resizable 设计规范\n\n- 结构为 `Resizable.PaneGroup`（`direction` 设 `horizontal` 或 `vertical`）> `Resizable.Pane` 和 `Resizable.Handle`；不要自己写拖拽调整宽度。\n- 每个 Pane 设 `defaultSize`，并用 `minSize` 保证内容不会被拖到不可用；可以收起的面板设 `collapsible`。\n- 需要让拖动结果在刷新后保留时，给 PaneGroup 设唯一的 `autoSaveId`。\n- 分隔条可以用键盘方向键调整，需要明显的拖拽提示时设 `withHandle`；窄屏下考虑改为上下堆叠或用 Tabs 切换。\n- 工作区的列表与详情使用 `Resizable.Handle appearance=\"workspace\"`，两侧 Pane 保留自身的布局边界。悬停和拖动显示 0.5 px 线，键盘聚焦显示 1 px 强调线。为分隔线添加说明其调整对象的 `aria-label`，组件按布局轴设置垂直或水平的分隔线语义。锁定时设 `disabled`，分隔线会退出 Tab 顺序。\n"
 		},
 		{
 			"name": "ruler-slider",
@@ -3132,7 +3165,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/skeleton",
 			"install": "pnpm exec valar-svelte add skeleton",
 			"markdown": "# Skeleton 骨架屏\n\n内容加载时按最终布局显示的占位。\n\n- 分类：反馈\n- 关键词：骨架屏、skeleton、加载占位、loading、占位\n- 安装：`pnpm exec valar-svelte add skeleton`\n\n## 何时使用\n\n- 内容加载时按最终布局显示占位，减少布局跳动\n\n## 何时不用\n\n- 按钮或小区域的短暂加载：改用 `spinner`\n- 可度量的进度：改用 `progress`\n- 加载完但没有数据：改用 `empty`\n\n## 无障碍\n\n- 占位是装饰，在容器上用 aria-busy 或提供读屏可读的加载文字\n\n## 响应式\n\n- 占位尺寸与真实内容一致，各断点都要对应\n\n## 相关组件\n\n- `spinner`\n- `progress`\n- `empty`\n",
-			"rules": "# Skeleton 设计规范\n\n- 用于加载时占位，形状和尺寸尽量与真实内容一致（文字行、头像、卡片），避免加载完成后布局跳动。\n- 加载很快（几百毫秒内）时不要显示骨架屏；加载失败时替换为错误提示，不要一直显示 Skeleton。\n- Skeleton 对读屏器没有意义：给加载中的容器设 `aria-busy=\"true\"`，需要时另外放一段 `sr-only` 的“正在加载”文字。\n- 颜色和动画跟随组件样式，不要另设背景色。\n"
+			"rules": "# Skeleton 设计规范\n\n- 用于加载时占位，形状和尺寸尽量与真实内容一致（文字行、头像、卡片），避免加载完成后布局跳动。\n- 头像占位保留直径；同一行的文字占位随容器收缩，保留头像和文字之间的间距。\n- 加载很快（几百毫秒内）时不要显示骨架屏；加载失败时替换为错误提示，不要一直显示 Skeleton。\n- Skeleton 对读屏器没有意义：给加载中的容器设 `aria-busy=\"true\"`，需要时另外放一段 `sr-only` 的“正在加载”文字。\n- 颜色和动画跟随组件样式，不要另设背景色。\n- 筛选条件生成期间用 `appearance=\"filter\"`。占位高 24 px、圆角 8 px、间距 8 px，宽度由最终条件和可用空间决定。用 `delay` 指定毫秒级错峰。默认保留 1.2 秒入场和 2 秒循环，开启减少动态效果时立即显示静态占位。完成后在原位替换为条件，保留现有列表，并通过独立状态文字播报。\n"
 		},
 		{
 			"name": "slider",
@@ -3188,13 +3221,13 @@
 			"docs": "http://127.0.0.1:5186/docs/components/slider",
 			"install": "pnpm exec valar-svelte add slider",
 			"markdown": "# Slider 滑块\n\n在给定范围内拖动选择一个值或一个区间。\n\n- 分类：表单\n- 关键词：滑块、slider、范围、range、拖动\n- 安装：`pnpm exec valar-svelte add slider`\n\n## 何时使用\n\n- 在已知范围内粗略选择数值，如音量\n- 用 type=multiple 选择区间或多个值\n\n## 何时不用\n\n- 需要精确输入数值：改用 `slider-field`\n- 没有明确范围的数字：改用 `number-field`\n- 只展示完成度、不可调整：改用 `progress`\n\n## 无障碍\n\n- 用 aria-label 或 aria-labelledby 命名可聚焦的滑块把手；指向根元素 id 的 HTML label 不能命名内部把手\n- 多个把手用 thumbLabels 按值的顺序分别命名\n- 方向键调整数值\n\n## 响应式\n\n- 支持触摸拖动，窄屏下占满容器宽度\n- orientation=vertical 纵向显示，需要给出高度\n\n## 相关组件\n\n- `slider-field`\n- `number-field`\n- `progress`\n",
-			"rules": "# Slider 设计规范\n\n- 只适合粗略调整的连续值；需要看到或输入精确数值时用 Slider Field（滑块加数字输入框），没有明确范围的数字用 Number Field。\n- 滑块必须有名称：设 `aria-label` 或 `aria-labelledby`，多个滑块（范围选择）用 `thumbLabels` 给每个滑块单独命名；`Field.Label for` 无法关联滑块（检查规则 `valar/input-label`）。\n- 必须设 `type=\"single\"` 或 `type=\"multiple\"`，并给出 `min`、`max`、`step`；值用 `bind:value`。\n- 竖向滑块用 `orientation=\"vertical\"`，并给父容器明确的高度。\n"
+			"rules": "# Slider 设计规范\n\n- 只适合粗略调整的连续值；需要看到或输入精确数值时用 Slider Field（滑块加数字输入框），没有明确范围的数字用 Number Field。\n- 滑块必须有名称：设 `aria-label` 或 `aria-labelledby`，多个滑块（范围选择）用 `thumbLabels` 给每个滑块单独命名；`Field.Label for` 无法关联滑块（检查规则 `valar/input-label`）。\n- 必须设 `type=\"single\"` 或 `type=\"multiple\"`，并给出 `min`、`max`、`step`；值用 `bind:value`。\n- 竖向滑块用 `orientation=\"vertical\"`，并给父容器明确的高度。\n- 外观设置可用横向 `appearance=\"settings\"`。轨道高 6 px，白色手柄直径 20 px，焦点反馈使用内描边。把实时数值放在独立读数中，间隔 12 px，窄屏允许整个滑块与读数换到下一行。\n"
 		},
 		{
 			"name": "slider-field",
 			"type": "registry:ui",
 			"title": "Slider Field 滑块数值",
-			"description": "滑块与数值输入框组合，拖动调整或直接输入精确数值。",
+			"description": "滑块搭配数字输入框或只读数值。",
 			"categories": [
 				"表单"
 			],
@@ -3208,7 +3241,7 @@
 						"参数调节"
 					],
 					"whenToUse": [
-						"在已知范围内调整数值，并需要精确输入"
+						"在已知范围内调整数值，并需要精确输入或显示当前值"
 					],
 					"whenNotToUse": [
 						{
@@ -3216,16 +3249,17 @@
 							"use": "number-field"
 						},
 						{
-							"case": "只需粗略拖动",
+							"case": "无需显示当前数值",
 							"use": "slider"
 						}
 					],
 					"accessibility": [
-						"标签同时命名滑块和输入框",
+						"可见标签命名滑块和可编辑输入框",
+						"读数模式的键盘焦点停留在滑块",
 						"超出范围的输入标为无效而不是静默截断"
 					],
 					"responsive": [
-						"窄屏下滑块与输入框保持同一行，空间不足时换行"
+						"读数模式下滑块与数值作为一组，空间不足时换到标签下方"
 					],
 					"related": [
 						"slider",
@@ -3236,8 +3270,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/slider-field",
 			"install": "pnpm exec valar-svelte add slider-field",
-			"markdown": "# Slider Field 滑块数值\n\n滑块与数值输入框组合，拖动调整或直接输入精确数值。\n\n- 分类：表单\n- 关键词：滑块、slider、数值、范围、参数调节\n- 安装：`pnpm exec valar-svelte add slider-field`\n\n## 何时使用\n\n- 在已知范围内调整数值，并需要精确输入\n\n## 何时不用\n\n- 没有明确范围的数字：改用 `number-field`\n- 只需粗略拖动：改用 `slider`\n\n## 无障碍\n\n- 标签同时命名滑块和输入框\n- 超出范围的输入标为无效而不是静默截断\n\n## 响应式\n\n- 窄屏下滑块与输入框保持同一行，空间不足时换行\n\n## 相关组件\n\n- `slider`\n- `number-field`\n- `field`\n",
-			"rules": "# Slider Field 设计规范\n\n- 用于有明确范围、又需要精确数值的参数（尺寸、透明度、音量）；只需粗略拖动时用 Slider，没有范围的数字用 Number Field。\n- `label` 必填，它同时命名滑块、数字输入框和加减按钮，并显示为可见标签；不要在外面再包一个 Field.Label。\n- 单位写在 `unit`（如 `unit=\"px\"`），它只显示在数字后面，不进入值；值始终是数字。\n- 必须给出 `min`、`max`、`step`。超出范围或无法解析的输入会被标为无效并保持上一个有效值，不要另外写截断逻辑。\n- 放在表单中提交时设 `name`，提交的是纯数字。\n"
+			"markdown": "# Slider Field 滑块数值\n\n滑块搭配数字输入框或只读数值。\n\n- 分类：表单\n- 关键词：滑块、slider、数值、范围、参数调节\n- 安装：`pnpm exec valar-svelte add slider-field`\n\n## 何时使用\n\n- 在已知范围内调整数值，并需要精确输入或显示当前值\n\n## 何时不用\n\n- 没有明确范围的数字：改用 `number-field`\n- 无需显示当前数值：改用 `slider`\n\n## 无障碍\n\n- 可见标签命名滑块和可编辑输入框\n- 读数模式的键盘焦点停留在滑块\n- 超出范围的输入标为无效而不是静默截断\n\n## 响应式\n\n- 读数模式下滑块与数值作为一组，空间不足时换到标签下方\n\n## 相关组件\n\n- `slider`\n- `number-field`\n- `field`\n",
+			"rules": "# Slider Field 设计规范\n\n- 用于有明确范围、需要查看或精确输入数值的参数，例如尺寸、透明度和主题对比度。无需显示数字时用 Slider，没有范围的数字用 Number Field。\n- `label` 必填。默认外观用它命名滑块、数字输入框和加减按钮。读数外观将可见标签与滑块关联。\n- `appearance=\"readout\"` 用于设置项。控制组宽 250 px、高 32 px，读数与滑块一起换行。读数不参与 Tab 轮转，焦点提示保留在滑块内侧。\n- 单位写在 `unit`（如 `unit=\"px\"`），它只显示在数字后面，不进入值；值始终是数字。\n- 必须给出 `min`、`max`、`step`。超出范围或无法解析的输入会被标为无效并保持上一个有效值，不要另外写截断逻辑。\n- 放在表单中提交时设 `name`，提交的是纯数字。\n"
 		},
 		{
 			"name": "sonner",
@@ -3284,7 +3318,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/sonner",
 			"install": "pnpm exec valar-svelte add sonner",
 			"markdown": "# Sonner 轻提示\n\n操作后在屏幕角落短暂出现的通知（toast）。\n\n- 分类：反馈\n- 关键词：通知、toast、sonner、轻提示、消息\n- 安装：`pnpm exec valar-svelte add sonner`\n\n## 何时使用\n\n- 告知操作结果，如“已保存”\n\n## 何时不用\n\n- 需要用户处理的错误：改用 `alert`\n- 需要确认：改用 `alert-dialog`\n\n## 无障碍\n\n- 通知内容会被读屏器播报\n- 包含操作按钮时停留时间足够长\n\n## 响应式\n\n- 移动端在顶部或底部居中显示\n\n## 相关组件\n\n- `alert`\n",
-			"rules": "# Sonner 设计规范\n\n- 在根布局放一次 `<Toaster />`，在任意位置用 `svelte-sonner` 的 `toast()` 发通知；不要在多个页面各放一个 Toaster。\n- Toaster 的浅色／深色跟随 mode-watcher；项目的深色模式也应由 mode-watcher 管理，否则通知不会随之切换。\n- 只用于操作完成后的简短反馈（“已保存”“已复制链接”）；需要用户处理的错误用 Alert 或表单内的 Field.Error，需要确认的操作用 Alert Dialog。\n- 按结果选择 `toast.success`、`toast.error`、`toast.info`、`toast.warning`，等待中的操作用 `toast.promise` 或 `toast.loading`；不要用自定义颜色区分类型。\n- 文案写结果本身，不写“操作成功”这类空话；可撤销的操作通过 `action: { label: \"撤销\", onClick }` 提供撤销，并保证停留时间足够点击。\n- 不要每次输入、每次自动保存都弹通知；同一结果连续触发时复用同一个 `id` 更新已有通知。\n"
+			"rules": "# Sonner 设计规范\n\n- 在根布局放一次 `<Toaster />`，在任意位置用 `svelte-sonner` 的 `toast()` 发通知；不要在多个页面各放一个 Toaster。\n- Toaster 的浅色／深色跟随 mode-watcher；项目的深色模式也应由 mode-watcher 管理，否则通知不会随之切换。\n- 只用于操作完成后的简短反馈（“已保存”“已复制链接”）；需要用户处理的错误用 Alert 或表单内的 Field.Error，需要确认的操作用 Alert Dialog。\n- 按结果选择 `toast.success`、`toast.error`、`toast.info`、`toast.warning`，等待中的操作用 `toast.promise` 或 `toast.loading`；不要用自定义颜色区分类型。\n- 文案写结果本身，不写“操作成功”这类空话；可撤销的操作通过 `action: { label: \"撤销\", onClick }` 提供撤销，并保证停留时间足够点击。\n- 不要每次输入、每次自动保存都弹通知；同一结果连续触发时复用同一个 `id` 更新已有通知。\n- 工作区复制反馈使用 `appearance=\"workspace\"`。该样式将关闭与撤销放在通知内部，并在窄屏保留两侧留白。加载完成后用同一个 ID 更新原通知，独立事件分别入栈。\n"
 		},
 		{
 			"name": "sparkline",
@@ -3315,7 +3349,7 @@
 						"SVG 为装饰；相邻文字提供趋势摘要和精确数据"
 					],
 					"responsive": [
-						"可通过原生 SVG 宽高调整，默认 50.4 × 28"
+						"默认 50.4 × 28，项目趋势外观为 104 × 32，可通过原生 SVG 宽高调整"
 					],
 					"related": [
 						"chart",
@@ -3325,14 +3359,14 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/sparkline",
 			"install": "pnpm exec valar-svelte add sparkline",
-			"markdown": "# Static Sparkline 迷你趋势\n\n保留日历槽位、零基线和缺失断点的装饰性静态趋势线。\n\n- 分类：展示\n- 关键词：sparkline、趋势、迷你图、null\n- 安装：`pnpm exec valar-svelte add sparkline`\n\n## 何时使用\n\n- 在精简摘要旁显示不插值的日历序列趋势\n\n## 何时不用\n\n- 需要坐标轴和逐点读取：改用 `chart`\n\n## 无障碍\n\n- SVG 为装饰；相邻文字提供趋势摘要和精确数据\n\n## 响应式\n\n- 可通过原生 SVG 宽高调整，默认 50.4 × 28\n\n## 相关组件\n\n- `chart`\n- `table`\n",
-			"rules": "# Static Sparkline Design Rules\n\n- Supply ordered calendar slots as finite nonnegative numbers or null. Null breaks the path; zero is an actual baseline point.\n- Decorative only: provide an adjacent text summary and exact data when needed.\n- Do not synthesize samples, smooth gaps, forecast or animate readings.\n- Default viewBox is 72 × 40 and display size 50.4 × 28; native SVG attributes can override size.\n"
+			"markdown": "# Static Sparkline 迷你趋势\n\n保留日历槽位、零基线和缺失断点的装饰性静态趋势线。\n\n- 分类：展示\n- 关键词：sparkline、趋势、迷你图、null\n- 安装：`pnpm exec valar-svelte add sparkline`\n\n## 何时使用\n\n- 在精简摘要旁显示不插值的日历序列趋势\n\n## 何时不用\n\n- 需要坐标轴和逐点读取：改用 `chart`\n\n## 无障碍\n\n- SVG 为装饰；相邻文字提供趋势摘要和精确数据\n\n## 响应式\n\n- 默认 50.4 × 28，项目趋势外观为 104 × 32，可通过原生 SVG 宽高调整\n\n## 相关组件\n\n- `chart`\n- `table`\n",
+			"rules": "# Static Sparkline Design Rules\n\n- Supply ordered calendar slots as finite nonnegative numbers or null. Null breaks the path; zero is an actual baseline point.\n- Decorative only: provide an adjacent text summary and exact data when needed.\n- Do not synthesize samples, smooth gaps, forecast or animate readings.\n- Default viewBox is 72 × 40 and display size 50.4 × 28; native SVG attributes can override size.\n- `appearance=\"project\"` adapts Linear’s full-size Project Progress Completed series into Valar’s 104 × 32 compact chart. Use a thin indigo line, a fade to the zero baseline and dots for the last recorded value and isolated samples. Preserve gaps in both line and fill.\n- Keep the chart out of the tab order. Interactive controls and readable values belong beside it.\n"
 		},
 		{
 			"name": "spinner",
 			"type": "registry:ui",
 			"title": "Spinner 加载指示",
-			"description": "表示正在加载的旋转图标。",
+			"description": "表示加载中的旋转图标或行内三点状态。",
 			"categories": [
 				"反馈"
 			],
@@ -3359,7 +3393,7 @@
 						}
 					],
 					"accessibility": [
-						"默认 role=status、aria-label=加载中，能更具体时改 aria-label"
+						"状态只播报一次；图标使用 aria-label，行内三点使用可见标签并隐藏标点"
 					],
 					"responsive": [
 						"用 size-* 调整大小"
@@ -3373,8 +3407,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/spinner",
 			"install": "pnpm exec valar-svelte add spinner",
-			"markdown": "# Spinner 加载指示\n\n表示正在加载的旋转图标。\n\n- 分类：反馈\n- 关键词：加载、spinner、loading、转圈、等待\n- 安装：`pnpm exec valar-svelte add spinner`\n\n## 何时使用\n\n- 时长不定的加载状态，可放在按钮、徽标、输入组中\n\n## 何时不用\n\n- 可度量的进度：改用 `progress`\n- 整块内容加载：改用 `skeleton`\n\n## 无障碍\n\n- 默认 role=status、aria-label=加载中，能更具体时改 aria-label\n\n## 响应式\n\n- 用 size-* 调整大小\n\n## 相关组件\n\n- `progress`\n- `skeleton`\n- `button`\n",
-			"rules": "# Spinner 设计规范\n\n- 用于无法估计进度的短暂等待；可以计算进度时用 Progress，内容区域加载用 Skeleton。\n- Spinner 自带 `role=\"status\"`，默认读屏名称是“加载中”：能说明具体在做什么时传更具体的 `aria-label`（如“正在保存”）。\n- 放在按钮中表示提交中时，同时禁用按钮并保留按钮文字（“保存中…”），不要只换成 Spinner。\n- 尺寸用 `size-*` 档位类，颜色继承文字颜色，不要单独设色。\n"
+			"markdown": "# Spinner 加载指示\n\n表示加载中的旋转图标或行内三点状态。\n\n- 分类：反馈\n- 关键词：加载、spinner、loading、转圈、等待\n- 安装：`pnpm exec valar-svelte add spinner`\n\n## 何时使用\n\n- 时长不定的加载状态，可放在按钮、徽标、输入组中\n\n## 何时不用\n\n- 可度量的进度：改用 `progress`\n- 整块内容加载：改用 `skeleton`\n\n## 无障碍\n\n- 状态只播报一次；图标使用 aria-label，行内三点使用可见标签并隐藏标点\n\n## 响应式\n\n- 用 size-* 调整大小\n\n## 相关组件\n\n- `progress`\n- `skeleton`\n- `button`\n",
+			"rules": "# Spinner 设计规范\n\n- 用于无法估计进度的短暂等待；可以计算进度时用 Progress，内容区域加载用 Skeleton。\n- 图标 Spinner 自带 `role=\"status\"`，默认读屏名称是“加载中”。能说明具体在做什么时传更具体的 `aria-label`（如“正在保存”）。\n- 行内同步反馈可用 `appearance=\"dots\"`，用 `label` 提供状态文字。保持 24 px 行高与三个点的固定占位，三点按约 1 秒周期错峰；开启减少动态效果时静态完整显示。消息由外层状态区域播报时，为内层 Spinner 传 `role=\"none\"`。\n- 放在按钮中表示提交中时，同时禁用按钮并保留按钮文字（“保存中…”），不要只换成 Spinner。\n- 尺寸用 `size-*` 档位类，颜色继承文字颜色，不要单独设色。\n"
 		},
 		{
 			"name": "stepper",
@@ -3383,6 +3417,9 @@
 			"description": "带校验门禁、可取消异步校验的分步流程。",
 			"categories": [
 				"导航"
+			],
+			"registryDependencies": [
+				"scroll-area"
 			],
 			"meta": {
 				"valar": {
@@ -3413,11 +3450,12 @@
 						}
 					],
 					"accessibility": [
-						"步骤为原生按钮列表，当前步骤 aria-current=step，切换后聚焦内容区",
+						"当前步骤使用 aria-current=step，切换后聚焦内容区",
+						"导入外观的步骤标记为只读，用内容区的操作按钮导航",
 						"方向键移动焦点，Enter／Space 激活，Home／End 到首尾"
 					],
 					"responsive": [
-						"横向步骤在窄屏折为竖排，键盘方向仍以 orientation 为准"
+						"普通横向步骤在窄屏折为竖排；导入步骤在悬浮 Scroll Area 中横向排列"
 					],
 					"related": [
 						"tabs",
@@ -3428,8 +3466,8 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/stepper",
 			"install": "pnpm exec valar-svelte add stepper",
-			"markdown": "# Stepper 步骤条\n\n带校验门禁、可取消异步校验的分步流程。\n\n- 分类：导航\n- 关键词：步骤条、stepper、向导、wizard、多步表单、流程\n- 安装：`pnpm exec valar-svelte add stepper`\n\n## 何时使用\n\n- 有先后顺序的多步流程，如多步表单、配置向导\n- 前进前需要校验（beforeChange），可异步并可取消\n\n## 何时不用\n\n- 多题型、可跳过的问卷：改用 `questionnaire`\n- 并列视图切换：改用 `tabs`\n- 显示页面层级：改用 `breadcrumb`\n\n## 无障碍\n\n- 步骤为原生按钮列表，当前步骤 aria-current=step，切换后聚焦内容区\n- 方向键移动焦点，Enter／Space 激活，Home／End 到首尾\n\n## 响应式\n\n- 横向步骤在窄屏折为竖排，键盘方向仍以 orientation 为准\n\n## 相关组件\n\n- `tabs`\n- `questionnaire`\n- `progress`\n",
-			"rules": "# Stepper 设计规范\n\n- 用于有先后顺序的多步流程（注册、配置向导）；步骤之间可以随意切换、没有顺序时用 Tabs。\n- 步骤通过 `steps` 数组定义，每项有稳定的 `id` 和 `title`；用 `bind:value` 绑定当前步骤，内容在 `children` snippet 中按 `step.id` 渲染。\n- 默认按顺序前进（`linear`）；离开当前步骤前的校验写在 `beforeChange`，返回字符串会作为错误显示并阻止切换，不要自己拦截按钮。\n- 某一步的错误写在该步的 `error` 字段，禁用的步骤设 `disabled`。\n- 默认读屏名称是“步骤进度”，播报与默认错误文案也是中文；其他语言传 `aria-label` 和 `messages`。切换步骤后焦点会移到新内容，不要再手动移动焦点。\n"
+			"markdown": "# Stepper 步骤条\n\n带校验门禁、可取消异步校验的分步流程。\n\n- 分类：导航\n- 关键词：步骤条、stepper、向导、wizard、多步表单、流程\n- 安装：`pnpm exec valar-svelte add stepper`\n\n## 何时使用\n\n- 有先后顺序的多步流程，如多步表单、配置向导\n- 前进前需要校验（beforeChange），可异步并可取消\n\n## 何时不用\n\n- 多题型、可跳过的问卷：改用 `questionnaire`\n- 并列视图切换：改用 `tabs`\n- 显示页面层级：改用 `breadcrumb`\n\n## 无障碍\n\n- 当前步骤使用 aria-current=step，切换后聚焦内容区\n- 导入外观的步骤标记为只读，用内容区的操作按钮导航\n- 方向键移动焦点，Enter／Space 激活，Home／End 到首尾\n\n## 响应式\n\n- 普通横向步骤在窄屏折为竖排；导入步骤在悬浮 Scroll Area 中横向排列\n\n## 相关组件\n\n- `tabs`\n- `questionnaire`\n- `progress`\n",
+			"rules": "# Stepper 设计规范\n\n- 用于有先后顺序的多步流程（注册、配置向导）；步骤之间可以随意切换、没有顺序时用 Tabs。\n- 步骤通过 `steps` 数组定义，每项有稳定的 `id` 和 `title`；用 `bind:value` 绑定当前步骤，内容在 `children` snippet 中按 `step.id` 渲染。\n- 默认按顺序前进（`linear`）；离开当前步骤前的校验写在 `beforeChange`，返回字符串会作为错误显示并阻止切换，不要自己拦截按钮。\n- 某一步的错误写在该步的 `error` 字段，禁用的步骤设 `disabled`。\n- 默认读屏名称是“步骤进度”，播报与默认错误文案也是中文；其他语言传 `aria-label` 和 `messages`。切换步骤后焦点会移到新内容，不要再手动移动焦点。\n- 将 `appearance=\"import\"` 用于横向导入向导。阶段标题是只读指示，前进和返回在内容区底栏调用 `next()` 和 `previous()`。遇到阻断步骤的失败，用内容区的告警解释原因并禁用前进操作。轨道在窄屏用悬浮 Scroll Area，操作栏在轨道外，当前阶段随切换保持可见。\n"
 		},
 		{
 			"name": "switch",
@@ -3526,7 +3564,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/table",
 			"install": "pnpm exec valar-svelte add table",
 			"markdown": "# Table 表格\n\n展示行列结构化数据的表格。\n\n- 分类：展示\n- 关键词：表格、table、数据表、data table、列表\n- 安装：`pnpm exec valar-svelte add table`\n\n## 何时使用\n\n- 行列结构化数据\n- 结合 @tanstack/table 做排序、筛选、分页\n\n## 何时不用\n\n- 数据的趋势或对比：改用 `chart`\n- 少量内容项：改用 `item`\n\n## 无障碍\n\n- 使用语义化 table、表头单元格，用 Table.Caption 说明表格内容\n\n## 响应式\n\n- 外层容器横向滚动，窄屏不压缩列\n\n## 相关组件\n\n- `pagination`\n- `chart`\n- `item`\n",
-			"rules": "# Table 设计规范\n\n- 结构用 `Table.Header`、`Table.Body`、`Table.Footer`，行用 `Table.Row`，表头单元格用 `Table.Head`，数据用 `Table.Cell`；用 `Table.Caption` 说明表格内容。\n- 表格容器会横向滚动，窄屏下不要压缩列宽到无法阅读；列很多时考虑在移动端改为卡片列表。\n- 管理标签等紧凑设置列表用 `appearance=\"settings\"`。排序状态标在表头，选择状态通过行内复选框传达。\n- 数字列右对齐并用 `tabular-nums`，便于比较。\n- 需要排序、筛选、分页、选择行时，按 Data Table 文档用 TanStack Table 组合，不要自己实现；表头上的排序按钮要说明排序状态。\n- 空表格用 Empty 说明原因，不要只显示空白。\n- 列宽固定或预期窄屏溢出时，传 `scrollLabel` 为滚动区命名，让键盘用户能用 Tab 进入，再用方向键横向移动。列首复选框依逻辑方向对齐。\n"
+			"rules": "# Table 设计规范\n\n- 结构用 `Table.Header`、`Table.Body`、`Table.Footer`，行用 `Table.Row`，表头单元格用 `Table.Head`，数据用 `Table.Cell`；用 `Table.Caption` 说明表格内容。\n- 表格容器会横向滚动，窄屏下不要压缩列宽到无法阅读；列很多时考虑在移动端改为卡片列表。\n- 管理标签等紧凑设置列表用 `appearance=\"settings\"`。排序状态标在表头，选择状态通过行内复选框传达。\n- 数字列右对齐并用 `tabular-nums`，便于比较。\n- 需要排序、筛选、分页、选择行时，按 Data Table 文档用 TanStack Table 组合，不要自己实现；表头上的排序按钮要说明排序状态。\n- 空表格用 Empty 说明原因，不要只显示空白。\n- 列宽固定或预期窄屏溢出时，传 `scrollLabel` 为滚动区命名，让键盘用户能用 Tab 进入，再用方向键横向移动。列首复选框依逻辑方向对齐。\n- Data Table 设置 `scroll=\"overlay\"`，由 Scroll Area 承载横向滚动。通过 `scrollLabel` 命名滚动视口，滑块覆盖表格底部，横向滚动不改变内容宽度。\n"
 		},
 		{
 			"name": "tabs",
@@ -3818,7 +3856,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/toggle",
 			"install": "pnpm exec valar-svelte add toggle",
 			"markdown": "# Toggle 切换按钮\n\n按下／弹起两种状态的按钮，如工具栏中的加粗。\n\n- 分类：操作\n- 关键词：切换按钮、toggle、开关按钮、按下状态、pressed\n- 安装：`pnpm exec valar-svelte add toggle`\n\n## 何时使用\n\n- 工具栏中可开关的单个状态，如加粗、静音\n\n## 何时不用\n\n- 设置项的开启／关闭：改用 `switch`\n- 一组单选或多选的状态：改用 `toggle-group`\n- 执行一次性操作：改用 `button`\n\n## 无障碍\n\n- Bits UI 用 aria-pressed 表达按下状态\n- 只有图标时要加 aria-label\n\n## 响应式\n\n- 窄屏下保证触摸目标足够大（size）\n\n## 相关组件\n\n- `toggle-group`\n- `switch`\n- `button`\n",
-			"rules": "# Toggle 设计规范\n\n- 用于按下／弹起两种状态的工具按钮（如加粗、显示网格）；表单中的开关设置用 Switch，执行一次性操作用 Button。\n- 状态用 `bind:pressed`；样式和尺寸只用 `variant`（`default`、`outline`）和 `size`（`sm`、`default`、`lg`）。\n- 只有图标时必须有 `aria-label`，名称描述功能而不是状态（“加粗”，不要写“开启加粗”）。\n- 一组互相关联的切换按钮用 Toggle Group。\n"
+			"rules": "# Toggle 设计规范\n\n- 用于按下／弹起两种状态的工具按钮（如加粗、显示网格）；表单中的开关设置用 Switch，执行一次性操作用 Button。\n- 状态用 `bind:pressed`。编辑器格式按钮用 `appearance=\"formatting\"`（26 px，圆角 4 px，图标 16 px），工作区图标筛选用 `appearance=\"toolbar\"`（28 px，胶囊圆角，图标 14 px）。两种外观的尺寸由用途决定。\n- 通用文字或描边切换按钮用 `variant`（`default`、`outline`）和 `size`（`sm`、`default`、`lg`）。\n- 只有图标时必须有 `aria-label`，名称描述功能而不是状态（“加粗”，不要写“开启加粗”）。\n- 一组互相关联的切换按钮用 Toggle Group。\n"
 		},
 		{
 			"name": "toggle-group",
@@ -3872,7 +3910,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/toggle-group",
 			"install": "pnpm exec valar-svelte add toggle-group",
 			"markdown": "# Toggle Group 切换按钮组\n\n一组切换按钮，可单选（如对齐方式）或多选（如文字样式）。\n\n- 分类：操作\n- 关键词：切换按钮组、toggle group、分段控制、segmented control、对齐方式\n- 安装：`pnpm exec valar-svelte add toggle-group`\n\n## 何时使用\n\n- 一组相关的状态按钮，type=single 单选或 type=multiple 多选\n\n## 何时不用\n\n- 执行操作的按钮组：改用 `button-group`\n- 表单中的单选项：改用 `radio-group`\n- 切换页面内的内容面板：改用 `tabs`\n\n## 无障碍\n\n- 保留 Bits UI 的方向键移动焦点\n- 用 aria-label 命名整组和只有图标的项\n\n## 响应式\n\n- 项较多时窄屏可改 orientation=vertical\n- spacing 控制项之间的间距\n\n## 相关组件\n\n- `toggle`\n- `button-group`\n- `tabs`\n",
-			"rules": "# Toggle Group 设计规范\n\n- `ToggleGroup.Root` 必须设 `type=\"single\"`（多选一，如对齐方式）或 `type=\"multiple\"`（如加粗、斜体）；用 `bind:value` 绑定。\n- 整组用 `aria-label` 说明用途；只有图标的 `ToggleGroup.Item` 都要有 `aria-label`。\n- 默认外观的 `variant`、`size` 设在 Root 上，所有项保持一致；需要项之间留空时用 `spacing`，不要给项单独改圆角或边框。\n- 切换视图或模式且各视图内容差异较大时用 Tabs。\n\n- 富文本格式组使用 `appearance=\"toolbar\"`。参考 Linear 选中文本后的浮动工具栏，按钮为 26 × 26 px、圆角 4 px、图标 16 px，默认间距 6 px。多个格式可同时选中，按下项用底色区分；透明度过渡为 100 ms，系统开启减少动态效果时取消过渡。键盘焦点使用内描边。\n"
+			"rules": "# Toggle Group 设计规范\n\n- `ToggleGroup.Root` 必须设 `type=\"single\"`（多选一，如对齐方式）或 `type=\"multiple\"`（如加粗、斜体）；用 `bind:value` 绑定。\n- 整组用 `aria-label` 说明用途；只有图标的 `ToggleGroup.Item` 都要有 `aria-label`。\n- 默认外观的 `variant`、`size` 设在 Root 上，所有项保持一致；需要项之间留空时用 `spacing`，不要给项单独改圆角或边框。\n- 切换视图或模式且各视图内容差异较大时用 Tabs。\n\n- 富文本格式组使用 `appearance=\"toolbar\"`。参考 Linear 选中文本后的浮动工具栏，按钮为 26 × 26 px、圆角 4 px、图标 16 px，默认间距 6 px。多个格式可同时选中，按下项用底色区分；透明度过渡为 100 ms，系统开启减少动态效果时取消过渡。键盘焦点使用内描边。\n- 水平或垂直方向键沿组内移动焦点，Space 切换当前项，禁用项跳过。无间距的组只在两端保留圆角，横向端点跟随书写方向。\n"
 		},
 		{
 			"name": "tooltip",
@@ -3928,6 +3966,11 @@
 			"categories": [
 				"展示"
 			],
+			"registryDependencies": [
+				"button",
+				"collapsible",
+				"spinner"
+			],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -3953,24 +3996,73 @@
 						}
 					],
 					"accessibility": [
-						"本身不加角色，语义来自包裹它的触发器（如 Trace.CollapsibleTrigger 带 aria-expanded）",
+						"步骤行从包裹它的触发器获得语义，独立重试按钮用状态区域宣布结果",
 						"Trace.Title 是可访问名称，要写成完整的一句话，状态也写进标题",
 						"运行中的闪烁效果在“减少动态效果”时停止"
 					],
 					"responsive": [
-						"支持嵌套，摘要可展开为步骤"
+						"支持嵌套，摘要可展开为步骤，重试反馈按剩余宽度换行"
 					],
 					"related": [
 						"message",
 						"marker",
+						"button",
 						"collapsible"
 					]
 				}
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/trace",
 			"install": "pnpm exec valar-svelte add trace",
-			"markdown": "# Trace 执行轨迹\n\n展示 agent 推理、工具调用、来源等步骤的行列表。\n\n- 分类：展示\n- 关键词：执行轨迹、trace、工具调用、推理、agent、步骤\n- 安装：`pnpm exec valar-svelte add trace`\n\n## 何时使用\n\n- 展示 agent 的推理、工具调用、子任务、来源\n- 步骤可展开详情、链接，或打开 dialog、sheet\n\n## 何时不用\n\n- agent 的回复内容：改用 `message`\n- 回合之间的提示和分隔：改用 `marker`\n\n## 无障碍\n\n- 本身不加角色，语义来自包裹它的触发器（如 Trace.CollapsibleTrigger 带 aria-expanded）\n- Trace.Title 是可访问名称，要写成完整的一句话，状态也写进标题\n- 运行中的闪烁效果在“减少动态效果”时停止\n\n## 响应式\n\n- 支持嵌套，摘要可展开为步骤\n\n## 相关组件\n\n- `message`\n- `marker`\n- `collapsible`\n",
-			"rules": "# Trace 设计规范\n\n- 用于展示代理执行的步骤（调用工具、运行命令、编辑文件）；代理的回复用 Message，轮次之间的提示和分隔用 Marker。\n- `Trace.Title` 是这一步的名称，写成说明发生了什么的完整短句（“已编辑 trace.svelte”），不要只写文件名；`Trace.Icon` 对读屏器隐藏。\n- 状态用 `Trace.Line` 的 `status`（`running`、`error`、`pending`，完成的步骤不设），并同时写进标题：进行中用“正在运行 pnpm build”，失败用“运行 pnpm build 失败”。\n- 有细节时用 `Trace.Collapsible` + `Trace.CollapsibleTrigger` + `Trace.CollapsibleContent`；也可以把 Line 包在链接或 Dialog、Sheet 的触发按钮中，它会获得对应的键盘行为。\n- 链接在新标签页打开时，在标题后加 `sr-only` 的“（在新标签页打开）”；CollapsibleContent 中带背景色的块要设 `text-foreground` 保持对比度。\n"
+			"markdown": "# Trace 执行轨迹\n\n展示 agent 推理、工具调用、来源等步骤的行列表。\n\n- 分类：展示\n- 关键词：执行轨迹、trace、工具调用、推理、agent、步骤\n- 安装：`pnpm exec valar-svelte add trace`\n\n## 何时使用\n\n- 展示 agent 的推理、工具调用、子任务、来源\n- 步骤可展开详情、链接，或打开 dialog、sheet\n\n## 何时不用\n\n- agent 的回复内容：改用 `message`\n- 回合之间的提示和分隔：改用 `marker`\n\n## 无障碍\n\n- 步骤行从包裹它的触发器获得语义，独立重试按钮用状态区域宣布结果\n- Trace.Title 是可访问名称，要写成完整的一句话，状态也写进标题\n- 运行中的闪烁效果在“减少动态效果”时停止\n\n## 响应式\n\n- 支持嵌套，摘要可展开为步骤，重试反馈按剩余宽度换行\n\n## 相关组件\n\n- `message`\n- `marker`\n- `button`\n- `collapsible`\n",
+			"rules": "# Trace 设计规范\n\n- 用于展示代理执行的步骤（调用工具、运行命令、编辑文件）；代理的回复用 Message，轮次之间的提示和分隔用 Marker。\n- `Trace.Title` 是这一步的名称，写成说明发生了什么的完整短句（“已编辑 trace.svelte”），不要只写文件名；`Trace.Icon` 对读屏器隐藏。\n- 状态用 `Trace.Line` 的 `status`（`running`、`error`、`pending`，完成的步骤不设），并同时写进标题：进行中用“正在运行 pnpm build”，失败用“运行 pnpm build 失败”。\n- Agent 正在执行的步骤直接显示在 `Trace.Root` 下，标题旁可放查询词。完成后收进可展开摘要。减少动态效果时保留状态文字并停用闪动。\n- 有细节时用 `Trace.Collapsible` + `Trace.CollapsibleTrigger` + `Trace.CollapsibleContent`；也可以把 Line 包在链接或 Dialog、Sheet 的触发按钮中，它会获得对应的键盘行为。\n- 可重试的工具步骤在展开详情中放 `Trace.Retry`，由宿主执行真正的请求。处理中忽略重复激活，失败后可重试，结果用单一状态区域播报。重试完成后保留当前焦点，新的工具步骤可渲染独立的重试动作。\n- 详情中的独立链接用带 `href` 的 `Trace.Action`，使链接和重试各自在 Tab 顺序中。\n- 链接在新标签页打开时，在标题后加 `sr-only` 的“（在新标签页打开）”；CollapsibleContent 中带背景色的块要设 `text-foreground` 保持对比度。\n"
+		},
+		{
+			"name": "typography",
+			"type": "registry:ui",
+			"title": "Typography 排版",
+			"description": "文章、问题描述与富文本内容的只读排版。",
+			"categories": [
+				"展示"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"排版",
+						"typography",
+						"prose",
+						"文章",
+						"富文本"
+					],
+					"whenToUse": [
+						"以原生 HTML 标题、段落、列表和引用展示富文本"
+					],
+					"whenNotToUse": [
+						{
+							"case": "编辑问题描述",
+							"use": "issue-composer"
+						},
+						{
+							"case": "表单字段说明",
+							"use": "field"
+						}
+					],
+					"accessibility": [
+						"保持标题层级和列表语义；可用键盘聚焦并打开文章链接"
+					],
+					"responsive": [
+						"长链接和行内代码随容器宽度换行；宽表格使用 Table 的悬浮滚动"
+					],
+					"related": [
+						"code-block",
+						"issue-detail",
+						"table"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/typography",
+			"install": "pnpm exec valar-svelte add typography",
+			"markdown": "# Typography 排版\n\n文章、问题描述与富文本内容的只读排版。\n\n- 分类：展示\n- 关键词：排版、typography、prose、文章、富文本\n- 安装：`pnpm exec valar-svelte add typography`\n\n## 何时使用\n\n- 以原生 HTML 标题、段落、列表和引用展示富文本\n\n## 何时不用\n\n- 编辑问题描述：改用 `issue-composer`\n- 表单字段说明：改用 `field`\n\n## 无障碍\n\n- 保持标题层级和列表语义；可用键盘聚焦并打开文章链接\n\n## 响应式\n\n- 长链接和行内代码随容器宽度换行；宽表格使用 Table 的悬浮滚动\n\n## 相关组件\n\n- `code-block`\n- `issue-detail`\n- `table`\n",
+			"rules": "# Typography 设计规范\n\n- 将 Typography 用于只读问题描述、文档正文或独立文章，内部保留原生标题、段落、列表、引用、链接和分隔线。\n- 按页面中的层级选择标题。正文用 15 px／22.5 px、450 字重。链接使用主题链接色，悬停和键盘焦点以下划线提示。\n- 词组和短命令使用行内 `code`。多行代码使用 Code Block，宽表格使用 `Table.Root scroll=\"overlay\"` 并提供 `scrollLabel`。\n- 控件标签、导航标题和提示说明分别依照对应组件的排版规则。\n"
 		},
 		{
 			"name": "waffle-chart",
@@ -4012,7 +4104,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/waffle-chart",
 			"install": "pnpm exec valar-svelte add waffle-chart",
 			"markdown": "# Waffle Chart 百格图\n\n最大余数法分配固定一百个格子的只读占比图。\n\n- 分类：展示\n- 关键词：waffle、百格图、占比、chart\n- 安装：`pnpm exec valar-svelte add waffle-chart`\n\n## 何时使用\n\n- 用一百个格子展示类别构成，旁边保留精确图例\n\n## 何时不用\n\n- 需要准确读取每个类别的数值：改用 `table`\n\n## 无障碍\n\n- 调用方提供整体 label 和精确文字图例，不依赖颜色区分\n\n## 响应式\n\n- 正方形网格随容器缩放，固定十行十列\n\n## 相关组件\n\n- `donut-chart`\n- `chart`\n",
-			"rules": "# Waffle Chart Design Rules\n\n- Supply finite data and an accessible label. Positive totals allocate exactly 100 whole cells; zero/empty data draws no cells.\n- Largest-remainder cells are approximate; keep exact values in a nearby accessible legend.\n- Colors come from caller-owned semantic series tokens; never use color as the only explanation.\n- Read-only: do not imply that cells are buttons or add hover-only information.\n"
+			"rules": "# Waffle Chart Design Rules\n\n- Supply finite data and an accessible label. Positive totals allocate exactly 100 whole cells. For zero or empty data, the frame stays visible with no filled cells.\n- Largest-remainder cells are approximate; keep exact values in a nearby accessible legend.\n- Colors come from caller-owned semantic series tokens; never use color as the only explanation.\n- Read-only: do not imply that cells are buttons or add hover-only information.\n"
 		}
 	],
 	"missingCards": []

@@ -18,6 +18,26 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+## Persistent workflow error
+
+<ComponentPreview name="alert-workflow-error">
+
+<div></div>
+
+</ComponentPreview>
+
+Use `appearance="workflow-error"` when an error stops the current step until the user corrects the source. Place the recovery guidance in `Alert.Description`. Its optional `Alert.Action` holds a help link. Keep navigation and disabled forward actions with the workflow. This local example starts at the error step and uses a simulated source check.
+
+## Upload notification
+
+<ComponentPreview name="alert-notification">
+
+<div></div>
+
+</ComponentPreview>
+
+Use `appearance="notification"` for upload rejection with a dismiss action and a way to recover. The host controls how long the notification stays visible and where focus returns.
+
 <ComponentPreview name="alert-connection">
 
 <div></div>

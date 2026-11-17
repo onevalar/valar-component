@@ -17,6 +17,14 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+<ComponentPreview name="message-agent" previewClassName="h-auto min-h-0">
+
+<div></div>
+
+</ComponentPreview>
+
+Use `appearance="agent"` for agent conversations. Use `Bubble` for the prompt and reply surfaces, `Marker` for live status, and `Message.Footer` for actions on a completed reply.
+
 <ComponentPreview name="message-demo" previewClassName="h-auto theme-blue">
 
 <div></div>

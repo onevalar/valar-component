@@ -33,6 +33,26 @@ Charts are designed to look great out of the box. They work well with the other 
 
 [Browse the Charts Library](/charts).
 
+## Issue insights
+
+Use `appearance="insights"` on the container and tooltip for a compact stacked chart with a right-side axis. Hover a bar segment for counts and percentages. Click a segment or activate its matching table cell to open the detail panel. This example uses sample issue counts and titles.
+
+<ComponentPreview name="insights-chart-demo">
+
+<div></div>
+
+</ComponentPreview>
+
+## Empty usage chart
+
+Set `appearance="usage"` on `Chart.Container` for the transparent 320 px usage chart surface and compact axis typography. The chart below reproduces the empty state observed in Linear Usage Explorer. Change the sample period to update the date axis and the accessible total. With zero usage, the plot has no bars or hover targets.
+
+<ComponentPreview name="usage-chart-empty">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Component
 
 We use [LayerChart](https://next.layerchart.com) under the hood.

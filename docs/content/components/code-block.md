@@ -28,6 +28,16 @@ links:
 
 Syntax highlighting is optional and lives in a separate hook, so a block that only shows plain output stays small.
 
+## Issue and Agent
+
+Use `appearance="issue"` for an issue description and `appearance="agent"` for an Agent reply. Both use the measured compact surface and type. The issue example floats its copy action on hover and focus. The Agent example includes a language label, copy, and a Valar wrap switch.
+
+<ComponentPreview name="code-block-linear" previewClassName="h-auto min-h-0">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Installation
 
 <InstallTabs>
@@ -51,7 +61,7 @@ Install the required Valar Svelte dependencies:
 
 </Step>
 
-<PMAddComp name="button use-highlighted-code" />
+<PMAddComp name="button scroll-area use-highlighted-code" />
 
 <Step>
 
@@ -66,7 +76,7 @@ Copy and paste the following code into your project.
 {/snippet}
 </InstallTabs>
 
-`code-block` also installs `useHighlightedCode` for [syntax highlighting](#syntax-highlighting).
+`code-block` also installs [Scroll Area](/docs/components/scroll-area) and `useHighlightedCode` for [syntax highlighting](#syntax-highlighting).
 
 ## Usage
 
@@ -263,7 +273,8 @@ Cap the height with a `max-h-*` class on `CodeBlock.Content`. The content scroll
 
 <CodeBlock.Content
   {id}
-  class={expanded ? undefined : "max-h-64 overflow-y-hidden scroll-fade-y"}
+  scrollOrientation={expanded ? undefined : "horizontal"}
+  class={expanded ? undefined : "max-h-64 scroll-fade-y"}
   {code}
 />
 <CodeBlock.Footer class="justify-center">
@@ -495,8 +506,8 @@ The `code` component gets `incomplete`, which is `true` until the closing fence 
 
 ## Accessibility
 
-- `CodeBlock.Content` is a `pre` with a `code` element and always sets `dir="ltr"`, so code reads left to right on an RTL page.
-- `CodeBlock.Content` has `tabindex={0}`, so keyboard users can focus it and scroll it. Pass `tabindex={-1}` to remove the tab stop.
+- `CodeBlock.Content` renders a `pre` and `code` inside Scroll Area. Code reads left to right even on an RTL page.
+- The viewport has `tabindex={0}` and supports arrow keys and paging. Pass `aria-label` to name this region and `tabindex={-1}` to remove it from the Tab order. Scrollbars appear over the content on hover.
 - Floating actions show when focus is inside the block, not only on hover, so keyboard users can reach them.
 - Line numbers are hidden from screen readers.
 - Diff lines carry a `+` or `−` marker as well as a tint, so the change does not rely on color.
@@ -510,11 +521,12 @@ The `code` component gets `incomplete`, which is `true` until the closing fence 
 
 The surface that holds the header, the content and the footer.
 
-| Prop      | Type                         | Default     | Description                                                     |
-| --------- | ---------------------------- | ----------- | --------------------------------------------------------------- |
-| `variant` | `"default" \| "destructive"` | `"default"` | The tone of the block.                                          |
-| `size`    | `"default" \| "sm"`          | `"default"` | `"sm"` has tighter padding and `text-xs` code, for tool output. |
-| `class`   | `string`                     | -           | Additional classes to apply to the block.                       |
+| Prop         | Type                         | Default     | Description                                                     |
+| ------------ | ---------------------------- | ----------- | --------------------------------------------------------------- |
+| `variant`    | `"default" \| "destructive"` | `"default"` | The tone of the block.                                          |
+| `size`       | `"default" \| "sm"`          | `"default"` | `"sm"` has tighter padding and `text-xs` code, for tool output. |
+| `appearance` | `"issue" \| "agent"`         | -           | Compact surface for an issue description or Agent reply.        |
+| `class`      | `string`                     | -           | Additional classes to apply to the block.                       |
 
 ### CodeBlock.Header
 
@@ -551,17 +563,18 @@ A ghost icon button that copies `value` to the clipboard. It accepts the props o
 
 ### CodeBlock.Content
 
-The `pre` that scrolls or wraps.
+Code inside a scrollable viewport. `ref` points to the `pre` element, and `viewportRef` points to the scrollable element.
 
-| Prop          | Type      | Default | Description                                                     |
-| ------------- | --------- | ------- | --------------------------------------------------------------- |
-| `code`        | `string`  | -       | Plain text to render. When it is set, `children` is ignored.    |
-| `children`    | `Snippet` | -       | A list of `CodeBlock.Line`.                                     |
-| `wrap`        | `boolean` | `false` | Wrap long lines instead of scrolling.                           |
-| `lineNumbers` | `boolean` | `false` | Number each line. A `code` string is split into lines.          |
-| `startLine`   | `number`  | `1`     | The number of the first line, when `lineNumbers` is set.        |
-| `tabindex`    | `number`  | `0`     | Makes the content focusable so it can be scrolled by keyboard.  |
-| `class`       | `string`  | -       | Additional classes to apply to the content, such as `max-h-72`. |
+| Prop                | Type                                   | Default                                | Description                                                     |
+| ------------------- | -------------------------------------- | -------------------------------------- | --------------------------------------------------------------- |
+| `code`              | `string`                               | -                                      | Plain text to render. When it is set, `children` is ignored.    |
+| `children`          | `Snippet`                              | -                                      | A list of `CodeBlock.Line`.                                     |
+| `wrap`              | `boolean`                              | `false`                                | Wrap long lines instead of scrolling.                           |
+| `scrollOrientation` | `"horizontal" \| "vertical" \| "both"` | `"both"`, or `"vertical"` when wrapped | Restrict which axes can scroll.                                 |
+| `lineNumbers`       | `boolean`                              | `false`                                | Number each line. A `code` string is split into lines.          |
+| `startLine`         | `number`                               | `1`                                    | The number of the first line, when `lineNumbers` is set.        |
+| `tabindex`          | `number`                               | `0`                                    | Makes the content focusable so it can be scrolled by keyboard.  |
+| `class`             | `string`                               | -                                      | Additional classes to apply to the content, such as `max-h-72`. |
 
 ### CodeBlock.Line
 

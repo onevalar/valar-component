@@ -13,6 +13,12 @@ links:
 
 <ComponentPreview name="stepper-demo"><div></div></ComponentPreview>
 
+## Import wizard
+
+<ComponentPreview name="stepper-import"><div></div></ComponentPreview>
+
+Use `appearance="import"` for a horizontal workflow with read-only stage indicators. Place Back and Next in the step content and call `previous()` or `next()`. A blocking error belongs next to its recovery instructions in the current panel. On narrow screens, the stage list scrolls in an overlay Scroll Area while the actions stay reachable below. The sample uses local data. Enter `demo` to continue, or enter another value to try the error and recovery flow.
+
 ## 安装与用法
 
 <PMAddComp name="stepper" />

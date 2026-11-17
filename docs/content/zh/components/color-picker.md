@@ -17,7 +17,7 @@ links:
 
 <PMAddComp name="color-picker" />
 
-依赖 Valar 的 Popover，CLI 会一并安装。
+CLI 会一并安装 Valar 的 Popover 和 Scroll Area。
 
 ## 用法
 
@@ -34,13 +34,17 @@ links:
 />
 ```
 
-## 行为合同
+## 标签调色板
 
-- `value` 始终是小写六位十六进制 `#rrggbb`；外部传入的三位简写会被展开，无效值显示为 `#000000`。导出的 `normalizeHex` 可在其他地方复用同一规则。
-- 弹层内提供浏览器原生色盘（Chromium 等浏览器自带取色器）、十六进制输入和可选预设色块，三者实时同步。
-- 十六进制输入：输入满六位时立即生效；三位简写在 Enter 或失焦时展开生效；未完成的输入不会修改当前值，失焦后恢复为当前值。出现非十六进制字符时提示错误。
-- 预设色块是带 `aria-pressed` 的按钮，当前颜色处于按下状态。弹层的打开、关闭、焦点归还和 Esc 行为来自 Bits UI Popover。
-- `contentProps` 透传 Popover.Content 的配置（不含 `children`／`child`），例如 `sideOffset`、`class` 或 `portalProps`；默认仍使用 Portal，只有需要容器内渲染时才传 `portalProps={{ disabled: true }}`。面板样式只影响 Color Picker，不修改全局 Popover。
-- 根节点 `class` 与 `contentProps.class` 中的显式工具类优先于各自默认类；面板使用专属 `data-slot="color-picker-content"`，包括默认 Portal 渲染时。
-- 传入 `name` 时以 `#rrggbb` 参与原生表单提交。
-- 当前不支持透明度、OKLCH／HSL 等其他色彩空间的直接编辑；原生色盘的外观由浏览器决定。
+<ComponentPreview name="color-picker-label"><div></div></ComponentPreview>
+
+在标签名称旁使用 `appearance="label"`。`presets` 支持十六进制字符串或 `{ color, label }`。Tab 依次访问各预设色和自定义入口。选择预设色或输入有效的自定义 Hex 后按 Enter，面板关闭并把焦点还给触发器。自定义面板的饱和度／亮度区域和色相条支持指针及方向键。通过 `labels` 本地化自定义面板。
+
+## 交互行为
+
+- 显示和提交值采用小写六位十六进制 `#rrggbb`。`normalizeHex` 会展开三位简写，外部无效值显示为 `#000000`。
+- 默认面板同步原生色盘、十六进制输入和可选预设。六位输入立即生效。三位简写在 Enter 或失焦时生效，未完成的输入失焦后恢复为当前值。
+- 预设按钮用 `aria-pressed` 表达当前色。Escape 关闭并将焦点归还给触发器。空间不足时使用悬浮滚动条。
+- `contentProps` 可传入 `sideOffset`、`class` 或 `portalProps` 等 Popover.Content 配置。默认开启 Portal，容器内渲染可传 `portalProps={{ disabled: true }}`。
+- 根节点 `class` 与 `contentProps.class` 可以覆盖布局类。两种面板都使用 `data-slot="color-picker-content"`。
+- 传入 `name` 将当前 `#rrggbb` 随原生表单提交。原生色盘外观由浏览器决定。

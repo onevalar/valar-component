@@ -18,6 +18,18 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+## Thinking state
+
+<ComponentPreview name="marker-thinking" previewClassName="h-auto">
+
+<div></div>
+
+</ComponentPreview>
+
+Use `appearance="thinking"` with `Marker.Content` for the short status before an assistant reply. The text animates over a 2.4-second cycle and stays static with reduced motion. Remove the marker when work starts or the response is stopped.
+
+## Common markers
+
 <ComponentPreview name="marker-demo" previewClassName="h-auto theme-blue">
 
 <div></div>

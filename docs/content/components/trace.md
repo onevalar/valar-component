@@ -17,6 +17,14 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+<ComponentPreview name="trace-agent">
+
+<div></div>
+
+</ComponentPreview>
+
+Use `appearance="agent"` for live tool activity and its completed summary. A running step uses `Trace.Line` with `status="running"`. When the tool finishes, use a collapsible summary to show the steps on demand.
+
 <ComponentPreview name="trace-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
@@ -63,6 +71,8 @@ Install the required Valar Svelte dependencies:
 </Step>
 
 <PMAddComp name="collapsible" />
+<PMAddComp name="button" />
+<PMAddComp name="spinner" />
 
 <Step>
 
@@ -177,6 +187,18 @@ Set `status` on `Trace.Line` when a step is running, has failed or hasn't starte
 | `"running"` | Work in progress. Write the title in the present tense: "Running pnpm build". |
 | `"pending"` | Work that has not started, such as a plan step: "Run pnpm test".              |
 
+## Retry a failed tool
+
+Put `Trace.Retry` in the expanded detail beneath the disclosure button. It invokes the caller's `onRetry`, keeps focus on the same button, and announces the result. A rejected request leaves the action available. A successful request blocks another activation. Each new tool step can render its own retry action.
+
+The local preview simulates one unsuccessful retry followed by a successful one. The tested Linear Agent conversation queued its request while offline and resumed after reconnecting, then recorded a successful search. Tool-level controls for a failed search remain pending capture.
+
+<ComponentPreview name="trace-agent-retry" previewClassName="h-auto min-h-0">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Description
 
 Put secondary text such as a diff stat, a duration or a count in a `Trace.Description` after the `Trace.Title`. It does not truncate.
@@ -228,6 +250,8 @@ To open a row while it streams and let the reader's click win, pass `open ?? run
 ## Link
 
 Wrap the `Trace.Line` in an anchor. For a new tab, use an arrow-up-right icon and sr-only "(opens in a new tab)".
+
+Use `Trace.Action` with `href` for a separate link within the detail area. It renders a native anchor and follows the Button keyboard and focus styles.
 
 <ComponentPreview name="trace-link" previewClassName="h-auto min-h-0">
 
@@ -363,7 +387,7 @@ See [Tool](/docs/ai-elements/tool) for more examples.
 
 ## Accessibility
 
-`Trace` adds no roles of its own. Each line gets its semantics from the element that wraps it.
+Each line gets its semantics from the element that wraps it. `Trace.Retry` includes a status region for retry feedback.
 
 - A `Trace.Line` on its own is a `span`. It is read as text and is not a tab stop.
 - Wrap it in a `Trace.CollapsibleTrigger` and it becomes a button with `aria-expanded`. Wrap it in a link, or in the trigger for a dialog or sheet, and it takes the keyboard and focus behavior of that element.
@@ -416,6 +440,21 @@ Secondary text after the title, such as a count or a duration. It does not trunc
 | Prop    | Type     | Default | Description                                     |
 | ------- | -------- | ------- | ----------------------------------------------- |
 | `class` | `string` | -       | Additional classes to apply to the description. |
+
+### Trace.Action
+
+A compact action that accepts [Button](/docs/components/button) props. Pass `href` for a link or `onclick` for a button.
+
+### Trace.Retry
+
+An action that runs a caller-provided retry and shows feedback in the detail area.
+
+| Prop       | Type                                                 | Default  | Description                          |
+| ---------- | ---------------------------------------------------- | -------- | ------------------------------------ |
+| `label`    | `string`                                             | -        | Button label.                        |
+| `onRetry`  | `() => void \| Promise<void>`                         | -        | Resolve on success or throw on failure. |
+| `messages` | `{ pending: string, success: string, error: string }` | -        | Localized status messages.           |
+| `state`    | `"idle" \| "pending" \| "success" \| "error"`        | `"idle"` | Bindable action state.               |
 
 ### Trace.Collapsible
 

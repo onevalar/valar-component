@@ -1,60 +1,104 @@
 import { stripLocale } from "./i18n/config.js";
 
-// A slug enters the catalog once its applicable states and usages have passed alignment review.
+// Components enter the catalog after their applicable states and usages pass review.
 const alignedSlugs = new Set([
+	"accordion",
+	"alert",
 	"alert-dialog",
+	"aspect-ratio",
+	"attachment",
 	"avatar",
+	"badge",
 	"breadcrumb",
+	"bubble",
 	"button",
+	"button-group",
 	"calendar",
 	"card",
+	"carousel",
+	"chart",
 	"checkbox",
+	"code-block",
 	"collapsible",
+	"color-picker",
 	"combobox",
 	"command",
 	"context-menu",
+	"data-table",
 	"date-picker",
 	"dialog",
+	"drawer",
 	"dropdown-menu",
 	"empty",
 	"field",
+	"gauge",
 	"hover-card",
 	"input",
 	"input-group",
 	"item",
+	"issue-composer",
+	"issue-detail",
 	"kbd",
 	"label",
+	"marker",
+	"menubar",
+	"message",
+	"message-scroller",
+	"native-select",
+	"navigation-menu",
+	"number-field",
 	"popover",
+	"questionnaire",
+	"radio-group",
+	"range-calendar",
+	"resizable",
 	"scroll-area",
 	"select",
 	"separator",
 	"sheet",
 	"sidebar",
+	"skeleton",
+	"slider",
+	"slider-field",
+	"sonner",
+	"sparkline",
+	"stepper",
 	"switch",
 	"table",
 	"tabs",
 	"textarea",
-	"tooltip",
-]);
-
-// Existing implementation or scenario evidence awaiting a complete component review.
-const partialSlugs = new Set([
-	"alert",
-	"badge",
-	"button-group",
-	"progress",
-	"resizable",
-	"sonner",
+	"toggle",
 	"toggle-group",
+	"tooltip",
+	"typography",
 ]);
 
-export function basicComponentAlignment(slug: string): "aligned" | "partial" | "pending" {
+// Valar designs reviewed against the same library-wide rules.
+const valarSlugs = new Set([
+	"donut-chart",
+	"input-otp",
+	"pagination",
+	"progress",
+	"ruler-slider",
+	"spinner",
+	"tags-input",
+	"texture-fill",
+	"tick-meter",
+	"trace",
+	"waffle-chart",
+]);
+
+export function basicComponentAlignment(
+	slug: string
+): "aligned" | "valar" | "pending" {
 	if (alignedSlugs.has(slug)) return "aligned";
-	return partialSlugs.has(slug) ? "partial" : "pending";
+	if (valarSlugs.has(slug)) return "valar";
+	return "pending";
 }
 
 export function isPublishedBasicComponent(slug: string): boolean {
-	return alignedSlugs.has(slug);
+	const status = basicComponentAlignment(slug);
+	return status === "aligned" || status === "valar";
 }
 
 /** Technical links to draft pages work, but public component discovery omits those pages. */

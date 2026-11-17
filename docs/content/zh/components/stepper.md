@@ -13,6 +13,12 @@ links:
 
 <ComponentPreview name="stepper-demo"><div></div></ComponentPreview>
 
+## 导入向导
+
+<ComponentPreview name="stepper-import"><div></div></ComponentPreview>
+
+使用 `appearance="import"` 显示横向只读阶段标记。将返回和下一步放在内容区，调用 `previous()` 或 `next()`。阻断流程的错误与恢复说明放在当前面板。窄屏的阶段轨道使用悬浮 Scroll Area，底部操作仍可直接到达。此示例使用本地数据，可输入 `demo` 继续，也可输入其他值试用失败和恢复流程。
+
 ## 安装与用法
 
 <PMAddComp name="stepper" />

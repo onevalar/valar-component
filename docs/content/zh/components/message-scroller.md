@@ -18,6 +18,14 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+<ComponentPreview name="message-scroller-agent" previewClassName="h-auto min-h-0">
+
+<div></div>
+
+</ComponentPreview>
+
+`MessageScroller.Viewport` 使用悬浮 Scroll Area。回看历史时，末尾按钮用 `appearance="latest"` 显示「最新」入口。
+
 <ComponentPreview name="message-scroller-demo" class="rounded-[34px] sm:rounded-4xl" previewClassName="h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16">
 
 <div></div>

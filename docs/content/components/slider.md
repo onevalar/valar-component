@@ -56,6 +56,16 @@ Copy and paste the following code into your project.
 {/snippet}
 </InstallTabs>
 
+## Settings contrast
+
+Linear’s appearance settings pair a 6 px unfilled track and a 20 px white thumb with a separate numeric readout. Use `appearance="settings"` on a horizontal Slider for this track and thumb. The example has a range of 15–100 and a step of 1. The control can wrap in a narrow settings row, and the keyboard outline sits inside the thumb.
+
+<ComponentPreview name="slider-contrast">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Usage
 
 ```svelte

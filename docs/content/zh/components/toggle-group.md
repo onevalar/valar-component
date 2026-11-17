@@ -74,7 +74,7 @@ links:
 
 ## 格式工具栏
 
-用 `appearance="toolbar"` 显示紧凑的图标切换按钮。这个示例中的加粗和斜体可以同时开启。方向键移动焦点，空格键切换格式。
+用 `appearance="toolbar"` 显示紧凑的图标切换按钮。方向键移动焦点并跳过禁用项，空格键切换格式。加粗和斜体可以同时开启。
 
 <ComponentPreview name="toggle-group-toolbar">
 

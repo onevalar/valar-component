@@ -66,6 +66,16 @@ links:
 <Spinner />
 ```
 
+## 同步状态
+
+用 `appearance="dots"` 和可见的 `label` 显示行内等待状态。三个点在动效中保持间距，开启减少动态效果时完整静态显示。外层有持续存在的状态播报区域时，给内层 Spinner 传 `role="none"`，让状态只播报一次。
+
+<ComponentPreview name="spinner-syncing">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 定制
 
 修改 `Spinner` 组件，即可把默认图标换成任意其他图标。
@@ -107,6 +117,8 @@ links:
 ## 按钮
 
 在按钮内加入加载指示器表示加载状态。放在文案之前并加上 `data-icon="inline-start"`，显示在起始位置；放在文案之后并加上 `data-icon="inline-end"`，显示在末尾位置。
+
+用 Button 的 `loading` 状态保留键盘焦点并防止重复触发。相邻的状态区域负责播报时，将指示器设为 `aria-hidden="true"`。
 
 <ComponentPreview name="spinner-button-demo">
 

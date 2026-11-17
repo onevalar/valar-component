@@ -1,6 +1,6 @@
 ---
 title: Pagination
-description: Pagination with page navigation, next and previous links.
+description: Numbered pagination and compact result navigation.
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/pagination
@@ -56,6 +56,8 @@ Copy and paste the following code into your project.
 {/snippet}
 </InstallTabs>
 
+The workspace package exports these controls from `@valar/svelte-ui/pagination`.
+
 ## Usage
 
 ```svelte showLineNumbers
@@ -91,6 +93,34 @@ Copy and paste the following code into your project.
   {/snippet}
 </Pagination.Root>
 ```
+
+Use a horizontal Scroll Area when a numbered row has more items than its container can fit.
+
+## Results
+
+Use `Pagination.Results` beside a data list when people need the result range and previous or next actions. The compact row follows the Usage Explorer. The interactive example uses local sample records. The empty example shows the observed disabled state.
+
+<ComponentPreview name="pagination-results">
+
+<div></div>
+
+</ComponentPreview>
+
+```svelte
+<Pagination.Results
+  count={records.length}
+  perPage={25}
+  bind:page
+  aria-label="Usage results pagination"
+  aria-controls="usage-records"
+  previousLabel="Back"
+  nextLabel="Forward"
+  formatResults={({ start, end, total }) =>
+    start <= 1 && end === total ? `${total} results` : `${start}–${end} of ${total} results`}
+/>
+```
+
+Keyboard focus stays on the current direction button during browsing. At an endpoint, it moves to the available direction. Set `page` to 1 after changing the filter or page size.
 
 ## Simple
 

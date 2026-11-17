@@ -19,6 +19,8 @@ links:
 	let { viewerData } = $props();
 </script>
 
+可试用复制问题编号、保存、保存失败和撤销归档。
+
 <ComponentPreview name="sonner-workspace">
 
 <div></div>

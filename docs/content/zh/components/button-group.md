@@ -173,7 +173,7 @@ links:
 
 ## 选择器
 
-与 `Select` 组件搭配使用。
+`Select` 和 `Input` 同组时对齐为 32 px，各自保留键盘入口。
 
 <ComponentPreview name="button-group-select-demo">
 

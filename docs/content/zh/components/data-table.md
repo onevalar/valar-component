@@ -3,7 +3,7 @@ title: 数据表格
 description: 基于 TanStack Table 构建的表格与数据网格。
 component: true
 links:
-  source: https://github.com/onevalar/valar-svelte/blob/next/docs/src/lib/registry/examples/data-table-demo.svelte
+  source: https://github.com/onevalar/valar-svelte/blob/main/docs/src/lib/registry/examples/data-table-imports.svelte
   doc: https://tanstack.com/table/latest/docs/framework/svelte/quick-start
 ---
 
@@ -15,6 +15,20 @@ links:
 	import Steps from "$lib/components/steps.svelte";
 	import Step from "$lib/components/step.svelte";
 </script>
+
+## 导入记录
+
+<ComponentPreview name="data-table-imports">
+
+<div></div>
+
+</ComponentPreview>
+
+导入记录复用 Table 的 `settings` 外观，由 TanStack Table 处理列排序。**创建时间**默认最新在前，聚焦列标题按钮后可按 Enter 切换。行尾菜单支持搜索命令，按 Escape 回到触发器。预览使用示例数据，包含错误记录和状态筛选器。筛选后可清除搜索词，从空状态返回记录列表。
+
+给 `Table.Root` 传入 `scroll="overlay"` 和 `scrollLabel` 可获得具名、支持键盘滚动的视口。滑块浮在表格底部，列宽随内容保留。
+
+## 支付记录
 
 <ComponentPreview name="data-table-demo">
 
@@ -240,7 +254,7 @@ export const columns = columnHelper.columns([
 </script>
 
 <div class="rounded-md border">
-  <Table.Root>
+  <Table.Root scroll="overlay" scrollLabel="付款记录列">
     <Table.Header>
       {#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
         <Table.Row>
@@ -470,7 +484,7 @@ export const columns = columnHelper.columns([
 
 <div>
   <div class="rounded-md border">
-    <Table.Root>
+    <Table.Root scroll="overlay" scrollLabel="付款记录列">
       <!--- ... table implementation -->
     </Table.Root>
   </div>
@@ -601,7 +615,7 @@ export const columns = columnHelper.columns([
     />
   </div>
   <div class="rounded-md border">
-    <Table.Root><!-- ... --></Table.Root>
+    <Table.Root scroll="overlay" scrollLabel="付款记录列"><!-- ... --></Table.Root>
   </div>
 </div>
 ```
@@ -659,7 +673,7 @@ export const columns = columnHelper.columns([
     </DropdownMenu.Root>
   </div>
   <div class="rounded-md border">
-    <Table.Root><!--...--></Table.Root>
+    <Table.Root scroll="overlay" scrollLabel="付款记录列"><!--...--></Table.Root>
   </div>
 </div>
 ```

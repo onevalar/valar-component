@@ -56,6 +56,16 @@ links:
 {/snippet}
 </InstallTabs>
 
+## 设置 · 对比度
+
+Linear 的外观设置使用 6 px 无填充轨道、20 px 白色滑块和独立数值读数。横向 Slider 设置 `appearance="settings"` 可复用轨道与滑块。示例范围为 15–100，步长为 1。窄屏下控件可以换行，键盘焦点使用内侧描边。
+
+<ComponentPreview name="slider-contrast">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 用法
 
 ```svelte

@@ -156,7 +156,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 			test("Inbox and Agent keep toolbar menus within the viewport and restore focus", async ({
 				page,
 			}) => {
-				await page.goto(`${path}/inbox`);
+				await page.goto(`${path}/inbox`, { waitUntil: "networkidle" });
 				const inbox = page.getByRole("region", { name: "通知中心" });
 				const inboxMenu = inbox.getByRole("menu");
 				await openAndDismiss(
@@ -165,7 +165,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 					inboxMenu,
 					inboxMenu.getByRole("menuitem", { name: "搜索通知" })
 				);
-				await page.goto(`${path}/agent`);
+				await page.goto(`${path}/agent`, { waitUntil: "networkidle" });
 				const agent = page.getByRole("region", { name: "Agent 对话" });
 				const agentMenu = agent.getByRole("menu");
 				await openAndDismiss(

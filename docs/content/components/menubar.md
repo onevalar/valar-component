@@ -24,6 +24,14 @@ links:
 
 </ComponentPreview>
 
+## Header navigation
+
+Set `appearance="navigation"` on `Menubar.Root` for a small set of grouped header menus. The 32 px pill triggers open panels aligned below them. Arrow keys move between menus and items, Enter opens or selects, and Escape closes the menu and returns focus. Panels shift within the viewport on narrow screens. Use a [Scroll Area](/docs/components/scroll-area) for longer groups that need a height limit. The dark style comes from Linear’s public header. The light palette and keyboard focus indicators use Valar’s tokens. [Linear header](https://linear.app/contact/sales)
+
+<ComponentPreview name="menubar-navigation">
+
+</ComponentPreview>
+
 ## Installation
 
 <InstallTabs>

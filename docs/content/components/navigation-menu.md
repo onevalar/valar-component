@@ -20,6 +20,16 @@ links:
 	let { viewerData } = $props();
 </script>
 
+## Project navigation
+
+<ComponentPreview name="navigation-menu-project" align="start">
+
+</ComponentPreview>
+
+Use `appearance="project"` for a row of links between project views. Set `active` from the current URL. On narrow screens, the links scroll inside a horizontal Scroll Area. Pass `scrollLabel` to name its keyboard-accessible viewport. This example uses URL fragments to switch between three local views.
+
+## Navigation with dropdowns
+
 <ComponentPreview name="navigation-menu-demo" align="start">
 
 </ComponentPreview>

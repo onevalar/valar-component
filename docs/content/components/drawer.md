@@ -1,6 +1,6 @@
 ---
 title: Drawer
-description: A drawer component for Svelte.
+description: Draggable edge panels and mobile workspace navigation.
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/drawer
@@ -59,6 +59,8 @@ Copy and paste the following code into your project.
 {/snippet}
 </InstallTabs>
 
+The workspace package exports these controls from `@valar/svelte-ui/drawer`.
+
 ## Usage
 
 ```svelte showLineNumbers
@@ -90,6 +92,26 @@ Use the `direction` prop to set the side of the drawer.
 Available options are `top`, `right`, `bottom`, and `left`.
 
 <ComponentPreview name="drawer-sides">
+
+<div></div>
+
+</ComponentPreview>
+
+## Workspace navigation
+
+Use `direction="left"` with `Drawer.Content appearance="workspace"` for a mobile navigation drawer. The panel is up to 330 px wide, fills the viewport height and leaves at least 24 px of the page visible on narrow screens. The workspace appearance follows the Linear menu geometry and uses Vaul's transition and drag behavior.
+
+<ComponentPreview name="drawer-workspace">
+
+<div></div>
+
+</ComponentPreview>
+
+## Scrollable content
+
+Keep the title and actions outside the scroll region. Place long content in `ScrollArea.Root` with a `viewportLabel` and `data-vaul-no-drag` so scrolling and dragging the thumb work independently of drawer gestures.
+
+<ComponentPreview name="drawer-scrollable-content">
 
 <div></div>
 

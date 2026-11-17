@@ -58,7 +58,19 @@ links:
 <Skeleton class="h-[20px] w-[100px] rounded-full" />
 ```
 
+## 问题筛选
+
+使用 `appearance="filter"` 表达 Linear 生成筛选条件时的 24 px 高占位。根据条件内容设置宽度，用 `delay` 指定毫秒级错峰。本地示例预留筛选行，保持问题列表可见，并在生成后播报结果。
+
+<ComponentPreview name="skeleton-filter">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 头像
+
+固定头像占位的直径，让文字占位随可用宽度收缩。内容加载时为所属容器设置 `aria-busy="true"`。
 
 <ComponentPreview name="skeleton-avatar">
 

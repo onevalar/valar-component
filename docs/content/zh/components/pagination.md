@@ -1,6 +1,6 @@
 ---
 title: 分页
-description: 带页码导航与上一页、下一页链接的分页组件。
+description: 页码导航和带结果计数的紧凑翻页。
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/pagination
@@ -56,6 +56,8 @@ links:
 {/snippet}
 </InstallTabs>
 
+工作区组件包的入口为 `@valar/svelte-ui/pagination`。
+
 ## 用法
 
 ```svelte showLineNumbers
@@ -91,6 +93,34 @@ links:
   {/snippet}
 </Pagination.Root>
 ```
+
+页码行超出容器宽度时使用横向悬浮 Scroll Area。
+
+## 结果分页
+
+用量记录或表格需要显示当前范围并支持前后浏览时，使用 `Pagination.Results`。紧凑行对应用量浏览器。可交互示例使用本地合成记录，空结果示例展示实测的禁用状态。
+
+<ComponentPreview name="pagination-results">
+
+<div></div>
+
+</ComponentPreview>
+
+```svelte
+<Pagination.Results
+  count={records.length}
+  perPage={25}
+  bind:page
+  aria-label="用量记录分页"
+  aria-controls="usage-records"
+  previousLabel="上一页"
+  nextLabel="下一页"
+  formatResults={({ start, end, total }) =>
+    start <= 1 && end === total ? `${total} 个结果` : `第 ${start}–${end} 条，共 ${total} 个结果`}
+/>
+```
+
+连续翻页时键盘焦点留在当前按钮。到达首尾页时，焦点移到可用的方向按钮。筛选条件或每页条数变化后，将 `page` 重置为 1。
 
 ## 简单
 

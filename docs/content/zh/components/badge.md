@@ -17,6 +17,8 @@ links:
 	let { viewerData } = $props();
 </script>
 
+长标签可使用 `truncate` 显示省略号，完整文字仍是链接名称。
+
 <ComponentPreview name="badge-demo">
 
 <div></div>

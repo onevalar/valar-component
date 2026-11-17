@@ -33,6 +33,26 @@ links:
 
 [浏览图表库](/charts)。
 
+## 问题洞察
+
+给图表容器和提示框设置 `appearance="insights"`，展示带右侧坐标轴的紧凑堆叠柱图。悬停柱段查看计数和组内百分比，点击柱段或用键盘操作对应表格数值可打开详情。示例使用演示计数和合成问题标题。
+
+<ComponentPreview name="insights-chart-demo">
+
+<div></div>
+
+</ComponentPreview>
+
+## 用量为空
+
+给 `Chart.Container` 设置 `appearance="usage"` 可使用 320 px 高的透明图表区和紧凑刻度。下例复现 Linear Usage Explorer 的用量空态。切换时段可更新日期轴和可访问的总额说明。用量为零时，绘图区没有柱条和悬停目标。
+
+<ComponentPreview name="usage-chart-empty">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 组件
 
 底层使用 [LayerChart](https://next.layerchart.com)。

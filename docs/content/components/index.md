@@ -1,6 +1,6 @@
 ---
 title: Basic components
-description: Browse basic components that have passed their full Linear alignment review.
+description: Browse the reviewed foundation of the Valar Svelte library.
 ---
 
 <script>

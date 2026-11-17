@@ -18,6 +18,26 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+## 常驻流程错误
+
+<ComponentPreview name="alert-workflow-error">
+
+<div></div>
+
+</ComponentPreview>
+
+当前步骤因错误无法继续时，可用 `appearance="workflow-error"` 保留提示，直到用户返回修正。将排查说明放进 `Alert.Description`，可嵌套 `Alert.Action` 放帮助链接。返回和禁用的下一步操作放在当前流程的操作栏。示例从错误步骤开始，验证使用本地合成状态。
+
+## 上传通知
+
+<ComponentPreview name="alert-notification">
+
+<div></div>
+
+</ComponentPreview>
+
+上传被拒绝时，可以用 `appearance="notification"` 显示原因、关闭入口和恢复操作。显示时长以及关闭后归焦的位置由宿主决定。
+
 <ComponentPreview name="alert-connection">
 
 <div></div>

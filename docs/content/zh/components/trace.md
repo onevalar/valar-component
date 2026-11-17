@@ -17,6 +17,14 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+<ComponentPreview name="trace-agent">
+
+<div></div>
+
+</ComponentPreview>
+
+Agent 工具反馈用 `appearance="agent"`。进行中的步骤用 `Trace.Line` 并设 `status="running"`。完成后显示工作摘要，点击或用键盘展开查看具体步骤。
+
 <ComponentPreview name="trace-demo" previewClassName="h-auto min-h-0">
 
 <div></div>
@@ -63,6 +71,8 @@ links:
 </Step>
 
 <PMAddComp name="collapsible" />
+<PMAddComp name="button" />
+<PMAddComp name="spinner" />
 
 <Step>
 
@@ -177,6 +187,18 @@ Trace.Root
 | `"running"` | 进行中的工作。标题用进行时表述：“Running pnpm build”。        |
 | `"pending"` | 尚未开始的工作，例如计划中的步骤：“Run pnpm test”。           |
 
+## 工具失败与重试
+
+把 `Trace.Retry` 放在展开详情中。它调用宿主提供的 `onRetry`，使焦点停在原按钮，并播报结果。失败后可以再次重试，成功后停止响应重复激活。每次新的工具步骤可以使用独立的重试按钮。
+
+本地示例模拟首次重试失败、再次重试成功。Linear Agent 实测对话在断网时将请求排队，重连后继续并记下成功的搜索步骤。搜索工具本身失败时的控件仍待实页取样。
+
+<ComponentPreview name="trace-agent-retry" previewClassName="h-auto min-h-0">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 描述
 
 差异统计、耗时或计数等次要信息，放在 `Trace.Title` 之后的 `Trace.Description` 中。这部分不会截断。
@@ -228,6 +250,8 @@ Trace.Root
 ## 链接
 
 用链接元素包裹 `Trace.Line`。在新标签页打开时，使用右上箭头图标，并用 sr-only 加上“(opens in a new tab)”。
+
+详情中需要独立链接时，给 `Trace.Action` 传入 `href`。它仍渲染原生链接，沿用 Button 的键盘与焦点样式。
 
 <ComponentPreview name="trace-link" previewClassName="h-auto min-h-0">
 
@@ -363,7 +387,7 @@ Trace.Root
 
 ## 无障碍
 
-`Trace` 自身不添加任何 role。每行的语义由包裹它的元素决定。
+每行的语义由包裹它的元素决定。`Trace.Retry` 使用状态区域播报重试反馈。
 
 - 单独使用的 `Trace.Line` 是 `span`，按文本朗读，也不在 Tab 顺序中。
 - 用 `Trace.CollapsibleTrigger` 包裹，它就成为带 `aria-expanded` 的按钮。用链接包裹，或用对话框、面板的触发器包裹，它沿用该元素的键盘与焦点行为。
@@ -416,6 +440,21 @@ Trace.Root
 | 属性    | 类型     | 默认值 | 说明                     |
 | ------- | -------- | ------ | ------------------------ |
 | `class` | `string` | -      | 应用到描述的附加类名。   |
+
+### Trace.Action
+
+紧凑操作控件，接受[按钮](/docs/components/button)属性。`href` 用于链接，`onclick` 用于按钮。
+
+### Trace.Retry
+
+运行宿主提供的重试并在详情区显示反馈。
+
+| 属性       | 类型                                                 | 默认值   | 说明                                 |
+| ---------- | ---------------------------------------------------- | -------- | ------------------------------------ |
+| `label`    | `string`                                             | -        | 按钮名称。                           |
+| `onRetry`  | `() => void \| Promise<void>`                         | -        | 成功时正常返回，失败时抛错。         |
+| `messages` | `{ pending: string, success: string, error: string }` | -        | 本地化的状态反馈。                   |
+| `state`    | `"idle" \| "pending" \| "success" \| "error"`        | `"idle"` | 可绑定的操作状态。                   |
 
 ### Trace.Collapsible
 

@@ -70,6 +70,16 @@ Copy and paste the following code into your project.
 </AspectRatio>
 ```
 
+## Issue description media
+
+Use `appearance="media"` for images and videos that need to stay fully visible. Pass the content’s `ratio` and use `mediaWidth` for its preferred display width in CSS pixels. The frame shrinks to fit the available width and a 600 px height limit, with a 6 px corner radius.
+
+<ComponentPreview name="aspect-ratio-media">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Square
 
 A square aspect ratio component using the `ratio={1 / 1}` prop. This is useful for displaying images in a square format.

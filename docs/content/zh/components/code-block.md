@@ -28,6 +28,16 @@ links:
 
 语法高亮是可选项，由单独的 hook 提供，因此只显示纯文本输出的代码块依然保持轻量。
 
+## Issue 与 Agent
+
+Issue 描述中的代码使用 `appearance="issue"`，Agent 回复中的代码使用 `appearance="agent"`。两者共用实测的紧凑表面和排版。Issue 示例在悬停或聚焦时显示浮动复制操作。Agent 示例提供语言标签、复制和 Valar 的换行开关。
+
+<ComponentPreview name="code-block-linear" previewClassName="h-auto min-h-0">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 安装
 
 <InstallTabs>
@@ -51,7 +61,7 @@ links:
 
 </Step>
 
-<PMAddComp name="button use-highlighted-code" />
+<PMAddComp name="button scroll-area use-highlighted-code" />
 
 <Step>
 
@@ -66,7 +76,7 @@ links:
 {/snippet}
 </InstallTabs>
 
-`code-block` 还会一并安装 `useHighlightedCode`，用于[语法高亮](#语法高亮)。
+`code-block` 会一并安装 [Scroll Area](/docs/components/scroll-area) 和用于[语法高亮](#语法高亮)的 `useHighlightedCode`。
 
 ## 用法
 
@@ -263,7 +273,8 @@ CodeBlock.Root
 
 <CodeBlock.Content
   {id}
-  class={expanded ? undefined : "max-h-64 overflow-y-hidden scroll-fade-y"}
+  scrollOrientation={expanded ? undefined : "horizontal"}
+  class={expanded ? undefined : "max-h-64 scroll-fade-y"}
   {code}
 />
 <CodeBlock.Footer class="justify-center">
@@ -495,8 +506,8 @@ export async function load() {
 
 ## 无障碍
 
-- `CodeBlock.Content` 是包含 `code` 元素的 `pre`，固定设置 `dir="ltr"`，因此即使页面从右到左排版，代码仍按从左到右阅读。
-- `CodeBlock.Content` 带有 `tabindex={0}`，键盘用户可以聚焦并滚动内容。传入 `tabindex={-1}` 即移除 Tab 停靠点。
+- `CodeBlock.Content` 在 Scroll Area 内渲染 `pre` 和 `code`。页面从右到左排版时，代码仍从左到右阅读。
+- 视口默认带 `tabindex={0}`，支持方向键和翻页键滚动。用 `aria-label` 命名区域，用 `tabindex={-1}` 将其移出 Tab 顺序。悬停时滚动条浮在内容上方。
 - 焦点进入代码块时浮动操作就会显示，而不只在悬停时显示，键盘用户同样能操作。
 - 行号对屏幕阅读器隐藏。
 - 差异行除了底色，还带有 `+` 或 `−` 标记，变化不只靠颜色传达。
@@ -510,11 +521,12 @@ export async function load() {
 
 承载头部、内容和页脚的容器。
 
-| 属性      | 类型                         | 默认值      | 说明                                                       |
-| --------- | ---------------------------- | ----------- | ---------------------------------------------------------- |
-| `variant` | `"default" \| "destructive"` | `"default"` | 代码块的色调。                                             |
-| `size`    | `"default" \| "sm"`          | `"default"` | `"sm"` 内边距更紧凑，代码为 `text-xs`，用于工具输出。       |
-| `class`   | `string`                     | -           | 应用于代码块的额外类名。                                   |
+| 属性         | 类型                         | 默认值      | 说明                                                  |
+| ------------ | ---------------------------- | ----------- | ----------------------------------------------------- |
+| `variant`    | `"default" \| "destructive"` | `"default"` | 代码块的色调。                                        |
+| `size`       | `"default" \| "sm"`          | `"default"` | `"sm"` 内边距更紧凑，代码为 `text-xs`，用于工具输出。 |
+| `appearance` | `"issue" \| "agent"`         | -           | 用于 Issue 描述或 Agent 回复的紧凑表面。              |
+| `class`      | `string`                     | -           | 应用于代码块的额外类名。                              |
 
 ### CodeBlock.Header
 
@@ -551,17 +563,18 @@ export async function load() {
 
 ### CodeBlock.Content
 
-可滚动或自动换行的 `pre`。
+可滚动视口中的代码。`ref` 指向 `pre` 元素，`viewportRef` 指向实际滚动的元素。
 
-| 属性          | 类型      | 默认值  | 说明                                                            |
-| ------------- | --------- | ------- | --------------------------------------------------------------- |
-| `code`        | `string`  | -       | 要渲染的纯文本。设置后忽略 `children`。                          |
-| `children`    | `Snippet` | -       | 一组 `CodeBlock.Line`。                                         |
-| `wrap`        | `boolean` | `false` | 长行自动换行，而不是滚动。                                      |
-| `lineNumbers` | `boolean` | `false` | 为每行编号。传入 `code` 字符串时会按行拆分。                    |
-| `startLine`   | `number`  | `1`     | 设置 `lineNumbers` 时首行的行号。                               |
-| `tabindex`    | `number`  | `0`     | 让内容可聚焦，从而能用键盘滚动。                                |
-| `class`       | `string`  | -       | 应用于内容的额外类名，例如 `max-h-72`。                         |
+| 属性                | 类型                                   | 默认值                          | 说明                                         |
+| ------------------- | -------------------------------------- | ------------------------------- | -------------------------------------------- |
+| `code`              | `string`                               | -                               | 要渲染的纯文本。设置后忽略 `children`。      |
+| `children`          | `Snippet`                              | -                               | 一组 `CodeBlock.Line`。                      |
+| `wrap`              | `boolean`                              | `false`                         | 长行自动换行，而不是滚动。                   |
+| `scrollOrientation` | `"horizontal" \| "vertical" \| "both"` | `"both"`，换行时为 `"vertical"` | 限制可滚动的方向。                           |
+| `lineNumbers`       | `boolean`                              | `false`                         | 为每行编号。传入 `code` 字符串时会按行拆分。 |
+| `startLine`         | `number`                               | `1`                             | 设置 `lineNumbers` 时首行的行号。            |
+| `tabindex`          | `number`                               | `0`                             | 让内容可聚焦，从而能用键盘滚动。             |
+| `class`             | `string`                               | -                               | 应用于内容的额外类名，例如 `max-h-72`。      |
 
 ### CodeBlock.Line
 

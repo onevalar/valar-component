@@ -11,6 +11,12 @@ component: true
 
 <ComponentPreview name="sparkline-demo"><div></div></ComponentPreview>
 
+## Project completion
+
+Use `appearance="project"` for a compact completion summary. It adapts the thin indigo line, fading area and final point from the Completed series in Linear’s project progress graph. The 104 × 32 px size and simulated weekly values belong to Valar. Each connected segment fills down to the zero baseline and a missing week leaves both the line and the area open. Keep exact readings alongside the decorative graphic. [Linear project progress graph](https://linear.app/docs/project-graph)
+
+<ComponentPreview name="sparkline-project"><div></div></ComponentPreview>
+
 ## Installation
 
 <PMAddComp name="sparkline" />

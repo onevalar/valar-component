@@ -1,8 +1,10 @@
 import { execFileSync } from "node:child_process";
+import { readdirSync } from "node:fs";
+import { resolve } from "node:path";
 import { test, expect, devices } from "@playwright/test";
 import { isUnpublishedBasicComponentHref } from "../src/lib/basic-component-visibility.js";
 
-test("Basic component catalog and site search only expose fully aligned components", async ({
+test("Basic component catalog and site search show reviewed Linear and Valar components", async ({
 	page,
 	request,
 }) => {
@@ -30,9 +32,33 @@ test("Basic component catalog and site search only expose fully aligned componen
 		}
 		expect([...visibleHrefs].some(isUnpublishedBasicComponentHref)).toBe(false);
 		for (const slug of [
+			"accordion",
+			"alert",
+			"aspect-ratio",
+			"attachment",
 			"avatar",
+			"badge",
+			"bubble",
+			"button-group",
 			"card",
+			"chart",
+			"code-block",
+			"color-picker",
+			"data-table",
+			"drawer",
+			"gauge",
 			"hover-card",
+			"issue-composer",
+			"issue-detail",
+			"marker",
+			"message",
+			"message-scroller",
+			"menubar",
+			"native-select",
+			"navigation-menu",
+			"number-field",
+			"questionnaire",
+			"carousel",
 			"scroll-area",
 			"table",
 			"sidebar",
@@ -40,6 +66,18 @@ test("Basic component catalog and site search only expose fully aligned componen
 			"collapsible",
 			"item",
 			"empty",
+			"radio-group",
+			"range-calendar",
+			"resizable",
+			"skeleton",
+			"slider",
+			"slider-field",
+			"sonner",
+			"sparkline",
+			"stepper",
+			"toggle",
+			"toggle-group",
+			"typography",
 		]) {
 			expect(visibleHrefs).toContain(`${root}/${slug}`);
 		}
@@ -47,8 +85,8 @@ test("Basic component catalog and site search only expose fully aligned componen
 			await expect(
 				page.getByText(
 					prefix === "/zh"
-						? "基础组件通过 Linear 整体对齐验收后会在这里展示。目前正在复核。"
-						: "Components appear here after their full Linear alignment review. Reviews are in progress.",
+						? "基础组件通过整体验收后会在这里展示。目前正在复核。"
+						: "Components appear here after their full review. Reviews are in progress.",
 					{ exact: true }
 				)
 			).toBeVisible();
@@ -60,27 +98,38 @@ test("Basic component catalog and site search only expose fully aligned componen
 				.filter((href) => href.startsWith(`${root}/`))
 		);
 		expect(searchHrefs).toEqual(visibleHrefs);
+		const localDocs = resolve(
+			import.meta.dirname,
+			"../content",
+			prefix ? "zh/components" : "components"
+		);
+		const reviewedComponentHrefs = readdirSync(localDocs)
+			.filter((file) => file.endsWith(".md") && file !== "index.md")
+			.map((file) => `${root}/${file.slice(0, -3)}`)
+			.filter((href) => !isUnpublishedBasicComponentHref(href));
+		expect(visibleHrefs).toEqual(new Set(reviewedComponentHrefs));
 
-		const partial = `${root}/progress`;
-		if (isUnpublishedBasicComponentHref(partial)) {
-			await page.goto(partial);
-			await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", "noindex");
-			await expect(page.locator('[data-alignment-status="partial"]')).toHaveText(
-				prefix === "/zh" ? "部分对齐 · 待整体验收" : "Partially aligned · full review pending"
-			);
-			await expect(page.getByRole("progressbar").first()).toBeVisible();
+		for (const slug of [
+			"donut-chart",
+			"input-otp",
+			"pagination",
+			"progress",
+			"ruler-slider",
+			"spinner",
+			"tags-input",
+			"texture-fill",
+			"tick-meter",
+			"trace",
+			"waffle-chart",
+		]) {
+			expect(visibleHrefs.has(`${root}/${slug}`)).toBe(true);
 		}
-
-		const draft = ["radio-group", "slider", "accordion"]
-			.map((slug) => `${root}/${slug}`)
-			.find(isUnpublishedBasicComponentHref);
-		if (draft) {
-			await page.goto(draft);
-			await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", "noindex");
-			await expect(page.locator('[data-alignment-status="pending"]')).toHaveText(
-				prefix === "/zh" ? "待完成样式对齐" : "Design alignment pending"
-			);
-		}
+		expect(visibleHrefs.size).toBe(80);
+		await page.goto(`${root}/tags-input`);
+		await expect(page.locator('head meta[name="robots"][content="noindex"]')).toHaveCount(0);
+		await expect(page.locator('[data-alignment-status="valar"]')).toHaveText(
+			prefix === "/zh" ? "Valar 设计" : "Valar design"
+		);
 	}
 });
 

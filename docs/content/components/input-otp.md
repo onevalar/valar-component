@@ -139,7 +139,7 @@ Use `bind:value` to control the input value.
 
 ## Invalid
 
-Use `aria-invalid` on the slots to show an error state.
+Set `aria-invalid` on `InputOTP.Root` and associate the error text using `aria-describedby`. Use `inputId` to connect a visible label to the underlying native input. The active slot shows the error or focus inside its own border.
 
 <ComponentPreview name="input-otp-invalid">
 
@@ -174,3 +174,5 @@ Use `REGEXP_ONLY_DIGITS_AND_CHARS` to accept both letters and numbers.
 <div></div>
 
 </ComponentPreview>
+
+The form preview uses a local demo code and includes an error and retry flow. The grouped slots inherit the input surface and focus colors, and the controls keep their spacing on narrow screens. Use the application to manage verification and code delivery.

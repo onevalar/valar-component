@@ -19,6 +19,8 @@ links:
 	let { viewerData } = $props();
 </script>
 
+Try copying an issue ID, saving, showing a save error, or undoing an archive action.
+
 <ComponentPreview name="sonner-workspace">
 
 <div></div>

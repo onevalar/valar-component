@@ -20,6 +20,14 @@ links:
 	let { viewerData } = $props();
 </script>
 
+<ComponentPreview name="toggle-linear">
+
+<div></div>
+
+</ComponentPreview>
+
+编辑器格式按钮用 `appearance="formatting"`，收件箱只看未读等工作区筛选用 `appearance="toolbar"`。两种按钮在按下前后尺寸保持一致。
+
 <ComponentPreview name="toggle-demo">
 
 <div></div>

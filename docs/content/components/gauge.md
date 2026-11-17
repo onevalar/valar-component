@@ -1,6 +1,6 @@
 ---
 title: Gauge
-description: A static percentage meter and composable SVG arcs.
+description: Read-only percentages, cycle capacity and composable SVG arcs.
 component: true
 ---
 
@@ -11,6 +11,12 @@ component: true
 
 <ComponentPreview name="gauge-demo"><div></div></ComponentPreview>
 
+## Cycle capacity
+
+Use `appearance="capacity"` when a row needs a 16 px ring beside the percentage. Add an optional localized `suffix` for context, and include that context in `valueText`. The ring stops at 100% and turns red above capacity while the visible value and spoken description retain the actual percentage.
+
+<ComponentPreview name="gauge-capacity"><div></div></ComponentPreview>
+
 ## Installation
 
 <PMAddComp name="gauge" />
@@ -19,6 +25,6 @@ component: true
 
 Import `Gauge`, `GaugeArc` from `@valar/svelte-ui/gauge` (shared package) or `$lib/components/ui/gauge/index.js` (registry).
 
-`Gauge`: required `value: number`, `label: string`, `valueText: string`; optional `tone: 'accent' | 'danger'` (accent). Native div attributes including `class` and `onclick` forward. Graphic and numeric ARIA range clamp to 0–100; visible number and valueText retain overflow.
+`Gauge` requires `value: number`, `label: string` and `valueText: string`. The default appearance accepts `tone: "accent" | "danger"` and uses the accent tone by default. Native div attributes including `class` and `onclick` forward. The graphic and numeric ARIA range clamp to 0–100. The visible number and `valueText` retain overflow.
 
-`GaugeArc`: required `value: number | null`; optional `radius=42`, `tone='accent'`, native SVG group attributes. Mount inside a 100-unit SVG viewBox. Null draws a dashed missing track. No interaction or animation. Supply finite numeric input; caller handles missing before mounting Gauge.
+`GaugeArc` requires `value: number | null` and accepts `radius=42`, `tone="accent"` and native SVG group attributes. Mount it inside a 100-unit SVG viewBox. Null draws a dashed missing track. Supply a finite value for `Gauge` and handle missing values before mounting it.

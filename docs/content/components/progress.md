@@ -20,13 +20,13 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
-<ComponentPreview name="progress-project">
+<ComponentPreview name="progress-demo">
 
 <div></div>
 
 </ComponentPreview>
 
-Use `appearance="project"` for a read-only project completion percentage. Move the slider to preview progress values. Give the indicator an accessible label, and put project status actions in a separate control.
+Use the horizontal bar for tasks with measurable progress, such as an upload or import. Display a count or percentage beside the bar.
 
 ## Installation
 
@@ -70,7 +70,11 @@ Copy and paste the following code into your project.
 <Progress value={33} aria-label="Import progress" />
 ```
 
-<ComponentPreview name="progress-demo">
+## Project percentage
+
+Use `appearance="project"` for a read-only project completion percentage. Move the slider to preview progress values. Give the indicator an accessible label, and put project status actions in a separate control.
+
+<ComponentPreview name="progress-project">
 
 <div></div>
 

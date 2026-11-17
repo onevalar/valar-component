@@ -86,7 +86,7 @@ Copy and paste the following code into your project.
 
 ## Vertical
 
-Use `direction="vertical"` for vertical resizing.
+Use `direction="vertical"` for stacked panes. Resize with Up and Down within the pane limits, or lock the divider.
 
 <ComponentPreview name="resizable-vertical">
 

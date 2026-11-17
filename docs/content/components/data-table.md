@@ -3,7 +3,7 @@ title: Data Table
 description: Powerful table and datagrids built using TanStack Table.
 component: true
 links:
-  source: https://github.com/onevalar/valar-svelte/blob/next/docs/src/lib/registry/examples/data-table-demo.svelte
+  source: https://github.com/onevalar/valar-svelte/blob/main/docs/src/lib/registry/examples/data-table-imports.svelte
   doc: https://tanstack.com/table/latest/docs/framework/svelte/quick-start
 ---
 
@@ -15,6 +15,20 @@ links:
 	import Steps from "$lib/components/steps.svelte";
 	import Step from "$lib/components/step.svelte";
 </script>
+
+## Import history
+
+<ComponentPreview name="data-table-imports">
+
+<div></div>
+
+</ComponentPreview>
+
+The import history uses Table's `settings` appearance and TanStack Table to sort by column. **Created** starts newest first. Enter sorts via the focused header button. Use the row action's search to find a command, or Escape to return to the button. The preview uses example records, including a failed import and a status filter. Filter, then clear the search to restore rows from the empty state.
+
+Use `scroll="overlay"` and a `scrollLabel` on `Table.Root` for a named, keyboard-scrollable viewport. The thumb appears over the table while columns keep their width.
+
+## Payments
 
 <ComponentPreview name="data-table-demo">
 
@@ -240,7 +254,7 @@ Next, we'll create a `<DataTable />` component to render our table.
 </script>
 
 <div class="rounded-md border">
-  <Table.Root>
+  <Table.Root scroll="overlay" scrollLabel="Payment columns">
     <Table.Header>
       {#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
         <Table.Row>
@@ -470,7 +484,7 @@ We can add pagination controls to our table using the `<Button />` component and
 
 <div>
   <div class="rounded-md border">
-    <Table.Root>
+    <Table.Root scroll="overlay" scrollLabel="Payment columns">
       <!--- ... table implementation -->
     </Table.Root>
   </div>
@@ -601,7 +615,7 @@ The `columnFilteringFeature`, filtered row model, and the `includesString` filte
     />
   </div>
   <div class="rounded-md border">
-    <Table.Root><!-- ... --></Table.Root>
+    <Table.Root scroll="overlay" scrollLabel="Payment columns"><!-- ... --></Table.Root>
   </div>
 </div>
 ```
@@ -659,7 +673,7 @@ Adding column visibility is fairly simple using the `@tanstack/svelte-table` vis
     </DropdownMenu.Root>
   </div>
   <div class="rounded-md border">
-    <Table.Root><!--...--></Table.Root>
+    <Table.Root scroll="overlay" scrollLabel="Payment columns"><!--...--></Table.Root>
   </div>
 </div>
 ```

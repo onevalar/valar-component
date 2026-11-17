@@ -30,6 +30,18 @@ links:
 
 The carousel component is built using the [Embla Carousel](https://www.embla-carousel.com/docs/v8/get-started/svelte) library.
 
+## Full-screen media
+
+Open either thumbnail to start on that image. Use the down or right arrow to advance and the up or left arrow to go back. Navigation stops at the first and last image. The percentage control toggles between the original size and up to twice its size. It resets when you switch images. Escape closes the viewer and returns focus to its thumbnail.
+
+Use `appearance="media"` on the root and pass each item its zero-based `index`. Place `Carousel.Toolbar` inside the root with Next before Previous in a pill Button Group. The 40 px toolbar uses 28 px controls, 14 px icons, a half-pixel divider and a 4 px gap to Close. Keep the image stage centered inside the remaining space. Reduced motion changes images without the slide animation.
+
+<ComponentPreview name="carousel-media">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Installation
 
 <InstallTabs>
@@ -252,24 +264,7 @@ See the [Embla Carousel docs](https://www.embla-carousel.com/docs/v8/api/events)
 
 ## Plugins
 
-You can use the `plugins` prop to add plugins to the carousel.
-
-```svelte showLineNumbers {2,7-11}
-<script lang="ts">
-  import Autoplay from "embla-carousel-autoplay";
-  import * as Carousel from "$lib/components/ui/carousel/index.js";
-</script>
-
-<Carousel.Root
-  plugins={[
-    Autoplay({
-      delay: 2000,
-    }),
-  ]}
->
-  <!-- ... -->
-</Carousel.Root>
-```
+Pass Embla plugins through the `plugins` prop. The autoplay example exposes a Play/Pause button before the slides. Hovering pauses playback temporarily. Moving focus into the slides or dragging pauses playback until the user starts it again. With reduced motion, the example starts paused.
 
 <ComponentPreview name="carousel-plugin">
 

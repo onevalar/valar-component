@@ -173,7 +173,7 @@ Create a split button group with a `DropdownMenu` component.
 
 ## Select
 
-Pair with a `Select` component.
+Pair a `Select` and an `Input` to share a 32 px row. Each control keeps its own keyboard entry.
 
 <ComponentPreview name="button-group-select-demo">
 

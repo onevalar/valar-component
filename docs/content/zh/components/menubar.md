@@ -24,6 +24,14 @@ links:
 
 </ComponentPreview>
 
+## 顶部导航
+
+少量分组菜单可在 `Menubar.Root` 设置 `appearance="navigation"`。触发器高 32 px、采用胶囊圆角，弹层在各自的触发器下打开。方向键切换菜单及菜单项，Enter 打开或选择，Escape 关闭并返回触发器。窄屏弹层会在视口内调整位置。需要限制高度的菜单组放进[滚动区域](/zh/docs/components/scroll-area)。深色取样自 Linear 的公开顶部导航，浅色和键盘焦点提示沿用 Valar token。[Linear 顶部导航](https://linear.app/contact/sales)
+
+<ComponentPreview name="menubar-navigation">
+
+</ComponentPreview>
+
 ## 安装
 
 <InstallTabs>

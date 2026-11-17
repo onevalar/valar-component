@@ -30,6 +30,18 @@ links:
 
 轮播组件基于 [Embla Carousel](https://www.embla-carousel.com/docs/v8/get-started/svelte) 库构建。
 
+## 全屏图片
+
+点击任一缩略图，从对应图片开始浏览。向下键和向右键切换到下一张，向上键和向左键切换到上一张。到达首尾后停止。百分比按钮在原始尺寸和最多两倍之间切换，更换图片时恢复原始大小。按 Escape 关闭，焦点返回打开预览的缩略图。
+
+在根组件设置 `appearance="media"`，给每张图片传入从 0 开始的 `index`。在根组件内放置 `Carousel.Toolbar`，胶囊按钮组内先放下一张，再放上一张。工具栏高 40 px，控件为 28 px，图标为 14 px，内部用 0.5 px 分隔线，关闭按钮与按钮组间距为 4 px。图片在剩余空间内居中。启用减少动态效果时，切换直接完成。
+
+<ComponentPreview name="carousel-media">
+
+<div></div>
+
+</ComponentPreview>
+
 ## 安装
 
 <InstallTabs>
@@ -252,24 +264,7 @@ links:
 
 ## 插件
 
-用 `plugins` 属性为轮播添加插件。
-
-```svelte showLineNumbers {2,7-11}
-<script lang="ts">
-  import Autoplay from "embla-carousel-autoplay";
-  import * as Carousel from "$lib/components/ui/carousel/index.js";
-</script>
-
-<Carousel.Root
-  plugins={[
-    Autoplay({
-      delay: 2000,
-    }),
-  ]}
->
-  <!-- ... -->
-</Carousel.Root>
-```
+通过 `plugins` 属性传入 Embla 插件。自动播放示例在幻灯片之前提供播放／暂停按钮。鼠标悬停时临时暂停，焦点进入幻灯片区域或拖动时暂停，用户可主动恢复。开启减少动态效果时，初始状态为暂停。
 
 <ComponentPreview name="carousel-plugin">
 

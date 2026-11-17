@@ -26,6 +26,16 @@ links:
 
 </ComponentPreview>
 
+## Jira import method
+
+The default Valar radio is 16 px with a transparent unchecked surface, a thin border, and a 4 px dot on the selected accent fill. Keyboard focus uses an inset outline. Set `appearance="settings"` for a 16 px gap between options. This example follows Jira's import method picker. Labels sit 12 px from the controls and wrap when space is limited. Horizontal, disabled, and invalid states follow the general Valar rules.
+
+<ComponentPreview name="radio-group-jira">
+
+<div></div>
+
+</ComponentPreview>
+
 ## Installation
 
 <InstallTabs>
@@ -66,7 +76,7 @@ Copy and paste the following code into your project.
 ```
 
 ```svelte showLineNumbers
-<RadioGroup.Root value="option-one">
+<RadioGroup.Root value="option-one" aria-label="Display density">
   <div class="flex items-center gap-3">
     <RadioGroup.Item value="option-one" id="option-one" />
     <Label for="option-one">Option One</Label>
@@ -80,7 +90,7 @@ Copy and paste the following code into your project.
 
 ## Description
 
-Radio group items with a description using the `Field` component.
+Use `Field.Description` and reference its ID from each option's `aria-describedby`.
 
 <ComponentPreview name="radio-group-description">
 
@@ -90,7 +100,7 @@ Radio group items with a description using the `Field` component.
 
 ## Choice Card
 
-Use `Field.Label` to wrap the entire `Field.Field` for a clickable card-style selection.
+Wrap the entire `Field.Field` in `Field.Label` for a clickable card. Reference its title with `aria-labelledby` and its supporting text with `aria-describedby`.
 
 <ComponentPreview name="radio-group-choice-card">
 
@@ -100,7 +110,7 @@ Use `Field.Label` to wrap the entire `Field.Field` for a clickable card-style se
 
 ## Fieldset
 
-Use `Field.Set` and `Field.Legend` to group radio items with a label and description.
+Use `Field.Set` and `Field.Legend` for the group. Attach the legend to `RadioGroup.Root` with `aria-labelledby` and its description with `aria-describedby`.
 
 <ComponentPreview name="radio-group-fieldset">
 
@@ -120,7 +130,7 @@ Use the `disabled` prop on `RadioGroup.Item` to disable individual items.
 
 ## Invalid
 
-Use `aria-invalid` on `RadioGroup.Item` and `data-invalid` on `Field.Field` to show validation errors.
+Set `aria-invalid` on the group and its items. Apply `data-invalid` to `Field.Field` and connect the `Field.Error` ID with `aria-describedby`.
 
 <ComponentPreview name="radio-group-invalid">
 

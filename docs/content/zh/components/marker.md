@@ -18,6 +18,18 @@ links:
 	import Step from "$lib/components/step.svelte";
 </script>
 
+## 思考状态
+
+<ComponentPreview name="marker-thinking" previewClassName="h-auto">
+
+<div></div>
+
+</ComponentPreview>
+
+助手回复前的短时状态可用 `appearance="thinking"` 和 `Marker.Content`。文字扫光周期为 2.4 秒。开启减少动态效果时保留静态文字。开始处理或停止回复后移除标记。
+
+## 常用标记
+
 <ComponentPreview name="marker-demo" previewClassName="h-auto theme-blue">
 
 <div></div>
