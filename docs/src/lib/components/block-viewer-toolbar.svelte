@@ -49,7 +49,7 @@
 		{ctx.item.description?.replace(/\.$/, "")}
 	</a>
 	<div class="ms-auto flex items-center gap-2">
-		<div class="h-8 items-center gap-1.5 rounded-md border p-[3px] shadow-none">
+		<div class="flex h-8 items-center gap-1 rounded-[8px] border-[0.5px] border-border bg-[#EFEFF1] p-[3px] dark:bg-[#161719]">
 			<ToggleGroup.Root
 				type="single"
 				value="100"
@@ -58,7 +58,7 @@
 						ctx.resizablePaneRef.resize(parseInt(value));
 					}
 				}}
-				class="gap-1 *:data-[slot=toggle-group-item]:!size-6 *:data-[slot=toggle-group-item]:!rounded-sm"
+				class="gap-1 *:data-[slot=toggle-group-item]:!size-6 *:data-[slot=toggle-group-item]:!rounded-[5px]"
 			>
 				<ToggleGroup.Item value="100" title={t("docs.desktop")}>
 					<MonitorIcon />

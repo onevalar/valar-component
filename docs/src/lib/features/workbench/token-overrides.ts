@@ -211,6 +211,65 @@ export function applyTokenOverride<T extends { cssVars?: CssVars }>(
 	};
 }
 
+/**
+ * Generates global CSS variable overrides plus component bridge variables for customized tokens.
+ * Returns "" when no override entries exist so uncustomized themes preserve exact Linear defaults.
+ */
+export function globalTokenBridgeCss(
+	override: TokenOverride | undefined,
+	lightSelector = ":root",
+	darkSelector = ".dark"
+): string {
+	if (!override) return "";
+	const lightEntries = Object.entries(override.light ?? {});
+	const darkEntries = Object.entries(override.dark ?? {});
+	const themeEntries = Object.entries(override.theme ?? {});
+	if (!lightEntries.length && !darkEntries.length && !themeEntries.length) return "";
+
+	const bridgeVars = (vars: Record<string, string>) => {
+		const extra: string[] = [];
+		if ("primary" in vars) {
+			extra.push(
+				"--valar-button-primary: var(--primary);",
+				"--valar-button-primary-hover: color-mix(in oklch, var(--primary), black 10%);",
+				"--valar-accent-fill: var(--primary);"
+			);
+		}
+		if ("primary-foreground" in vars) {
+			extra.push(
+				"--valar-button-primary-ink: var(--primary-foreground);",
+				"--valar-accent-ink: var(--primary-foreground);"
+			);
+		}
+		if ("secondary" in vars) extra.push("--valar-button-secondary: var(--secondary);");
+		if ("destructive" in vars) extra.push("--valar-button-danger: var(--destructive);");
+		if ("ring" in vars) {
+			extra.push("--valar-button-focus: var(--ring);", "--valar-focus-ring: var(--ring);");
+		}
+		if ("card" in vars) extra.push("--valar-card-bg: var(--card);");
+		if ("popover" in vars) extra.push("--valar-popover-bg: var(--popover);");
+		return extra;
+	};
+
+	const formatRule = (selector: string, entries: [string, string][], extra: string[] = []) => {
+		if (!entries.length && !extra.length) return "";
+		const decls = [
+			...entries.map(([token, value]) => `--${token}: ${value};`),
+			...extra,
+		].join(" ");
+		return `${selector} { ${decls} }`;
+	};
+
+	const lightBridge = bridgeVars({ ...(override.light ?? {}) });
+	const darkBridge = bridgeVars({ ...(override.dark ?? {}) });
+	const rules = [
+		formatRule(lightSelector, [...lightEntries, ...themeEntries], lightBridge),
+		formatRule(darkSelector, darkEntries, darkBridge),
+	].filter(Boolean);
+
+	return rules.join("\n");
+}
+
 /** Lists every token whose value differs, for the confirmation dialog. */
 export function diffTokens(
 	before: Record<string, string>,

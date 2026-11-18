@@ -81,7 +81,7 @@ pnpm --filter @valar/${framework}-ui pack --pack-destination ./dist/packages`);
 				{@render children()}
 			</section>
 		{:else if !example}
-			<div class="flex flex-col gap-3 rounded-xl border p-5" role="status">
+			<div class="flex flex-col gap-3 rounded-xl border-[0.5px] border-border p-5" role="status">
 				<Badge variant="secondary">{name} · {t("usage.pending")}</Badge>
 				<p class="text-sm">{t("usage.unavailable", { framework: name })}</p>
 			</div>

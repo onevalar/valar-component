@@ -295,18 +295,18 @@
 				variant="outline"
 				aria-label={t("command.label")}
 				class={cn(
-					"relative size-8 justify-center rounded-lg border-none bg-muted text-foreground shadow-none transition-colors hover:bg-muted/50 md:w-48 md:justify-start md:pl-3 lg:w-40 xl:w-64 dark:bg-card"
+					"relative size-7 justify-center rounded-[8px] border-[0.5px] border-border bg-card/90 text-[13px] text-muted-foreground shadow-none transition-colors hover:bg-accent/60 hover:text-foreground md:w-48 md:justify-start md:pl-2.5 lg:w-40 xl:w-56"
 				)}
 				onclick={() => openCommandMenu()}
 			>
-				<SearchIcon class="md:hidden" />
+				<SearchIcon class="size-3.5 md:mr-1.5" />
 				<span class="hidden xl:inline-flex">{t("command.placeholder")}</span>
 				<span class="hidden md:inline-flex xl:hidden">{t("header.search")}</span>
 			</Button>
 		{/snippet}
 	</Dialog.Trigger>
 	<Dialog.Content
-		class="top-4 flex max-h-[calc(100dvh-2rem)] max-w-[calc(100%-2rem)] translate-y-0 flex-col overflow-hidden rounded-xl border-none bg-clip-padding p-2 pb-11 shadow-2xl ring-4 ring-neutral-200/80 sm:top-1/2 sm:max-w-lg sm:-translate-y-1/2 dark:bg-neutral-900 dark:ring-neutral-800"
+		class="top-4 flex max-h-[calc(100dvh-2rem)] max-w-[calc(100%-2rem)] translate-y-0 flex-col overflow-hidden rounded-[12px] border-[0.5px] border-[color:lch(91.9%_0_282)] bg-[lch(100%_0_282)] bg-clip-padding p-2 pb-11 shadow-[0_9px_48px_lch(0%_0_0/.08),0_6px_24px_lch(0%_0_0/.1),0_1px_1px_lch(0%_0_0/.04)] sm:top-1/2 sm:max-w-lg sm:-translate-y-1/2 dark:border-[color:lch(25.68%_1.93_272)] dark:bg-[lch(12.72%_0.85_272)] dark:shadow-[0_4px_40px_rgb(0_0_0/.1),0_3px_20px_rgb(0_0_0/.125),0_1px_1px_rgb(0_0_0/.125)]"
 	>
 		<Dialog.Header class="sr-only">
 			<Dialog.Title>{t("command.placeholder")}</Dialog.Title>

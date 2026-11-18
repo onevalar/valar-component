@@ -24,6 +24,7 @@
 		TYPE_SCALE_DEFAULTS,
 		TYPE_TOKENS,
 		diffTokens,
+		globalTokenBridgeCss,
 		hexToOklch,
 		oklchToHex,
 		parseOklch,
@@ -206,6 +207,26 @@
 		return { light: pick("light"), dark: pick("dark"), theme: pick("theme") };
 	}
 
+	const globalDraftCss = $derived(
+		base === "neutral"
+			? globalTokenBridgeCss(
+					{
+						light: Object.fromEntries(
+							diffTokens(saved.light, draft.light).map(({ token, to }) => [token, to])
+						),
+						dark: Object.fromEntries(
+							diffTokens(saved.dark, draft.dark).map(({ token, to }) => [token, to])
+						),
+						theme: Object.fromEntries(
+							diffTokens(saved.theme, draft.theme).map(({ token, to }) => [token, to])
+						),
+					},
+					":root",
+					".dark"
+				)
+			: ""
+	);
+
 	function cssCode() {
 		const block = (selector: string, vars: Record<string, string>) =>
 			`${selector} {\n${Object.entries(vars)
@@ -253,7 +274,7 @@
 <svelte:head>
 	<!-- Values come from the color picker / sliders after validation into oklch()/rem strings. -->
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-	{@html `<style>${css}</style>`}
+	{@html `<style>${css}${globalDraftCss ? `\n${globalDraftCss}` : ""}</style>`}
 </svelte:head>
 
 <div class="grid gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
@@ -378,7 +399,7 @@
 			{/each}
 		</section>
 
-		<div class="sticky bottom-0 -mx-4 -mb-4 grid gap-2 border-t bg-background p-4">
+		<div class="sticky bottom-0 -mx-4 -mb-4 grid gap-2 border-t-[0.5px] border-border bg-background p-4">
 			<div class="flex flex-wrap gap-2">
 				{#if canWrite}
 					<Button size="sm" disabled={!changes.length} onclick={() => (confirming = true)}

@@ -76,9 +76,16 @@ function flattenedRegistry(): Plugin {
 		path.join(__dirname, "src/lib/registry/examples"),
 		path.join(__dirname, "src/lib/registry/blocks"),
 		path.join(__dirname, "content"),
+		path.join(__dirname, "src/lib/components"),
+		path.join(__dirname, "src/routes/[[lang]]"),
 	];
 	const tunerDir = path.join(__dirname, "src/lib/features/workbench");
-	const rawImporters = [path.join(__dirname, "src/lib/registry/examples/create")];
+	const rawImporters = [
+		path.join(__dirname, "src/lib/registry/examples/create"),
+		path.join(__dirname, "src/routes/[[lang]]/(app)/preview"),
+		path.join(__dirname, "src/routes/[[lang]]/(app)/(layout)/(create)"),
+		path.join(__dirname, "src/lib/features/design-system"),
+	];
 	const TEXT_EXTENSIONS = new Set([".svelte", ".ts", ".js"]);
 
 	const within = (file: string, dirs: string[]) =>
@@ -123,9 +130,9 @@ function flattenedRegistry(): Plugin {
 		name: "shadcn-svelte:flattened-registry",
 		enforce: "pre",
 		async resolveId(source, importer, options) {
-			if (!importer) return null;
 			// Svelte owns extracted CSS/other virtual subrequests; they are not source modules.
 			if (splitId(source).params.has("svelte")) return null;
+			if (!importer) return null;
 			// The dependency scanner loads what it resolves straight from disk, where the queried id
 			// doesn't exist. It only looks for bare imports, which are the same in both variants.
 			if ((options as { scan?: boolean }).scan) return null;
@@ -149,6 +156,9 @@ function flattenedRegistry(): Plugin {
 			);
 			if (!resolved || resolved.external || isFlattened(resolved.id)) return resolved;
 			const file = splitId(resolved.id).file;
+			// `sonner.svelte` owns a `<style>` block whose virtual CSS subrequest strips custom queries in
+			// `vite-plugin-svelte` dev SSR; `.style-valar` and `sonner-tuning` already style `.cn-toast`.
+			if (file === path.join(rawUiDir, "sonner", "sonner.svelte")) return resolved;
 			const isUi = within(file, [rawUiDir]);
 			// Local helpers imported by an already-styled module need the same query, or
 			// their UI imports resolve to a different flattened instance (split context).

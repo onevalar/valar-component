@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { page } from "$app/state";
+	import BookOpenIcon from "@lucide/svelte/icons/book-open";
 	import SquareTerminal from "@lucide/svelte/icons/square-terminal";
 	import Separator from "$lib/registry/ui/separator/separator.svelte";
+	import * as Tooltip from "$lib/registry/ui/tooltip/index.js";
 	import { getColors } from "$lib/colors.js";
-	import type { Locale } from "$lib/i18n/config.js";
+	import { localizeHref, type Locale } from "$lib/i18n/config.js";
 	import { t } from "$lib/i18n/index.js";
 	import { getMainNavItems, sectionOf } from "$lib/navigation.js";
 	import { Button } from "$lib/registry/ui/button/index.js";
@@ -23,7 +25,8 @@
 
 	const locale = $derived((page.data.locale ?? "en") as Locale);
 	const mainNavItems = $derived(getMainNavItems(locale));
-	const atHome = $derived(sectionOf(page.url.pathname, locale) === "home");
+	const currentSection = $derived(sectionOf(page.url.pathname, locale));
+	const atHome = $derived(currentSection === "home");
 
 	let mobileNavRef: { closeMenu: () => void } | undefined;
 
@@ -34,9 +37,9 @@
 	}
 </script>
 
-<header class="sticky top-0 z-50 w-full bg-background">
+<header class="sticky top-0 z-50 w-full border-b-[0.5px] border-border/80 bg-background/95 backdrop-blur-xs">
 	<div
-		class="container-wrapper px-4 group-has-data-[slot=designer]/layout:max-w-none sm:px-6 3xl:fixed:px-0"
+		class="container-wrapper px-3 group-has-data-[slot=designer]/layout:max-w-none sm:px-6 3xl:fixed:px-0"
 	>
 		<div
 			class="flex h-(--header-height) items-center **:data-[slot=separator]:h-4! **:data-[slot=separator]:self-center group-has-data-[slot=designer]/layout:fixed:max-w-none 3xl:fixed:container"
@@ -46,13 +49,13 @@
 			<a
 				href={locale === "zh" ? "/zh" : "/"}
 				aria-label={t("header.home")}
-				class="mr-2 ml-3 flex shrink-0 items-baseline gap-2 sm:mr-5 lg:ml-0"
+				class="mr-1.5 ml-2 flex shrink-0 items-baseline gap-1.5 sm:mr-5 sm:gap-2 lg:ml-0"
 				><span class="text-lg font-semibold tracking-tight">Valar</span><span
 					class="text-xs text-muted-foreground">Svelte</span
 				></a
 			>
 			<MainNav items={mainNavItems} class="hidden lg:flex" />
-			<div class="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
+			<div class="ml-auto flex items-center gap-1 sm:gap-2 md:flex-1 md:justify-end">
 				{#if atHome}
 					<AgentHistory />
 				{/if}
@@ -60,6 +63,27 @@
 					<CommandMenu {colors} {closeMobileMenu} />
 				</div>
 				<Separator orientation="vertical" class="ml-2 hidden lg:block" />
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						{#snippet child({ props })}
+							<Button
+								{...props}
+								href={localizeHref("/docs/installation", locale)}
+								variant="ghost"
+								size="icon-sm"
+								aria-label={locale === "zh" ? "接入与工程文档" : "Installation & Engineering Docs"}
+								class={currentSection === "docs"
+									? "bg-accent text-foreground"
+									: "text-muted-foreground hover:text-foreground"}
+							>
+								<BookOpenIcon />
+							</Button>
+						{/snippet}
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						{locale === "zh" ? "接入与工程文档" : "Installation & Docs"}
+					</Tooltip.Content>
+				</Tooltip.Root>
 				<LanguageSwitcher />
 				<div class="hidden sm:block"><GithubLink /></div>
 				<Separator orientation="vertical" class="hidden 3xl:flex" />

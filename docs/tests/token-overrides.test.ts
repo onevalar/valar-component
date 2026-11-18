@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	applyTokenOverride,
+	globalTokenBridgeCss,
 	hexToOklch,
 	oklchToHex,
 	serializeTokenOverrides,
@@ -123,5 +124,31 @@ describe("global token write-back", () => {
 		});
 		// Upstream theme data itself stays untouched.
 		expect(light(UPSTREAM_BASE_THEMES)).not.toHaveProperty("motion-duration-fast");
+	});
+
+	it("builds global CSS and component bridge variables only when tokens are overridden", () => {
+		expect(globalTokenBridgeCss(undefined)).toBe("");
+		expect(globalTokenBridgeCss({ light: {}, dark: {}, theme: {} })).toBe("");
+		const css = globalTokenBridgeCss({
+			light: {
+				primary: "oklch(0.55 0.22 250)",
+				card: "oklch(0.99 0 0)",
+				popover: "oklch(0.98 0 0)",
+				ring: "oklch(0.6 0.2 250)",
+				radius: "0.75rem",
+			},
+			dark: {
+				primary: "oklch(0.7 0.2 250)",
+			},
+		});
+		expect(css).toContain(":root {");
+		expect(css).toContain("--primary: oklch(0.55 0.22 250);");
+		expect(css).toContain("--radius: 0.75rem;");
+		expect(css).toContain("--valar-button-primary: var(--primary);");
+		expect(css).toContain("--valar-card-bg: var(--card);");
+		expect(css).toContain("--valar-popover-bg: var(--popover);");
+		expect(css).toContain("--valar-focus-ring: var(--ring);");
+		expect(css).toContain(".dark {");
+		expect(css).toContain("--primary: oklch(0.7 0.2 250);");
 	});
 });

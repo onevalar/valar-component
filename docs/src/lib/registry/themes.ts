@@ -537,8 +537,81 @@ const VALAR_TOKENS = tokenOverrideFileSchema.parse(valarTokens);
  * Upstream themes plus Valar's own tokens (motion, border width) at their defaults. This is the
  * baseline `/themes` diffs against and restores to; `tokens.json` stores only differences from it.
  */
+const LINEAR_NEUTRAL_OVERRIDE = {
+	light: {
+		background: "oklch(0.985 0.002 282)",
+		foreground: "oklch(0.218 0.003 282)",
+		card: "oklch(1 0 0)",
+		"card-foreground": "oklch(0.218 0.003 282)",
+		popover: "oklch(1 0 0)",
+		"popover-foreground": "oklch(0.218 0.003 282)",
+		primary: "oklch(0.552 0.165 276.5)",
+		"primary-foreground": "oklch(1 0 0)",
+		secondary: "oklch(0.952 0.003 282)",
+		"secondary-foreground": "oklch(0.295 0.005 282)",
+		muted: "oklch(0.958 0.003 282)",
+		"muted-foreground": "oklch(0.478 0.006 282)",
+		accent: "oklch(0.942 0.003 282)",
+		"accent-foreground": "oklch(0.218 0.003 282)",
+		destructive: "oklch(0.585 0.205 27.5)",
+		border: "oklch(0.912 0.003 282)",
+		input: "oklch(0.882 0.003 282)",
+		ring: "oklch(0.552 0.165 276.5)",
+		"chart-1": "oklch(0.552 0.165 276.5)",
+		"chart-2": "oklch(0.645 0.128 242)",
+		"chart-3": "oklch(0.668 0.135 168)",
+		"chart-4": "oklch(0.735 0.145 78)",
+		"chart-5": "oklch(0.618 0.168 308)",
+		sidebar: "oklch(0.952 0.003 282)",
+		"sidebar-foreground": "oklch(0.218 0.003 282)",
+		"sidebar-primary": "oklch(0.552 0.165 276.5)",
+		"sidebar-primary-foreground": "oklch(1 0 0)",
+		"sidebar-accent": "oklch(0.908 0.003 282)",
+		"sidebar-accent-foreground": "oklch(0.205 0 0)",
+		"sidebar-border": "oklch(0.908 0.003 282)",
+		"sidebar-ring": "oklch(0.552 0.165 276.5)",
+		...VALAR_TOKEN_DEFAULTS,
+	},
+	dark: {
+		background: "oklch(0.182 0.004 272)",
+		foreground: "oklch(0.985 0 0)",
+		card: "oklch(0.218 0.005 272)",
+		"card-foreground": "oklch(0.985 0 0)",
+		popover: "oklch(0.248 0.006 272)",
+		"popover-foreground": "oklch(0.922 0.004 272)",
+		primary: "oklch(0.562 0.162 277.5)",
+		"primary-foreground": "oklch(1 0 0)",
+		secondary: "oklch(0.228 0.005 272)",
+		"secondary-foreground": "oklch(0.916 0.004 272)",
+		muted: "oklch(0.238 0.005 272)",
+		"muted-foreground": "oklch(0.672 0.006 272)",
+		accent: "oklch(0.282 0.006 272)",
+		"accent-foreground": "oklch(0.985 0 0)",
+		destructive: "oklch(0.648 0.202 27.5)",
+		border: "oklch(0.272 0.006 272)",
+		input: "oklch(0.328 0.007 272)",
+		ring: "oklch(0.612 0.158 277.5)",
+		"chart-1": "oklch(0.612 0.162 277.5)",
+		"chart-2": "oklch(0.685 0.128 242)",
+		"chart-3": "oklch(0.705 0.135 168)",
+		"chart-4": "oklch(0.765 0.142 78)",
+		"chart-5": "oklch(0.668 0.165 308)",
+		sidebar: "oklch(0.148 0.004 272)",
+		"sidebar-foreground": "oklch(0.916 0.004 272)",
+		"sidebar-primary": "oklch(0.562 0.162 277.5)",
+		"sidebar-primary-foreground": "oklch(1 0 0)",
+		"sidebar-accent": "oklch(0.258 0.006 272)",
+		"sidebar-accent-foreground": "oklch(1 0 0)",
+		"sidebar-border": "oklch(0.248 0.005 272)",
+		"sidebar-ring": "oklch(0.612 0.158 277.5)",
+	},
+};
+
 export const DEFAULT_BASE_THEMES = UPSTREAM_BASE_THEMES.map((theme) =>
-	applyTokenOverride(theme, { light: VALAR_TOKEN_DEFAULTS })
+	applyTokenOverride(
+		theme,
+		theme.name === "neutral" ? LINEAR_NEUTRAL_OVERRIDE : { light: VALAR_TOKEN_DEFAULTS }
+	)
 ) as unknown as typeof UPSTREAM_BASE_THEMES;
 export const BASE_THEMES = DEFAULT_BASE_THEMES.map((theme) =>
 	applyTokenOverride(theme, VALAR_TOKENS[theme.name])

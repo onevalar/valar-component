@@ -18,16 +18,18 @@
 	const current = $derived(sectionOf(page.url.pathname, localeFromPathname(page.url.pathname)));
 </script>
 
-<nav class={cn("items-center gap-0.5", className)} {...restProps}>
+<nav class={cn("items-center gap-1", className)} {...restProps}>
 	{#each items as item (item.href)}
 		<Button
 			href={item.href}
 			variant="ghost"
 			size="sm"
+			shape="pill"
 			class={cn(
+				"h-7 px-2.5 text-[13px] font-medium transition-colors duration-150 motion-reduce:transition-none",
 				item.section && item.section === current
-					? "bg-accent font-semibold text-foreground"
-					: "text-muted-foreground hover:text-foreground"
+					? "bg-accent text-foreground shadow-[0_0_0_0.5px_var(--border)]"
+					: "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
 			)}
 			aria-current={item.section && item.section === current ? "page" : undefined}
 		>
