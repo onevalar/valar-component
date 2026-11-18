@@ -1,6 +1,6 @@
 ---
 title: Advanced components
-description: Patterns for agentic interfaces, built from Valar Svelte components.
+description: Complete business scenes, core modules, and AI interface assemblies built from Valar basic components.
 ---
 
 <script>

@@ -4,6 +4,8 @@
 	import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
 	import ArrowRightIcon from "@lucide/svelte/icons/arrow-right";
 	import ArrowUpRight from "@lucide/svelte/icons/arrow-up-right";
+	import CopyIcon from "@lucide/svelte/icons/copy";
+	import { toast } from "svelte-sonner";
 	import * as Tabs from "$lib/registry/ui/tabs/index.js";
 	import ComponentCodeViewer from "$lib/components/component-code-viewer/component-code-viewer.svelte";
 	import ComponentGuide from "$lib/components/component-guide.svelte";
@@ -12,8 +14,13 @@
 	import DocsToc from "$lib/components/docs-toc.svelte";
 	import FrameworkUsage from "$lib/components/framework-usage.svelte";
 	import Metadata from "$lib/components/metadata.svelte";
-	import { basicComponentAlignment } from "$lib/basic-component-visibility.js";
+	import {
+		basicComponentAlignment,
+		isAdvancedModuleSlug,
+	} from "$lib/basic-component-visibility.js";
 	import { categoryOf } from "$lib/component-categories.js";
+	import { buildComponentAiSpec } from "$lib/component-ai-spec.js";
+	import { copyText } from "$lib/hooks/use-clipboard.svelte.js";
 	import { localeFromPathname, localizeHref } from "$lib/i18n/config.js";
 	import { t } from "$lib/i18n/index.js";
 	import { findNeighbors } from "$lib/navigation.js";
@@ -34,12 +41,15 @@
 	const path = $derived(page.url.pathname.replace(/\/$/, ""));
 	const basicHref = $derived(localizeHref("/docs/components", locale));
 	const advancedHref = $derived(localizeHref("/docs/ai-elements", locale));
-	const isBasic = $derived(path.startsWith(`${basicHref}/`));
-	const isAdvanced = $derived(path.startsWith(`${advancedHref}/`));
+	const isBasicPath = $derived(path.startsWith(`${basicHref}/`));
+	const isAdvancedPath = $derived(path.startsWith(`${advancedHref}/`));
 	const wide = $derived(path === basicHref || path === advancedHref);
+	const slug = $derived(path.split("/").pop() ?? "");
+	const isModule = $derived(isBasicPath && isAdvancedModuleSlug(slug));
+	const isBasic = $derived(isBasicPath && !isModule);
+	const isAdvanced = $derived(isAdvancedPath || isModule);
 	const isComponent = $derived(isBasic || isAdvanced);
 	const previews = $derived(doc.previews ?? []);
-	const slug = $derived(path.split("/").pop() ?? "");
 	const alignment = $derived(isBasic ? basicComponentAlignment(slug) : "aligned");
 	const category = $derived(
 		isComponent ? categoryOf(slug, isBasic ? "basic" : "advanced") : undefined
@@ -48,6 +58,7 @@
 	const requestedFramework = $derived(browser ? page.url.searchParams.get("framework") : null);
 	const hasFramework = $derived(["svelte", "react", "vue"].includes(requestedFramework ?? ""));
 	let tab = $state("states");
+	let copyingAiSpec = $state(false);
 	const showSvelteLinks = $derived(
 		tab !== "usage" || !["react", "vue"].includes(requestedFramework ?? "")
 	);
@@ -57,6 +68,28 @@
 	});
 	const showToc = $derived(!wide && !isComponent);
 	const isChangelog = $derived(page.url.pathname.startsWith("/docs/changelog"));
+
+	async function copyAiSpec() {
+		if (copyingAiSpec) return;
+		copyingAiSpec = true;
+		try {
+			const spec = await buildComponentAiSpec({
+				slug,
+				title: doc.title,
+				description: doc.description,
+				sourceDir: isBasicPath ? "components" : "ai-elements",
+				locale,
+			});
+			const result = await copyText(spec);
+			if (result === "success") {
+				toast.success(locale === "zh" ? "已复制 AI 组件规范" : "Copied AI component spec");
+			} else {
+				toast.error(locale === "zh" ? "复制失败，请手动复制" : "Copy failed");
+			}
+		} finally {
+			copyingAiSpec = false;
+		}
+	}
 </script>
 
 <Metadata
@@ -67,12 +100,6 @@
 	}}
 	ogType="article"
 />
-
-<svelte:head>
-	{#if alignment !== "aligned"}
-		<meta name="robots" content="noindex" />
-	{/if}
-</svelte:head>
 
 {#if isComponent}
 	<!--
@@ -123,8 +150,17 @@
 						<Tabs.Trigger value="usage">{t("usage.tab")}</Tabs.Trigger>
 					</Tabs.List>
 				</div>
-				{#if showSvelteLinks && (apiLink || docLink || source)}
+				{#if showSvelteLinks}
 					<div class="flex flex-wrap items-center gap-2">
+						<Button
+							variant="outline"
+							size="sm"
+							disabled={copyingAiSpec}
+							onclick={copyAiSpec}
+						>
+							<CopyIcon />
+							{locale === "zh" ? "复制 AI 组件规范" : "Copy AI Spec"}
+						</Button>
 						{#if docLink}
 							<Badge href={docLink} variant="secondary" target="_blank" rel="noreferrer">
 								{t("docs.docs")}
@@ -149,7 +185,7 @@
 			{#if showStates}
 				<Tabs.Content value="states">
 					<div class="flex flex-col gap-8">
-						{#each previews as preview, index (`${path}:${preview.name}:${index}`)}
+						{#each previews as preview (preview.name)}
 							<section class="flex flex-col gap-2">
 								<h2 class="text-lg font-semibold">{preview.title || t("components.default")}</h2>
 								{#if preview.text}
@@ -164,7 +200,7 @@
 			<Tabs.Content value="guide">
 				{#if tab === "guide"}
 					{#key path}
-						<ComponentGuide {slug} section={isBasic ? "basic" : "advanced"} {locale} />
+						<ComponentGuide {slug} sourceDir={isBasicPath ? "components" : "ai-elements"} {locale} />
 					{/key}
 				{/if}
 			</Tabs.Content>

@@ -1,6 +1,6 @@
 ---
 title: Basic components
-description: Browse basic components that have passed their full Linear alignment review.
+description: Browse, search, and inspect every basic Valar Svelte component with visual states and AI-ready guidelines.
 ---
 
 <script>

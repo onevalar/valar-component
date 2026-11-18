@@ -119,7 +119,7 @@
 	{#if bare}
 		<div
 			class={cn(
-				"flex max-h-[28rem] min-h-32 w-full items-center justify-center overflow-auto rounded-xl border p-6",
+				"flex max-h-[28rem] min-h-32 w-full items-center justify-center overflow-auto rounded-xl border-[0.5px] border-border p-6",
 				name === "calendar-custom-days" && "max-h-none px-2 py-4"
 			)}
 		>
@@ -143,7 +143,7 @@
 	class={cn(
 		bare
 			? "relative flex flex-col"
-			: "group relative mt-4 mb-12 flex flex-col overflow-hidden rounded-2xl border",
+			: "group relative mt-4 mb-12 flex flex-col overflow-hidden rounded-xl border-[0.5px] border-border",
 		className
 	)}
 	{...restProps}
@@ -375,7 +375,7 @@
 		<div
 			data-slot="code"
 			data-code-visible={codeVisible}
-			class="relative overflow-hidden **:data-rehype-pretty-code-figure:m-0! **:data-rehype-pretty-code-figure:rounded-t-none **:data-rehype-pretty-code-figure:border-t data-[code-visible=false]:**:data-rehype-pretty-code-figure:max-h-28 data-[code-visible=false]:**:data-rehype-pretty-code-figure:overflow-hidden **:data-[slot=copy-button]:right-4 **:data-[slot=copy-button]:hidden data-[code-visible=true]:**:data-[slot=copy-button]:flex data-[code-visible=true]:[&_pre]:max-h-72"
+			class="relative overflow-hidden **:data-rehype-pretty-code-figure:m-0! **:data-rehype-pretty-code-figure:rounded-t-none **:data-rehype-pretty-code-figure:border-t-[0.5px] data-[code-visible=false]:**:data-rehype-pretty-code-figure:max-h-28 data-[code-visible=false]:**:data-rehype-pretty-code-figure:overflow-hidden **:data-[slot=copy-button]:right-4 **:data-[slot=copy-button]:hidden data-[code-visible=true]:**:data-[slot=copy-button]:flex data-[code-visible=true]:[&_pre]:max-h-72"
 		>
 			{@render children?.()}
 			{#if !codeVisible}

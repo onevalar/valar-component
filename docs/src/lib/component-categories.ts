@@ -20,6 +20,7 @@ export const COMPONENT_CATEGORIES = [
 			"switch",
 			"slider",
 			"slider-field",
+			"ruler-slider",
 			"tags-input",
 			"color-picker",
 			"date-picker",
@@ -86,6 +87,12 @@ export const COMPONENT_CATEGORIES = [
 			"typography",
 			"marker",
 			"trace",
+			"gauge",
+			"waffle-chart",
+			"donut-chart",
+			"sparkline",
+			"tick-meter",
+			"texture-fill",
 		],
 	},
 	{
@@ -110,8 +117,20 @@ export const COMPONENT_CATEGORIES = [
 
 export const OTHER_CATEGORY = { key: "other", zh: "其他", en: "Other" } as const;
 
-/** Groups for the advanced components (AI elements): ready-made assemblies of basic components. */
+/** Groups for the advanced components: complete scenes, business modules, and AI assemblies. */
 export const ADVANCED_CATEGORIES = [
+	{
+		key: "scenes",
+		zh: "完整业务界面",
+		en: "Business scenes",
+		slugs: ["my-issues", "projects", "inbox", "new-issue", "settings", "agent"],
+	},
+	{
+		key: "modules",
+		zh: "核心业务模块",
+		en: "Core modules",
+		slugs: ["issue-detail", "issue-composer"],
+	},
 	{
 		key: "conversation",
 		zh: "对话",

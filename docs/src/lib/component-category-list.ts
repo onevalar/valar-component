@@ -1,4 +1,5 @@
 import { aiElements, components } from "$content/index.js";
+import { ADVANCED_MODULES, ADVANCED_SCENES } from "$lib/advanced-catalog.js";
 import { isPublishedBasicComponent } from "$lib/basic-component-visibility.js";
 import {
 	ADVANCED_CATEGORIES,
@@ -35,16 +36,25 @@ export function basicCategories(locale: Locale) {
 export function categoryChips(section: "basic" | "advanced", locale: Locale): CategoryChip[] {
 	const lang = locale === "zh" ? "zh" : "en";
 	if (section === "basic") {
-		return basicCategories(locale).map((c) => ({
-			key: c.key,
-			title: c.title,
-			count: c.items.length,
-		}));
+		const groups = basicCategories(locale);
+		const total = groups.reduce((sum, group) => sum + group.items.length, 0);
+		return [
+			{ key: "all", title: t("components.all"), count: total },
+			...groups.map((c) => ({
+				key: c.key,
+				title: c.title,
+				count: c.items.length,
+			})),
+		];
 	}
 	const docs = aiElements.filter((doc) => doc.locale === locale && doc.path !== "ai-elements");
-	const slugs = new Set(docs.map((doc) => doc.path.split("/").pop() ?? ""));
+	const slugs = new Set([
+		...docs.map((doc) => doc.path.split("/").pop() ?? ""),
+		...ADVANCED_SCENES.map((scene) => scene.slug),
+		...ADVANCED_MODULES.map((mod) => mod.slug),
+	]);
 	return [
-		{ key: "all", title: t("components.all"), count: docs.length },
+		{ key: "all", title: t("components.all"), count: slugs.size },
 		...ADVANCED_CATEGORIES.map((c) => ({
 			key: c.key,
 			title: c[lang],

@@ -7,7 +7,7 @@
 
 export const en = {
 	// Navigation
-	"nav.home": "Assistant",
+	"nav.home": "AI Chat",
 	"nav.docs": "Docs",
 	"nav.components": "Components",
 	"nav.introduction": "Introduction",
@@ -35,9 +35,9 @@ export const en = {
 	"components.filter": "Filter components…",
 	"components.all": "All",
 	"components.states": "States & tuning",
-	"components.alignmentPending": "Design alignment pending",
-	"components.alignmentPartial": "Partially aligned · full review pending",
-	"components.alignmentEmpty": "Components appear here after their full Linear alignment review. Reviews are in progress.",
+	"components.alignmentPartial": "Partial",
+	"components.alignmentPending": "Pending",
+	"components.alignmentEmpty": "No basic components are available right now.",
 	"components.default": "Default",
 	"components.docsAndCode": "Guide & rules",
 	"usage.tab": "Use",
@@ -258,7 +258,7 @@ export type MessageKey = keyof typeof en;
 
 export const zh: Record<MessageKey, string> = {
 	// Navigation
-	"nav.home": "组件助手",
+	"nav.home": "AI 对话",
 	"nav.docs": "文档",
 	"nav.components": "组件",
 	"nav.introduction": "简介",
@@ -286,9 +286,9 @@ export const zh: Record<MessageKey, string> = {
 	"components.filter": "按名称筛选组件…",
 	"components.all": "全部",
 	"components.states": "状态与调节",
-	"components.alignmentPending": "待完成样式对齐",
-	"components.alignmentPartial": "部分对齐 · 待整体验收",
-	"components.alignmentEmpty": "基础组件通过 Linear 整体对齐验收后会在这里展示。目前正在复核。",
+	"components.alignmentPending": "待复核",
+	"components.alignmentPartial": "部分复核",
+	"components.alignmentEmpty": "暂无可展示的基础组件。",
 	"components.default": "默认",
 	"components.docsAndCode": "说明与准则",
 	"usage.tab": "使用组件",

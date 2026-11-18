@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getComponentInfos } from "$lib/agent/knowledge.js";
 	import { isPublishedBasicComponent } from "$lib/basic-component-visibility.js";
-	import { guideSections } from "$lib/doc-guide.js";
+	import { buildGuideSections, loadComponentGuideData } from "$lib/component-ai-spec.js";
 	import { localizeHref, type Locale } from "$lib/i18n/config.js";
 	import { Button } from "$lib/registry/ui/button/index.js";
 	import { Skeleton } from "$lib/registry/ui/skeleton/index.js";
@@ -13,74 +13,29 @@
 	 * install steps or code. The rules and card texts are the same ones the assistant reads, so
 	 * a wrong answer from it can be traced to a line shown here.
 	 */
-	let { slug, section, locale }: { slug: string; section: "basic" | "advanced"; locale: Locale } =
-		$props();
-
-	const docs = import.meta.glob("/content/**/*.md", { query: "?raw", import: "default" });
-	const rulesFiles = import.meta.glob("/src/lib/registry/ui/*/RULES.md", {
-		query: "?raw",
-		import: "default",
-	});
+	let {
+		slug,
+		sourceDir,
+		locale,
+	}: { slug: string; sourceDir: "components" | "ai-elements"; locale: Locale } = $props();
 
 	const info = $derived(
-		section === "basic" ? getComponentInfos(locale).find((item) => item.slug === slug) : undefined
+		sourceDir === "components"
+			? getComponentInfos(locale).find((item) => item.slug === slug)
+			: undefined
 	);
 	const relatedSlugs = $derived(info?.related.filter(isPublishedBasicComponent) ?? []);
 	const titles = $derived(
 		new Map(getComponentInfos(locale).map((item) => [item.slug, item.title]))
 	);
 
-	async function load() {
-		const dir = section === "basic" ? "components" : "ai-elements";
-		const doc = docs[`/content${locale === "zh" ? "/zh" : ""}/${dir}/${slug}.md`];
-		const rules =
-			section === "basic" ? rulesFiles[`/src/lib/registry/ui/${slug}/RULES.md`] : undefined;
-		const [raw, ruleText] = await Promise.all([doc?.(), rules?.()]);
-		return {
-			prose: raw ? guideSections(raw as string) : [],
-			rules: ruleText ? (ruleText as string).replace(/^#.*\n/, "").trim() : "",
-		};
-	}
-	const loaded = $derived(load());
-
-	const list = (items: string[]) => items.map((item) => `- ${item}`).join("\n");
-	const sections = $derived.by(() => {
-		const out: { id: string; title: string; body: string }[] = [];
-		if (info?.whenToUse.length)
-			out.push({ id: "when", title: "什么时候用", body: list(info.whenToUse) });
-		if (info?.whenNotToUse.length) {
-			out.push({
-				id: "when-not",
-				title: "什么时候不用",
-				body: list(
-					info.whenNotToUse.map((item) =>
-						item.use ? `${item.case}：改用「${titles.get(item.use) ?? item.use}」` : item.case
-					)
-				),
-			});
-		}
-		return out;
-	});
+	const loaded = $derived(loadComponentGuideData({ slug, sourceDir, locale }));
 </script>
 
 {#await loaded}
 	<Skeleton class="h-64 rounded-xl" />
 {:then { prose, rules }}
-	{@const all = [
-		...sections,
-		...(rules ? [{ id: "rules", title: "设计准则（助手按此使用）", body: rules }] : []),
-		...(info?.accessibility.length
-			? [{ id: "a11y", title: "无障碍", body: list(info.accessibility) }]
-			: []),
-		...(info?.responsive.length
-			? [{ id: "responsive", title: "响应式", body: list(info.responsive) }]
-			: []),
-		...prose.map((item, i) => ({
-			id: `prose-${i}`,
-			title: item.title || "概述",
-			body: item.body,
-		})),
-	]}
+	{@const all = buildGuideSections({ info, titles, rules, prose })}
 	<div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_11rem]">
 		<div class="flex min-w-0 flex-col gap-8">
 			{#each all as item (item.id)}

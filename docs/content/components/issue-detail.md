@@ -10,7 +10,7 @@ links:
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-[Try Issue Detail in My issues](/themes/my-issues). Open an issue row or use the details button.
+[Try Issue Detail in My issues](/advanced/my-issues). Open an issue row or use the details button.
 
 ## Installation
 

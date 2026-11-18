@@ -1,6 +1,6 @@
 ---
 title: 高级组件
-description: 用 Valar Svelte 组件构建智能体界面的模式。
+description: 基于基础组件拼装而成的完整业务界面、核心业务模块与 AI 对话组合。
 ---
 
 <script>

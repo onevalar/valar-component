@@ -8,10 +8,13 @@
 		/** Registry example shown as the card's picture. */
 		demo: string;
 		zoom?: number;
+		badge?: { label: string; variant?: "secondary" | "outline" };
+		tags?: readonly string[];
 	};
 </script>
 
 <script lang="ts">
+	import { Badge } from "$lib/registry/ui/badge/index.js";
 	import * as Card from "$lib/registry/ui/card/index.js";
 	import ComponentSample from "./component-sample.svelte";
 
@@ -24,20 +27,34 @@
 		<li class="flex">
 			<Card.Root class="relative w-full transition-colors hover:bg-accent/40">
 				<Card.Content>
-					<div class="h-40 overflow-hidden rounded-lg border bg-background">
+					<div class="h-40 overflow-hidden rounded-lg border-[0.5px] border-border bg-background">
 						<ComponentSample name={item.demo} zoom={item.zoom ?? 0.65} />
 					</div>
 				</Card.Content>
 				<Card.Header>
-					<Card.Title>
-						<a href={item.href} class="after:absolute after:inset-0">{item.title}</a>
-					</Card.Title>
+					<div class="flex items-start justify-between gap-2">
+						<Card.Title class="min-w-0">
+							<a href={item.href} class="after:absolute after:inset-0">{item.title}</a>
+						</Card.Title>
+						{#if item.badge}
+							<Badge variant={item.badge.variant ?? "outline"} class="shrink-0">
+								{item.badge.label}
+							</Badge>
+						{/if}
+					</div>
 					{#if item.code || item.description}
 						<Card.Description class="line-clamp-2">
 							{#if item.code}<span class="font-mono text-xs">{item.code}</span>{/if}
 							{#if item.code && item.description}<br />{/if}
 							{item.description ?? ""}
 						</Card.Description>
+					{/if}
+					{#if item.tags?.length}
+						<div class="flex flex-wrap gap-1 pt-1">
+							{#each item.tags as tag (tag)}
+								<Badge variant="secondary" class="text-[11px]">{tag}</Badge>
+							{/each}
+						</div>
 					{/if}
 				</Card.Header>
 			</Card.Root>

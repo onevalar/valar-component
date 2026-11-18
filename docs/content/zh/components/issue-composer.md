@@ -10,7 +10,7 @@ links:
 	import PMAddComp from "$lib/components/pm-add-comp.svelte";
 </script>
 
-[试用新建问题弹窗](/zh/themes/new-issue)。
+[试用新建问题弹窗](/zh/advanced/new-issue)。
 
 ## 安装
 

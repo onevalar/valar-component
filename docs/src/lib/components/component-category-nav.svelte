@@ -3,7 +3,6 @@
 	import { categoryChips } from "$lib/component-category-list.js";
 	import type { Locale } from "$lib/i18n/config.js";
 	import { t } from "$lib/i18n/index.js";
-	import { Badge } from "$lib/registry/ui/badge/index.js";
 	import { Button } from "$lib/registry/ui/button/index.js";
 
 	/**
@@ -33,16 +32,20 @@
 	});
 </script>
 
-<nav class="flex flex-wrap items-center gap-2" aria-label={t("components.categories")}>
+<nav class="flex flex-wrap items-center gap-1.5" aria-label={t("components.categories")}>
 	{#each chips as chip (chip.key)}
 		<Button
 			href="#{chip.key}"
 			size="sm"
-			variant={chip.key === value ? "default" : "outline"}
+			shape="pill"
+			variant={chip.key === value ? "secondary" : "ghost"}
+			class={chip.key === value
+				? "h-7 gap-1.5 bg-accent px-3 text-xs font-medium text-foreground shadow-[0_0_0_0.5px_var(--border)]"
+				: "h-7 gap-1.5 px-3 text-xs font-medium text-muted-foreground hover:bg-accent/60 hover:text-foreground"}
 			aria-current={chip.key === value ? "page" : undefined}
 		>
 			{chip.title}
-			<Badge variant="secondary">{chip.count}</Badge>
+			<span class="text-[11px] text-muted-foreground tabular-nums">{chip.count}</span>
 		</Button>
 	{/each}
 </nav>

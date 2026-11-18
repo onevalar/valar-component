@@ -9,7 +9,11 @@ import {
 	registry,
 	utils,
 } from "$content/index.js";
-import { isPublishedBasicComponent } from "$lib/basic-component-visibility.js";
+import { ADVANCED_SCENES } from "$lib/advanced-catalog.js";
+import {
+	isAdvancedModuleSlug,
+	isPublishedBasicComponent,
+} from "$lib/basic-component-visibility.js";
 import { COMPONENT_CATEGORIES, OTHER_CATEGORY } from "$lib/component-categories.js";
 import { localeFromPathname, localizeHref, type Locale } from "$lib/i18n/config.js";
 import { translate, type MessageKey } from "$lib/i18n/index.js";
@@ -30,14 +34,23 @@ export type NavItem = {
 
 export type NavSection = "home" | "components" | "advanced" | "docs" | "themes";
 
+const ADVANCED_THEME_PATHS = new Set(ADVANCED_SCENES.map((scene) => `/themes/${scene.slug}`));
+
 /** Which top-level section a pathname belongs to. Basic and advanced components are separate sections. */
 export function sectionOf(pathname: string, locale: Locale): NavSection | null {
 	const path = pathname.length > 1 ? pathname.replace(/\/$/, "") : pathname;
 	const under = (base: string) =>
 		path === to(locale, base) || path.startsWith(`${to(locale, base)}/`);
 	if (path === "/" || path === "/zh") return "home";
+	if (under("/docs/ai-elements") || under("/advanced")) return "advanced";
+	for (const legacy of ADVANCED_THEME_PATHS) {
+		if (under(legacy)) return "advanced";
+	}
+	if (path.startsWith(`${to(locale, "/docs/components")}/`)) {
+		const slug = path.split("/").pop() ?? "";
+		if (isAdvancedModuleSlug(slug)) return "advanced";
+	}
 	if (under("/docs/components")) return "components";
-	if (under("/docs/ai-elements")) return "advanced";
 	if (under("/docs")) return "docs";
 	if (under("/themes")) return "themes";
 	return null;
@@ -387,17 +400,20 @@ export function getMainNavItems(locale: Locale = "en"): NavItem[] {
 	return [
 		{ title: label(locale, "nav.home"), href: to(locale, "/"), section: "home" },
 		{
-			title: zh ? "基础组件" : "Basic components",
+			title: zh ? "基础组件" : "Basic Components",
 			href: to(locale, "/docs/components"),
 			section: "components",
 		},
 		{
-			title: zh ? "高级组件" : "Advanced components",
+			title: zh ? "高级组件" : "Advanced Components",
 			href: to(locale, "/docs/ai-elements"),
 			section: "advanced",
 		},
-		{ title: label(locale, "nav.docs"), href: to(locale, "/docs/installation"), section: "docs" },
-		{ title: zh ? "设计 token" : "Design tokens", href: to(locale, "/themes"), section: "themes" },
+		{
+			title: zh ? "设计规范" : "Design System",
+			href: to(locale, "/themes"),
+			section: "themes",
+		},
 	];
 }
 

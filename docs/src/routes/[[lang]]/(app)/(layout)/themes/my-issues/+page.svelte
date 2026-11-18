@@ -21,11 +21,11 @@
 	<div class="container max-w-6xl space-y-6 px-5 py-8 sm:px-8 sm:py-10">
 		<header>
 			<a
-				href={localizeHref("/themes", locale)}
+				href={localizeHref("/docs/ai-elements#scenes", locale)}
 				class="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
 			>
 				<ArrowLeft class="size-4" />
-				{zh ? "设计 token" : "Design tokens"}
+				{zh ? "高级组件" : "Advanced components"}
 			</a>
 			<h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
 			<p class="mt-2 text-sm text-muted-foreground">{description}</p>
