@@ -37,8 +37,8 @@
 		--agent-file: light-dark(#f2f2f4, #252628);
 		--agent-bubble: light-dark(#ebebee, #222325);
 		--agent-placeholder: light-dark(#77777c, #929296);
-		--agent-send: light-dark(#585ec3, #6268ce);
-		--agent-focus: light-dark(#6d74d6, #858bf1);
+		--agent-send: light-dark(lch(46% 70 267), lch(48% 72 267));
+		--agent-focus: light-dark(lch(46% 70 267), lch(48% 72 267));
 		--foreground: light-dark(lch(9.794% 0 282), lch(90.826% 1.425 272));
 		--muted-foreground: light-dark(lch(39.176% 1.25 282), lch(65% 1.2 272));
 		--border: light-dark(#e3e3e7, #29292b);

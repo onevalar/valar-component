@@ -196,8 +196,8 @@
 
   /* MARK: Button */
   .cn-button {
-    @apply [--valar-button-ink-base:lch(19.588%_1.25_282)] [--valar-button-hover-ink-base:lch(9.794%_0_282)] [--valar-button-focus-base:lch(53%_52.26_286.91)] [--valar-button-hover-base:lch(94.854%_.5_282)] [--valar-button-surface-shadow-base:0_3px_6px_-2px_rgb(0_0_0/.02),0_1px_1px_rgb(0_0_0/.04)];
-    @apply dark:[--valar-button-ink-base:lch(90.451%_1.2_272)] dark:[--valar-button-hover-ink-base:white] dark:[--valar-button-focus-base:lch(47.918%_59.303_288.421)] dark:[--valar-button-hover-base:lch(18.634%_1.075_272)] dark:[--valar-button-surface-shadow-base:0_0.5px_1px_1px_rgb(0_0_0/.30)];
+    @apply [--valar-button-ink-base:lch(19.588%_1.25_282)] [--valar-button-hover-ink-base:lch(9.794%_0_282)] [--valar-button-focus-base:lch(46%_70_267)] [--valar-button-hover-base:lch(94.854%_.5_282)] [--valar-button-surface-shadow-base:0_3px_6px_-2px_rgb(0_0_0/.02),0_1px_1px_rgb(0_0_0/.04)];
+    @apply dark:[--valar-button-ink-base:lch(90.451%_1.2_272)] dark:[--valar-button-hover-ink-base:white] dark:[--valar-button-focus-base:lch(48%_72_267)] dark:[--valar-button-hover-base:lch(18.634%_1.075_272)] dark:[--valar-button-surface-shadow-base:0_0.5px_1px_1px_rgb(0_0_0/.30)];
     @apply rounded-lg border-[0.5px] border-transparent bg-clip-padding text-[13px]/[normal] font-medium transition-[border-color,background-color,color,opacity] duration-150 ease-out dark:duration-0 motion-reduce:transition-none [&_svg:not([class*='size-'])]:size-4 motion-reduce:[&_[data-slot=spinner]]:animate-none;
     @apply focus-visible:border-[color:var(--valar-button-focus,var(--valar-button-focus-base))] focus-visible:ring-[color:var(--valar-button-focus,var(--valar-button-focus-base))] focus-visible:ring-1 focus-visible:ring-inset aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-inset aria-invalid:ring-destructive;
     @apply disabled:opacity-60 not-data-loading:aria-disabled:opacity-60;
@@ -208,7 +208,7 @@
   }
 
   .cn-button-variant-default {
-    @apply [--valar-button-primary-base:lch(53%_52.26_286.91)] [--valar-button-primary-ink-base:lch(100%_5_286.91)] [--valar-button-primary-hover-base:lch(47%_50.26_286.91)] dark:[--valar-button-primary-base:lch(47.918%_59.303_288.421)] dark:[--valar-button-primary-ink-base:lch(100%_5_288.421)] dark:[--valar-button-primary-hover-base:lch(52.418%_61.103_288.421)];
+    @apply [--valar-button-primary-base:lch(46%_70_267)] [--valar-button-primary-ink-base:lch(100%_3_267)] [--valar-button-primary-hover-base:lch(41%_68_267)] dark:[--valar-button-primary-base:lch(48%_72_267)] dark:[--valar-button-primary-ink-base:lch(100%_3_267)] dark:[--valar-button-primary-hover-base:lch(53%_74_267)];
     @apply bg-[color:var(--valar-button-primary,var(--valar-button-primary-base))] text-[color:var(--valar-button-primary-ink,var(--valar-button-primary-ink-base))] shadow-(--valar-button-surface-shadow-base) hover:bg-[color:var(--valar-button-primary-hover,var(--valar-button-primary-hover-base))] focus-visible:ring-white;
   }
 
@@ -227,11 +227,11 @@
   }
 
   .cn-button-variant-destructive {
-    @apply [--valar-button-danger-base:lch(58%_73_29)] [--valar-button-danger-ink-base:lch(100%_5_286.91)] dark:[--valar-button-danger-ink-base:lch(100%_5_288.421)] bg-[color:var(--valar-button-danger,var(--valar-button-danger-base))] text-[color:var(--valar-button-danger-ink,var(--valar-button-danger-ink-base))] shadow-(--valar-button-surface-shadow-base) hover:bg-[color:color-mix(in_lch,var(--valar-button-danger,var(--valar-button-danger-base)),black_5%)] focus-visible:ring-white;
+    @apply [--valar-button-danger-base:lch(58%_73_29)] [--valar-button-danger-ink-base:lch(100%_3_267)] dark:[--valar-button-danger-ink-base:lch(100%_3_267)] bg-[color:var(--valar-button-danger,var(--valar-button-danger-base))] text-[color:var(--valar-button-danger-ink,var(--valar-button-danger-ink-base))] shadow-(--valar-button-surface-shadow-base) hover:bg-[color:color-mix(in_lch,var(--valar-button-danger,var(--valar-button-danger-base)),black_5%)] focus-visible:ring-white;
   }
 
   .cn-button-variant-link {
-    @apply text-[color:var(--valar-button-link,lch(48%_52.26_286.91))] underline-offset-4 hover:underline focus-visible:underline dark:text-[color:var(--valar-button-link,lch(75%_43_288.421))];
+    @apply text-[color:var(--valar-button-link,lch(45%_72_267))] underline-offset-4 hover:underline focus-visible:underline dark:text-[color:var(--valar-button-link,lch(75%_56_267))];
   }
 
   .cn-button-size-xs {
@@ -284,7 +284,7 @@
     @apply [&>:is(button,a)]:border-0 [&>:is(button,a)]:text-inherit [&>:is(button,a)]:shadow-none [&>:is(button,a)]:active:translate-y-0;
     @apply [&[data-variant=pill]>:is(button,a):first-child]:rounded-l-full! [&[data-variant=pill]>:is(button,a):last-child]:rounded-r-full!;
     @apply [&>:is(button,a):is(:hover,[aria-expanded=true])]:bg-[lch(95.883%_0.157_282)] [&>:is(button,a):is(:hover,[aria-expanded=true])]:text-[color:lch(19.588%_1.25_282)] dark:[&>:is(button,a):is(:hover,[aria-expanded=true])]:bg-[lch(14.777%_1.075_272)] dark:[&>:is(button,a):is(:hover,[aria-expanded=true])]:text-[color:lch(90.451%_1.2_272)];
-    @apply [&>:is(button,a):focus-visible]:ring-0 [&>:is(button,a):focus-visible]:outline-1 [&>:is(button,a):focus-visible]:-outline-offset-1 [&>:is(button,a):focus-visible]:outline-solid [&>:is(button,a):focus-visible]:outline-[color:lch(53%_52.26_286.91)] dark:[&>:is(button,a):focus-visible]:outline-[color:lch(47.918%_59.303_288.421)];
+    @apply [&>:is(button,a):focus-visible]:ring-0 [&>:is(button,a):focus-visible]:outline-1 [&>:is(button,a):focus-visible]:-outline-offset-1 [&>:is(button,a):focus-visible]:outline-solid [&>:is(button,a):focus-visible]:outline-[color:lch(46%_70_267)] dark:[&>:is(button,a):focus-visible]:outline-[color:lch(48%_72_267)];
     @apply [&>[data-slot=button-group-separator]]:m-0 [&>[data-slot=button-group-separator]]:h-5 [&>[data-slot=button-group-separator]]:w-[0.5px] [&>[data-slot=button-group-separator]]:self-center [&>[data-slot=button-group-separator]]:bg-black/[4.5%] dark:[&>[data-slot=button-group-separator]]:bg-white/[6.85%];
   }
 
@@ -299,8 +299,8 @@
   /* MARK: Calendar */
   .cn-calendar {
     @apply p-2 [--cell-radius:calc(infinity*1px)] [--cell-size:--spacing(7)];
-    @apply [--calendar-date-text:lch(40%_1_282)] [--calendar-date-muted:lch(66%_1_282)] [--calendar-date-strong:lch(10%_0_282)] [--calendar-date-today:lch(90.55%_0_282)] [--calendar-date-accent:lch(53%_52.26_286.91)] [--calendar-date-accent-text:lch(100%_5_286.91)] [--calendar-date-nav-hover:lch(96.914%_0_282)];
-    @apply dark:[--calendar-date-text:lch(91.178%_1.425_272)] dark:[--calendar-date-muted:lch(44.255%_1.65_272)] dark:[--calendar-date-strong:white] dark:[--calendar-date-today:lch(20.032%_1.93_272)] dark:[--calendar-date-accent:lch(47.918%_59.303_288.421)] dark:[--calendar-date-accent-text:lch(100%_5_288.421)] dark:[--calendar-date-nav-hover:lch(24.918%_1.493_272)];
+    @apply [--calendar-date-text:lch(40%_1_282)] [--calendar-date-muted:lch(66%_1_282)] [--calendar-date-strong:lch(10%_0_282)] [--calendar-date-today:lch(90.55%_0_282)] [--calendar-date-accent:lch(46%_70_267)] [--calendar-date-accent-text:lch(100%_3_267)] [--calendar-date-nav-hover:lch(96.914%_0_282)];
+    @apply dark:[--calendar-date-text:lch(91.178%_1.425_272)] dark:[--calendar-date-muted:lch(44.255%_1.65_272)] dark:[--calendar-date-strong:white] dark:[--calendar-date-today:lch(20.032%_1.93_272)] dark:[--calendar-date-accent:lch(48%_72_267)] dark:[--calendar-date-accent-text:lch(100%_3_267)] dark:[--calendar-date-nav-hover:lch(24.918%_1.493_272)];
   }
 
   .cn-calendar-day {
@@ -314,8 +314,8 @@
 
   .cn-calendar-project-date {
     @apply w-full max-w-[301px] min-w-0 p-0 [--cell-radius:calc(infinity*1px)] [--cell-size:26px];
-    @apply [--calendar-date-text:lch(20%_1_282)] [--calendar-date-muted:lch(66%_1_282)] [--calendar-date-strong:lch(10%_0_282)] [--calendar-date-weekday:var(--calendar-date-muted)] [--calendar-date-today:lch(90.55%_0_282)] [--calendar-date-accent:lch(53%_52.26_286.91)] [--calendar-date-accent-text:lch(100%_5_286.91)] [--calendar-date-nav-hover:lch(96.914%_0_282)];
-    @apply dark:[--calendar-date-text:lch(91.554%_1.65_272)] dark:[--calendar-date-muted:lch(44.255%_1.65_272)] dark:[--calendar-date-strong:white] dark:[--calendar-date-weekday:lch(66.215%_1.65_272)] dark:[--calendar-date-today:lch(20.032%_1.93_272)] dark:[--calendar-date-accent:lch(47.918%_59.303_288.421)] dark:[--calendar-date-accent-text:lch(100%_5_288.421)] dark:[--calendar-date-nav-hover:lch(24.918%_1.493_272)];
+    @apply [--calendar-date-text:lch(20%_1_282)] [--calendar-date-muted:lch(66%_1_282)] [--calendar-date-strong:lch(10%_0_282)] [--calendar-date-weekday:var(--calendar-date-muted)] [--calendar-date-today:lch(90.55%_0_282)] [--calendar-date-accent:lch(46%_70_267)] [--calendar-date-accent-text:lch(100%_3_267)] [--calendar-date-nav-hover:lch(96.914%_0_282)];
+    @apply dark:[--calendar-date-text:lch(91.554%_1.65_272)] dark:[--calendar-date-muted:lch(44.255%_1.65_272)] dark:[--calendar-date-strong:white] dark:[--calendar-date-weekday:lch(66.215%_1.65_272)] dark:[--calendar-date-today:lch(20.032%_1.93_272)] dark:[--calendar-date-accent:lch(48%_72_267)] dark:[--calendar-date-accent-text:lch(100%_3_267)] dark:[--calendar-date-nav-hover:lch(24.918%_1.493_272)];
     @apply [&_[data-slot=calendar-month]]:gap-0 [&_[data-calendar-header]]:h-9 [&_[data-calendar-header]]:justify-start [&_[data-calendar-header]]:px-2 [&_[data-calendar-header]]:text-xs [&_[data-calendar-header]]:font-normal [&_[data-calendar-header]]:text-(color:--calendar-date-text);
     @apply [&[data-caption-layout=label]_[data-slot=calendar-nav]]:start-auto [&[data-caption-layout=label]_[data-slot=calendar-nav]]:end-2 [&_[data-slot=calendar-nav]]:top-1 [&_[data-slot=calendar-nav]]:z-10 [&[data-caption-layout=label]_[data-slot=calendar-nav]]:w-auto;
     @apply [&_:is([data-calendar-prev-button],[data-calendar-next-button])]:size-7 [&_:is([data-calendar-prev-button],[data-calendar-next-button])]:rounded-full [&_:is([data-calendar-prev-button],[data-calendar-next-button])]:bg-transparent [&_:is([data-calendar-prev-button],[data-calendar-next-button])]:text-(color:--calendar-date-muted);
@@ -354,7 +354,7 @@
   }
 
   .cn-date-picker-period {
-    @apply min-w-0 px-2 text-xs aria-pressed:border-transparent aria-pressed:bg-[lch(53%_52.26_286.91)] aria-pressed:text-[lch(100%_5_286.91)] dark:aria-pressed:bg-[lch(47.918%_59.303_288.421)] dark:aria-pressed:text-[lch(100%_5_288.421)];
+    @apply min-w-0 px-2 text-xs aria-pressed:border-transparent aria-pressed:bg-[lch(46%_70_267)] aria-pressed:text-[lch(100%_3_267)] dark:aria-pressed:bg-[lch(48%_72_267)] dark:aria-pressed:text-[lch(100%_3_267)];
   }
 
   /* MARK: Card */
@@ -408,7 +408,7 @@
   /* MARK: Checkbox */
   .cn-checkbox {
     @apply flex size-3.5 items-center justify-center rounded-[3px] border bg-transparent transition-none;
-    @apply [--valar-checkbox-border-base:lch(52.04%_0_282)] [--valar-checkbox-fill-base:var(--valar-accent-fill,lch(53%_52.26_286.91))] [--valar-checkbox-mark-base:var(--valar-accent-ink,lch(100%_5_286.91))] dark:[--valar-checkbox-border-base:lch(48.72%_1.48_272)] dark:[--valar-checkbox-fill-base:var(--valar-accent-fill,lch(47.918%_59.303_288.421))] dark:[--valar-checkbox-mark-base:var(--valar-accent-ink,lch(100%_5_288.421))];
+    @apply [--valar-checkbox-border-base:lch(52.04%_0_282)] [--valar-checkbox-fill-base:var(--valar-accent-fill,lch(46%_70_267))] [--valar-checkbox-mark-base:var(--valar-accent-ink,lch(100%_3_267))] dark:[--valar-checkbox-border-base:lch(48.72%_1.48_272)] dark:[--valar-checkbox-fill-base:var(--valar-accent-fill,lch(48%_72_267))] dark:[--valar-checkbox-mark-base:var(--valar-accent-ink,lch(100%_3_267))];
     @apply border-[color:var(--valar-checkbox-border,var(--valar-checkbox-border-base))] data-checked:border-[color:var(--valar-checkbox-fill,var(--valar-checkbox-fill-base))] data-checked:bg-[color:var(--valar-checkbox-fill,var(--valar-checkbox-fill-base))] data-checked:text-[color:var(--valar-checkbox-mark,var(--valar-checkbox-mark-base))];
     @apply data-[state=indeterminate]:border-[color:var(--valar-checkbox-fill,var(--valar-checkbox-fill-base))] data-[state=indeterminate]:bg-[color:var(--valar-checkbox-fill,var(--valar-checkbox-fill-base))] data-[state=indeterminate]:text-[color:var(--valar-checkbox-mark,var(--valar-checkbox-mark-base))];
     @apply focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-inset aria-invalid:ring-destructive/20 aria-invalid:aria-checked:border-[color:var(--valar-checkbox-fill,var(--valar-checkbox-fill-base))] dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40;
@@ -674,7 +674,7 @@
     @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-100 data-open:zoom-in-100 duration-100 motion-reduce:animate-none;
     @apply grid max-h-[calc(100dvh-2rem)] max-w-[min(30rem,calc(100%-2rem))] gap-4 overflow-y-auto overscroll-contain rounded-[12px] border-[0.5px] border-[color:var(--valar-dialog-border)] bg-[color:var(--valar-dialog-surface)] p-6 text-sm text-[color:var(--valar-dialog-text)] shadow-lg sm:max-w-[30rem];
     @apply [--valar-dialog-border:lch(91.9%_0_282)] [--valar-dialog-surface:var(--valar-popover-bg,white)] [--valar-dialog-text:lch(9.794%_0_282)] dark:[--valar-dialog-border:lch(22.193%_1.93_272)] dark:[--valar-dialog-surface:var(--valar-popover-bg,lch(9.232%_.85_272))] dark:[--valar-dialog-text:lch(90.826%_1.425_272)];
-    @apply [--ring:var(--valar-focus-ring,lch(53%_52.26_286.91))] dark:[--ring:var(--valar-focus-ring,lch(47.918%_59.303_288.421))];
+    @apply [--ring:var(--valar-focus-ring,lch(46%_70_267))] dark:[--ring:var(--valar-focus-ring,lch(48%_72_267))];
   }
 
   .cn-dialog-editor {
@@ -809,7 +809,7 @@
 
   .cn-empty-issue-list {
     @apply gap-5 rounded-none border-0 bg-transparent p-0 **:data-[slot=empty-title]:text-[13px] **:data-[slot=empty-title]:font-medium **:data-[slot=empty-title]:tracking-normal **:data-[slot=empty-title]:text-[color:var(--valar-empty-issue-title)];
-    @apply [--valar-empty-issue-title:lch(39.176%_1.25_282)] [--valar-empty-issue-accent:lch(53%_52.26_286.91)] [--valar-empty-issue-accent-foreground:lch(100%_5_286.91)] dark:[--valar-empty-issue-title:lch(61.803%_1.2_272)] dark:[--valar-empty-issue-accent:lch(47.918%_59.303_288.421)] dark:[--valar-empty-issue-accent-foreground:lch(100%_5_288.421)];
+    @apply [--valar-empty-issue-title:lch(39.176%_1.25_282)] [--valar-empty-issue-accent:lch(46%_70_267)] [--valar-empty-issue-accent-foreground:lch(100%_3_267)] dark:[--valar-empty-issue-title:lch(61.803%_1.2_272)] dark:[--valar-empty-issue-accent:lch(48%_72_267)] dark:[--valar-empty-issue-accent-foreground:lch(100%_3_267)];
   }
 
   .cn-empty-filtered-list {
@@ -917,9 +917,9 @@
 
   /* MARK: Input */
   .cn-input {
-    @apply border-[color:var(--valar-input-border,var(--valar-input-border-base,lch(86.5%_0_282)))] bg-[color:var(--valar-input-surface,var(--valar-input-surface-base,white))] dark:[--valar-input-border-base:lch(30.833%_1.93_272)] dark:[--valar-input-surface-base:lch(9.232%_.85_272)] dark:[--valar-input-focus:lch(47.918%_59.303_288.421)] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 h-8 rounded-md border-[0.5px] px-3 py-1 text-base transition-[border-color] file:h-6 file:text-sm file:font-medium aria-invalid:ring-1 aria-invalid:ring-inset md:text-[13px] motion-reduce:transition-none;
+    @apply border-[color:var(--valar-input-border,var(--valar-input-border-base,lch(86.5%_0_282)))] bg-[color:var(--valar-input-surface,var(--valar-input-surface-base,white))] dark:[--valar-input-border-base:lch(30.833%_1.93_272)] dark:[--valar-input-surface-base:lch(9.232%_.85_272)] dark:[--valar-input-focus:lch(48%_72_267)] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 h-8 rounded-md border-[0.5px] px-3 py-1 text-base transition-[border-color] file:h-6 file:text-sm file:font-medium aria-invalid:ring-1 aria-invalid:ring-inset md:text-[13px] motion-reduce:transition-none;
     @apply data-[slot=input]:placeholder:text-[color:lch(66%_1_282)] dark:data-[slot=input]:placeholder:text-[color:lch(39.452%_1.425_272)] md:data-[slot=input]:py-1.5 md:data-[slot=input]:leading-[normal] data-[slot=input]:focus:transition-none data-[slot=input]:focus:not-aria-invalid:border-[color:var(--valar-input-border-focus,lch(78.5%_0_282))] dark:[--valar-input-border-focus:lch(28.032%_6.93_272)];
-    @apply data-[slot=input]:focus:not-aria-invalid:outline-solid data-[slot=input]:focus:not-aria-invalid:outline-1 data-[slot=input]:focus:not-aria-invalid:-outline-offset-1 data-[slot=input]:focus:not-aria-invalid:outline-[color:var(--settings-focus,var(--valar-input-focus,lch(53%_52.26_286.91)))];
+    @apply data-[slot=input]:focus:not-aria-invalid:outline-solid data-[slot=input]:focus:not-aria-invalid:outline-1 data-[slot=input]:focus:not-aria-invalid:-outline-offset-1 data-[slot=input]:focus:not-aria-invalid:outline-[color:var(--settings-focus,var(--valar-input-focus,lch(46%_70_267)))];
     @apply data-[slot=input]:focus:aria-invalid:outline-solid data-[slot=input]:focus:aria-invalid:outline-1 data-[slot=input]:focus:aria-invalid:-outline-offset-1 data-[slot=input]:focus:aria-invalid:outline-destructive;
   }
 
@@ -1289,7 +1289,7 @@
   /* MARK: Select */
   .cn-select-trigger {
     @apply [--valar-select-trigger-bg:white] [--valar-select-trigger-hover:lch(95%_.5_282)] [--valar-select-trigger-ink:lch(20%_1_282)] [--valar-select-trigger-edge:lch(86.5%_0_282)] dark:[--valar-select-trigger-bg:lch(13.861%_1.139_272)] dark:[--valar-select-trigger-hover:lch(18.49%_1.525_272)] dark:[--valar-select-trigger-ink:lch(90.826%_1.425_272)] dark:[--valar-select-trigger-edge:lch(38.032%_2.38_272)];
-    @apply gap-1.5 rounded-md border border-transparent bg-[color:var(--settings-control,var(--valar-select-trigger-bg))] py-0 pr-2 pl-2.5 text-[13px] text-[color:var(--settings-control-text,var(--valar-select-trigger-ink))] shadow-[var(--settings-control-shadow,0_0_0_.5px_var(--valar-select-trigger-edge)_inset)] transition-colors select-none data-placeholder:text-muted-foreground enabled:hover:bg-[color:var(--settings-control-hover,var(--valar-select-trigger-hover))] data-open:bg-[color:var(--settings-control-hover,var(--valar-select-trigger-hover))] focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-[color:var(--settings-focus,lch(53%_52.26_286.91))] dark:focus-visible:outline-[color:var(--settings-focus,lch(47.918%_59.303_288.421))] aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-inset aria-invalid:ring-destructive/20 focus-visible:aria-invalid:outline-destructive dark:focus-visible:aria-invalid:outline-destructive motion-reduce:transition-none data-[size=default]:h-7.5 data-[size=settings]:h-7.5 data-[size=sm]:h-7 [&_svg:not([class*='size-'])]:size-3.5;
+    @apply gap-1.5 rounded-md border border-transparent bg-[color:var(--settings-control,var(--valar-select-trigger-bg))] py-0 pr-2 pl-2.5 text-[13px] text-[color:var(--settings-control-text,var(--valar-select-trigger-ink))] shadow-[var(--settings-control-shadow,0_0_0_.5px_var(--valar-select-trigger-edge)_inset)] transition-colors select-none data-placeholder:text-muted-foreground enabled:hover:bg-[color:var(--settings-control-hover,var(--valar-select-trigger-hover))] data-open:bg-[color:var(--settings-control-hover,var(--valar-select-trigger-hover))] focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-[color:var(--settings-focus,lch(46%_70_267))] dark:focus-visible:outline-[color:var(--settings-focus,lch(48%_72_267))] aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-inset aria-invalid:ring-destructive/20 focus-visible:aria-invalid:outline-destructive dark:focus-visible:aria-invalid:outline-destructive motion-reduce:transition-none data-[size=default]:h-7.5 data-[size=settings]:h-7.5 data-[size=sm]:h-7 [&_svg:not([class*='size-'])]:size-3.5;
   }
 
   .cn-select-value {
@@ -1423,8 +1423,8 @@
 
   /* MARK: Sidebar */
   .cn-sidebar-workspace {
-    @apply [--sidebar:lch(94.44%_.5_282)] [--sidebar-foreground:lch(9.794%_0_282)] [--sidebar-accent:lch(89.54%_.5_282)] [--sidebar-accent-foreground:lch(9.444%_0_282)] [--sidebar-ring:lch(53%_52.26_286.91)];
-    @apply dark:[--sidebar:lch(2.595%_.4_272)] dark:[--sidebar-foreground:lch(60.621%_1.2_272)] dark:[--sidebar-accent:lch(13.845%_1.3_272)] dark:[--sidebar-accent-foreground:white] dark:[--sidebar-ring:lch(47.918%_59.303_288.421)];
+    @apply [--sidebar:lch(94.44%_.5_282)] [--sidebar-foreground:lch(9.794%_0_282)] [--sidebar-accent:lch(89.54%_.5_282)] [--sidebar-accent-foreground:lch(9.444%_0_282)] [--sidebar-ring:lch(46%_70_267)];
+    @apply dark:[--sidebar:lch(2.595%_.4_272)] dark:[--sidebar-foreground:lch(60.621%_1.2_272)] dark:[--sidebar-accent:lch(13.845%_1.3_272)] dark:[--sidebar-accent-foreground:white] dark:[--sidebar-ring:lch(48%_72_267)];
     @apply [--sidebar-workspace-hover:lch(91.64%_.5_282)] [--sidebar-workspace-icon:lch(37.776%_1.25_282)] dark:[--sidebar-workspace-hover:lch(8.445%_1.3_272)] dark:[--sidebar-workspace-icon:lch(60.621%_1.2_272)];
     @apply [&_[data-slot=sidebar-container]]:motion-reduce:transition-none [&_[data-slot=sidebar-gap]]:motion-reduce:transition-none;
     @apply [&_[data-slot=sidebar-header]]:px-3 [&_[data-slot=sidebar-group]]:px-3 [&_[data-slot=sidebar-footer]]:px-3;
@@ -1581,7 +1581,7 @@
 
   /* MARK: Switch */
   .cn-switch {
-    @apply data-checked:bg-[color:var(--settings-switch-on,var(--settings-focus,var(--valar-accent-fill,lch(53%_52.26_286.91))))] data-unchecked:bg-[color:var(--settings-switch-off,lch(82.484%_.054_281.837))] dark:data-checked:bg-[color:var(--settings-switch-on,var(--settings-focus,var(--valar-accent-fill,lch(47.918%_59.303_288.421))))] dark:data-unchecked:bg-[color:var(--settings-switch-off,lch(47.551%_.913_271.998))] focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-[color:var(--settings-focus,var(--valar-focus-ring,lch(53%_52.26_286.91)))] dark:focus-visible:outline-[color:var(--settings-focus,var(--valar-focus-ring,lch(47.918%_59.303_288.421)))] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 shrink-0 rounded-full border border-transparent aria-invalid:ring-1 aria-invalid:ring-inset data-[size=default]:h-5 data-[size=default]:w-[30px] data-[size=default]:px-0.5 data-[size=sm]:h-[14px] data-[size=sm]:w-[22px] data-[size=sm]:px-px;
+    @apply data-checked:bg-[color:var(--settings-switch-on,var(--settings-focus,var(--valar-accent-fill,lch(46%_70_267))))] data-unchecked:bg-[color:var(--settings-switch-off,lch(82.484%_.054_281.837))] dark:data-checked:bg-[color:var(--settings-switch-on,var(--settings-focus,var(--valar-accent-fill,lch(48%_72_267))))] dark:data-unchecked:bg-[color:var(--settings-switch-off,lch(47.551%_.913_271.998))] focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-[color:var(--settings-focus,var(--valar-focus-ring,lch(46%_70_267)))] dark:focus-visible:outline-[color:var(--settings-focus,var(--valar-focus-ring,lch(48%_72_267)))] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 shrink-0 rounded-full border border-transparent aria-invalid:ring-1 aria-invalid:ring-inset data-[size=default]:h-5 data-[size=default]:w-[30px] data-[size=default]:px-0.5 data-[size=sm]:h-[14px] data-[size=sm]:w-[22px] data-[size=sm]:px-px;
     @apply focus-visible:data-checked:outline-white dark:focus-visible:data-checked:outline-white focus-visible:aria-invalid:outline-destructive!;
     @apply dark:data-[size=sm]:data-unchecked:bg-[color:var(--settings-switch-off,lch(48.296%_1.13_271.996))];
   }
@@ -1591,7 +1591,7 @@
   }
 
   .cn-switch-thumb {
-    @apply bg-[lch(100%_5_286.91)] dark:bg-[lch(100%_5_288.421)] rounded-full group-data-[size=default]/switch:size-3.5 group-data-[size=sm]/switch:size-2.5;
+    @apply bg-[lch(100%_3_267)] dark:bg-[lch(100%_3_267)] rounded-full group-data-[size=default]/switch:size-3.5 group-data-[size=sm]/switch:size-2.5;
   }
 
   .cn-switch-thumb-aria {
@@ -1616,7 +1616,7 @@
     @apply [&_[data-slot=table-row]]:border-b-0 [&_[data-slot=table-row]:not([data-state=selected])]:hover:bg-transparent;
     @apply [&_[data-slot=table-head]]:h-8 [&_[data-slot=table-head]]:text-xs [&_[data-slot=table-head]]:text-[color:lch(19.588%_1.25_282)] dark:[&_[data-slot=table-head]]:text-[color:lch(90.451%_1.2_272)];
     @apply [&_[data-slot=table-cell]]:h-11 [&_[data-slot=table-cell]]:py-0;
-    @apply [&_[data-slot=table-row][data-state=selected]]:bg-[lch(92.254%_5.903_282.518)] [&_[data-slot=table-row][data-state=selected]]:text-[color:lch(18.451%_3.951_282.518)] dark:[&_[data-slot=table-row][data-state=selected]]:bg-[lch(12.141%_17.792_286.445)] dark:[&_[data-slot=table-row][data-state=selected]]:text-[color:lch(91.12%_9.896_286.445)];
+    @apply [&_[data-slot=table-row][data-state=selected]]:bg-[lch(92.5%_6_267)] [&_[data-slot=table-row][data-state=selected]]:text-[color:lch(18.5%_4_267)] dark:[&_[data-slot=table-row][data-state=selected]]:bg-[lch(12.5%_18_267)] dark:[&_[data-slot=table-row][data-state=selected]]:text-[color:lch(91.5%_10_267)];
   }
 
   .cn-table-header {
@@ -1674,8 +1674,8 @@
 
   .cn-tabs-list-variant-capsule {
     @apply gap-0.5 rounded-[5px] bg-[lch(100%_0_282)] p-0 dark:bg-[lch(9.232%_0.85_272)];
-    @apply [--tabs-capsule-bg:white] [--tabs-capsule-ink:lch(40%_1_282)] [--tabs-capsule-hover:lch(96.914%_0_282)] [--tabs-capsule-hover-ink:lch(20%_1_282)] [--tabs-capsule-active:lch(95.543%_0_282)] [--tabs-capsule-active-ink:lch(10%_0_282)] [--tabs-capsule-focus:lch(53%_52.26_286.91)] [--tabs-capsule-shadow:0_0_0_0.5px_rgb(0_0_0/.088),0_3px_6px_-2px_rgb(0_0_0/.02),0_1px_1px_rgb(0_0_0/.04)] [--tabs-capsule-shadow-active:0_0_0_0.5px_rgb(0_0_0/.147)];
-    @apply dark:[--tabs-capsule-bg:lch(13.861%_1.043_272)] dark:[--tabs-capsule-ink:lch(63.304%_1.425_272)] dark:[--tabs-capsule-hover:lch(17.718%_1.043_272)] dark:[--tabs-capsule-hover-ink:lch(90.826%_1.425_272)] dark:[--tabs-capsule-active:lch(20.418%_1.429_272)] dark:[--tabs-capsule-active-ink:white] dark:[--tabs-capsule-focus:lch(47.918%_59.303_288.421)] dark:[--tabs-capsule-shadow:0_0_0_0.5px_rgb(255_255_255/.143),0_0.5px_1px_1px_rgb(0_0_0/.30)] dark:[--tabs-capsule-shadow-active:0_0_0_0.5px_rgb(255_255_255/.238)];
+    @apply [--tabs-capsule-bg:white] [--tabs-capsule-ink:lch(40%_1_282)] [--tabs-capsule-hover:lch(96.914%_0_282)] [--tabs-capsule-hover-ink:lch(20%_1_282)] [--tabs-capsule-active:lch(95.543%_0_282)] [--tabs-capsule-active-ink:lch(10%_0_282)] [--tabs-capsule-focus:lch(46%_70_267)] [--tabs-capsule-shadow:0_0_0_0.5px_rgb(0_0_0/.088),0_3px_6px_-2px_rgb(0_0_0/.02),0_1px_1px_rgb(0_0_0/.04)] [--tabs-capsule-shadow-active:0_0_0_0.5px_rgb(0_0_0/.147)];
+    @apply dark:[--tabs-capsule-bg:lch(13.861%_1.043_272)] dark:[--tabs-capsule-ink:lch(63.304%_1.425_272)] dark:[--tabs-capsule-hover:lch(17.718%_1.043_272)] dark:[--tabs-capsule-hover-ink:lch(90.826%_1.425_272)] dark:[--tabs-capsule-active:lch(20.418%_1.429_272)] dark:[--tabs-capsule-active-ink:white] dark:[--tabs-capsule-focus:lch(48%_72_267)] dark:[--tabs-capsule-shadow:0_0_0_0.5px_rgb(255_255_255/.143),0_0.5px_1px_1px_rgb(0_0_0/.30)] dark:[--tabs-capsule-shadow-active:0_0_0_0.5px_rgb(255_255_255/.238)];
   }
 
   .cn-tabs-trigger {
@@ -1700,12 +1700,12 @@
 
   /* MARK: Textarea */
   .cn-textarea {
-    @apply border-[color:var(--valar-textarea-border,var(--valar-textarea-border-base,rgb(0_0_0_/_8.8%)))] bg-[color:var(--valar-textarea-surface,var(--valar-textarea-surface-base,lch(100%_0_282)))] dark:[--valar-textarea-border-base:rgb(255_255_255_/_8.3%)] dark:[--valar-textarea-surface-base:lch(9.232%_.85_272)] data-[slot=textarea]:focus-visible:not-aria-invalid:border-[color:var(--settings-focus,var(--valar-input-focus,var(--valar-textarea-focus-base,lch(53%_52.26_286.91))))] dark:[--valar-textarea-focus-base:lch(47.918%_59.303_288.421)] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 rounded-lg border-[0.5px] px-2.5 py-2 text-base placeholder:text-[color:lch(66%_1_282)] dark:placeholder:text-[color:lch(39.452%_1.425_272)] data-[slot=textarea]:focus-visible:not-aria-invalid:outline-solid data-[slot=textarea]:focus-visible:not-aria-invalid:outline-1 data-[slot=textarea]:focus-visible:not-aria-invalid:-outline-offset-1 data-[slot=textarea]:focus-visible:not-aria-invalid:outline-[color:var(--settings-focus,var(--valar-input-focus,var(--valar-textarea-focus-base,lch(53%_52.26_286.91))))] data-[slot=textarea]:focus-visible:aria-invalid:outline-solid data-[slot=textarea]:focus-visible:aria-invalid:outline-1 data-[slot=textarea]:focus-visible:aria-invalid:-outline-offset-1 data-[slot=textarea]:focus-visible:aria-invalid:outline-destructive transition-colors duration-150 aria-invalid:ring-1 aria-invalid:ring-inset md:text-[13px] motion-reduce:transition-none;
+    @apply border-[color:var(--valar-textarea-border,var(--valar-textarea-border-base,rgb(0_0_0_/_8.8%)))] bg-[color:var(--valar-textarea-surface,var(--valar-textarea-surface-base,lch(100%_0_282)))] dark:[--valar-textarea-border-base:rgb(255_255_255_/_8.3%)] dark:[--valar-textarea-surface-base:lch(9.232%_.85_272)] data-[slot=textarea]:focus-visible:not-aria-invalid:border-[color:var(--settings-focus,var(--valar-input-focus,var(--valar-textarea-focus-base,lch(46%_70_267))))] dark:[--valar-textarea-focus-base:lch(48%_72_267)] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 rounded-lg border-[0.5px] px-2.5 py-2 text-base placeholder:text-[color:lch(66%_1_282)] dark:placeholder:text-[color:lch(39.452%_1.425_272)] data-[slot=textarea]:focus-visible:not-aria-invalid:outline-solid data-[slot=textarea]:focus-visible:not-aria-invalid:outline-1 data-[slot=textarea]:focus-visible:not-aria-invalid:-outline-offset-1 data-[slot=textarea]:focus-visible:not-aria-invalid:outline-[color:var(--settings-focus,var(--valar-input-focus,var(--valar-textarea-focus-base,lch(46%_70_267))))] data-[slot=textarea]:focus-visible:aria-invalid:outline-solid data-[slot=textarea]:focus-visible:aria-invalid:outline-1 data-[slot=textarea]:focus-visible:aria-invalid:-outline-offset-1 data-[slot=textarea]:focus-visible:aria-invalid:outline-destructive transition-colors duration-150 aria-invalid:ring-1 aria-invalid:ring-inset md:text-[13px] motion-reduce:transition-none;
   }
 
   .cn-textarea-appearance-settings {
     @apply field-sizing-fixed h-30 min-h-30 resize-none overflow-y-auto rounded-lg border-[0.5px] p-4 text-[13px]/[normal] font-normal md:text-[13px]/[normal] text-[color:lch(10%_0_282)] dark:text-[color:lch(100%_0_272)] placeholder:text-[color:lch(66%_1_282)] dark:placeholder:text-[color:lch(39.452%_1.425_272)];
-    @apply data-[slot=textarea]:focus:transition-none data-[slot=textarea]:focus:not-aria-invalid:outline-solid data-[slot=textarea]:focus:not-aria-invalid:outline-1 data-[slot=textarea]:focus:not-aria-invalid:-outline-offset-1 data-[slot=textarea]:focus:not-aria-invalid:outline-[color:var(--settings-focus,var(--valar-input-focus,var(--valar-textarea-focus-base,lch(53%_52.26_286.91))))];
+    @apply data-[slot=textarea]:focus:transition-none data-[slot=textarea]:focus:not-aria-invalid:outline-solid data-[slot=textarea]:focus:not-aria-invalid:outline-1 data-[slot=textarea]:focus:not-aria-invalid:-outline-offset-1 data-[slot=textarea]:focus:not-aria-invalid:outline-[color:var(--settings-focus,var(--valar-input-focus,var(--valar-textarea-focus-base,lch(46%_70_267))))];
   }
 
   /* MARK: Toggle */
@@ -1794,7 +1794,7 @@
   }
 
   .cn-input-group-settings-search {
-    @apply [--valar-settings-search-surface:lch(99.997%_.5_282)] [--valar-settings-search-border:lch(89.84%_0_282)] [--valar-settings-search-text:lch(9.444%_0_282)] [--valar-settings-search-muted:lch(37.776%_1.25_282)] [--valar-settings-search-focus:lch(53%_52.26_286.91)] dark:[--valar-settings-search-surface:lch(7.32%_.85_272)] dark:[--valar-settings-search-border:lch(18.48%_1.48_272)] dark:[--valar-settings-search-text:white] dark:[--valar-settings-search-muted:lch(60.621%_1.2_272)] dark:[--valar-settings-search-focus:lch(47.918%_59.303_288.421)];
+    @apply [--valar-settings-search-surface:lch(99.997%_.5_282)] [--valar-settings-search-border:lch(89.84%_0_282)] [--valar-settings-search-text:lch(9.444%_0_282)] [--valar-settings-search-muted:lch(37.776%_1.25_282)] [--valar-settings-search-focus:lch(46%_70_267)] dark:[--valar-settings-search-surface:lch(7.32%_.85_272)] dark:[--valar-settings-search-border:lch(18.48%_1.48_272)] dark:[--valar-settings-search-text:white] dark:[--valar-settings-search-muted:lch(60.621%_1.2_272)] dark:[--valar-settings-search-focus:lch(48%_72_267)];
     @apply data-[appearance=settings-search]:h-7 data-[appearance=settings-search]:rounded-[8px] border-[0.5px] not-has-[>[data-slot=input-group-control]:disabled]:bg-[color:var(--valar-settings-search-surface)] dark:not-has-[>[data-slot=input-group-control]:disabled]:bg-[color:var(--valar-settings-search-surface)] not-has-[>[data-slot=input-group-control][aria-invalid=true]]:border-[color:var(--valar-settings-search-border)] shadow-[0_3px_6px_-2px_rgb(0_0_0_/_2%),0_1px_1px_rgb(0_0_0_/_4%)] dark:shadow-[0_0.5px_1px_1px_rgb(0_0_0_/_30%)];
     @apply has-[>input[data-slot=input-group-control]:focus]:outline-solid has-[>input[data-slot=input-group-control]:focus]:outline-1 has-[>input[data-slot=input-group-control]:focus]:-outline-offset-1 has-[>input[data-slot=input-group-control]:focus]:outline-[color:var(--valar-settings-search-focus)];
     @apply [&>input[data-slot=input-group-control]]:h-full [&>input[data-slot=input-group-control]]:px-0 [&>input[data-slot=input-group-control]]:py-1.5 [&>input[data-slot=input-group-control]]:text-[13px] [&>input[data-slot=input-group-control]]:font-medium [&>input[data-slot=input-group-control]]:text-[color:var(--valar-settings-search-text)] [&>input[data-slot=input-group-control]]:placeholder:text-[color:var(--valar-settings-search-muted)] [&>input::-webkit-search-cancel-button]:appearance-none;
@@ -1803,8 +1803,8 @@
   }
 
   .cn-input-group-settings-name {
-    @apply data-[appearance=settings-name]:rounded-[8px] border-[0.5px] [--valar-name-border:lch(86.5%_0_282)] [--valar-name-surface:white] [--valar-name-addon:lch(78.247%_3.577_260.65_/_12.5%)] [--valar-name-ink:lch(10%_0_282)] [--valar-name-placeholder:lch(66%_1_282)] [--valar-name-focus:lch(53%_52.26_286.91)];
-    @apply dark:[--valar-name-border:lch(30.833%_1.93_272)] dark:[--valar-name-surface:lch(9.232%_.85_272)] dark:[--valar-name-addon:lch(78.247%_3.577_260.65_/_17.5%)] dark:[--valar-name-ink:white] dark:[--valar-name-placeholder:lch(39.452%_1.425_272)] dark:[--valar-name-focus:lch(47.918%_59.303_288.421)];
+    @apply data-[appearance=settings-name]:rounded-[8px] border-[0.5px] [--valar-name-border:lch(86.5%_0_282)] [--valar-name-surface:white] [--valar-name-addon:lch(78.247%_3.577_260.65_/_12.5%)] [--valar-name-ink:lch(10%_0_282)] [--valar-name-placeholder:lch(66%_1_282)] [--valar-name-focus:lch(46%_70_267)];
+    @apply dark:[--valar-name-border:lch(30.833%_1.93_272)] dark:[--valar-name-surface:lch(9.232%_.85_272)] dark:[--valar-name-addon:lch(78.247%_3.577_260.65_/_17.5%)] dark:[--valar-name-ink:white] dark:[--valar-name-placeholder:lch(39.452%_1.425_272)] dark:[--valar-name-focus:lch(48%_72_267)];
     @apply not-has-[>[data-slot=input-group-control][aria-invalid=true]]:border-[color:var(--valar-name-border)] not-has-[>[data-slot=input-group-control]:disabled]:bg-[color:var(--valar-name-surface)] dark:not-has-[>[data-slot=input-group-control]:disabled]:bg-[color:var(--valar-name-surface)];
     @apply [&>[data-align=inline-start]]:m-0 [&>[data-align=inline-start]]:h-full [&>[data-align=inline-start]]:w-8 [&>[data-align=inline-start]]:shrink-0 [&>[data-align=inline-start]]:rounded-s-[7px] [&>[data-align=inline-start]]:border-e-[0.5px] [&>[data-align=inline-start]]:border-[color:var(--valar-name-border)] [&>[data-align=inline-start]]:bg-[color:var(--valar-name-addon)] [&>[data-align=inline-start]]:p-0 [&>[data-align=inline-start]>button]:size-full [&>[data-align=inline-start]>button]:border-0 [&>[data-align=inline-start]>button]:rounded-s-[7px] [&>[data-align=inline-start]>button]:rounded-e-none;
     @apply [&>input[data-slot=input-group-control]]:h-full [&>input[data-slot=input-group-control]]:rounded-e-[8px] [&>input[data-slot=input-group-control]]:px-3 [&>input[data-slot=input-group-control]]:py-1.5 [&>input[data-slot=input-group-control]]:text-[13px]/[normal] [&>input[data-slot=input-group-control]]:text-[color:var(--valar-name-ink)] [&>input[data-slot=input-group-control]]:placeholder:text-[color:var(--valar-name-placeholder)];

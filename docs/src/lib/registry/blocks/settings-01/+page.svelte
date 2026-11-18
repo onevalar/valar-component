@@ -43,7 +43,7 @@
 		--settings-menu: light-dark(white, lch(16.433% 1.3 272));
 		--settings-menu-highlight: light-dark(lch(94% .5 282), lch(25.69% 1.975 272));
 		--settings-menu-shadow: 0 0 0 .5px light-dark(lch(86.5% 0 282), lch(38.032% 2.38 272)), 0 6px 18px light-dark(rgb(0 0 0 / .02), transparent), 0 3px 9px light-dark(rgb(0 0 0 / .04), transparent), 0 3px 8px light-dark(transparent, rgb(0 0 0 / .125)), 0 2px 5px light-dark(transparent, rgb(0 0 0 / .125)), 0 1px 1px light-dark(rgb(0 0 0 / .04), rgb(0 0 0 / .125));
-		--settings-focus: light-dark(lch(53% 52.26 286.91), lch(47.918% 59.303 288.421));
+		--settings-focus: light-dark(lch(46% 70 267), lch(48% 72 267));
 		--settings-switch-off: light-dark(lch(82.484% .054 281.837), lch(47.551% .913 271.998));
 	`;
 </script>

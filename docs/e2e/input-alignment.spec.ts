@@ -44,7 +44,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 		await expect(email).toHaveCSS("box-shadow", "none");
 		await expect(email).toHaveCSS(
 			"outline-color",
-			colorScheme === "light" ? "lch(53 52.26 286.91)" : "lch(47.918 59.303 288.421)"
+			colorScheme === "light" ? "lch(46 70 267)" : "lch(48 72 267)"
 		);
 
 		await page.setViewportSize({ width: 390, height: 800 });

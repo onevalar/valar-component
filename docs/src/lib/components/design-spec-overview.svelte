@@ -2,6 +2,7 @@
 	import { page } from "$app/state";
 	import ArrowRightIcon from "@lucide/svelte/icons/arrow-right";
 	import CopyIcon from "@lucide/svelte/icons/copy";
+	import { mode } from "mode-watcher";
 	import { toast } from "svelte-sonner";
 	import * as Card from "$lib/registry/ui/card/index.js";
 	import * as Table from "$lib/registry/ui/table/index.js";
@@ -11,6 +12,7 @@
 		EASE_TOKENS,
 		TYPE_SCALE_DEFAULTS,
 		VALAR_TOKEN_DEFAULTS,
+		oklchToHex,
 	} from "$lib/features/workbench/token-overrides.js";
 	import { copyText } from "$lib/hooks/use-clipboard.svelte.js";
 	import { localeFromPathname, localizeHref } from "$lib/i18n/config.js";
@@ -28,10 +30,56 @@
 	const neutralTheme = $derived(BASE_THEMES.find((item) => item.name === "neutral"));
 	const lightVars = $derived((neutralTheme?.cssVars?.light ?? {}) as Record<string, string>);
 	const darkVars = $derived((neutralTheme?.cssVars?.dark ?? {}) as Record<string, string>);
+	const activeVars = $derived(mode.current === "dark" ? darkVars : lightVars);
 	const themeVars = $derived(
 		((neutralTheme?.cssVars as { theme?: Record<string, string> } | undefined)?.theme ??
 			{}) as Record<string, string>
 	);
+
+	const COLOR_ROLES: Record<string, { zh: string; en: string }> = {
+		background: { zh: "页面主背景", en: "Page background" },
+		foreground: { zh: "默认主文字", en: "Primary text" },
+		card: { zh: "卡片表面", en: "Card surface" },
+		"card-foreground": { zh: "卡片文字", en: "Card text" },
+		popover: { zh: "浮层与菜单表面", en: "Popover surface" },
+		"popover-foreground": { zh: "浮层文字", en: "Popover text" },
+		primary: { zh: "Linear 品牌蓝主色", en: "Linear primary blue" },
+		"primary-foreground": { zh: "主色按钮文字", en: "Primary ink" },
+		secondary: { zh: "次级控件表面", en: "Secondary surface" },
+		"secondary-foreground": { zh: "次级控件文字", en: "Secondary text" },
+		muted: { zh: "弱化底色", en: "Muted surface" },
+		"muted-foreground": { zh: "辅助说明文字", en: "Muted text" },
+		accent: { zh: "悬停与高亮底色", en: "Hover & accent" },
+		"accent-foreground": { zh: "高亮文字", en: "Accent text" },
+		info: { zh: "信息提示青蓝", en: "Info status" },
+		"info-foreground": { zh: "信息底前景字色", en: "Info ink" },
+		success: { zh: "完成与正常状态绿", en: "Success status" },
+		"success-foreground": { zh: "成功底前景字色", en: "Success ink" },
+		warning: { zh: "进行中与风险警告黄", en: "Warning status" },
+		"warning-foreground": { zh: "警告底前景字色", en: "Warning ink" },
+		destructive: { zh: "危险操作与错误红", en: "Destructive & error" },
+		"destructive-foreground": { zh: "危险底前景字色", en: "Destructive ink" },
+		blue: { zh: "Linear 蓝（主交互）", en: "Linear blue" },
+		teal: { zh: "青蓝标签与提示", en: "Teal label" },
+		green: { zh: "翠绿状态与标签", en: "Green label" },
+		yellow: { zh: "明黄进行中状态", en: "Yellow label" },
+		orange: { zh: "暖橙分诊与积压", en: "Orange triage" },
+		red: { zh: "珊瑚红缺陷与阻塞", en: "Red bug label" },
+		indigo: { zh: "经典靛紫状态色", en: "Classic indigo" },
+		pink: { zh: "柔粉标签色", en: "Pink label" },
+		slate: { zh: "蓝灰关闭与取消态", en: "Slate muted state" },
+		border: { zh: "细腻分隔线与描边", en: "Subtle borders" },
+		input: { zh: "表单输入描边", en: "Input stroke" },
+		ring: { zh: "内嵌焦点蓝框", en: "Focus ring blue" },
+		sidebar: { zh: "侧边栏导航底色", en: "Sidebar surface" },
+		"sidebar-primary": { zh: "侧边栏主强调蓝", en: "Sidebar primary" },
+		"sidebar-accent": { zh: "侧边栏当前项底色", en: "Sidebar active" },
+		"chart-1": { zh: "图表序列 1 · 品牌蓝", en: "Series 1 · Blue" },
+		"chart-2": { zh: "图表序列 2 · 青蓝", en: "Series 2 · Teal" },
+		"chart-3": { zh: "图表序列 3 · 翠绿", en: "Series 3 · Green" },
+		"chart-4": { zh: "图表序列 4 · 明黄", en: "Series 4 · Yellow" },
+		"chart-5": { zh: "图表序列 5 · 靛紫", en: "Series 5 · Indigo" },
+	};
 
 	const COLOR_GROUPS = [
 		{
@@ -42,9 +90,39 @@
 		},
 		{
 			key: "brand",
-			zh: "主次与强调",
-			en: "Emphasis & Status",
-			tokens: ["primary", "primary-foreground", "secondary", "muted", "accent", "destructive"],
+			zh: "主色与中性层级",
+			en: "Primary & Neutral Hierarchy",
+			tokens: [
+				"primary",
+				"primary-foreground",
+				"secondary",
+				"secondary-foreground",
+				"muted",
+				"muted-foreground",
+				"accent",
+				"accent-foreground",
+			],
+		},
+		{
+			key: "semantic",
+			zh: "语义状态反馈",
+			en: "Semantic Feedback",
+			tokens: [
+				"info",
+				"info-foreground",
+				"success",
+				"success-foreground",
+				"warning",
+				"warning-foreground",
+				"destructive",
+				"destructive-foreground",
+			],
+		},
+		{
+			key: "spectrum",
+			zh: "Linear 标签与状态色板",
+			en: "Linear Spectrum & Labels",
+			tokens: ["blue", "teal", "green", "yellow", "orange", "red", "indigo", "pink", "slate"],
 		},
 		{
 			key: "stroke",
@@ -54,11 +132,27 @@
 		},
 		{
 			key: "sidebar",
-			zh: "侧边栏与图表",
+			zh: "侧边栏与五序列图表",
 			en: "Sidebar & Charts",
-			tokens: ["sidebar", "sidebar-accent", "chart-1", "chart-2", "chart-3"],
+			tokens: [
+				"sidebar",
+				"sidebar-primary",
+				"sidebar-accent",
+				"chart-1",
+				"chart-2",
+				"chart-3",
+				"chart-4",
+				"chart-5",
+			],
 		},
 	] as const;
+
+	function swatchReadout(token: string): string {
+		const raw = activeVars[token] ?? lightVars[token] ?? darkVars[token];
+		if (!raw) return "token";
+		const hex = oklchToHex(raw);
+		return hex ? `${hex.toUpperCase()} · ${raw}` : raw;
+	}
 
 	const TYPE_STEPS = [
 		{ key: "text-xs", cls: "text-xs", zh: "辅助说明 / 徽标", en: "Captions & badges" },
@@ -138,7 +232,7 @@
 				</Card.Description>
 			</div>
 			<Button href={localizeHref("/themes/palette", locale)} variant="outline" size="sm">
-				{zh ? "Linear 中性色对照表" : "Neutral reference palette"}
+				{zh ? "Linear 完整色板对照表" : "Full Linear palette"}
 				<ArrowRightIcon />
 			</Button>
 		</Card.Header>
@@ -150,6 +244,7 @@
 					</h3>
 					<div class="grid gap-2.5 sm:grid-cols-2 md:grid-cols-3">
 						{#each group.tokens as token (token)}
+							{@const role = COLOR_ROLES[token]}
 							<Button
 								type="button"
 								variant="outline"
@@ -163,11 +258,18 @@
 									style:background-color={`var(--${token})`}
 								></span>
 								<span class="min-w-0 flex-1">
-									<span class="block truncate font-mono text-xs font-medium text-foreground">
-										--{token}
+									<span class="flex items-baseline justify-between gap-2">
+										<span class="truncate font-mono text-xs font-medium text-foreground">
+											--{token}
+										</span>
+										{#if role}
+											<span class="shrink-0 text-[11px] text-muted-foreground">
+												{zh ? role.zh : role.en}
+											</span>
+										{/if}
 									</span>
 									<span class="block truncate font-mono text-[11px] text-muted-foreground">
-										{lightVars[token] ?? darkVars[token] ?? "token"}
+										{swatchReadout(token)}
 									</span>
 								</span>
 							</Button>

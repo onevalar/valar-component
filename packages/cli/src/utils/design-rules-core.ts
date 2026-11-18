@@ -1,6 +1,6 @@
 // Pure parts of the design rules (no Node APIs), so the docs site can reuse them in its assistant.
 
-export const GLOBAL_RULES = `- 颜色只用语义 token 类，如 \`bg-primary\`、\`text-muted-foreground\`、\`border-border\`；不要用调色板色值（\`bg-blue-500\`）、黑白（\`bg-white\`）或十六进制（检查规则 \`valar/semantic-color\`）。
+export const GLOBAL_RULES = `- 颜色只用语义 token 类，如 \`bg-primary\`、\`bg-success\`、\`text-warning\`、\`bg-info\`、\`text-destructive\`、\`bg-teal/15\`、\`text-muted-foreground\`、\`border-border\`；不要用调色板色值（\`bg-blue-500\`）、黑白（\`bg-white\`）或十六进制（检查规则 \`valar/semantic-color\`）。
 - 圆角、字号、间距用 \`rounded-*\`、\`text-*\` 等档位，它们跟随全局 token；不要写 \`h-[37px]\` 这类像素任意值（检查规则 \`valar/no-arbitrary-px\`）。
 - 保留组件自带的动效、缓动曲线和边框。需要新动效时，可以显式使用 \`duration-fast\`／\`duration-normal\`／\`duration-slow\` 及 \`ease-enter\`／\`ease-exit\`／\`ease-standard\`，按 Valar 技能包的动效指南选用（检查规则 \`valar/motion-token\`）。
 - 图片都要有 \`alt\`，纯装饰的图片写 \`alt=""\`（检查规则 \`valar/image-alt\`）。

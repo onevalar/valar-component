@@ -21,8 +21,8 @@
 	const title = $derived(zh ? "配色方案" : "Color palette");
 	const description = $derived(
 		zh
-			? "查看 Valar Svelte 的浅色与深色中性色设计稿，以及当前默认主题的颜色。"
-			: "Explore the light and dark neutral palette and the colors in the current default theme."
+			? "查看提取自 Linear 真实应用的品牌蓝主色、语义状态、标签与工作流色板及中性色层级，以及当前默认主题的颜色。"
+			: "Explore Linear's brand blue, semantic feedback, label and workflow colors, neutral hierarchy, and current default theme."
 	);
 
 	function color(key: PaletteColor) {
@@ -88,7 +88,7 @@
 		<Tabs.Root value="reference" class="gap-5">
 			<div class="flex flex-wrap items-center justify-between gap-3 border-b pb-4">
 				<Tabs.List aria-label={zh ? "配色来源" : "Palette source"}>
-					<Tabs.Trigger value="reference">{zh ? "中性色设计稿" : "Neutral reference"}</Tabs.Trigger>
+					<Tabs.Trigger value="reference">{zh ? "Linear 完整参考色板" : "Linear reference"}</Tabs.Trigger>
 					<Tabs.Trigger value="default">{zh ? "当前默认主题" : "Current default"}</Tabs.Trigger>
 				</Tabs.List>
 				<div
@@ -112,8 +112,8 @@
 			<Tabs.Content value="reference" class="space-y-6">
 				<p class="text-sm text-muted-foreground">
 					{zh
-						? "色值来自截图取样，供后续设计使用。预览只在此页生效。点击色卡可复制 HEX。"
-						: "Colors sampled from the design references. This preview is local to the page. Select a swatch to copy its HEX value."}
+						? "色值提取自 Linear 真实应用配色体系与截图取样，供系统及业务界面统一选用。预览只在此页生效，点击色卡可复制 HEX。"
+						: "Colors extracted from Linear's live theme system and UI references. This preview is local to the page. Select a swatch to copy its HEX value."}
 				</p>
 				<section
 					aria-label={zh ? "中性色组件预览" : "Neutral component preview"}
@@ -177,7 +177,13 @@
 								<p class="px-2.5 py-1.5">{zh ? "复制链接" : "Copy link"}</p>
 							</div>
 						</div>
-						<div class="mt-3 flex flex-wrap gap-2 text-sm">
+						<div class="mt-3 flex flex-wrap items-center gap-2 text-sm">
+							<span
+								class="rounded-full px-3 py-1 font-medium text-white"
+								style:background-color={color("primaryBlue")}
+							>
+								{zh ? "保存更改" : "Save changes"}
+							</span>
 							<span
 								class="rounded-full border px-3 py-1"
 								style:background-color={color("pillSelected")}
@@ -189,6 +195,18 @@
 								style:border-color={color("pillHighlightedBorder")}
 								style:color={color("pillHighlightedText")}>{zh ? "高亮" : "Highlighted"}</span
 							>
+							<span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1" style:border-color={color("cardBorder")}>
+								<span aria-hidden="true" class="size-2 rounded-full" style:background-color={color("successGreen")}></span>
+								{zh ? "正常进行" : "On track"}
+							</span>
+							<span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1" style:border-color={color("cardBorder")}>
+								<span aria-hidden="true" class="size-2 rounded-full" style:background-color={color("warningYellow")}></span>
+								{zh ? "进行中" : "In progress"}
+							</span>
+							<span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1" style:border-color={color("cardBorder")}>
+								<span aria-hidden="true" class="size-2 rounded-full" style:background-color={color("destructiveRed")}></span>
+								{zh ? "高危提醒" : "Blocked"}
+							</span>
 						</div>
 					</div>
 				</section>

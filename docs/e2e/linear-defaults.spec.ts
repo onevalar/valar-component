@@ -11,8 +11,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 				await expect(page.locator("html")).toHaveCSS("color-scheme", colorScheme);
 				await expect(page.getByRole("button", { name: "样式调节器", exact: true })).toBeEnabled();
 			};
-			const focusColor =
-				colorScheme === "light" ? "lch(53 52.26 286.91)" : "lch(47.918 59.303 288.421)";
+			const focusColor = colorScheme === "light" ? "lch(46 70 267)" : "lch(48 72 267)";
 			const radius = (name: string, value: string) =>
 				expect(slot(name)).toHaveCSS("border-top-left-radius", value);
 			const surface = async (name: string, value: string) => {
@@ -49,10 +48,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 			await expect(control).not.toHaveCSS("background-color", off);
 			await expect(control).toHaveCSS("outline-width", "1px");
 			await expect(control).toHaveCSS("outline-color", "rgb(255, 255, 255)");
-			await expect(slot("switch-thumb")).toHaveCSS(
-				"background-color",
-				colorScheme === "light" ? "lch(100 5 286.91)" : "lch(100 5 288.421)"
-			);
+			await expect(slot("switch-thumb")).toHaveCSS("background-color", "lch(100 3 267)");
 			await expect(slot("switch-thumb")).toHaveCSS("transition-property", "none");
 
 			await visit("dropdown-menu");

@@ -41,7 +41,7 @@
 		"rounded-none border-0 bg-transparent! px-0 text-foreground ring-0! shadow-none! focus:outline-none! focus-visible:outline-none! placeholder:text-(--composer-placeholder) transition-none";
 	const tokens = `
 		--composer-surface: light-dark(lch(100% 0 282), lch(9.232% .85 272));
-		--composer-accent: light-dark(lch(53% 52.26 286.91), lch(47.918% 59.303 288.421));
+		--composer-accent: light-dark(lch(46% 70 267), lch(48% 72 267));
 		--composer-placeholder: light-dark(lch(57% 1.25 282), lch(42% 1.2 272));
 		--composer-chip: light-dark(white, lch(13.861% 1.139 272));
 		--foreground: light-dark(lch(9.794% 0 282), white);

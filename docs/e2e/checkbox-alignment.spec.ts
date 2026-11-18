@@ -8,8 +8,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 		await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
 		await page.goto("/docs/components/checkbox", { waitUntil: "networkidle" });
 
-		const checkedColor =
-			colorScheme === "light" ? "lch(53 52.26 286.91)" : "lch(47.918 59.303 288.421)";
+		const checkedColor = colorScheme === "light" ? "lch(46 70 267)" : "lch(48 72 267)";
 		const borderColor = colorScheme === "light" ? "lch(52.04 0 282)" : "lch(48.72 1.48 272)";
 		const all = page.getByRole("checkbox", { name: "Select all users", exact: true });
 		const row = page.getByRole("checkbox", { name: "Select Marcus Rodriguez", exact: true });

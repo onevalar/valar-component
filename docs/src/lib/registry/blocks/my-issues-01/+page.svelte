@@ -51,7 +51,7 @@
 		--issue-control: light-dark(white, lch(10.149% .593 272));
 		--issue-selected: light-dark(lch(93.483% .5 282), lch(16.706% .979 272));
 		--issue-hover: light-dark(lch(94.854% .5 282), lch(14.006% .593 272));
-		--issue-accent: light-dark(lch(53% 52.26 286.91), lch(47.918% 59.303 288.421));
+		--issue-accent: light-dark(lch(46% 70 267), lch(48% 72 267));
 		--foreground: light-dark(lch(9.794% 0 282), white);
 		--muted-foreground: light-dark(lch(39.176% 1.25 282), lch(61.803% 1.2 272));
 		--border: light-dark(lch(92.5% 0 282), lch(18.5% .85 272));

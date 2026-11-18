@@ -80,7 +80,7 @@
 		--project-dialog: light-dark(white, lch(9.232% .85 272));
 		--project-control: light-dark(white, lch(13.861% 1.139 272));
 		--project-placeholder: light-dark(lch(57% 1.25 282), lch(49% 1.2 272));
-		--project-accent: light-dark(lch(53% 52.26 286.91), lch(47.918% 59.303 288.421));
+		--project-accent: light-dark(lch(46% 70 267), lch(48% 72 267));
 		--foreground: light-dark(lch(9.794% 0 282), white);
 		--muted-foreground: light-dark(lch(39.176% 1.25 282), lch(61.803% 1.2 272));
 		--border: light-dark(lch(92.5% 0 282), lch(22% .85 272));

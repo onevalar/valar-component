@@ -60,7 +60,7 @@ test("keyboard focus remains visible inside buttons, inputs and compound control
 				if (slug === "input") {
 					await expect(surface).toHaveCSS(
 						"outline-color",
-						colorScheme === "light" ? "lch(53 52.26 286.91)" : "lch(47.918 59.303 288.421)"
+						colorScheme === "light" ? "lch(46 70 267)" : "lch(48 72 267)"
 					);
 					await expect(surface).toHaveCSS("box-shadow", "none");
 				}

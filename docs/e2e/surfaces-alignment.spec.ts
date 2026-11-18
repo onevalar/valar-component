@@ -131,7 +131,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 				await expect(table.locator("tbody tr").first()).toHaveCSS("height", "44px");
 				await expect(table.locator("tbody tr").first()).toHaveCSS(
 					"background-color",
-					colorScheme === "dark" ? "lch(12.141 17.792 286.445)" : "lch(92.254 5.903 282.518)"
+					colorScheme === "dark" ? "lch(12.5 18 267)" : "lch(92.5 6 267)"
 				);
 				if (width === 360) {
 					await expect(columns).toHaveAttribute("tabindex", "0");

@@ -49,7 +49,7 @@
 						class="flex h-7 items-center gap-2 ps-1.5 text-[13px] font-semibold text-sidebar-accent-foreground"
 					>
 						<span
-							class="grid size-5 shrink-0 place-items-center rounded-lg bg-indigo-600 text-[11px] text-white"
+							class="grid size-5 shrink-0 place-items-center rounded-lg bg-primary text-[11px] text-primary-foreground"
 							aria-hidden="true">V</span
 						>
 						<span class="truncate group-data-[collapsible=icon]:sr-only">Valar</span>

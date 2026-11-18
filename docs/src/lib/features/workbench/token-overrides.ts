@@ -38,6 +38,22 @@ export const COLOR_TOKENS = [
 	"accent",
 	"accent-foreground",
 	"destructive",
+	"destructive-foreground",
+	"info",
+	"info-foreground",
+	"success",
+	"success-foreground",
+	"warning",
+	"warning-foreground",
+	"blue",
+	"teal",
+	"green",
+	"yellow",
+	"orange",
+	"red",
+	"indigo",
+	"pink",
+	"slate",
 	"border",
 	"input",
 	"ring",
@@ -56,6 +72,49 @@ export const COLOR_TOKENS = [
 	"sidebar-ring",
 ] as const;
 export type ColorToken = (typeof COLOR_TOKENS)[number];
+
+/**
+ * Extended semantic and Linear chromatic palette defaults applied across all base themes
+ * (derived from Linear's live LCH theme engine and 9-swatch label/status palette).
+ */
+export const VALAR_COLOR_DEFAULTS = {
+	light: {
+		"destructive-foreground": "oklch(1 0 0)",
+		info: "oklch(0.638 0.11 209.821)",
+		"info-foreground": "oklch(1 0 0)",
+		success: "oklch(0.637 0.175 146.777)",
+		"success-foreground": "oklch(1 0 0)",
+		warning: "oklch(0.825 0.169 89.963)",
+		"warning-foreground": "oklch(0.218 0.003 282)",
+		blue: "oklch(0.57 0.191 255.5)",
+		teal: "oklch(0.713 0.118 213.034)",
+		green: "oklch(0.703 0.127 158.894)",
+		yellow: "oklch(0.825 0.169 89.963)",
+		orange: "oklch(0.719 0.176 42.054)",
+		red: "oklch(0.653 0.183 23.679)",
+		indigo: "oklch(0.567 0.159 275.206)",
+		pink: "oklch(0.872 0.055 28.07)",
+		slate: "oklch(0.708 0.029 255.136)",
+	},
+	dark: {
+		"destructive-foreground": "oklch(1 0 0)",
+		info: "oklch(0.713 0.118 213.034)",
+		"info-foreground": "oklch(0.182 0.004 272)",
+		success: "oklch(0.705 0.176 146.508)",
+		"success-foreground": "oklch(0.182 0.004 272)",
+		warning: "oklch(0.85 0.146 90.493)",
+		"warning-foreground": "oklch(0.182 0.004 272)",
+		blue: "oklch(0.628 0.202 257.401)",
+		teal: "oklch(0.713 0.118 213.034)",
+		green: "oklch(0.703 0.127 158.894)",
+		yellow: "oklch(0.85 0.146 90.493)",
+		orange: "oklch(0.76 0.142 59.51)",
+		red: "oklch(0.655 0.201 23.348)",
+		indigo: "oklch(0.607 0.141 276.281)",
+		pink: "oklch(0.872 0.055 28.07)",
+		slate: "oklch(0.708 0.029 255.136)",
+	},
+} as const;
 
 /** Tailwind's default type scale. Overrides land in `@theme inline` as `--text-*`. */
 export const TYPE_SCALE_DEFAULTS = {
@@ -243,8 +302,16 @@ export function globalTokenBridgeCss(
 		}
 		if ("secondary" in vars) extra.push("--valar-button-secondary: var(--secondary);");
 		if ("destructive" in vars) extra.push("--valar-button-danger: var(--destructive);");
+		if ("destructive-foreground" in vars) {
+			extra.push("--valar-button-danger-ink: var(--destructive-foreground);");
+		}
 		if ("ring" in vars) {
-			extra.push("--valar-button-focus: var(--ring);", "--valar-focus-ring: var(--ring);");
+			extra.push(
+				"--valar-button-focus: var(--ring);",
+				"--valar-focus-ring: var(--ring);",
+				"--valar-input-focus: var(--ring);",
+				"--valar-textarea-focus-base: var(--ring);"
+			);
 		}
 		if ("card" in vars) extra.push("--valar-card-bg: var(--card);");
 		if ("popover" in vars) extra.push("--valar-popover-bg: var(--popover);");

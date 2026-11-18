@@ -17,7 +17,7 @@ for (const { colorScheme, width } of [
 		await expect(grid.locator("[data-calendar-grid-body] tr")).toHaveCount(6);
 		const chosen = project.locator("[data-calendar-day][data-selected]");
 		const today = project.locator("[data-calendar-day][data-today]");
-		const accent = colorScheme === "dark" ? "lch(47.918 59.303 288.421)" : "lch(53 52.26 286.91)";
+		const accent = colorScheme === "dark" ? "lch(48 72 267)" : "lch(46 70 267)";
 		await expect(chosen).toHaveCSS("width", "26px");
 		await expect(chosen).toHaveCSS("background-color", accent);
 		await expect(today).toHaveCSS(

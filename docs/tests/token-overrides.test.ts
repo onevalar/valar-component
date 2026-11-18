@@ -151,4 +151,44 @@ describe("global token write-back", () => {
 		expect(css).toContain(".dark {");
 		expect(css).toContain("--primary: oklch(0.7 0.2 250);");
 	});
+
+	it("ships Linear Blue primary on neutral and full Linear semantic/chromatic tokens on all 7 base themes", async () => {
+		const { BASE_THEME_NAMES, COLOR_TOKENS } = await import(
+			"../src/lib/features/workbench/token-overrides.js"
+		);
+		const { DEFAULT_BASE_THEMES } = await import("../src/lib/registry/themes.js");
+		const neutral = DEFAULT_BASE_THEMES.find((theme) => theme.name === "neutral")!;
+		expect(neutral.cssVars.light.primary).toBe("oklch(0.57 0.191 255.5)");
+		expect(neutral.cssVars.dark.primary).toBe("oklch(0.587 0.197 255.457)");
+		const extendedTokens = [
+			"info",
+			"info-foreground",
+			"success",
+			"success-foreground",
+			"warning",
+			"warning-foreground",
+			"destructive",
+			"destructive-foreground",
+			"blue",
+			"teal",
+			"green",
+			"yellow",
+			"orange",
+			"red",
+			"indigo",
+			"pink",
+			"slate",
+		] as const;
+		for (const base of BASE_THEME_NAMES) {
+			const theme = DEFAULT_BASE_THEMES.find((item) => item.name === base)!;
+			for (const token of COLOR_TOKENS) {
+				expect(theme.cssVars.light).toHaveProperty(token);
+				expect(theme.cssVars.dark).toHaveProperty(token);
+			}
+			for (const token of extendedTokens) {
+				expect((theme.cssVars.light as Record<string, string>)[token]).toMatch(/^oklch\(/);
+				expect((theme.cssVars.dark as Record<string, string>)[token]).toMatch(/^oklch\(/);
+			}
+		}
+	});
 });

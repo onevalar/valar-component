@@ -34,7 +34,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 		await expect(primary).toHaveCSS("padding-inline-start", "12px");
 		await expect(primary).toHaveCSS(
 			"background-color",
-			dark ? "lch(47.918 59.303 288.421)" : "lch(53 52.26 286.91)"
+			dark ? "lch(48 72 267)" : "lch(46 70 267)"
 		);
 		await expect(outline).toHaveCSS(
 			"background-color",
@@ -48,7 +48,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 		await primary.hover();
 		await expect(primary).toHaveCSS(
 			"background-color",
-			dark ? "lch(52.418 61.103 288.421)" : "lch(47 50.26 286.91)"
+			dark ? "lch(53 74 267)" : "lch(41 68 267)"
 		);
 		await outline.hover();
 		await expect(outline).toHaveCSS(
