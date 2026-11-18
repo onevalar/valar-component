@@ -1074,7 +1074,7 @@ describe("Input, Select and Textarea editors share Button's levels", () => {
 			input
 		);
 		const inputClasses = installed("valar", both, "input/input.svelte");
-		expect(inputClasses).toEqual(expect.arrayContaining(["h-9", "rounded-xl", "px-3"]));
+		expect(inputClasses).toEqual(expect.arrayContaining(["h-9", "rounded-xl", "px-3", "file:h-6"]));
 		for (const old of ["h-8", "rounded-md", "px-2.5"]) expect(inputClasses).not.toContain(old);
 		const trigger = installed("valar", both, "select/select-trigger.svelte");
 		expect(trigger).toEqual(
@@ -1490,7 +1490,7 @@ describe("Number Field and Slider Field editor installation contracts", () => {
 			expect(
 				parseNumberFieldSource([{ target: "number-field.svelte", content: baseline }], context)
 					.values
-			).toEqual({ height: "style", radius: "md", paddingX: 8 });
+			).toEqual({ height: "default", radius: "md", paddingX: 8 });
 			let css = emptyOverrides(style);
 			for (const values of [
 				{ height: "lg", radius: "none", paddingX: 0 },
@@ -2026,7 +2026,7 @@ describe("Badge and basic Table editor installation contracts", () => {
 		for (const style of styles) {
 			const spacious = ["maia", "luma", "sera"].includes(style);
 			expect(parseTableSource(registryFiles("table", style)).values).toEqual({
-				headHeight: spacious ? 48 : 40,
+				headHeight: spacious ? 48 : style === "valar" ? 36 : 40,
 				headPaddingX: spacious ? 12 : 8,
 				cellPaddingX: spacious ? 12 : 8,
 				cellPaddingY: spacious ? 12 : 8,

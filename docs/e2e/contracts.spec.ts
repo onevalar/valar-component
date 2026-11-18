@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { test, expect, devices } from "@playwright/test";
 import { isUnpublishedBasicComponentHref } from "../src/lib/basic-component-visibility.js";
 
-test("Basic component catalog and site search only expose fully aligned components", async ({
+test("Basic component catalog exposes all basic components with in-page search and status badges", async ({
 	page,
 	request,
 }) => {
@@ -10,49 +10,47 @@ test("Basic component catalog and site search only expose fully aligned componen
 	expect(response.ok()).toBe(true);
 	const entries: { href: string }[] = await response.json();
 	expect(entries.some(({ href }) => href.includes("/docs/ai-elements/"))).toBe(true);
-	for (const { prefix, categories } of [
-		{ prefix: "", categories: "Categories" },
-		{ prefix: "/zh", categories: "分类" },
+	for (const { prefix, categories, partialText, pendingText, filterPlaceholder } of [
+		{
+			prefix: "",
+			categories: "Categories",
+			partialText: "Partial",
+			pendingText: "Pending",
+			filterPlaceholder: "Filter components…",
+		},
+		{
+			prefix: "/zh",
+			categories: "分类",
+			partialText: "部分复核",
+			pendingText: "待复核",
+			filterPlaceholder: "按名称筛选组件…",
+		},
 	]) {
 		const root = `${prefix}/docs/components`;
 		await page.goto(root, { waitUntil: "networkidle" });
 		const nav = page.getByRole("navigation", { name: categories, exact: true });
-		const visibleHrefs = new Set<string>();
-		for (const chip of await nav.getByRole("link").all()) {
-			await chip.click();
-			await expect(chip).toHaveAttribute("aria-current", "page");
-			const cards = page.locator(`main [data-slot="card-title"] a[href^="${root}/"]`);
-			await expect(cards.first()).toBeVisible();
-			for (const href of await cards.evaluateAll((links) =>
-				links.map((link) => link.getAttribute("href")!)
-			))
-				visibleHrefs.add(href);
-		}
+		const allChip = nav.getByRole("link").first();
+		await expect(allChip).toHaveAttribute("aria-current", "page");
+
+		const cards = page.locator(`main [data-slot="card-title"] a[href^="${root}/"]`);
+		await expect(cards.first()).toBeVisible();
+		const visibleHrefs = new Set(
+			await cards.evaluateAll((links) => links.map((link) => link.getAttribute("href")!))
+		);
 		expect([...visibleHrefs].some(isUnpublishedBasicComponentHref)).toBe(false);
 		for (const slug of [
 			"avatar",
 			"card",
-			"hover-card",
-			"scroll-area",
-			"table",
-			"sidebar",
-			"breadcrumb",
-			"collapsible",
-			"item",
+			"slider",
+			"radio-group",
+			"progress",
+			"stepper",
 			"empty",
 		]) {
 			expect(visibleHrefs).toContain(`${root}/${slug}`);
 		}
-		if (visibleHrefs.size === 0) {
-			await expect(
-				page.getByText(
-					prefix === "/zh"
-						? "基础组件通过 Linear 整体对齐验收后会在这里展示。目前正在复核。"
-						: "Components appear here after their full Linear alignment review. Reviews are in progress.",
-					{ exact: true }
-				)
-			).toBeVisible();
-		}
+		expect(visibleHrefs).not.toContain(`${root}/issue-composer`);
+		expect(visibleHrefs).not.toContain(`${root}/issue-detail`);
 
 		const searchHrefs = new Set(
 			entries
@@ -61,25 +59,24 @@ test("Basic component catalog and site search only expose fully aligned componen
 		);
 		expect(searchHrefs).toEqual(visibleHrefs);
 
-		const partial = `${root}/progress`;
-		if (isUnpublishedBasicComponentHref(partial)) {
-			await page.goto(partial);
-			await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", "noindex");
-			await expect(page.locator('[data-alignment-status="partial"]')).toHaveText(
-				prefix === "/zh" ? "部分对齐 · 待整体验收" : "Partially aligned · full review pending"
-			);
-			await expect(page.getByRole("progressbar").first()).toBeVisible();
-		}
+		const filterInput = page.getByRole("searchbox", { name: filterPlaceholder, exact: true });
+		await filterInput.fill("stepper");
+		await expect(cards.first()).toHaveAttribute("href", `${root}/stepper`);
+		await filterInput.fill("waffle-chart");
+		await expect(cards).toHaveCount(1);
+		await expect(cards.first()).toHaveAttribute("href", `${root}/waffle-chart`);
+		await filterInput.fill("");
+		await expect(cards.first()).toBeVisible();
+		await expect(page.getByText(partialText, { exact: true })).toHaveCount(0);
+		await expect(page.getByText(pendingText, { exact: true })).toHaveCount(0);
 
-		const draft = ["radio-group", "slider", "accordion"]
-			.map((slug) => `${root}/${slug}`)
-			.find(isUnpublishedBasicComponentHref);
-		if (draft) {
-			await page.goto(draft);
-			await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", "noindex");
-			await expect(page.locator('[data-alignment-status="pending"]')).toHaveText(
-				prefix === "/zh" ? "待完成样式对齐" : "Design alignment pending"
-			);
+		for (const alignedSlug of ["progress", "radio-group", "number-field", "waffle-chart"]) {
+			await page.goto(`${root}/${alignedSlug}`);
+			await expect(page.locator('head meta[name="robots"]')).toHaveCount(0);
+			await expect(page.locator("[data-alignment-status]")).toHaveCount(0);
+			if (alignedSlug === "progress") {
+				await expect(page.getByRole("progressbar").first()).toBeVisible();
+			}
 		}
 	}
 });
@@ -192,8 +189,8 @@ test("full-text search loads on demand, retries failures and shares an in-flight
 	await open.click();
 	await query.fill("upstream-source-manifest");
 	await expect(page.getByRole("status")).toContainText("Full-text search unavailable");
-	await query.fill("Breadcrumb");
-	await expect(page.getByRole("option", { name: "Breadcrumb", exact: true })).toBeVisible();
+	await query.fill("Stepper");
+	await expect(page.getByRole("option", { name: "Stepper", exact: true })).toBeVisible();
 	await page.keyboard.press("Escape");
 	await open.click();
 	await query.fill("upstream-source-manifest");
@@ -257,8 +254,8 @@ test.describe("phone layout and touch navigation", () => {
 			page.getByRole("button", { name: "Toggle menu Menu", exact: true })
 		).toHaveAttribute("aria-expanded", "false");
 		await page.getByRole("button", { name: "Search documentation", exact: true }).tap();
-		await page.getByRole("dialog").getByRole("combobox").fill("Breadcrumb");
-		await expect(page.getByRole("option", { name: "Breadcrumb", exact: true })).toBeVisible();
+		await page.getByRole("dialog").getByRole("combobox").fill("Stepper");
+		await expect(page.getByRole("option", { name: "Stepper", exact: true })).toBeVisible();
 		await page.setViewportSize({ width: 390, height: 360 });
 		await expect
 			.poll(() => page.getByRole("dialog").evaluate((el) => el.getBoundingClientRect().bottom))
@@ -279,19 +276,26 @@ test("local CLI tarball installs into an independent, checked and built consumer
 	});
 });
 
-test("homepage opens the assistant and its navigation fits one desktop screen", async ({
+test("homepage exposes four-section nav and built-in AI assistant renders dynamic UI without API key", async ({
 	page,
 }) => {
 	await page.setViewportSize({ width: 1440, height: 900 });
 	await page.goto("/", { waitUntil: "networkidle" });
 	const nav = page.locator("header nav").first();
 	await expect(nav.getByRole("link")).toHaveText([
-		"Assistant",
-		"Basic components",
-		"Advanced components",
-		"Docs",
-		"Design tokens",
+		"AI Chat",
+		"Basic Components",
+		"Advanced Components",
+		"Design System",
 	]);
 	await expect(page.getByRole("heading", { level: 1, name: "想设计点什么？" })).toBeVisible();
-	expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThan(1300);
+	const suggestion = page.getByRole("button", {
+		name: "设计一个登录表单，让我看看效果",
+		exact: true,
+	});
+	await expect(suggestion).toBeVisible();
+	await suggestion.click();
+	await expect(page.getByRole("dialog", { name: "模型设置" })).toHaveCount(0);
+	await expect(page.getByText("登录 Valar 工作区")).toBeVisible();
+	await expect(page.getByText("本界面所用组件：")).toBeVisible();
 });

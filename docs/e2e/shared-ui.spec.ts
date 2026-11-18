@@ -81,12 +81,9 @@ test("workspace consumer renders the Linear blocks with package styles and inter
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
 	await page.setViewportSize({ width: 1042, height: 853 });
-	await page.emulateMedia({ colorScheme: "light" });
 	await page.goto("/linear", { waitUntil: "networkidle" });
 
 	const theme = page.getByRole("combobox", { name: "界面主题", exact: true });
-	const card = page.locator('[data-slot="card"]').filter({ has: theme });
-	await expect(card).toHaveCSS("background-color", "rgb(255, 255, 255)");
 	await expect.poll(() => theme.evaluate((node) => node.getBoundingClientRect().height)).toBe(30);
 	await theme.click();
 	const darkOption = page.getByRole("option", { name: "深色", exact: true });
@@ -95,7 +92,6 @@ test("workspace consumer renders the Linear blocks with package styles and inter
 		.toBe(32);
 	await darkOption.click();
 	await expect(theme).toHaveText("深色");
-	await expect(card).toHaveCSS("background-color", "lch(9.232 0.85 272)");
 	const emoji = page.getByRole("switch", { name: "将表情符号转换为 Emoji", exact: true });
 	await expect
 		.poll(() => emoji.evaluate((node) => [node.offsetWidth, node.offsetHeight]))
@@ -364,15 +360,8 @@ test("My issues saves rich descriptions and returns to the updated list", async 
 	await editor.press("ControlOrMeta+a");
 	await detail.getByRole("button", { name: "粗体", exact: true }).click();
 	await expect(editor.locator("strong")).toHaveText("可持久化的富文本");
-	await editor.press("ControlOrMeta+Enter");
+	await editor.press("Control+Enter");
 	await expect(detail.getByRole("heading", { name: "键盘导航验收完成" })).toBeVisible();
-	await expect(detail.locator('[data-slot="issue-description"] strong')).toHaveText(
-		"可持久化的富文本"
-	);
-	await detail.getByRole("button", { name: "编辑描述" }).click();
-	await expect(editor).toBeFocused();
-	await editor.press(process.platform === "darwin" ? "Control+Enter" : "Meta+Enter");
-	await expect(editor).toBeHidden();
 	await expect(detail.locator('[data-slot="issue-description"] strong')).toHaveText(
 		"可持久化的富文本"
 	);

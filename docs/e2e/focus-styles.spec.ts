@@ -54,7 +54,7 @@ test("keyboard focus remains visible inside buttons, inputs and compound control
 					.not.toMatchObject({
 						borderTopColor: before.borderTopColor,
 					});
-			} else if (slug === "input" || slug === "switch") {
+			} else if (slug === "input" || slug === "switch" || slug === "slider") {
 				await expect(surface).toHaveCSS("outline-style", "solid");
 				await expect(surface).toHaveCSS("outline-offset", "-1px");
 				if (slug === "input") {
@@ -72,10 +72,14 @@ test("keyboard focus remains visible inside buttons, inputs and compound control
 		await page.goto("/zh/docs/components/input-otp");
 		const otp = page.locator('input[data-slot="input-otp"]').first();
 		await otp.click();
-		await otp.press("Home");
+		await otp.press(process.platform === "darwin" ? "Meta+ArrowLeft" : "Home");
 		const activeCell = page.locator('[data-slot="input-otp-slot"][data-active="true"]').first();
-		await expect(activeCell).toHaveCSS("box-shadow", /inset/);
-		await expect.poll(() => readFocusStyles(activeCell)).toMatchObject({ outerRings: [] });
+		await expect(activeCell).toHaveCSS("outline-style", "solid");
+		await expect(activeCell).toHaveCSS("outline-offset", "-1px");
+		await expect.poll(() => readFocusStyles(activeCell)).toMatchObject({
+			outerRings: [],
+			outsideOutline: false,
+		});
 
 		await page.goto("/zh/docs/components/card");
 		const link = page.getByRole("link", { name: "Forgot your password?" }).first();
@@ -103,14 +107,45 @@ test("toast actions place their focus shadow inside the button", async ({ page }
 		});
 });
 
-test("the workbench toolbar draws its keyboard focus outline inside the action", async ({
+test("compound textareas and number fields avoid double inner/outer focus outlines", async ({
 	page,
 }) => {
-	await page.goto("/zh/workbench");
-	const control = page.getByTestId("workbench").getByRole("button", { name: "导入", exact: true });
+	await page.goto("/zh");
+	const composerGroup = page.locator('[data-slot="input-group"][data-appearance="composer"]').first();
+	const composerTextarea = composerGroup.locator('textarea[data-slot="input-group-control"]').first();
+	await composerTextarea.click();
+	await expect(composerTextarea).toBeFocused();
+	await expect(composerTextarea).toHaveCSS("outline-style", "none");
+	await expect(composerGroup).toHaveCSS("outline-style", "solid");
+	await expect(composerGroup).toHaveCSS("outline-width", "1px");
+	await expect(composerGroup).toHaveCSS("outline-offset", "-1px");
+	await expect
+		.poll(() => readFocusStyles(composerGroup))
+		.toMatchObject({
+			outerRings: [],
+			outsideOutline: false,
+		});
+
+	await page.goto("/zh/docs/components/input-group");
+	const textareaGroup = page
+		.locator('[data-slot="input-group"]:has(textarea[data-slot="input-group-control"])')
+		.first();
+	const textareaControl = textareaGroup
+		.locator('textarea[data-slot="input-group-control"]')
+		.first();
+	await textareaControl.click();
+	await expect(textareaControl).toBeFocused();
+	await expect(textareaControl).toHaveCSS("outline-style", "none");
+	await expect(textareaGroup).toHaveCSS("outline-style", "solid");
+	await expect(textareaGroup).toHaveCSS("outline-offset", "-1px");
+
+	await page.goto("/zh/docs/components/number-field");
+	const field = page.locator('[data-slot="number-field"]').first();
+	const increment = field.locator('[data-slot="number-field-increment"]');
 	await page.keyboard.press("Tab");
-	await control.focus();
-	await expect(control).toBeFocused();
-	await expect(control).toHaveCSS("outline-width", "2px");
-	await expect.poll(() => readFocusStyles(control)).toMatchObject({ outsideOutline: false });
+	await increment.focus();
+	await expect(increment).toBeFocused();
+	await expect(increment).toHaveCSS("outline-style", "solid");
+	await expect(increment).toHaveCSS("outline-offset", "-1px");
+	await expect(field).toHaveCSS("outline-style", "none");
 });
