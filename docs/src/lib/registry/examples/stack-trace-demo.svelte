@@ -128,7 +128,7 @@ migrations/
 					</Trace.CollapsibleTrigger>
 					<Trace.CollapsibleContent>
 						<ol
-							class="flex flex-col gap-1 overflow-x-auto rounded-md bg-muted p-3 font-mono text-xs"
+							class="flex flex-col gap-1 overflow-x-auto rounded-[8px] border-[0.5px] border-border bg-[#F6F6F8] p-3 font-mono text-xs dark:bg-[#141517]"
 						>
 							{#each internalFrames as frame, index (index)}
 								<li class="whitespace-nowrap">

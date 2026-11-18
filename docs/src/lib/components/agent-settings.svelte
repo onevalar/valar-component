@@ -6,7 +6,7 @@
 	import * as Field from "$lib/registry/ui/field/index.js";
 	import * as InputGroup from "$lib/registry/ui/input-group/index.js";
 	import * as Select from "$lib/registry/ui/select/index.js";
-	import * as ToggleGroup from "$lib/registry/ui/toggle-group/index.js";
+	import * as Tabs from "$lib/registry/ui/tabs/index.js";
 	import { API_MODES, EFFORTS, type ApiMode, type Effort } from "$lib/agent/settings.js";
 	import {
 		agentSettings,
@@ -53,7 +53,7 @@
 	}
 </script>
 
-<Field.Group>
+<Field.Group class="gap-4">
 	<Field.Field>
 		<Field.Label for="agent-base-url">Base URL</Field.Label>
 		<Input
@@ -125,19 +125,18 @@
 			自动：OpenAI 官方地址用 Responses，其他用 Chat
 			Completions。如果用中转地址并出现「工具与思考不能同用」之类的报错，选 Responses。
 		</Field.Description>
-		<ToggleGroup.Root
-			type="single"
-			variant="outline"
-			aria-label="接口类型"
+		<Tabs.Root
 			bind:value={
 				() => agentSettings.apiMode,
 				(value) => (agentSettings.apiMode = (value || "auto") as ApiMode)
 			}
 		>
-			{#each API_MODES as mode (mode.value)}
-				<ToggleGroup.Item value={mode.value}>{mode.label}</ToggleGroup.Item>
-			{/each}
-		</ToggleGroup.Root>
+			<Tabs.List aria-label="接口类型" class="w-full sm:w-fit">
+				{#each API_MODES as mode (mode.value)}
+					<Tabs.Trigger value={mode.value} class="px-3">{mode.label}</Tabs.Trigger>
+				{/each}
+			</Tabs.List>
+		</Tabs.Root>
 	</Field.Set>
 
 	<Field.Set>
@@ -145,19 +144,18 @@
 		<Field.Description
 			>仅对支持推理的模型生效；选「默认」则不向服务传这个参数，「关闭」会明确要求不思考。</Field.Description
 		>
-		<ToggleGroup.Root
-			type="single"
-			variant="outline"
-			aria-label="思考强度"
+		<Tabs.Root
 			bind:value={
 				() => agentSettings.effort,
 				(value) => (agentSettings.effort = (value || "default") as Effort)
 			}
 		>
-			{#each EFFORTS as effort (effort.value)}
-				<ToggleGroup.Item value={effort.value}>{effort.label}</ToggleGroup.Item>
-			{/each}
-		</ToggleGroup.Root>
+			<Tabs.List aria-label="思考强度" class="w-full sm:w-fit">
+				{#each EFFORTS as effort (effort.value)}
+					<Tabs.Trigger value={effort.value} class="px-3">{effort.label}</Tabs.Trigger>
+				{/each}
+			</Tabs.List>
+		</Tabs.Root>
 	</Field.Set>
 
 	<Alert.Root role="status">
@@ -167,8 +165,8 @@
 		</Alert.Description>
 	</Alert.Root>
 
-	<Field.Field orientation="horizontal">
-		<Button variant="outline" onclick={clearAgentSettings}>清除设置</Button>
-		<Button onclick={onDone}><CheckIcon /> 完成</Button>
-	</Field.Field>
+	<div class="flex items-center justify-between gap-2 pt-1">
+		<Button variant="outline" size="sm" onclick={clearAgentSettings}>清除设置</Button>
+		<Button size="sm" onclick={onDone}><CheckIcon /> 完成</Button>
+	</div>
 </Field.Group>

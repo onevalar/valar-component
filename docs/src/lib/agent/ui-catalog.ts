@@ -443,6 +443,93 @@ export const UI_CATALOG = [
 		children: "none",
 		example: { type: "SliderField", props: { label: "音量", min: 0, max: 100, value: 60 } },
 	}),
+	define({
+		type: "InputOtpField",
+		name: "验证码输入（带标签）",
+		useWhen: "输入 4 位或 6 位一次性短信/邮箱验证码",
+		props: {
+			...fieldBase,
+			maxlength: z.union([z.literal(4), z.literal(6)]).optional(),
+			value: z.string().max(6).optional(),
+		},
+		children: "none",
+		example: {
+			type: "InputOtpField",
+			props: { label: "短信验证码", maxlength: 6, description: "输入收到的 6 位数字" },
+		},
+	}),
+	define({
+		type: "NumberField",
+		name: "数值输入（带标签）",
+		useWhen: "需要加减步进按钮或范围限制的数字输入",
+		avoidWhen: "不需要精确步进、只需拖动概览用 SliderField",
+		props: {
+			...fieldBase,
+			defaultValue: z.number().optional(),
+			min: z.number().optional(),
+			max: z.number().optional(),
+			step: z.number().positive().optional(),
+		},
+		children: "none",
+		example: {
+			type: "NumberField",
+			props: { label: "人数上限", defaultValue: 10, min: 1, max: 100, step: 1 },
+		},
+	}),
+	define({
+		type: "TagsInputField",
+		name: "标签输入（带标签）",
+		useWhen: "输入多个关键词、标签或邮箱条目",
+		props: {
+			...fieldBase,
+			defaultValue: z.array(z.string().max(40)).max(12).optional(),
+			placeholder: text.optional(),
+			max: z.number().int().min(1).max(20).optional(),
+		},
+		children: "none",
+		example: {
+			type: "TagsInputField",
+			props: { label: "关联标签", defaultValue: ["UI", "线性规范"], placeholder: "输入后回车添加" },
+		},
+	}),
+	define({
+		type: "DatePickerField",
+		name: "日期选择（带标签）",
+		useWhen: "选择目标日期或周期排期",
+		props: {
+			...fieldBase,
+			placeholder: text.optional(),
+		},
+		children: "none",
+		example: {
+			type: "DatePickerField",
+			props: { label: "目标日期", placeholder: "选择日期" },
+		},
+	}),
+	define({
+		type: "ComboboxField",
+		name: "可搜索组合框（带标签）",
+		useWhen: "选项较多需要搜索过滤，或需要多选下拉",
+		avoidWhen: "选项很少且无需搜索时用 SelectField 或 RadioGroupField",
+		props: {
+			...fieldBase,
+			placeholder: text.optional(),
+			multiple: z.boolean().optional(),
+			options: z.array(z.strictObject({ id: z.string().min(1).max(80), label })).min(1).max(20),
+		},
+		children: "none",
+		example: {
+			type: "ComboboxField",
+			props: {
+				label: "负责人",
+				placeholder: "搜索成员…",
+				options: [
+					{ id: "mira", label: "Mira Chen" },
+					{ id: "alex", label: "Alex Rivera" },
+				],
+			},
+		},
+	}),
 
 	// ---- structured content -----------------------------------------------------------------
 	define({
@@ -566,6 +653,56 @@ export const UI_CATALOG = [
 			children: [{ type: "InputField", props: { label: "名字", value: "王" } }],
 		},
 	}),
+	define({
+		type: "Stepper",
+		name: "步骤流程",
+		useWhen: "多步骤向导或有先后顺序的表单流程",
+		props: {
+			orientation: z.enum(["horizontal", "vertical"]).optional(),
+			steps: z
+				.array(
+					z.strictObject({
+						id: z.string().min(1).max(40),
+						title: label,
+						description: text.optional(),
+					})
+				)
+				.min(2)
+				.max(6),
+		},
+		children: "none",
+		example: {
+			type: "Stepper",
+			props: {
+				steps: [
+					{ id: "info", title: "基本信息", description: "填写名称" },
+					{ id: "confirm", title: "确认提交", description: "核对配置" },
+				],
+			},
+		},
+	}),
+	define({
+		type: "ToggleGroup",
+		name: "切换按钮组",
+		useWhen: "2～6 个紧凑单选视图切换或工具栏模式选择",
+		props: {
+			label,
+			options: z.array(option).min(2).max(6),
+			defaultValue: z.string().max(80).optional(),
+		},
+		children: "none",
+		example: {
+			type: "ToggleGroup",
+			props: {
+				label: "视图模式",
+				defaultValue: "list",
+				options: [
+					{ value: "list", label: "列表" },
+					{ value: "board", label: "看板" },
+				],
+			},
+		},
+	}),
 ] as const;
 
 export type UiType = (typeof UI_CATALOG)[number]["type"];
@@ -663,6 +800,50 @@ export function validateUi(
 	return errors.length
 		? { ok: false, errors: errors.slice(0, 20) }
 		: { ok: true, root: root as UiNode, count };
+}
+
+/** Maps a validated UI tree back to unique basic component slugs for cross-linking. */
+export function usedComponentSlugs(root: UiNode): string[] {
+	const MAP: Record<string, string[]> = {
+		Separator: ["separator"],
+		Button: ["button"],
+		Badge: ["badge"],
+		Alert: ["alert"],
+		Progress: ["progress"],
+		Spinner: ["spinner"],
+		Kbd: ["kbd"],
+		Avatar: ["avatar"],
+		Empty: ["empty"],
+		Breadcrumb: ["breadcrumb"],
+		Card: ["card"],
+		InputField: ["field", "input"],
+		TextareaField: ["field", "textarea"],
+		CheckboxField: ["field", "checkbox"],
+		SwitchField: ["field", "switch"],
+		SelectField: ["field", "select"],
+		RadioGroupField: ["field", "radio-group"],
+		SliderField: ["slider-field"],
+		InputOtpField: ["field", "input-otp"],
+		NumberField: ["field", "number-field"],
+		TagsInputField: ["field", "tags-input"],
+		DatePickerField: ["field", "date-picker"],
+		ComboboxField: ["field", "combobox"],
+		Table: ["table"],
+		Tabs: ["tabs"],
+		Accordion: ["accordion"],
+		Dialog: ["dialog"],
+		Stepper: ["stepper"],
+		ToggleGroup: ["toggle-group"],
+	};
+	const found = new Set<string>();
+	const walk = (node: UiNode) => {
+		for (const slug of MAP[node.type] ?? []) found.add(slug);
+		if (Array.isArray(node.children)) {
+			for (const child of node.children) walk(child);
+		}
+	};
+	walk(root);
+	return [...found];
 }
 
 /** One line per component for the system prompt; the details come from `uiCatalogDetails`. */

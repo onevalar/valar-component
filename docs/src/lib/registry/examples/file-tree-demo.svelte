@@ -40,8 +40,12 @@
 	let selected = $state("components/ui/button.tsx");
 </script>
 
-<div class="flex w-full max-w-xs flex-col py-6 text-sm">
-	{#each files as node (node.path)}
-		<FileTreeNode {node} {selected} onSelect={(path) => (selected = path)} />
-	{/each}
+<div class="flex w-full max-w-xs flex-col py-6">
+	<div
+		class="flex flex-col gap-0.5 rounded-[10px] border-[0.5px] border-border bg-card p-1.5 shadow-[0_1px_2px_rgb(0_0_0_/_0.03)]"
+	>
+		{#each files as node (node.path)}
+			<FileTreeNode {node} {selected} onSelect={(path) => (selected = path)} />
+		{/each}
+	</div>
 </div>

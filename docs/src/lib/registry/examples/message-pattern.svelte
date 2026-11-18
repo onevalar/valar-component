@@ -42,6 +42,7 @@ Wrap the button in a \`DialogTrigger\` and put the settings form in \`DialogCont
 					{...props}
 					variant="ghost"
 					size="icon-sm"
+					class="size-6 rounded-full text-muted-foreground hover:text-foreground [&_svg:not([class*='size-'])]:size-3.5"
 					aria-label={label}
 					aria-pressed={pressed}
 					{onclick}
@@ -84,7 +85,7 @@ Wrap the button in a \`DialogTrigger\` and put the settings form in \`DialogCont
 	<RefreshCcwIcon />
 {/snippet}
 
-<div class="mx-auto flex w-full max-w-md flex-col gap-8 py-6 text-sm">
+<div class="mx-auto flex w-full max-w-md flex-col gap-8 py-6 text-[15px]/6">
 	<Message.Root align="end">
 		<Message.Content class="gap-2">
 			<Bubble.Root align="end" variant="muted">

@@ -214,18 +214,19 @@ New visitors now get the theme from their OS. The toggle also has a **System** o
 		class="relative flex w-full flex-col gap-4 [[data-slot=preview]:has(&)]:bg-background [[data-slot=preview]:has(&)>div]:p-0!"
 	>
 		<div class="flex h-200 w-full flex-col gap-4">
-			<div class="flex items-start justify-between gap-4 p-8 pb-4">
-				<div class="flex flex-col gap-1">
-					<div class="font-medium">New Thread</div>
-					<div class="text-sm text-muted-foreground">Ask the agent to change your code.</div>
+			<div class="flex items-center justify-between gap-4 border-b-[0.5px] border-border/80 px-6 py-3">
+				<div class="flex flex-col gap-0.5">
+					<div class="text-[13px] font-medium">New Thread</div>
+					<div class="text-xs text-muted-foreground">Ask the agent to change your code.</div>
 				</div>
 				<Tooltip.Root>
 					<Tooltip.Trigger>
 						{#snippet child({ props })}
 							<Button
 								{...props}
-								variant="outline"
-								size="icon"
+								variant="ghost"
+								size="icon-sm"
+								class="size-7 rounded-full text-muted-foreground hover:bg-accent hover:text-foreground [&_svg]:size-3.5"
 								aria-label="Reset conversation"
 								onclick={() => {
 									chat.messages = initialMessages;
@@ -259,7 +260,7 @@ New visitors now get the theme from their OS. The toggle also has a **System** o
 				{:else}
 					<MessageScroller.Root>
 						<MessageScroller.Viewport>
-							<MessageScroller.Content aria-busy={busy} class="gap-6 px-8 py-0">
+							<MessageScroller.Content aria-busy={busy} class="gap-6 px-6 py-2">
 								{#each chat.messages as message (message.id)}
 									{#if message.role === "user"}
 										<MessageScroller.Item messageId={message.id} scrollAnchor>
@@ -268,7 +269,9 @@ New visitors now get the theme from their OS. The toggle also has a **System** o
 													<Message.Root align="end">
 														<Message.Content>
 															<Bubble.Root align="end" variant="muted">
-																<Bubble.Content>{getMessageText(message)}</Bubble.Content>
+																<Bubble.Content class="text-[15px] leading-6">
+																	{getMessageText(message)}
+																</Bubble.Content>
 															</Bubble.Root>
 														</Message.Content>
 													</Message.Root>
@@ -300,7 +303,9 @@ New visitors now get the theme from their OS. The toggle also has a **System** o
 														</Trace.Root>
 													{/if}
 													{#if reply}
-														<Markdown content={reply} />
+														<div class="text-[15px] leading-6">
+															<Markdown content={reply} />
+														</div>
 													{/if}
 												</Message.Content>
 											</Message.Root>
@@ -313,14 +318,14 @@ New visitors now get the theme from their OS. The toggle also has a **System** o
 					</MessageScroller.Root>
 				{/if}
 			</div>
-			<div class="p-8 pt-0">
+			<div class="px-6 pt-0 pb-6">
 				<form bind:this={form} onsubmit={onSubmit} class="w-full">
-					<InputGroup.Root>
+					<InputGroup.Root appearance="composer">
 						<InputGroup.Textarea
 							bind:value={() => text, (value) => (draft = value ?? "")}
 							placeholder="Ask the agent..."
 							aria-label="Message"
-							class="min-h-14"
+							rows={2}
 							onkeydown={(event) => {
 								if (event.key === "Enter" && !event.shiftKey) {
 									event.preventDefault();
@@ -328,47 +333,52 @@ New visitors now get the theme from their OS. The toggle also has a **System** o
 								}
 							}}
 						/>
-						<InputGroup.Addon align="block-end" class="pt-1">
-							<DropdownMenu.Root>
-								<DropdownMenu.Trigger>
-									{#snippet child({ props })}
-										<InputGroup.Button
-											{...props}
-											aria-label="Add context"
-											type="button"
-											size="icon-sm"
-											variant="outline"
-										>
-											<PlusIcon />
-										</InputGroup.Button>
-									{/snippet}
-								</DropdownMenu.Trigger>
-								<DropdownMenu.Content align="start" side="top" class="w-44">
-									<DropdownMenu.Item>
-										<PaperclipIcon />
-										Add Photos & Files
-									</DropdownMenu.Item>
-									<DropdownMenu.Separator />
-									<DropdownMenu.Item>
-										<TelescopeIcon />
-										Deep Research
-									</DropdownMenu.Item>
-									<DropdownMenu.Item>
-										<GlobeIcon />
-										Web Search
-									</DropdownMenu.Item>
-								</DropdownMenu.Content>
-							</DropdownMenu.Root>
-							<InputGroup.Button
-								aria-label="Send"
-								type="submit"
-								variant="default"
-								size="icon-sm"
-								disabled={!canSend}
-								class="ml-auto"
-							>
-								<ArrowUpIcon />
-							</InputGroup.Button>
+						<InputGroup.Addon align="block-end">
+							<div class="ml-auto flex items-center gap-2">
+								<DropdownMenu.Root>
+									<DropdownMenu.Trigger>
+										{#snippet child({ props })}
+											<InputGroup.Button
+												{...props}
+												aria-label="Add context"
+												type="button"
+												size="icon-xs"
+												shape="pill"
+												variant="ghost"
+												class="size-6 rounded-full p-0 text-muted-foreground hover:bg-accent hover:text-foreground [&_svg]:size-3.5"
+											>
+												<PlusIcon />
+											</InputGroup.Button>
+										{/snippet}
+									</DropdownMenu.Trigger>
+									<DropdownMenu.Content align="end" side="top" class="w-44">
+										<DropdownMenu.Item>
+											<PaperclipIcon />
+											Add Photos & Files
+										</DropdownMenu.Item>
+										<DropdownMenu.Separator />
+										<DropdownMenu.Item>
+											<TelescopeIcon />
+											Deep Research
+										</DropdownMenu.Item>
+										<DropdownMenu.Item>
+											<GlobeIcon />
+											Web Search
+										</DropdownMenu.Item>
+									</DropdownMenu.Content>
+								</DropdownMenu.Root>
+								<InputGroup.Button
+									aria-label="Send"
+									type="submit"
+									variant="default"
+									size="icon-xs"
+									shape="pill"
+									disabled={!canSend}
+									class="size-6 rounded-full bg-primary p-0 text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100 [&_svg]:size-3.5"
+								>
+									<ArrowUpIcon />
+								</InputGroup.Button>
+							</div>
 						</InputGroup.Addon>
 					</InputGroup.Root>
 				</form>

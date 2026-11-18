@@ -50,98 +50,108 @@
 
 <div class="mx-auto w-full max-w-lg py-6">
 	<form bind:this={form} {onsubmit}>
-		<InputGroup.Root>
+		<InputGroup.Root appearance="composer">
 			<InputGroup.Textarea
 				bind:value={text}
 				placeholder="Ask the agent to change your code..."
+				rows={2}
 				onkeydown={(event) => {
 					if (event.key === "Enter" && !event.shiftKey) {
 						event.preventDefault();
 						form?.requestSubmit();
 					}
 				}}
-				class="p-3"
 			/>
 			<InputGroup.Addon align="block-end">
-				<InputGroup.Button
-					type="submit"
-					size="icon-sm"
-					variant="outline"
-					disabled={canSend}
-					aria-label="Attach"
-				>
-					<PlusIcon />
-				</InputGroup.Button>
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger>
-						{#snippet child({ props })}
-							<InputGroup.Button
-								{...props}
-								size="sm"
-								variant="outline"
-								aria-label="Model: {currentModel.name}"
-								class="ml-auto"
-							>
-								{currentModel.name}
-								<ChevronDownIcon />
-							</InputGroup.Button>
-						{/snippet}
-					</DropdownMenu.Trigger>
-					<DropdownMenu.Content align="start" class="w-48">
-						<DropdownMenu.RadioGroup bind:value={model}>
-							{#each providers as provider, index (provider.name)}
-								{#if index > 0}
-									<DropdownMenu.Separator />
-								{/if}
-								<DropdownMenu.Group>
-									<DropdownMenu.Label>{provider.name}</DropdownMenu.Label>
-									{#each provider.models as item (item.id)}
+				<div class="flex min-w-0 flex-wrap items-center gap-1">
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger>
+							{#snippet child({ props })}
+								<InputGroup.Button
+									{...props}
+									size="xs"
+									shape="pill"
+									variant="ghost"
+									aria-label="Model: {currentModel.name}"
+									class="h-6 rounded-full px-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+								>
+									{currentModel.name}
+									<ChevronDownIcon class="size-3 opacity-60" />
+								</InputGroup.Button>
+							{/snippet}
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content align="start" class="w-48">
+							<DropdownMenu.RadioGroup bind:value={model}>
+								{#each providers as provider, index (provider.name)}
+									{#if index > 0}
+										<DropdownMenu.Separator />
+									{/if}
+									<DropdownMenu.Group>
+										<DropdownMenu.Label>{provider.name}</DropdownMenu.Label>
+										{#each provider.models as item (item.id)}
+											<DropdownMenu.RadioItem value={item.id} closeOnSelect>
+												{item.name}
+											</DropdownMenu.RadioItem>
+										{/each}
+									</DropdownMenu.Group>
+								{/each}
+							</DropdownMenu.RadioGroup>
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger>
+							{#snippet child({ props })}
+								<InputGroup.Button
+									{...props}
+									size="xs"
+									shape="pill"
+									variant="ghost"
+									aria-label="Effort: {currentEffort.name}"
+									class="h-6 rounded-full px-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+								>
+									<span>Effort</span>
+									{currentEffort.name}
+									<ChevronDownIcon class="size-3 opacity-60" />
+								</InputGroup.Button>
+							{/snippet}
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content align="start" class="w-36">
+							<DropdownMenu.Group>
+								<DropdownMenu.Label>Effort</DropdownMenu.Label>
+								<DropdownMenu.RadioGroup bind:value={effort}>
+									{#each efforts as item (item.id)}
 										<DropdownMenu.RadioItem value={item.id} closeOnSelect>
 											{item.name}
 										</DropdownMenu.RadioItem>
 									{/each}
-								</DropdownMenu.Group>
-							{/each}
-						</DropdownMenu.RadioGroup>
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger>
-						{#snippet child({ props })}
-							<InputGroup.Button
-								{...props}
-								size="sm"
-								variant="outline"
-								aria-label="Effort: {currentEffort.name}"
-							>
-								<span class="text-muted-foreground">Effort</span>
-								{currentEffort.name}
-								<ChevronDownIcon />
-							</InputGroup.Button>
-						{/snippet}
-					</DropdownMenu.Trigger>
-					<DropdownMenu.Content align="start" class="w-36">
-						<DropdownMenu.Group>
-							<DropdownMenu.Label>Effort</DropdownMenu.Label>
-							<DropdownMenu.RadioGroup bind:value={effort}>
-								{#each efforts as item (item.id)}
-									<DropdownMenu.RadioItem value={item.id} closeOnSelect>
-										{item.name}
-									</DropdownMenu.RadioItem>
-								{/each}
-							</DropdownMenu.RadioGroup>
-						</DropdownMenu.Group>
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
-				<InputGroup.Button
-					type="submit"
-					size="icon-sm"
-					variant="default"
-					disabled={!canSend}
-					aria-label="Send"
-				>
-					<ArrowUpIcon />
-				</InputGroup.Button>
+								</DropdownMenu.RadioGroup>
+							</DropdownMenu.Group>
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
+				</div>
+				<div class="ml-auto flex items-center gap-2">
+					<InputGroup.Button
+						type="button"
+						size="icon-xs"
+						shape="pill"
+						variant="ghost"
+						class="size-6 rounded-full p-0 text-muted-foreground hover:bg-accent hover:text-foreground [&_svg]:size-3.5"
+						aria-label="Attach"
+					>
+						<PlusIcon />
+					</InputGroup.Button>
+					<InputGroup.Button
+						type="submit"
+						size="icon-xs"
+						shape="pill"
+						variant="default"
+						class="size-6 rounded-full bg-primary p-0 text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100 [&_svg]:size-3.5"
+						disabled={!canSend}
+						aria-label="Send"
+					>
+						<ArrowUpIcon />
+					</InputGroup.Button>
+				</div>
 			</InputGroup.Addon>
 		</InputGroup.Root>
 	</form>

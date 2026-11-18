@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as HoverCard from "$lib/registry/ui/hover-card/index.js";
+	import { Button } from "$lib/registry/ui/button/index.js";
 	import { getMessageText } from "$lib/ai-sdk.js";
 	import {
 		useMessageScroller,
@@ -44,10 +45,13 @@
 		class="flex w-64 flex-col gap-1 rounded-2xl p-1"
 	>
 		{#each userMessages as message (message.id)}
-			<button
+			<Button
 				type="button"
+				variant="ghost"
+				size="sm"
+				shape="square"
 				aria-current={visibility.currentAnchorId === message.id ? "location" : undefined}
-				class="flex min-h-7 items-center rounded-xl px-2 py-1.5 text-left text-sm transition-colors outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground aria-current:bg-accent aria-current:text-accent-foreground"
+				class="min-h-7 w-full justify-start rounded-xl px-2 py-1.5 text-left font-normal aria-current:bg-accent aria-current:text-accent-foreground"
 				onclick={() =>
 					scrollToMessage(message.id, {
 						align: "start",
@@ -55,7 +59,7 @@
 					})}
 			>
 				<span class="line-clamp-1 min-w-0">{getTrimmedMessageText(message)}</span>
-			</button>
+			</Button>
 		{/each}
 	</HoverCard.Content>
 </HoverCard.Root>

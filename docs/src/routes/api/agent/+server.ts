@@ -1,6 +1,8 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from "ai";
+import { ADVANCED_MODULES, ADVANCED_SCENES } from "$lib/advanced-catalog.js";
+import { createLocalAssistantResponse } from "$lib/agent/local-assistant.server.js";
 import type { AgentSettings } from "$lib/agent/settings.js";
 import { checkBaseURL, resolveSettings } from "$lib/agent/settings.server.js";
 import { createAgentTools } from "$lib/agent/tools.server.js";
@@ -13,7 +15,14 @@ export const prerender = false;
 
 const MAX_MESSAGES = 40;
 
-const SYSTEM = `你是 Valar Svelte 文档站里的助手：帮用户查找组件、对比选型，用库里的组件设计和拼装 Svelte 5 界面，并回答站内文档的问题。站内所有信息都能通过工具查到，不要凭记忆回答。
+const ADVANCED_SUMMARY = [
+	"完整业务界面：",
+	...ADVANCED_SCENES.map((s) => `- ${s.title.zh} (/advanced/${s.slug})：${s.description.zh}`),
+	"核心业务模块：",
+	...ADVANCED_MODULES.map((m) => `- ${m.title.zh} (/docs/components/${m.slug})：${m.description.zh}`),
+].join("\n");
+
+const SYSTEM = `你是 Valar Svelte 文档站里的助手：帮用户了解组件库全貌、查找组件、对比选型，用库里的组件设计和拼装 Svelte 5 界面，并回答站内设计与规范问题。站内所有信息都能通过工具查到，不要凭记忆回答。
 
 工作方式：
 1. 选组件：先 search_components（或 list_components），再 get_component 读说明卡和 RULES.md，看“何时用／何时不用”。
@@ -24,6 +33,9 @@ const SYSTEM = `你是 Valar Svelte 文档站里的助手：帮用户查找组�
 4. 交付代码前必须调用 review_code 检查，修掉所有 error 再回答；如实说明仍存在的 warning。
 5. 回答安装、命令行等问题：先 search_docs，再 read_doc；问主题色、设计 token：list_themes、get_theme。
 6. 库里没有的能力直接说没有，不要编造。回答用中文，简短直接；提到组件时同时给中文名和代码名，如「组合框 <Combobox />」。
+
+高级业务界面与模块（可推荐给用户直接在「高级组件」中查看）：
+${ADVANCED_SUMMARY}
 
 show_ui 可用的积木：\n${uiCatalogIndex()}\n\n通用设计规则（每个组件另有自己的 RULES.md，以 get_component 返回的为准）：
 ${GLOBAL_RULES}`;
@@ -38,9 +50,10 @@ export const POST: RequestHandler = async ({ request }) => {
 		return Response.json({ error: "bad_request" }, { status: 400 });
 	}
 
+	const locale = toLocale(body.locale);
 	const settings = resolveSettings(body.settings);
 	if (!settings.apiKey || !settings.model) {
-		return Response.json({ error: "not_configured" }, { status: 503 });
+		return createLocalAssistantResponse(body.messages, locale);
 	}
 	let baseURL: string;
 	try {
@@ -66,7 +79,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		system: SYSTEM,
 		messages: await convertToModelMessages(body.messages),
 		stopWhen: stepCountIs(12),
-		tools: createAgentTools(toLocale(body.locale)),
+		tools: createAgentTools(locale),
 		onFinish: ({ finishReason, steps }) =>
 			console.info("[agent] finished", finishReason, `${steps.length} steps`),
 		providerOptions: effort

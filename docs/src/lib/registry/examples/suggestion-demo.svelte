@@ -70,41 +70,56 @@
 			</Message.Root>
 		</div>
 	{/if}
-	<div class="flex flex-col gap-2">
-		<div class="flex scroll-fade-x scrollbar-none gap-2 overflow-x-auto overscroll-x-contain">
+	<div class="flex flex-col gap-2.5">
+		<div class="flex scroll-fade-x scrollbar-none gap-1.5 overflow-x-auto overscroll-x-contain">
 			{#each suggestions as suggestion, index (index)}
-				<Button variant="outline" size="sm" class="shrink-0" onclick={() => send(suggestion)}>
+				<Button
+					variant="outline"
+					size="sm"
+					shape="pill"
+					class="h-7 shrink-0 px-3 text-xs font-medium"
+					onclick={() => send(suggestion)}
+				>
 					{suggestion}
 				</Button>
 			{/each}
 		</div>
 		<form bind:this={form} onsubmit={onSubmit}>
-			<InputGroup.Root>
+			<InputGroup.Root appearance="composer">
 				<InputGroup.Textarea
 					bind:value={text}
 					placeholder="Ask the agent to change your code..."
+					rows={2}
 					onkeydown={(event) => {
 						if (event.key === "Enter" && !event.shiftKey) {
 							event.preventDefault();
 							form?.requestSubmit();
 						}
 					}}
-					class="p-3"
 				/>
 				<InputGroup.Addon align="block-end">
-					<InputGroup.Button size="icon-sm" variant="outline" aria-label="Attach files">
-						<PlusIcon />
-					</InputGroup.Button>
-					<InputGroup.Button
-						type="submit"
-						size="icon-sm"
-						variant="default"
-						class="ml-auto"
-						disabled={!canSend}
-						aria-label="Send"
-					>
-						<ArrowUpIcon />
-					</InputGroup.Button>
+					<div class="ml-auto flex items-center gap-2">
+						<InputGroup.Button
+							size="icon-xs"
+							shape="pill"
+							variant="ghost"
+							class="size-6 rounded-full p-0 text-muted-foreground hover:bg-accent hover:text-foreground [&_svg]:size-3.5"
+							aria-label="Attach files"
+						>
+							<PlusIcon />
+						</InputGroup.Button>
+						<InputGroup.Button
+							type="submit"
+							size="icon-xs"
+							shape="pill"
+							variant="default"
+							class="size-6 rounded-full bg-primary p-0 text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100 [&_svg]:size-3.5"
+							disabled={!canSend}
+							aria-label="Send"
+						>
+							<ArrowUpIcon />
+						</InputGroup.Button>
+					</div>
 				</InputGroup.Addon>
 			</InputGroup.Root>
 		</form>

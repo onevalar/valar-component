@@ -32,16 +32,17 @@
 					{...props}
 					variant="ghost"
 					size="sm"
-					class="w-full justify-start font-normal aria-expanded:bg-transparent aria-expanded:hover:bg-muted dark:aria-expanded:hover:bg-muted/50"
+					shape="square"
+					class="h-7 w-full justify-start rounded-[8px] px-2 text-[13px] font-normal text-foreground/85 hover:bg-[#F3F3F5] hover:text-foreground dark:hover:bg-[#1C1D20] aria-expanded:bg-transparent aria-expanded:hover:bg-[#F3F3F5] dark:aria-expanded:hover:bg-[#1C1D20] [&_svg:not([class*='size-'])]:size-3.5"
 				>
-					<ChevronRightIcon class="transition-transform group-data-[state=open]/folder:rotate-90" />
-					<FolderIcon />
+					<ChevronRightIcon class="text-muted-foreground transition-transform group-data-[state=open]/folder:rotate-90" />
+					<FolderIcon class="text-muted-foreground" />
 					{node.name}
 				</Button>
 			{/snippet}
 		</Collapsible.Trigger>
 		<Collapsible.Content>
-			<div class="ml-4 flex flex-col">
+			<div class="ml-3.5 flex flex-col border-l-[0.5px] border-border/70 pl-1">
 				{#each node.children as child (child.path)}
 					<FileTreeNode node={child} {selected} {onSelect} />
 				{/each}
@@ -52,14 +53,16 @@
 	<Button
 		variant="ghost"
 		size="sm"
+		shape="square"
 		class={cn(
-			"w-full justify-start font-normal",
-			selected === node.path && "bg-accent text-accent-foreground"
+			"h-7 w-full justify-start rounded-[8px] px-2 text-[13px] font-normal text-foreground/85 hover:bg-[#F3F3F5] hover:text-foreground dark:hover:bg-[#1C1D20] [&_svg:not([class*='size-'])]:size-3.5",
+			selected === node.path &&
+				"bg-[#F3F3F5] font-medium text-foreground dark:bg-[#1E1F23] dark:text-foreground"
 		)}
 		aria-current={selected === node.path ? "true" : undefined}
 		onclick={() => onSelect(node.path)}
 	>
-		<FileIcon />
+		<FileIcon class="text-muted-foreground" />
 		{node.name}
 	</Button>
 {/if}

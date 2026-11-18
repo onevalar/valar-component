@@ -8,21 +8,28 @@
 	import * as Dialog from "$lib/registry/ui/dialog/index.js";
 	import * as Empty from "$lib/registry/ui/empty/index.js";
 	import * as Field from "$lib/registry/ui/field/index.js";
+	import * as InputOTP from "$lib/registry/ui/input-otp/index.js";
 	import * as Kbd from "$lib/registry/ui/kbd/index.js";
 	import * as RadioGroup from "$lib/registry/ui/radio-group/index.js";
 	import * as Select from "$lib/registry/ui/select/index.js";
 	import * as Table from "$lib/registry/ui/table/index.js";
 	import * as Tabs from "$lib/registry/ui/tabs/index.js";
+	import * as ToggleGroup from "$lib/registry/ui/toggle-group/index.js";
 	import type { UiNode } from "$lib/agent/ui-catalog.js";
 	import { Badge } from "$lib/registry/ui/badge/index.js";
 	import { Button } from "$lib/registry/ui/button/index.js";
 	import { Checkbox } from "$lib/registry/ui/checkbox/index.js";
+	import { Combobox } from "$lib/registry/ui/combobox/index.js";
+	import { DatePicker } from "$lib/registry/ui/date-picker/index.js";
 	import { Input } from "$lib/registry/ui/input/index.js";
+	import { NumberField } from "$lib/registry/ui/number-field/index.js";
 	import { Progress } from "$lib/registry/ui/progress/index.js";
 	import { Separator } from "$lib/registry/ui/separator/index.js";
 	import { SliderField } from "$lib/registry/ui/slider-field/index.js";
 	import { Spinner } from "$lib/registry/ui/spinner/index.js";
+	import { Stepper } from "$lib/registry/ui/stepper/index.js";
 	import { Switch } from "$lib/registry/ui/switch/index.js";
+	import { TagsInput } from "$lib/registry/ui/tags-input/index.js";
 	import { Textarea } from "$lib/registry/ui/textarea/index.js";
 
 	/**
@@ -34,6 +41,8 @@
 	let { root }: { root: UiNode } = $props();
 
 	const uid = $props.id();
+	let comboValues = $state<Record<string, string[]>>({});
+	let otpValues = $state<Record<string, string>>({});
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	type Props = Record<string, any>;
@@ -248,6 +257,80 @@
 				value={p.value}
 				unit={p.unit}
 			/>
+		{:else if n.type === "InputOtpField"}
+			{@const len = p.maxlength === 4 ? 4 : 6}
+			<Field.Field data-invalid={p.error ? true : undefined}>
+				<Field.Label for={id}>{p.label}</Field.Label>
+				<InputOTP.Root
+					{id}
+					maxlength={len}
+					value={otpValues[path] ?? p.value ?? ""}
+					onValueChange={(value) => (otpValues[path] = value)}
+					disabled={p.disabled}
+				>
+					{#snippet children({ cells })}
+						<InputOTP.Group>
+							{#each cells as cell (cell)}
+								<InputOTP.Slot {cell} />
+							{/each}
+						</InputOTP.Group>
+					{/snippet}
+				</InputOTP.Root>
+				{@render notes(p)}
+			</Field.Field>
+		{:else if n.type === "NumberField"}
+			<Field.Field data-invalid={p.error ? true : undefined}>
+				<Field.Label for={id}>{p.label}</Field.Label>
+				<NumberField
+					{id}
+					defaultValue={p.defaultValue}
+					min={p.min}
+					max={p.max}
+					step={p.step}
+					disabled={p.disabled}
+					required={p.required}
+				/>
+				{@render notes(p)}
+			</Field.Field>
+		{:else if n.type === "TagsInputField"}
+			<Field.Field data-invalid={p.error ? true : undefined}>
+				<Field.Label for={id}>{p.label}</Field.Label>
+				<TagsInput
+					{id}
+					defaultValue={p.defaultValue}
+					placeholder={p.placeholder}
+					max={p.max}
+					disabled={p.disabled}
+				/>
+				{@render notes(p)}
+			</Field.Field>
+		{:else if n.type === "DatePickerField"}
+			<Field.Field data-invalid={p.error ? true : undefined}>
+				<Field.Label>{p.label}</Field.Label>
+				<DatePicker label={p.label} placeholder={p.placeholder ?? p.label} locale="zh-CN" />
+				{@render notes(p)}
+			</Field.Field>
+		{:else if n.type === "ComboboxField"}
+			<Field.Field data-invalid={p.error ? true : undefined}>
+				<Field.Label>{p.label}</Field.Label>
+				<Combobox
+					label={p.label}
+					placeholder={p.placeholder ?? "搜索并选择…"}
+					options={p.options}
+					multiple={p.multiple}
+					disabled={p.disabled}
+					value={comboValues[path] ?? []}
+					onSelect={(optId) => {
+						const cur = comboValues[path] ?? [];
+						comboValues[path] = p.multiple
+							? cur.includes(optId)
+								? cur.filter((x) => x !== optId)
+								: [...cur, optId]
+							: [optId];
+					}}
+				/>
+				{@render notes(p)}
+			</Field.Field>
 		{:else if n.type === "Table"}
 			<Table.Root>
 				{#if p.caption}<Table.Caption>{p.caption}</Table.Caption>{/if}
@@ -316,6 +399,19 @@
 					<div class="flex flex-col gap-4">{@render nodes(list(n), path)}</div>
 				</Dialog.Content>
 			</Dialog.Root>
+		{:else if n.type === "Stepper"}
+			<Stepper steps={p.steps} orientation={p.orientation} />
+		{:else if n.type === "ToggleGroup"}
+			<ToggleGroup.Root
+				type="single"
+				variant="outline"
+				value={p.defaultValue ?? p.options[0]?.value}
+				aria-label={p.label}
+			>
+				{#each p.options as opt (opt.value)}
+					<ToggleGroup.Item value={opt.value}>{opt.label}</ToggleGroup.Item>
+				{/each}
+			</ToggleGroup.Root>
 		{:else}
 			<Alert.Root>
 				<TriangleAlertIcon />
