@@ -2,6 +2,7 @@
 	import { onDestroy, tick, untrack } from "svelte";
 	import { toast } from "svelte-sonner";
 	import { SvelteSet } from "svelte/reactivity";
+	import { Button } from "$lib/registry/ui/button/index.js";
 	import Toaster from "$lib/registry/ui/sonner/sonner.svelte";
 	import type { SonnerPreviewUpdate } from "./sonner-tuning.js";
 
@@ -89,14 +90,14 @@
 		聚焦并展开通知；悬停或展开时暂停计时，普通 Tab 聚焦不暂停。
 	</p>
 	<div class="flex flex-wrap gap-2">
-		<button class="rounded-md border px-3 py-2" onclick={() => void replay(previewState.revision)}>
+		<Button variant="outline" size="sm" onclick={() => void replay(previewState.revision)}>
 			重播示例
-		</button>
-		<button class="rounded-md border px-3 py-2" onclick={semanticExamples}>语义通知</button>
-		<button class="rounded-md border px-3 py-2" onclick={promiseExample}>本地 Promise</button>
-		<button class="rounded-md border px-3 py-2" onclick={updateExample}>同 ID 更新</button>
-		<button class="rounded-md border px-3 py-2" onclick={unstyledExample}>无样式通知</button>
-		<button class="rounded-md border px-3 py-2" onclick={clear}>清空通知</button>
+		</Button>
+		<Button variant="outline" size="sm" onclick={semanticExamples}>语义通知</Button>
+		<Button variant="outline" size="sm" onclick={promiseExample}>本地 Promise</Button>
+		<Button variant="outline" size="sm" onclick={updateExample}>同 ID 更新</Button>
+		<Button variant="outline" size="sm" onclick={unstyledExample}>无样式通知</Button>
+		<Button variant="outline" size="sm" onclick={clear}>清空通知</Button>
 	</div>
 	<p role="status" data-sonner-preview-result class="text-xs text-muted-foreground">{result}</p>
 </section>

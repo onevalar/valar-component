@@ -2,6 +2,7 @@
 	import { scaleBand } from "d3-scale";
 	import { BarChart, LineChart } from "layerchart";
 	import * as Chart from "$lib/registry/ui/chart/index.js";
+	import { NativeSelect, NativeSelectOption } from "$lib/registry/ui/native-select/index.js";
 	import ComponentTuner from "./component-tuner.svelte";
 	import { CHART_SPEC } from "./chart-tuning.js";
 	import type { Snippet } from "svelte";
@@ -41,14 +42,10 @@
 		</p>
 		<div class="flex flex-wrap items-center gap-3">
 			<label for={`${id}-${pane}-kind`} class="text-sm">图表类型（仅预览）</label>
-			<select
-				id={`${id}-${pane}-kind`}
-				class="rounded-md border bg-background px-2 py-1 text-sm"
-				bind:value={states[pane].kind}
-			>
-				<option value="bar">柱状图</option>
-				<option value="line">折线图</option>
-			</select>
+			<NativeSelect id={`${id}-${pane}-kind`} size="sm" bind:value={states[pane].kind}>
+				<NativeSelectOption value="bar">柱状图</NativeSelectOption>
+				<NativeSelectOption value="line">折线图</NativeSelectOption>
+			</NativeSelect>
 		</div>
 		<!-- Keep the real portal and chart color variables inside this pane. Never add this
 		     target to the ordinary page sample, or unrelated charts could use its fallback. -->

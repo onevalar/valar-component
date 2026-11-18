@@ -47,7 +47,7 @@
 	>
 		<span
 			class={cn(
-				"text-2xl font-medium tabular-nums",
+				"text-xl font-semibold tracking-tight tabular-nums",
 				tone === "danger" ? "text-destructive" : "text-foreground"
 			)}
 		>

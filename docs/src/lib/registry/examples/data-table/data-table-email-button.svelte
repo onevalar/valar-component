@@ -6,7 +6,7 @@
 	let { variant = "ghost", ...restProps }: ComponentProps<typeof Button> = $props();
 </script>
 
-<Button {variant} {...restProps}>
+<Button {variant} size="sm" shape="square" class="-ms-2.5 h-7 px-2.5 text-[13px]" {...restProps}>
 	Email
 	<ArrowUpDownIcon />
 </Button>

@@ -1,1 +1,1 @@
-<div class="text-lg font-semibold">Are you absolutely sure?</div>
+<div class="text-[15px] font-medium">Are you absolutely sure?</div>

@@ -25,7 +25,7 @@
 	data-spacing={ctx.spacing}
 	class={!toolbar
 		? cn(
-				"cn-toggle-group-item shrink-0 focus:z-10 focus-visible:z-10 group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:border-l-0 group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:border-t-0 group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-l group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-t",
+				"cn-toggle-group-item shrink-0 focus:z-10 focus-visible:z-10 group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:border-l-0 group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:border-t-0 group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-l-[0.5px] group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-t-[0.5px]",
 				toggleVariants({ variant: ctx.variant || variant, size: ctx.size || size }),
 				className
 			)

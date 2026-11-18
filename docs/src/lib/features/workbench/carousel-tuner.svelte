@@ -1,6 +1,8 @@
 <script lang="ts">
 	import * as Carousel from "$lib/registry/ui/carousel/index.js";
 	import { Button } from "$lib/registry/ui/button/index.js";
+	import { Checkbox } from "$lib/registry/ui/checkbox/index.js";
+	import { NativeSelect, NativeSelectOption } from "$lib/registry/ui/native-select/index.js";
 	import type { CarouselAPI } from "$lib/registry/ui/carousel/context.js";
 	import ComponentTuner from "./component-tuner.svelte";
 	import { CAROUSEL_SPEC } from "./carousel-tuning.js";
@@ -43,16 +45,17 @@
 		</p>
 		<div class="flex flex-wrap items-center gap-3">
 			<label for={`${id}-${pane}-orientation`} class="text-sm">方向</label>
-			<select
+			<NativeSelect
 				id={`${id}-${pane}-orientation`}
+				size="sm"
 				bind:value={states[pane].orientation}
-				class="rounded-md border bg-background px-2 py-1 text-sm"
 			>
-				<option value="horizontal">水平</option>
-				<option value="vertical">垂直</option>
-			</select>
-			<label class="flex items-center gap-2 text-sm">
-				<input type="checkbox" bind:checked={states[pane].multiple} />每屏两张
+				<NativeSelectOption value="horizontal">水平</NativeSelectOption>
+				<NativeSelectOption value="vertical">垂直</NativeSelectOption>
+			</NativeSelect>
+			<label for={`${id}-${pane}-multiple`} class="flex items-center gap-2 text-sm">
+				<Checkbox id={`${id}-${pane}-multiple`} bind:checked={states[pane].multiple} />
+				<span>每屏两张</span>
 			</label>
 		</div>
 		<!-- The primitive captures orientation/options at creation; remount on preview changes.

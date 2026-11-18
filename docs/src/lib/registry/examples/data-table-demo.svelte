@@ -193,7 +193,7 @@
 </script>
 
 <div class="w-full">
-	<div class="flex items-center py-4">
+	<div class="flex items-center gap-2 py-3">
 		<Input
 			placeholder="Filter emails..."
 			value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
@@ -206,7 +206,7 @@
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger>
 				{#snippet child({ props })}
-					<Button {...props} variant="outline" class="ms-auto">
+					<Button {...props} variant="outline" size="sm" class="ms-auto">
 						Columns <ChevronDownIcon />
 					</Button>
 				{/snippet}
@@ -225,7 +225,7 @@
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</div>
-	<div class="overflow-hidden rounded-md border">
+	<div class="overflow-hidden rounded-[10px] border-[0.5px] border-border bg-card">
 		<Table.Root>
 			<Table.Header>
 				{#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
@@ -257,12 +257,12 @@
 			</Table.Body>
 		</Table.Root>
 	</div>
-	<div class="flex items-center justify-end space-x-2 py-4">
-		<div class="flex-1 text-sm text-muted-foreground">
+	<div class="flex items-center justify-end gap-2 py-3">
+		<div class="flex-1 text-xs text-muted-foreground tabular-nums">
 			{table.getFilteredSelectedRowModel().rows.length} of
 			{table.getFilteredRowModel().rows.length} row(s) selected.
 		</div>
-		<div class="space-x-2">
+		<div class="flex items-center gap-1.5">
 			<Button
 				variant="outline"
 				size="sm"

@@ -3,6 +3,8 @@
 	import * as Menubar from "$lib/registry/ui/menubar/index.js";
 	import * as Sheet from "$lib/registry/ui/sheet/index.js";
 	import { Button, buttonVariants } from "$lib/registry/ui/button/index.js";
+	import { Checkbox } from "$lib/registry/ui/checkbox/index.js";
+	import { NativeSelect, NativeSelectOption } from "$lib/registry/ui/native-select/index.js";
 	import ComponentTuner from "./component-tuner.svelte";
 	import { MENUBAR_SPEC } from "./menubar-tuning.js";
 	import type { Snippet } from "svelte";
@@ -157,19 +159,16 @@
 							</section>
 							<section class="grid gap-3" aria-label="视图">
 								<h3 class="text-sm font-medium">视图</h3>
-								<label class="flex items-center gap-2 text-sm"
-									><input type="checkbox" bind:checked={statusBar[pane]} />显示状态栏</label
-								>
+								<label for={`${id}-${pane}-status-bar`} class="flex items-center gap-2 text-sm">
+									<Checkbox id={`${id}-${pane}-status-bar`} bind:checked={statusBar[pane]} />
+									<span>显示状态栏</span>
+								</label>
 								<label class="grid gap-2 text-sm" for={`${id}-${pane}-zoom`}>文稿缩放</label>
-								<select
-									id={`${id}-${pane}-zoom`}
-									bind:value={zoom[pane]}
-									class="min-w-0 rounded-md border bg-background p-2"
-									><option value="100">100%</option><option value="125">125%</option><option
-										value="150"
-										disabled>150%（不可用）</option
-									></select
-								>
+								<NativeSelect id={`${id}-${pane}-zoom`} size="sm" bind:value={zoom[pane]}>
+									<NativeSelectOption value="100">100%</NativeSelectOption>
+									<NativeSelectOption value="125">125%</NativeSelectOption>
+									<NativeSelectOption value="150" disabled>150%（不可用）</NativeSelectOption>
+								</NativeSelect>
 							</section>
 							<p role="status" class="text-sm text-muted-foreground">{message[pane]}</p>
 						</div>

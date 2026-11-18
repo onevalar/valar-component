@@ -187,7 +187,7 @@
 	data-slot="number-field"
 	data-disabled={disabled || undefined}
 	class={cn(
-		"flex min-h-10 w-full items-center rounded-md border border-input bg-background text-foreground shadow-xs focus-within:border-ring has-aria-invalid:border-destructive",
+		"flex h-8 min-h-8 w-full items-center rounded-md border-[0.5px] border-input bg-white text-foreground transition-colors duration-150 motion-reduce:transition-none dark:bg-[#141518] has-[>[data-slot=number-field-input]:focus-visible]:border-ring has-[>[data-slot=number-field-input]:focus-visible]:outline-solid has-[>[data-slot=number-field-input]:focus-visible]:outline-1 has-[>[data-slot=number-field-input]:focus-visible]:-outline-offset-1 has-[>[data-slot=number-field-input]:focus-visible]:outline-ring has-aria-invalid:border-destructive has-aria-invalid:ring-1 has-aria-invalid:ring-inset has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40",
 		"cn-number-field",
 		className
 	)}
@@ -198,7 +198,7 @@
 		aria-label={decrementLabel}
 		disabled={disabled || readonly || (value !== undefined && min !== undefined && value <= min)}
 		class={cn(
-			"size-10 shrink-0 rounded-s-md text-lg hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-40",
+			"inline-flex size-full w-auto aspect-square shrink-0 items-center justify-center rounded-s-md border-e-[0.5px] border-input text-[14px] text-muted-foreground transition-colors duration-150 motion-reduce:transition-none hover:bg-accent hover:text-foreground focus-visible:outline-solid focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring disabled:opacity-40",
 			"cn-number-field-decrement"
 		)}
 		onpointerdown={(event) => event.preventDefault()}
@@ -212,7 +212,7 @@
 		inputmode="decimal"
 		data-slot="number-field-input"
 		class={cn(
-			"h-10 w-full min-w-0 bg-transparent px-2 text-center text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50",
+			"h-full w-full min-w-0 bg-transparent px-2 text-center text-[13px] tabular-nums outline-none disabled:cursor-not-allowed disabled:opacity-50",
 			"cn-number-field-input"
 		)}
 		{form}
@@ -252,7 +252,7 @@
 		aria-label={incrementLabel}
 		disabled={disabled || readonly || (value !== undefined && max !== undefined && value >= max)}
 		class={cn(
-			"size-10 shrink-0 rounded-e-md text-lg hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-40",
+			"inline-flex size-full w-auto aspect-square shrink-0 items-center justify-center rounded-e-md border-s-[0.5px] border-input text-[14px] text-muted-foreground transition-colors duration-150 motion-reduce:transition-none hover:bg-accent hover:text-foreground focus-visible:outline-solid focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring disabled:opacity-40",
 			"cn-number-field-increment"
 		)}
 		onpointerdown={(event) => event.preventDefault()}

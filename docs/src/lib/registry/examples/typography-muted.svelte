@@ -1,1 +1,1 @@
-<p class="text-sm text-muted-foreground">Enter your email address.</p>
+<p class="text-xs text-muted-foreground">Enter your email address.</p>

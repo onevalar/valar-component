@@ -38,7 +38,7 @@
 	const iconButton =
 		"inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-transparent p-0 text-foreground hover:bg-accent focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring motion-reduce:transition-none";
 	const editorField =
-		"rounded-none border-0 bg-transparent! px-0 text-foreground ring-0! shadow-none! placeholder:text-(--composer-placeholder) transition-none";
+		"rounded-none border-0 bg-transparent! px-0 text-foreground ring-0! shadow-none! focus:outline-none! focus-visible:outline-none! placeholder:text-(--composer-placeholder) transition-none";
 	const tokens = `
 		--composer-surface: light-dark(lch(100% 0 282), lch(9.232% .85 272));
 		--composer-accent: light-dark(lch(53% 52.26 286.91), lch(47.918% 59.303 288.421));
@@ -302,7 +302,7 @@
 							>
 								<Popover.Trigger
 									aria-label={`${label(field)} · ${label(selected)}`}
-									class="inline-flex h-6 items-center gap-1.5 rounded-full border border-border bg-(--composer-chip) px-2 text-xs leading-none font-medium text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring aria-expanded:bg-accent"
+									class="inline-flex h-6 items-center gap-1.5 rounded-full border-[0.5px] border-border bg-(--composer-chip) px-2 text-xs leading-none font-medium text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring aria-expanded:bg-accent"
 								>
 									<IssueGlyph value={selected} />
 									{selected === "none" ? label("priority") : label(selected)}
@@ -365,10 +365,12 @@
 									class="inline-flex h-6 max-w-full min-w-0 items-center gap-1 rounded-full border border-border px-2 text-xs"
 								>
 									<span class="truncate">{file.name}</span>
-									<button
+									<Button
 										type="button"
+										variant="ghost"
+										size="icon-xs"
 										aria-label={`${text("移除附件", "Remove attachment")} ${file.name}`}
-										class="rounded-full p-0.5 text-muted-foreground hover:bg-accent focus-visible:outline-ring"
+										class="size-4 rounded-full p-0.5 text-muted-foreground hover:bg-accent"
 										onclick={() => (attachments = attachments.filter((_, item) => item !== index))}
 										><IconPlaceholder
 											lucide="XIcon"
@@ -378,7 +380,7 @@
 											remixicon="RiCloseLine"
 											aria-hidden="true"
 											class="size-3"
-										/></button
+										/></Button
 									>
 								</li>
 							{/each}

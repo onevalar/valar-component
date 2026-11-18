@@ -1716,8 +1716,8 @@
 			"issue-composer",
 			"avatar",
 			"dropdown-menu",
-			"alert-dialog",
 			"button",
+			"alert-dialog",
 			"input",
 			"breadcrumb",
 			"combobox",
@@ -4993,8 +4993,8 @@
 		"name": "projects-01",
 		"type": "registry:block",
 		"dependencies": [
-			"@dnd-kit-svelte/svelte@0.1.5",
-			"@dnd-kit/dom@0.1.21"
+			"@dnd-kit-svelte/svelte@^0.1.5",
+			"@dnd-kit/dom@^0.1.21"
 		],
 		"registryDependencies": [
 			"date-picker",

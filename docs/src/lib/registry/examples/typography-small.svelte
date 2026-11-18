@@ -1,1 +1,1 @@
-<small class="text-sm leading-none font-medium">Email address</small>
+<small class="text-xs leading-none font-medium">Email address</small>

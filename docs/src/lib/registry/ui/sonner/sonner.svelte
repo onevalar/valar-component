@@ -129,8 +129,9 @@
 			.cn-toast[data-sonner-toast][data-styled="true"] {
 				width: 100%;
 				min-height: 41px;
-				padding: 12px;
-				gap: 8px;
+				padding-inline: var(--valar-toast-padding-x, 12px);
+				padding-block: var(--valar-toast-padding-y, 12px);
+				gap: var(--valar-toast-gap, 8px);
 				border-width: 0.5px;
 				border-radius: 12px;
 				box-shadow: var(--valar-workspace-toast-shadow);

@@ -9,7 +9,7 @@
 		children,
 		...props
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
-		appearance?: "default" | "settings-search" | "settings-name";
+		appearance?: "default" | "settings-search" | "settings-name" | "composer";
 	} = $props();
 </script>
 
@@ -22,6 +22,7 @@
 		"group/input-group cn-input-group relative flex w-full min-w-0 items-center outline-none has-[>textarea]:h-auto",
 		appearance === "settings-search" && "cn-input-group-settings-search",
 		appearance === "settings-name" && "cn-input-group-settings-name",
+		appearance === "composer" && "cn-input-group-composer",
 		className
 	)}
 	{...props}

@@ -83,19 +83,19 @@
 	class={cn("grid gap-2", "cn-color-picker", className)}
 	{...restProps}
 >
-	<span id={`${id}-label`} class="text-sm font-medium">{label}</span>
+	<span id={`${id}-label`} class="text-[13px] leading-[17px] font-medium text-foreground">{label}</span>
 	<Popover.Root bind:open>
 		<Popover.Trigger
 			{disabled}
 			aria-labelledby={`${id}-label ${id}-value`}
-			class="flex h-9 w-full items-center gap-2 rounded-md border border-input bg-background px-2 text-sm shadow-xs outline-none hover:bg-muted focus-visible:border-ring disabled:pointer-events-none disabled:opacity-50"
+			class="flex h-8 w-full items-center gap-2 rounded-md border-[0.5px] border-[color:lch(86.5%_0_282)] bg-white px-2.5 text-[13px] text-foreground transition-colors duration-150 motion-reduce:transition-none hover:bg-accent/50 dark:border-[color:lch(30.833%_1.93_272)] dark:bg-[lch(9.232%_.85_272)] dark:hover:bg-[lch(12%_1_272)] outline-none focus-visible:border-ring focus-visible:outline-solid focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
 		>
 			<span
 				data-slot="color-picker-swatch"
-				class="size-5 shrink-0 rounded-sm border"
+				class="size-4 shrink-0 rounded-[4px] border-[0.5px] border-black/15 dark:border-white/20"
 				style:background={current}
 			></span>
-			<span id={`${id}-value`} class="font-mono text-xs">{current}</span>
+			<span id={`${id}-value`} class="font-mono text-xs tabular-nums">{current}</span>
 		</Popover.Trigger>
 		<Popover.Content
 			aria-label={label}
@@ -112,9 +112,9 @@
 					set(normalizeHex(event.currentTarget.value));
 					text = current;
 				}}
-				class="h-28 w-full cursor-pointer rounded-md border bg-transparent p-0"
+				class="h-24 w-full cursor-pointer overflow-hidden rounded-md border-[0.5px] border-border bg-transparent p-0 focus-visible:outline-solid focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring"
 			/>
-			<label class="grid gap-1 text-xs text-muted-foreground"
+			<label class="grid gap-1 text-xs font-medium text-muted-foreground"
 				>十六进制
 				<input
 					type="text"
@@ -132,7 +132,7 @@
 						if (event.key === "Enter") commitText();
 					}}
 					onblur={commitText}
-					class="h-8 rounded-md border border-input bg-background px-2 font-mono text-sm text-foreground outline-none focus-visible:border-ring aria-invalid:border-destructive"
+					class="h-8 rounded-md border-[0.5px] border-[color:lch(86.5%_0_282)] bg-white px-2.5 font-mono text-xs tabular-nums text-foreground outline-none transition-colors duration-150 dark:border-[color:lch(30.833%_1.93_272)] dark:bg-[lch(9.232%_.85_272)] focus-visible:border-ring focus-visible:outline-solid focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring aria-invalid:border-destructive"
 				/>
 			</label>
 			{#if invalid}<p class="text-xs text-destructive">
@@ -147,7 +147,7 @@
 								type="button"
 								aria-label={hex}
 								aria-pressed={hex === current}
-								class="size-6 rounded-sm border outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring/50 aria-pressed:ring-2 aria-pressed:ring-foreground"
+								class="size-6 rounded-[5px] border-[0.5px] border-black/15 dark:border-white/20 outline-none transition-colors duration-100 focus-visible:outline-solid focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring aria-pressed:outline-solid aria-pressed:outline-2 aria-pressed:-outline-offset-2 aria-pressed:outline-white aria-pressed:shadow-[inset_0_0_0_1px_rgb(0_0_0/0.45)]"
 								style:background={hex}
 								onclick={() => {
 									set(hex);

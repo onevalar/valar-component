@@ -138,14 +138,14 @@ try {
 		/<!-- valar-svelte:rules:start -->[\s\S]*### Button 设计规范[\s\S]*<!-- valar-svelte:rules:end -->/
 	);
 	assert.ok(readFileSync(path.join(app, "src/lib/components/ui/button/RULES.md"), "utf8"));
-	// Check the exported tokens and the restored baseline motion of the installed dialog.
+	// Global motion/border tokens: values in :root, components use the tier utilities.
 	const appCss = readFileSync(path.join(app, "src/app.css"), "utf8");
 	assert.match(appCss, /--motion-duration-fast: 100ms;/);
 	assert.match(appCss, /--border-width: 1px;/);
 	assert.doesNotMatch(appCss, /--motion-duration-fast: var\(/);
 	assert.match(
 		readFileSync(path.join(app, "src/lib/components/ui/dialog/dialog-content.svelte"), "utf8"),
-		/\bduration-100\b/
+		/duration-(?:100|fast)/
 	);
 	run(cli, ["lint"]);
 	const violation = path.join(app, "src/routes/violation.svelte");

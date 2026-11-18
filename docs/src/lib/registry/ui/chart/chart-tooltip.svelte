@@ -107,7 +107,7 @@
 		bind:this={ref}
 		data-slot="chart-tooltip"
 		class={cn(
-			"grid min-w-32 items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
+			"grid min-w-32 items-start gap-1.5 rounded-[8px] border-[0.5px] border-[lch(91.9%_0_282)] bg-white px-2.5 py-1.5 text-xs text-[color:lch(19.588%_1.25_282)] tabular-nums shadow-[0_6px_18px_rgb(0_0_0/.04),0_3px_9px_rgb(0_0_0/.06),0_1px_1px_rgb(0_0_0/.04)] dark:border-[lch(25.68%_1.93_272)] dark:bg-[lch(12.72%_0.85_272)] dark:text-[color:lch(91.178%_1.425_272)] dark:shadow-[0_3px_8px_rgb(0_0_0/.22),0_2px_5px_rgb(0_0_0/.18),0_1px_1px_rgb(0_0_0/.18)]",
 			"cn-chart-tooltip-layout",
 			className
 		)}

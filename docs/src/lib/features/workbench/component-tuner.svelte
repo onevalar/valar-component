@@ -285,13 +285,13 @@
 {#snippet grid(pane: "current" | "before", caption: string)}
 	<figure
 		class={[
-			"min-w-0 rounded-xl border bg-background text-foreground",
+			"min-w-0 rounded-xl border-[0.5px] border-border bg-background text-foreground",
 			canvasMode === "dark" && "dark",
 		]}
 		data-tuning-current={pane === "current" ? "" : undefined}
 		data-tuning-before={pane === "before" ? "" : undefined}
 	>
-		<figcaption class="border-b px-4 py-2.5 text-xs text-muted-foreground">{caption}</figcaption>
+		<figcaption class="border-b-[0.5px] border-border px-4 py-2.5 text-xs text-muted-foreground">{caption}</figcaption>
 		{@render canvas(pane, {
 			overrides: (pane === "current"
 				? currentOverrides
@@ -406,16 +406,16 @@
 					{#if view === "compare"}
 						<label class="flex items-center gap-2 text-sm"
 							>对比基线
-							<select
+							<NativeSelect.Root
+								size="sm"
 								aria-label={`${title} 对比版本`}
 								bind:value={comparison}
-								class="h-8 rounded-md border bg-background px-2 text-sm"
 							>
-								<option value="">当前组件库样式</option>
-								{#each compatible as version (version.id)}<option value={version.id}
-										>{version.name}</option
-									>{/each}
-							</select>
+								<NativeSelect.Option value="">当前组件库样式</NativeSelect.Option>
+								{#each compatible as version (version.id)}
+									<NativeSelect.Option value={version.id}>{version.name}</NativeSelect.Option>
+								{/each}
+							</NativeSelect.Root>
 						</label>
 					{/if}
 					<ToggleGroup.Root
@@ -440,7 +440,7 @@
 			</section>
 			<aside
 				aria-label="参数"
-				class="flex min-w-0 flex-col gap-5 border-t p-4 lg:overflow-y-auto lg:border-t-0 lg:border-l"
+				class="flex min-w-0 flex-col gap-5 border-t-[0.5px] border-border p-4 lg:overflow-y-auto lg:border-t-0 lg:border-l-[0.5px]"
 			>
 				{@render status()}
 				{#if Panel && initial && baseline}
@@ -496,7 +496,7 @@
 				<section class="grid gap-2">
 					<h3 class="text-xs font-semibold text-muted-foreground">全局 token（只读）</h3>
 					<p class="text-xs leading-relaxed text-muted-foreground">
-						影响所有组件，在组件页不能修改，请到<a class="underline" href="/themes">全局主题页</a
+						影响所有组件，在组件页不能修改，请到<a class="underline" href="/themes">全局设计规范页</a
 						>统一配置。
 					</p>
 					<dl class="grid gap-1.5 text-xs">

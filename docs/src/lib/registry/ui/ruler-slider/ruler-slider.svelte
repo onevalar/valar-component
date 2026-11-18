@@ -117,17 +117,17 @@
 	data-disabled={disabled || undefined}
 	data-dragging={dragging || undefined}
 	class={cn(
-		"grid w-full min-w-0 justify-items-center gap-1 text-sm text-foreground select-none data-disabled:opacity-50",
+		"grid w-full min-w-0 justify-items-center gap-1 text-[13px] text-foreground select-none data-disabled:opacity-50",
 		className
 	)}
 	{...rest}
 >
-	<span id={`${id}-label`} class="text-muted-foreground">{label}</span>
+	<span id={`${id}-label`} class="text-[13px] font-medium text-muted-foreground">{label}</span>
 	<div
 		aria-hidden="true"
-		class="mb-3 inline-flex items-baseline gap-[0.3em] text-2xl leading-[1.1] font-medium tabular-nums"
+		class="mb-2.5 inline-flex items-baseline gap-[0.25em] text-xl leading-[1.15] font-semibold tracking-tight tabular-nums"
 	>
-		<span>{readout}</span>{#if unit}<span class="text-base text-muted-foreground">{unit}</span>{/if}
+		<span>{readout}</span>{#if unit}<span class="text-xs font-normal text-muted-foreground">{unit}</span>{/if}
 	</div>
 	<div
 		bind:this={viewport}
@@ -141,7 +141,7 @@
 		aria-valuetext={unit ? `${readout} ${unit}` : readout}
 		aria-orientation="horizontal"
 		aria-disabled={disabled || undefined}
-		class="relative h-18 w-full cursor-grab touch-pan-y overflow-hidden rounded-lg border bg-background outline-none [-webkit-tap-highlight-color:transparent] focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring in-data-[disabled]:cursor-not-allowed in-data-[dragging]:cursor-grabbing"
+		class="relative h-16 w-full cursor-grab touch-pan-y overflow-hidden rounded-[10px] border-[0.5px] border-[color:lch(86.5%_0_282)] bg-white dark:border-[color:lch(30.833%_1.93_272)] dark:bg-[lch(9.232%_.85_272)] outline-none [-webkit-tap-highlight-color:transparent] focus-visible:border-ring focus-visible:outline-solid focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring in-data-[disabled]:cursor-not-allowed in-data-[dragging]:cursor-grabbing"
 	>
 		<div
 			aria-hidden="true"
@@ -163,7 +163,7 @@
 				></span>
 				{#each marks as mark, index}
 					<span
-						class="absolute top-9 -translate-x-1/2 text-xs whitespace-nowrap text-muted-foreground tabular-nums"
+						class="absolute top-8 -translate-x-1/2 font-mono text-[11px] whitespace-nowrap text-muted-foreground tabular-nums"
 						style:left={`${index * spacing * majorEvery}px`}>{labelFormat(mark)}</span
 					>
 				{/each}

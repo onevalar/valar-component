@@ -12,13 +12,13 @@
 <RangeCalendarPrimitive.Day
 	bind:ref
 	class={cn(
-		"flex size-(--cell-size) flex-col items-center justify-center gap-1 rounded-(--cell-radius) p-0 leading-none font-normal whitespace-nowrap select-none",
+		"flex size-(--cell-size) flex-col items-center justify-center gap-1 rounded-(--cell-radius) p-0 text-[13px] leading-none font-normal tabular-nums whitespace-nowrap select-none",
 		"not-data-selected:hover:bg-accent/50 not-data-selected:hover:text-accent-foreground",
 		"data-[range-middle]:rounded-none [&[data-today]:not([data-selected])]:bg-accent [&[data-today]:not([data-selected])]:text-accent-foreground [&[data-today][data-disabled]]:text-muted-foreground",
 		// range Start
-		"data-[range-start]:bg-primary data-[range-start]:text-primary-foreground data-[range-start]:hover:text-foreground",
+		"data-[range-start]:bg-primary data-[range-start]:text-primary-foreground data-[range-start]:hover:bg-primary/90 data-[range-start]:hover:text-primary-foreground",
 		// range End
-		"data-[range-end]:bg-primary data-[range-end]:text-primary-foreground data-[range-end]:hover:text-foreground",
+		"data-[range-end]:bg-primary data-[range-end]:text-primary-foreground data-[range-end]:hover:bg-primary/90 data-[range-end]:hover:text-primary-foreground",
 		// Outside months
 		"[&[data-outside-month]:not([data-selected])]:text-muted-foreground [&[data-outside-month]:not([data-selected])]:hover:text-accent-foreground",
 		// Disabled
@@ -27,7 +27,7 @@
 		"data-[unavailable]:line-through",
 		"dark:data-[range-middle]:hover:bg-accent/0",
 		// focus
-		"focus:relative focus:border-ring focus:ring-ring/50 focus:ring-inset",
+		"focus-visible:relative focus-visible:outline-solid focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring",
 		// inner spans
 		"[&>span]:text-xs [&>span]:opacity-70",
 		className

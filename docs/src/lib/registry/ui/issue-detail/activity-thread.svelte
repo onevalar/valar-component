@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { tick } from "svelte";
 	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
+	import { Button } from "$lib/registry/ui/button/index.js";
 	import ActivityComment from "./activity-comment.svelte";
 	import CommentComposer from "./comment-composer.svelte";
 	import type { IssueActivityOptions, IssueCommentThread } from "./activity-model.js";
@@ -54,13 +55,15 @@
 	class="min-w-0 rounded-[8px] border border-(--activity-border) bg-(--activity-card)"
 >
 	{#if entry.resolution}
-		<button
-			bind:this={summary}
+		<Button
+			bind:ref={summary}
 			type="button"
+			variant="ghost"
+			shape="square"
 			aria-expanded={expanded}
 			aria-controls={id}
 			title={text("解决者", "Resolved by") + " · " + entry.resolution.by.name}
-			class="flex min-h-11 w-full items-center gap-2 rounded-[7px] bg-(--detail-control) px-4 py-2 text-start text-[13px] text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring"
+			class="h-auto min-h-11 w-full justify-start gap-2 rounded-[7px] bg-(--detail-control) px-4 py-2 text-start text-[13px] font-normal whitespace-normal text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring focus-visible:ring-0"
 			onclick={() => (expanded = !expanded)}
 		>
 			<IconPlaceholder
@@ -94,7 +97,7 @@
 				class="size-3.5 shrink-0"
 				aria-hidden="true"
 			/>
-		</button>
+		</Button>
 	{/if}
 
 	<div {id} bind:this={panel} hidden={!!entry.resolution && !expanded}>

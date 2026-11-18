@@ -245,7 +245,7 @@
 	data-slot="tags-input"
 	data-disabled={disabled || undefined}
 	class={cn(
-		"flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background p-1.5 text-foreground shadow-xs focus-within:border-ring has-aria-invalid:border-destructive",
+		"flex min-h-8 w-full flex-wrap items-center gap-1.5 rounded-md border-[0.5px] border-[color:lch(86.5%_0_282)] bg-white p-1.5 text-[13px] text-foreground transition-colors duration-150 motion-reduce:transition-none dark:border-[color:lch(30.833%_1.93_272)] dark:bg-[lch(9.232%_.85_272)] not-has-[[data-selected]]:has-[>[data-slot=tags-input-input]:focus-visible]:border-ring not-has-[[data-selected]]:has-[>[data-slot=tags-input-input]:focus-visible]:outline-solid not-has-[[data-selected]]:has-[>[data-slot=tags-input-input]:focus-visible]:outline-1 not-has-[[data-selected]]:has-[>[data-slot=tags-input-input]:focus-visible]:-outline-offset-1 not-has-[[data-selected]]:has-[>[data-slot=tags-input-input]:focus-visible]:outline-ring has-aria-invalid:border-destructive has-aria-invalid:ring-1 has-aria-invalid:ring-inset has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40",
 		"cn-tags-input",
 		className
 	)}
@@ -255,14 +255,14 @@
 			<li
 				data-slot="tags-input-item"
 				data-selected={selected === index || undefined}
-				class="inline-flex max-w-full min-w-0 items-center gap-1 rounded-sm bg-secondary px-2 py-1 text-sm text-secondary-foreground data-selected:ring-2 data-selected:ring-ring"
+				class="inline-flex min-h-[18px] max-w-full min-w-0 items-center gap-1 rounded-[5px] border-[0.5px] border-border bg-[#F4F4F6] px-1.5 py-px text-xs leading-4 font-medium text-foreground dark:bg-[#1C1D21] data-selected:border-ring data-selected:bg-primary/10 data-selected:outline-solid data-selected:outline-1 data-selected:-outline-offset-1 data-selected:outline-ring"
 			>
 				<span class="break-all">{tag}</span>
 				<button
 					type="button"
 					aria-label={removeLabel(tag)}
 					disabled={disabled || readonly}
-					class="size-5 shrink-0 rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-40"
+					class="inline-flex size-4 shrink-0 items-center justify-center rounded-[3px] text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground focus-visible:outline-solid focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring disabled:opacity-40"
 					onclick={() => remove(index)}>×</button
 				>
 			</li>
@@ -273,7 +273,7 @@
 		bind:this={ref}
 		type="text"
 		data-slot="tags-input-input"
-		class="h-7 min-w-20 flex-1 bg-transparent px-1 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50"
+		class="h-4.5 min-w-20 flex-1 bg-transparent px-1 text-[13px] placeholder:text-[color:lch(66%_1_282)] dark:placeholder:text-[color:lch(39.452%_1.425_272)] outline-none disabled:cursor-not-allowed disabled:opacity-50"
 		{dir}
 		{form}
 		{disabled}

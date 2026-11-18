@@ -59,7 +59,7 @@
 	)}
 	{...restProps}
 >
-	<label for={`${id}-input`} class="col-span-2 text-sm font-medium">{label}</label>
+	<label for={`${id}-input`} class="col-span-2 text-[13px] leading-[17px] font-medium text-foreground">{label}</label>
 	<Slider
 		type="single"
 		{value}
@@ -84,6 +84,6 @@
 			decrementLabel={`减小${label}`}
 			incrementLabel={`增大${label}`}
 		/>
-		{#if unit}<span class="text-xs text-muted-foreground">{unit}</span>{/if}
+		{#if unit}<span class="text-xs text-muted-foreground tabular-nums">{unit}</span>{/if}
 	</div>
 </div>

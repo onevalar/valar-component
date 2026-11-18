@@ -136,18 +136,9 @@
 		void stopEdit();
 	}
 
-	function submitWithShortcut(event: KeyboardEvent) {
-		if (event.isComposing || event.key !== "Enter" || !(event.ctrlKey || event.metaKey))
-			return false;
-		event.preventDefault();
-		if (!event.repeat) form.requestSubmit();
-		return true;
-	}
-
 	function editKeys(event: KeyboardEvent) {
 		if (
 			!editing ||
-			event.defaultPrevented ||
 			event.isComposing ||
 			!(event.target instanceof Node) ||
 			!form.contains(event.target)
@@ -156,9 +147,11 @@
 		if (event.key === "Escape") {
 			event.preventDefault();
 			void stopEdit();
-			return;
 		}
-		submitWithShortcut(event);
+		if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+			event.preventDefault();
+			if (!event.repeat) form.requestSubmit();
+		}
 	}
 
 	function updateIssue(update: IssueDetailUpdate) {
@@ -195,13 +188,15 @@
 						<Breadcrumb.Item>
 							<Breadcrumb.Link>
 								{#snippet child({ props })}
-									<button
+									<Button
 										type="button"
-										class={props.class}
+										variant="ghost"
+										size="xs"
+										class="cn-breadcrumb-link h-auto border-0 bg-transparent px-0 font-normal shadow-none hover:bg-transparent"
 										data-slot={props["data-slot"]}
 										onclick={onBack}
 										aria-label={text("返回我的问题", "Back to My issues")}
-										>{text("我的问题", "My issues")}</button
+										>{text("我的问题", "My issues")}</Button
 									>
 								{/snippet}
 							</Breadcrumb.Link>
@@ -358,7 +353,6 @@
 						{content}
 						{chinese}
 						focusOnMount={editing === "description"}
-						onEditorKeyDown={submitWithShortcut}
 						onChange={() => (changedDescription = true)}
 					/>
 					<div class="flex justify-end gap-2">

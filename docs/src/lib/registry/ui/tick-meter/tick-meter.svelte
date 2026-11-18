@@ -63,7 +63,7 @@
 	<span
 		aria-hidden="true"
 		class={cn(
-			"pointer-events-none absolute inset-0 grid place-content-center text-2xl font-medium tabular-nums",
+			"pointer-events-none absolute inset-0 grid place-content-center text-xl font-semibold tracking-tight tabular-nums",
 			tone === "danger" ? "text-destructive" : "text-foreground"
 		)}
 	>

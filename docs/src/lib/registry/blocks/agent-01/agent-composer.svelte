@@ -96,7 +96,7 @@
 		style={active
 			? "background-color: var(--agent-reply)"
 			: "background-color: var(--agent-composer)"}
-		class="flex h-auto flex-col items-stretch gap-2 rounded-xl border border-border px-3 pt-4 pb-2.5 shadow-none has-[[data-slot=input-group-control]:focus-visible]:border-(--agent-focus) has-[[data-slot=input-group-control]:focus-visible]:ring-0 sm:px-4"
+		class="flex h-auto flex-col items-stretch gap-2 rounded-xl border-[0.5px] border-border px-3 pt-4 pb-2.5 shadow-none has-[[data-slot=input-group-control]:focus-visible]:border-(--agent-focus) has-[[data-slot=input-group-control]:focus-visible]:outline-solid has-[[data-slot=input-group-control]:focus-visible]:outline-1 has-[[data-slot=input-group-control]:focus-visible]:-outline-offset-1 has-[[data-slot=input-group-control]:focus-visible]:outline-(--agent-focus) has-[[data-slot=input-group-control]:focus-visible]:ring-0 sm:px-4"
 	>
 		<div class="flex max-h-[min(35svh,17rem)] flex-col gap-2 overflow-y-auto">
 			<AgentAttachments files={draft.files} {chinese} {onRemove} />

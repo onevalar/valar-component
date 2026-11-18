@@ -8,6 +8,7 @@
 	import * as Bubble from "$lib/registry/ui/bubble/index.js";
 	import * as Message from "$lib/registry/ui/message/index.js";
 	import { Button } from "$lib/registry/ui/button/index.js";
+	import { NativeSelect, NativeSelectOption } from "$lib/registry/ui/native-select/index.js";
 	import { Spinner } from "$lib/registry/ui/spinner/index.js";
 	import ComponentTuner from "./component-tuner.svelte";
 	import { ATTACHMENT_SPEC } from "./attachment-tuning.js";
@@ -79,22 +80,25 @@
 	<div class="grid min-w-0 gap-6 p-4 md:p-6">
 		<div class="flex flex-wrap items-center gap-3 text-sm">
 			<label for={`${id}-${pane}-orientation`}>排列</label>
-			<select
+			<NativeSelect
 				id={`${id}-${pane}-orientation`}
-				class="rounded-md border bg-background p-2"
+				size="sm"
 				bind:value={panes[pane].orientation}
-				><option value="horizontal">横向附件</option><option value="vertical">纵向附件</option
-				></select
 			>
+				<NativeSelectOption value="horizontal">横向附件</NativeSelectOption>
+				<NativeSelectOption value="vertical">纵向附件</NativeSelectOption>
+			</NativeSelect>
 			<label for={`${id}-${pane}-composition`}>组成</label>
-			<select
+			<NativeSelect
 				id={`${id}-${pane}-composition`}
-				class="rounded-md border bg-background p-2"
+				size="sm"
 				bind:value={panes[pane].composition}
-				><option value="both">媒体与文字</option><option value="content">只有文字</option><option
-					value="media">只有媒体</option
-				><option value="empty">空壳（不应添加留白）</option></select
 			>
+				<NativeSelectOption value="both">媒体与文字</NativeSelectOption>
+				<NativeSelectOption value="content">只有文字</NativeSelectOption>
+				<NativeSelectOption value="media">只有媒体</NativeSelectOption>
+				<NativeSelectOption value="empty">空壳（不应添加留白）</NativeSelectOption>
+			</NativeSelect>
 			<Button
 				variant="outline"
 				onclick={() => (panes[pane].align = panes[pane].align === "start" ? "end" : "start")}

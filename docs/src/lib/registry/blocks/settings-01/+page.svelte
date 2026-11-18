@@ -31,7 +31,6 @@
 		--sidebar-accent: light-dark(lch(89.54% .5 282), lch(13.845% 1.3 272));
 		--sidebar-accent-foreground: light-dark(lch(9.444% 0 282), white);
 		--card: light-dark(white, lch(9.232% .85 272));
-		--valar-settings-card-surface: var(--card);
 		--card-foreground: light-dark(lch(9.794% 0 282), white);
 		--muted-foreground: light-dark(lch(39.176% 1.25 282), lch(61.803% 1.2 272));
 		--border: light-dark(lch(92.5% 0 282), lch(18.5% .85 272));
@@ -43,8 +42,7 @@
 		--settings-control-shadow: 0 0 0 .5px light-dark(#00000024, #ffffff26);
 		--settings-menu: light-dark(white, lch(16.433% 1.3 272));
 		--settings-menu-highlight: light-dark(lch(94% .5 282), lch(25.69% 1.975 272));
-		--settings-menu-border: light-dark(lch(86.5% 0 282), lch(38.032% 2.38 272));
-		--settings-menu-shadow: 0 0 0 .5px var(--settings-menu-border), 0 6px 18px light-dark(rgb(0 0 0 / .02), transparent), 0 3px 9px light-dark(rgb(0 0 0 / .04), transparent), 0 3px 8px light-dark(transparent, rgb(0 0 0 / .125)), 0 2px 5px light-dark(transparent, rgb(0 0 0 / .125)), 0 1px 1px light-dark(rgb(0 0 0 / .04), rgb(0 0 0 / .125));
+		--settings-menu-shadow: 0 0 0 .5px light-dark(lch(86.5% 0 282), lch(38.032% 2.38 272)), 0 6px 18px light-dark(rgb(0 0 0 / .02), transparent), 0 3px 9px light-dark(rgb(0 0 0 / .04), transparent), 0 3px 8px light-dark(transparent, rgb(0 0 0 / .125)), 0 2px 5px light-dark(transparent, rgb(0 0 0 / .125)), 0 1px 1px light-dark(rgb(0 0 0 / .04), rgb(0 0 0 / .125));
 		--settings-focus: light-dark(lch(53% 52.26 286.91), lch(47.918% 59.303 288.421));
 		--settings-switch-off: light-dark(lch(82.484% .054 281.837), lch(47.551% .913 271.998));
 	`;
@@ -187,7 +185,6 @@
 									<Select.Content
 										appearance="settings"
 										portalProps={{ to: `[id="${shellId}"]` }}
-										style="--valar-select-menu-border: var(--settings-menu-border)"
 										align="end"
 										class="min-w-[202px]"
 									>

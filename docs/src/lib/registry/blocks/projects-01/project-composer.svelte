@@ -39,7 +39,7 @@
 		empty: text("没有匹配的选项", "No matching options"),
 	});
 	const editor =
-		"border-0 bg-transparent! px-0 ring-0! shadow-none! placeholder:text-(--project-placeholder)";
+		"border-0 bg-transparent! px-0 ring-0! shadow-none! focus:outline-none! focus-visible:outline-none! placeholder:text-(--project-placeholder)";
 	const closeButton =
 		"size-8 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground";
 	let draft = $state<ProjectDraft>(emptyDraft("backlog", []));

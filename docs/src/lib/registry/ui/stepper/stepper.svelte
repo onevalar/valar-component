@@ -232,11 +232,11 @@
 	aria-busy={pending}
 	data-slot="stepper"
 	data-orientation={orientation}
-	class={cn("grid w-full min-w-0 gap-5 text-foreground", "cn-stepper", className)}
+	class={cn("grid w-full min-w-0 gap-4 text-foreground", "cn-stepper", className)}
 >
 	<ol
 		class={cn(
-			"flex min-w-0 gap-3",
+			"flex min-w-0 gap-2",
 			orientation === "vertical" ? "flex-col" : "flex-col sm:flex-row"
 		)}
 	>
@@ -268,7 +268,7 @@
 					disabled={disabled || !reachable(index) || (pending && index > currentIndex)}
 					tabindex={(focused || value) === step.id ? 0 : -1}
 					class={cn(
-						"flex w-full items-start gap-3 rounded-md border border-border bg-background p-3 text-start text-sm outline-none hover:bg-muted focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 data-[state=active]:border-primary data-[state=error]:border-destructive",
+						"flex w-full items-start gap-2.5 rounded-[10px] border-[0.5px] border-border bg-card p-3 text-start text-[13px] transition-colors duration-150 motion-reduce:transition-none outline-none hover:bg-accent/50 focus-visible:border-ring focus-visible:outline-solid focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-45 data-[state=active]:border-primary data-[state=active]:bg-primary/[0.04] dark:data-[state=active]:bg-primary/[0.08] data-[state=error]:border-destructive",
 						"cn-stepper-trigger"
 					)}
 					onclick={() => goTo(step.id)}
@@ -278,7 +278,7 @@
 					<span
 						aria-hidden="true"
 						class={cn(
-							"flex size-7 shrink-0 items-center justify-center rounded-full border",
+							"mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border-[0.5px] text-[11px] font-medium tabular-nums",
 							state === "active" || state === "completed"
 								? "border-primary bg-primary text-primary-foreground"
 								: state === "error"
@@ -286,10 +286,10 @@
 									: "border-border text-muted-foreground"
 						)}>{state === "completed" ? "✓" : state === "error" ? "!" : index + 1}</span
 					>
-					<span class="grid min-w-0 gap-1"
-						><span class="font-medium break-words">{step.title}</span>{#if step.description}<span
+					<span class="grid min-w-0 gap-0.5"
+						><span class="text-[13px] leading-[18px] font-medium break-words">{step.title}</span>{#if step.description}<span
 								id={`${triggerId(step.id)}-description`}
-								class="text-xs break-words text-muted-foreground">{step.description}</span
+								class="text-xs leading-[16px] break-words text-muted-foreground">{step.description}</span
 							>{/if}</span
 					>
 				</button>
@@ -299,7 +299,7 @@
 	<p class="sr-only" aria-live="polite">
 		{pending ? messages.validating : messages.progress(currentIndex + 1, steps.length)}
 	</p>
-	{#if currentError}<p id={`${uid}-error`} role="alert" class="text-sm text-destructive">
+	{#if currentError}<p id={`${uid}-error`} role="alert" class="text-xs text-destructive">
 			{currentError}
 		</p>{/if}
 	{#each steps as step, index (step.id)}
@@ -308,7 +308,7 @@
 			aria-labelledby={triggerId(step.id)}
 			tabindex="-1"
 			hidden={step.id !== value}
-			class="min-w-0 rounded-md outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring"
+			class="min-w-0 rounded-[8px] outline-none focus-visible:outline-solid focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring"
 			data-slot="stepper-content"
 		>
 			{@render children?.({
