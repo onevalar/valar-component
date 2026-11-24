@@ -5,7 +5,10 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
 	plugins: [svelte({ configFile: false })],
 	resolve: {
-		alias: { $lib: fileURLToPath(new URL("./src/lib", import.meta.url)) },
+		alias: {
+			$lib: fileURLToPath(new URL("./src/lib", import.meta.url)),
+			$content: fileURLToPath(new URL("./.velite", import.meta.url)),
+		},
 		conditions: ["browser"],
 	},
 	test: { environment: "jsdom", include: ["tests/**/*.test.ts"] },
