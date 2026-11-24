@@ -55,6 +55,7 @@ const alignedSlugs = new Set([
 	"native-select",
 	"navigation-menu",
 	"number-field",
+	"page-layout",
 	"pagination",
 	"popover",
 	"progress",

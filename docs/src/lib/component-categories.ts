@@ -99,7 +99,7 @@ export const COMPONENT_CATEGORIES = [
 		key: "layout",
 		zh: "布局",
 		en: "Layout",
-		slugs: ["aspect-ratio", "resizable", "scroll-area", "separator"],
+		slugs: ["page-layout", "aspect-ratio", "resizable", "scroll-area", "separator"],
 	},
 	{
 		key: "feedback",

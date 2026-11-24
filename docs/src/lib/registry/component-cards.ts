@@ -95,6 +95,7 @@ export const REQUIRED_CARDS = [
 	"ruler-slider",
 	"tick-meter",
 	"texture-fill",
+	"page-layout",
 ] as const;
 
 const line = z.string().min(2).max(200);

@@ -211,3 +211,4 @@ export { default as ShimmerAngle } from "./shimmer-angle.svelte";
 export { default as ShimmerOnce } from "./shimmer-once.svelte";
 export { default as ShimmerNone } from "./shimmer-none.svelte";
 export { default as ShimmerRtl } from "./shimmer-rtl.svelte";
+export { default as PageLayoutDemo } from "./page-layout-demo.svelte";
