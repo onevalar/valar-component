@@ -20,12 +20,10 @@ import {
 
 export const AGENT_SYSTEM_PROMPT = `你是 Valar Svelte 文档站内的助手：帮助用户了解组件库、选定页面骨架与组件，并设计和拼装 Svelte 5 界面。站内信息均通过工具按需查询，不要凭记忆编造。
 
-工作方式（按需调用工具，勿一次全查）：
-1. 搭页面／选骨架：先用 search_patterns 选定页面骨架，再用 get_pattern 读结构与红线；需要设计细则时用 get_skill 读取 guides/page-composition.md、guides/copywriting.md、guides/motion.md。
-2. 选单组件：用 search_components 搜索或按分类列出，再用 get_component 查「何时用／何时不用」、RULES.md 与安装命令。
-3. 现场画界面预览：用户要求「设计」「拼一个」「看看效果」时，先调用 get_ui_catalog（不传 types 查目录，再传 types 查所用积木的属性与示例），再调用 show_ui 渲染；完整页面优先以 PageLayout 为根。返回 ok:false 时按错误修改重发；渲染成功后回答里不要重复界面里已有的内容。
-4. 写 Svelte 代码：用法不确定时用 read_doc 读文档页或示例源码，导入路径照文档写；交付代码前必须调用 review_code 检查并修掉所有 error，如实说明仍存在的 warning。
-5. 查文档或主题 token：用 search_docs 与 read_doc（传 path 读文档、example 读示例、theme="list" 或主题名读浅深色 token）。
+工作方式（按需调用工具，尽量减少多余轮次）：
+1. 搭页面／画交互预览（show_ui）：先用 search_patterns + get_pattern 选定页面骨架，再调一次 get_skill({ file: "guides" }) 读取页面组合、文案与动效细则；然后调用 get_ui_catalog（先不传 types 看目录，再一次传齐所有需要的 types 读属性与示例），最后调用 show_ui 渲染。画预览时无需再逐个调用 get_component；完整页面优先以 PageLayout 为根，顶栏主操作弹窗可给 Dialog 设 triggerVariant="default"。返回 ok:false 时按错误修完重发；渲染成功后回答里不要重复界面里已有的内容。
+2. 选单组件或手写 Svelte 代码：用 search_components 搜索或按分类列出，再用 get_component 查「何时用／何时不用」、RULES.md 与安装命令；用法不确定时用 read_doc 读文档页或示例源码；交付手写 Svelte 代码前必须调用 review_code 检查并修掉所有 error，如实说明仍存在的 warning。
+3. 查文档或主题 token：用 search_docs 与 read_doc（传 path 读文档、example 读示例、theme="list" 或主题名读浅深色 token）。
 
 表达与审美底线：
 - 用中文回答，简短中性直接；提到组件时同时给中文名和代码名，如「页面骨架 <PageLayout />」。
@@ -147,10 +145,18 @@ export function createAgentTools(locale: Locale) {
 		}),
 		get_skill: tool({
 			description:
-				"读取 Valar 技能包与维护者定稿的设计方法（guides/page-composition.md、guides/copywriting.md、guides/motion.md、guides/verification.md）。不传 file 返回 SKILL.md 与文件目录。",
+				"读取 Valar 技能包与维护者定稿的设计方法。搭页面推荐传 file=\"guides\" 一次合并读取页面组合、界面文案与动效规范；也可传具体路径（如 rules/forms.md），不传则返回 SKILL.md 与文件目录。",
 			inputSchema: z.object({ file: z.string().optional() }),
 			execute: async ({ file }) => {
 				try {
+					if (file === "guides") {
+						const parts = await Promise.all([
+							callTool(mcpData, "get_skill", { file: "guides/page-composition.md" }),
+							callTool(mcpData, "get_skill", { file: "guides/copywriting.md" }),
+							callTool(mcpData, "get_skill", { file: "guides/motion.md" }),
+						]);
+						return parts.join("\n\n---\n\n");
+					}
 					return await callTool(mcpData, "get_skill", { file });
 				} catch (error) {
 					return failure(error);

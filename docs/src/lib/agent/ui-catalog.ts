@@ -787,15 +787,172 @@ export const UI_CATALOG = [
 	define({
 		type: "Dialog",
 		name: "对话框",
-		useWhen: "需要用户专注完成的一小步；点 triggerLabel 的按钮打开，children 是正文",
-		avoidWhen: "不可撤销的操作确认也可以用它，但危险按钮要设 variant=destructive",
-		props: { triggerLabel: label, title: label, description: text.optional() },
+		useWhen:
+			"需要用户专注完成的一小步短表单；点 triggerLabel 的按钮打开，children 是正文。放在 PageHeader 右上角作为唯一主操作时可设 triggerVariant=default",
+		avoidWhen: "不可逆的高危确认请用 AlertDialog；右侧详情或复杂筛选面板请用 Sheet",
+		props: {
+			triggerLabel: label,
+			triggerVariant: z.enum(["default", "outline", "secondary", "ghost", "destructive"]).optional(),
+			triggerSize: z.enum(["xs", "sm", "default"]).optional(),
+			title: label,
+			description: text.optional(),
+		},
 		children: "nodes",
 		example: {
 			type: "Dialog",
-			props: { triggerLabel: "编辑资料", title: "编辑资料", description: "修改后点保存。" },
+			props: {
+				triggerLabel: "编辑资料",
+				triggerVariant: "outline",
+				triggerSize: "sm",
+				title: "编辑资料",
+				description: "修改后点保存。",
+			},
 			children: [{ type: "InputField", props: { label: "名字", value: "王" } }],
 		},
+	}),
+	define({
+		type: "AlertDialog",
+		name: "危险确认弹窗",
+		useWhen:
+			"删除项目、移除成员、注销工作区等不可逆高危操作的二次确认；左侧强制保留取消按钮，confirmLabel 须写明动作与对象（如“删除密钥”）",
+		avoidWhen: "普通编辑表单用 Dialog；右侧详情或筛选面板用 Sheet",
+		props: {
+			triggerLabel: label,
+			triggerVariant: z.enum(["destructive", "outline", "ghost", "default"]).optional(),
+			title: label,
+			description: text,
+			cancelLabel: label.optional(),
+			confirmLabel: label,
+			destructive: z.boolean().optional(),
+		},
+		children: "none",
+		example: {
+			type: "AlertDialog",
+			props: {
+				triggerLabel: "删除密钥",
+				title: "删除 API 密钥",
+				description: "删除后使用该密钥的请求将立即失效，且无法恢复。",
+				cancelLabel: "取消",
+				confirmLabel: "删除密钥",
+				destructive: true,
+			},
+		},
+	}),
+	define({
+		type: "Sheet",
+		name: "侧滑详情抽屉",
+		useWhen: "点击按钮或列表项在侧边展开详情、属性编辑或复杂筛选面板，不丢失当前列表上下文",
+		avoidWhen: "短表单或高危二次确认用 Dialog 或 AlertDialog",
+		props: {
+			triggerLabel: label,
+			triggerVariant: z.enum(["outline", "ghost", "secondary", "default"]).optional(),
+			title: label,
+			description: text.optional(),
+			side: z.enum(["right", "left", "bottom"]).optional(),
+		},
+		children: "nodes",
+		example: {
+			type: "Sheet",
+			props: { triggerLabel: "查看详情", title: "任务详情", side: "right" },
+			children: [
+				{
+					type: "PropertyList",
+					props: { layout: "detail" },
+					children: [
+						{ type: "PropertyRow", props: { label: "状态", value: "进行中" } },
+						{ type: "PropertyRow", props: { label: "负责人", value: "Mira Chen" } },
+					],
+				},
+			],
+		},
+	}),
+	define({
+		type: "ItemList",
+		name: "紧凑列表",
+		useWhen:
+			"工作台任务列表、通知收件箱、轻量条目列表（平铺无外层卡片，自带 0.5px 行分隔）；children 只能是 ItemRow",
+		avoidWhen: "多列对齐数据比较用 Table；系统开关设置行用 PropertyList",
+		props: { label: label.optional() },
+		children: "nodes",
+		allowedChildren: ["ItemRow"],
+		example: {
+			type: "ItemList",
+			props: { label: "待办任务" },
+			children: [
+				{
+					type: "ItemRow",
+					props: { meta: "DS-42", title: "核对菜单键盘导航与焦点归位" },
+					children: [{ type: "Badge", props: { variant: "secondary" }, children: "进行中" }],
+				},
+				{
+					type: "ItemRow",
+					props: { meta: "DS-31", title: "收敛空状态提示文案" },
+					children: [{ type: "Badge", props: { variant: "outline" }, children: "待处理" }],
+				},
+			],
+		},
+	}),
+	define({
+		type: "ItemRow",
+		name: "列表行",
+		useWhen:
+			"ItemList 中的单条紧凑行：左放编号/标题/可选副说明，右放 children（Badge、Button、Sheet 或 AlertDialog）",
+		props: {
+			title: label,
+			meta: label.optional(),
+			description: text.optional(),
+			disabled: z.boolean().optional(),
+		},
+		children: "nodes",
+		example: {
+			type: "ItemRow",
+			props: { meta: "DS-42", title: "核对菜单键盘导航与焦点归位", description: "今日更新" },
+			children: [{ type: "Badge", props: { variant: "secondary" }, children: "进行中" }],
+		},
+	}),
+	define({
+		type: "Gauge",
+		name: "配额仪表",
+		useWhen:
+			"展示套餐配额、存储或 API 额度使用百分比（超过 100 自动切危险红），数字自动等宽对齐",
+		avoidWhen: "普通步骤完成度用 Progress",
+		props: {
+			label,
+			value: z.number().min(0).max(200),
+			valueText: label.optional(),
+			tone: z.enum(["accent", "danger"]).optional(),
+		},
+		children: "none",
+		example: {
+			type: "Gauge",
+			props: { label: "本月额度", value: 72, valueText: "720 / 1,000 次" },
+		},
+	}),
+	define({
+		type: "Sparkline",
+		name: "迷你趋势折线",
+		useWhen: "紧凑展示 7–30 天调用量、活跃度或消费趋势折线（仅用主题语义色）",
+		props: {
+			label,
+			value: label.optional(),
+			values: z.array(z.number().nullable()).min(2).max(31),
+		},
+		children: "none",
+		example: {
+			type: "Sparkline",
+			props: { label: "近 7 天请求量", value: "128,450 次", values: [12, 18, 15, 22, 29, 25, 34] },
+		},
+	}),
+	define({
+		type: "Skeleton",
+		name: "加载骨架",
+		useWhen: "局部数据加载时的等高占位（不加整页遮罩转圈）；variant 可选 row、text、card",
+		props: {
+			variant: z.enum(["row", "text", "card"]).optional(),
+			lines: z.number().int().min(1).max(6).optional(),
+		},
+		children: "none",
+		example: { type: "Skeleton", props: { variant: "row", lines: 3 } },
 	}),
 	define({
 		type: "Stepper",
@@ -856,19 +1013,25 @@ const byType = new Map<string, (typeof UI_CATALOG)[number]>(
 );
 export const UI_TYPES = UI_CATALOG.map((entry) => entry.type) as UiType[];
 
-export const UI_LIMITS = { nodes: 150, depth: 8, bytes: 200_000 } as const;
+export const UI_LIMITS = { nodes: 200, depth: 12, bytes: 200_000 } as const;
 
 const REDUNDANT_PLACEHOLDER = /^\s*请输入/;
+const GENERIC_CONFIRM_LABEL = /^(确定|确认|好的|提交|是的|ok|confirm)$/i;
 const EMOJI_PATTERN = /\p{Extended_Pictographic}/u;
 const TITLE_PROP_TYPES = new Set([
 	"PageHeader",
 	"PageSection",
 	"Dialog",
+	"AlertDialog",
+	"Sheet",
+	"ItemRow",
 	"Empty",
 	"AccordionItem",
 ]);
+const LABEL_EMOJI_TYPES = new Set(["Gauge", "Sparkline"]);
 const TEXT_HEADER_TYPES = new Set(["Heading", "CardTitle", "Button", "AlertTitle"]);
-const SINGLE_PRIMARY_CONTAINERS = new Set(["PageHeader", "PageToolbar", "CardFooter"]);
+const SINGLE_PRIMARY_CONTAINERS = new Set(["PageHeader", "PageToolbar", "CardFooter", "ItemRow"]);
+const OVERLAY_ROOTS = new Set(["Dialog", "Sheet"]);
 
 const isCardSurface = (type: string, props: Record<string, unknown>) =>
 	type === "Card" || (type === "PageSection" && props.surface === "card");
@@ -879,6 +1042,10 @@ export function validateUi(
 ): { ok: true; root: UiNode; count: number } | { ok: false; errors: string[] } {
 	const errors: string[] = [];
 	let count = 0;
+
+	if (!root || typeof root !== "object" || Array.isArray(root)) {
+		return { ok: false, errors: ["root 必须是 { type, props?, children? } 对象"] };
+	}
 
 	try {
 		if (JSON.stringify(root).length > UI_LIMITS.bytes) {
@@ -964,6 +1131,34 @@ export function validateUi(
 			errors.push(`${path}.props.title：禁止在标题中使用 Emoji 作图标装饰，保持中性克制的文字表达`);
 		}
 		if (
+			LABEL_EMOJI_TYPES.has(entry.type) &&
+			typeof safeProps.label === "string" &&
+			EMOJI_PATTERN.test(safeProps.label)
+		) {
+			errors.push(`${path}.props.label：禁止在指标标题中使用 Emoji 作图标装饰，保持中性克制的文字表达`);
+		}
+		if (
+			(entry.type === "AlertDialog" || entry.type === "Sheet" || entry.type === "Dialog") &&
+			typeof safeProps.triggerLabel === "string" &&
+			EMOJI_PATTERN.test(safeProps.triggerLabel)
+		) {
+			errors.push(
+				`${path}.props.triggerLabel：禁止在触发按钮中使用 Emoji 作图标装饰，保持中性克制的文字表达`
+			);
+		}
+		if (entry.type === "AlertDialog" && typeof safeProps.confirmLabel === "string") {
+			if (EMOJI_PATTERN.test(safeProps.confirmLabel)) {
+				errors.push(
+					`${path}.props.confirmLabel：禁止在确认按钮中使用 Emoji 作图标装饰，保持中性克制的文字表达`
+				);
+			}
+			if (GENERIC_CONFIRM_LABEL.test(safeProps.confirmLabel.trim())) {
+				errors.push(
+					`${path}.props.confirmLabel：高危确认按钮避免笼统写“${safeProps.confirmLabel.trim()}”，请写明具体动作与对象（如“删除密钥”“移除成员”）`
+				);
+			}
+		}
+		if (
 			TEXT_HEADER_TYPES.has(entry.type) &&
 			typeof children === "string" &&
 			EMOJI_PATTERN.test(children)
@@ -996,7 +1191,11 @@ export function validateUi(
 								c.props && typeof c.props === "object" && !Array.isArray(c.props)
 									? (c.props as Record<string, unknown>)
 									: {};
-							if (c.type === "Button" && (cp.variant === undefined || cp.variant === "default")) {
+							if (
+								(c.type === "Button" && (cp.variant === undefined || cp.variant === "default")) ||
+								((c.type === "Dialog" || c.type === "Sheet" || c.type === "AlertDialog") &&
+									cp.triggerVariant === "default")
+							) {
 								primaryCount++;
 							}
 						}
@@ -1021,7 +1220,7 @@ export function validateUi(
 						);
 					}
 				}
-				const nextInsideCard = insideCard || entersCard;
+				const nextInsideCard = OVERLAY_ROOTS.has(entry.type) ? false : insideCard || entersCard;
 				children.forEach((child, index) =>
 					visit(
 						child,
@@ -1076,7 +1275,14 @@ export function usedComponentSlugs(root: UiNode): string[] {
 		Table: ["table"],
 		Tabs: ["tabs"],
 		Accordion: ["accordion"],
-		Dialog: ["dialog"],
+		Dialog: ["dialog", "button"],
+		AlertDialog: ["alert-dialog", "button"],
+		Sheet: ["sheet", "button"],
+		ItemList: ["item"],
+		ItemRow: ["item"],
+		Gauge: ["gauge"],
+		Sparkline: ["sparkline"],
+		Skeleton: ["skeleton"],
 		Stepper: ["stepper"],
 		ToggleGroup: ["toggle-group"],
 	};
@@ -1099,7 +1305,52 @@ export function uiCatalogIndex(): string {
 	return UI_CATALOG.map((entry) => `- ${entry.type}（${entry.name}）：${entry.useWhen}`).join("\n");
 }
 
-/** Full description of some components: props as JSON Schema, children rule and a working example. */
+type JsonSchemaNode = {
+	type?: string;
+	enum?: unknown[];
+	const?: unknown;
+	anyOf?: JsonSchemaNode[];
+	items?: JsonSchemaNode;
+	properties?: Record<string, JsonSchemaNode>;
+	required?: string[];
+	minimum?: number;
+	maximum?: number;
+	minItems?: number;
+	maxItems?: number;
+};
+
+function summarizeSchemaNode(node: JsonSchemaNode): unknown {
+	if (node.enum) return node.enum.map((v) => String(v)).join(" | ");
+	if (node.const !== undefined) return String(node.const);
+	if (node.anyOf) return node.anyOf.map(summarizeSchemaNode).join(" | ");
+	if (node.type === "array" && node.items) {
+		const bounds =
+			node.minItems !== undefined || node.maxItems !== undefined
+				? ` (${node.minItems ?? 0}..${node.maxItems ?? "n"})`
+				: "";
+		const item = summarizeSchemaNode(node.items);
+		return typeof item === "string" ? `Array<${item}>${bounds}` : [item];
+	}
+	if (node.type === "object" && node.properties) {
+		const req = new Set(node.required ?? []);
+		return Object.fromEntries(
+			Object.entries(node.properties).map(([key, prop]) => [
+				req.has(key) ? `${key}*` : key,
+				summarizeSchemaNode(prop),
+			])
+		);
+	}
+	if (node.type === "number" || node.type === "integer") {
+		const range =
+			node.minimum !== undefined || node.maximum !== undefined
+				? ` (${node.minimum ?? ""}..${node.maximum ?? ""})`
+				: "";
+		return `${node.type}${range}`;
+	}
+	return node.type ?? "unknown";
+}
+
+/** Full description of some components: compact props signature (`*` = required), children rule and working example. */
 export function uiCatalogDetails(types?: string[]) {
 	const list = types?.length
 		? UI_CATALOG.filter((entry) => types.includes(entry.type))
@@ -1115,7 +1366,7 @@ export function uiCatalogDetails(types?: string[]) {
 				: entry.children === "text"
 					? "一段文字（字符串）"
 					: "无",
-		props: z.toJSONSchema(entry.schema, { io: "input" }),
+		props: summarizeSchemaNode(z.toJSONSchema(entry.schema, { io: "input" }) as JsonSchemaNode),
 		example: entry.example,
 	}));
 }

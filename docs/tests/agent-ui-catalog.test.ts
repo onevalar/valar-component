@@ -14,16 +14,23 @@ import { uiNodeToSvelte } from "$lib/agent/ui-to-svelte.js";
 import { lintSource } from "../../packages/cli/src/utils/design-rules-core.js";
 
 describe("agent UI catalog and aesthetic guardrails", () => {
-	it("validates every built-in catalog example including the PageLayout family", () => {
-		const pageTypes = [
+	it("validates every built-in catalog example including PageLayout and business primitives", () => {
+		const expectedTypes = [
 			"PageLayout",
 			"PageHeader",
 			"PageToolbar",
 			"PageSection",
 			"PropertyList",
 			"PropertyRow",
+			"AlertDialog",
+			"Sheet",
+			"ItemList",
+			"ItemRow",
+			"Gauge",
+			"Sparkline",
+			"Skeleton",
 		];
-		for (const type of pageTypes) {
+		for (const type of expectedTypes) {
 			expect(UI_CATALOG.some((entry) => entry.type === type)).toBe(true);
 		}
 		for (const entry of UI_CATALOG) {
@@ -238,6 +245,69 @@ describe("agent UI catalog and aesthetic guardrails", () => {
 			expect(res.errors.some((e) => e.includes("SwitchField"))).toBe(true);
 		}
 	});
+
+	it("rejects generic confirmLabel in AlertDialog and Emoji on new primitives", () => {
+		for (const generic of ["确定", "确认", "OK", "Confirm"]) {
+			const res = validateUi({
+				type: "AlertDialog",
+				props: {
+					triggerLabel: "删除项目",
+					title: "删除项目",
+					description: "删除后不可恢复。",
+					confirmLabel: generic,
+				},
+			});
+			expect(res.ok).toBe(false);
+			if (!res.ok) {
+				expect(res.errors.some((e) => e.includes("动作与对象"))).toBe(true);
+			}
+		}
+
+		for (const badEmoji of [
+			{
+				type: "Sheet",
+				props: { triggerLabel: "🔍 查看", title: "详情" },
+			},
+			{
+				type: "ItemRow",
+				props: { title: "🔥 紧急任务" },
+			},
+			{
+				type: "Gauge",
+				props: { label: "📊 配额", value: 60 },
+			},
+			{
+				type: "Sparkline",
+				props: { label: "📈 趋势", values: [1, 2, 3] },
+			},
+		]) {
+			const res = validateUi(badEmoji);
+			expect(res.ok).toBe(false);
+			if (!res.ok) {
+				expect(res.errors.some((e) => e.includes("Emoji"))).toBe(true);
+			}
+		}
+
+		// Sheet opened inside a Card resets card-nesting context, while still forbidding double cards inside Sheet.
+		const sheetInsideCardOk: UiNode = {
+			type: "PageSection",
+			props: { surface: "card" },
+			children: [
+				{
+					type: "Sheet",
+					props: { triggerLabel: "查看详情", title: "项目详情" },
+					children: [
+						{
+							type: "PageSection",
+							props: { surface: "card" },
+							children: [{ type: "Text", children: "单层卡片" }],
+						},
+					],
+				},
+			],
+		};
+		expect(validateUi(sheetInsideCardOk)).toMatchObject({ ok: true });
+	});
 });
 
 describe("slimmed site agent tools and system prompt", () => {
@@ -336,6 +406,117 @@ describe("slimmed site agent tools and system prompt", () => {
 		expect(missing.error).toContain("path");
 	});
 
+	it("merges all three maintainer design guides in one get_skill(guides) call and keeps catalog details compact", async () => {
+		const guides = String(await call(tools.get_skill, { file: "guides" }));
+		expect(guides).toContain("# 页面组合");
+		expect(guides).toContain("# 界面文案");
+		expect(guides).toContain("# 动效与交互反馈");
+
+		const details = await call(tools.get_ui_catalog, {
+			types: [
+				"PageLayout",
+				"PageHeader",
+				"PageToolbar",
+				"PageSection",
+				"PropertyList",
+				"PropertyRow",
+				"ItemList",
+				"ItemRow",
+				"Sheet",
+				"Dialog",
+				"AlertDialog",
+				"Table",
+				"Gauge",
+				"Sparkline",
+				"Button",
+			],
+		});
+		const bytes = JSON.stringify(details).length;
+		expect(bytes).toBeLessThan(10_000);
+		expect(JSON.stringify(details)).not.toContain("$schema");
+	});
+
+	it("allows realistic 10-level workspace+Sheet trees and counts primary Dialog triggers", () => {
+		expect(validateUi(undefined)).toEqual({
+			ok: false,
+			errors: ["root 必须是 { type, props?, children? } 对象"],
+		});
+
+		const duplicatePrimaryDialog: UiNode = {
+			type: "PageHeader",
+			props: { title: "成员权限" },
+			children: [
+				{
+					type: "Dialog",
+					props: { triggerLabel: "邀请成员", triggerVariant: "default", title: "邀请成员" },
+					children: [],
+				},
+				{ type: "Button", children: "导出" },
+			],
+		};
+		const dupRes = validateUi(duplicatePrimaryDialog);
+		expect(dupRes.ok).toBe(false);
+		if (!dupRes.ok) {
+			expect(dupRes.errors.some((e) => e.includes("最多只放 1 个主操作"))).toBe(true);
+		}
+
+		// Depth 10 realistic tree: PageLayout > Tabs > TabPanel > PageSection > ItemList > ItemRow > Sheet > PropertyList > PropertyRow > Button
+		const deepWorkspace: UiNode = {
+			type: "PageLayout",
+			props: { width: "full" },
+			children: [
+				{
+					type: "Tabs",
+					props: { defaultValue: "mine" },
+					children: [
+						{
+							type: "TabPanel",
+							props: { value: "mine", label: "我负责的" },
+							children: [
+								{
+									type: "PageSection",
+									children: [
+										{
+											type: "ItemList",
+											children: [
+												{
+													type: "ItemRow",
+													props: { meta: "DS-1", title: "核对权限接口" },
+													children: [
+														{
+															type: "Sheet",
+															props: { triggerLabel: "详情", title: "任务详情" },
+															children: [
+																{
+																	type: "PropertyList",
+																	props: { layout: "detail" },
+																	children: [
+																		{
+																			type: "PropertyRow",
+																			props: { label: "操作" },
+																			children: [
+																				{ type: "Button", props: { variant: "outline", size: "sm" }, children: "复制链接" },
+																			],
+																		},
+																	],
+																},
+															],
+														},
+													],
+												},
+											],
+										},
+									],
+								},
+							],
+						},
+					],
+				},
+			],
+		};
+		expect(validateUi(deepWorkspace)).toMatchObject({ ok: true });
+	});
+
 	it("enforces aesthetic rules in both show_ui and review_code", async () => {
 		const badUi = (await call(tools.show_ui, {
 			root: { type: "PageHeader", props: { title: "🚀 设置" } },
@@ -432,6 +613,109 @@ describe("deterministic uiNodeToSvelte code generator", () => {
 		expect(result.installCommand).toContain("table");
 		expect(result.installCommand).toContain("dialog");
 		expect(lintSource("settings-page.svelte", result.code)).toEqual([]);
+	});
+
+	it("generates lint-clean Svelte 5 code for billing metrics and workspace-list + Sheet pages", () => {
+		const billingPage: UiNode = {
+			type: "PageLayout",
+			props: { width: "full" },
+			children: [
+				{
+					type: "PageHeader",
+					props: { title: "账单与用量" },
+					children: [
+						{
+							type: "AlertDialog",
+							props: {
+								triggerLabel: "停用额度",
+								title: "停用超额计费",
+								description: "停用后超出套餐额度的请求将被直接拒绝。",
+								confirmLabel: "停用超额计费",
+							},
+						},
+					],
+				},
+				{
+					type: "Grid",
+					props: { columns: 2, gap: "md" },
+					children: [
+						{
+							type: "PageSection",
+							props: { surface: "card" },
+							children: [
+								{
+									type: "Gauge",
+									props: { label: "本月 API 额度", value: 112, valueText: "1,120 / 1,000 次" },
+								},
+							],
+						},
+						{
+							type: "PageSection",
+							props: { surface: "card" },
+							children: [
+								{
+									type: "Sparkline",
+									props: { label: "近 7 天请求趋势", value: "128,450 次", values: [12, 18, 16, 24, 30, 27, 36] },
+								},
+							],
+						},
+					],
+				},
+				{
+					type: "PageSection",
+					props: { title: "任务列表" },
+					children: [
+						{
+							type: "ItemList",
+							props: { label: "近期任务" },
+							children: [
+								{
+									type: "ItemRow",
+									props: { meta: "DS-42", title: "核对账单导出格式" },
+									children: [
+										{ type: "Badge", props: { variant: "secondary" }, children: "进行中" },
+										{
+											type: "Sheet",
+											props: { triggerLabel: "详情", title: "DS-42 详情" },
+											children: [
+												{
+													type: "PropertyList",
+													props: { layout: "detail" },
+													children: [{ type: "PropertyRow", props: { label: "负责人", value: "Mira" } }],
+												},
+											],
+										},
+									],
+								},
+							],
+						},
+					],
+				},
+				{ type: "Skeleton", props: { variant: "row", lines: 2 } },
+			],
+		};
+
+		expect(validateUi(billingPage)).toMatchObject({ ok: true });
+		const out = uiNodeToSvelte(billingPage);
+		expect(out.components).toEqual(
+			expect.arrayContaining([
+				"page-layout",
+				"alert-dialog",
+				"gauge",
+				"sparkline",
+				"item",
+				"sheet",
+				"skeleton",
+			])
+		);
+		expect(out.code).toContain('import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";');
+		expect(out.code).toContain('import * as Sheet from "$lib/components/ui/sheet/index.js";');
+		expect(out.code).toContain('import * as Item from "$lib/components/ui/item/index.js";');
+		expect(out.code).toContain('import { Gauge } from "$lib/components/ui/gauge/index.js";');
+		expect(out.code).toContain('import { StaticSparkline } from "$lib/components/ui/sparkline/index.js";');
+		expect(out.code).toContain('import { Skeleton } from "$lib/components/ui/skeleton/index.js";');
+		expect(out.code).toContain('tone="danger"');
+		expect(lintSource("billing-workspace.svelte", out.code)).toEqual([]);
 	});
 });
 

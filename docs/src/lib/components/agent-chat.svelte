@@ -189,7 +189,10 @@
 		"tool-get_skill": {
 			verb: "读取",
 			noun: "设计规范",
-			target: (i) => (strArg(i, "file") ? ` ${strArg(i, "file")}` : ""),
+			target: (i) => {
+				const f = strArg(i, "file");
+				return !f ? "" : f === "guides" ? "（组合／文案／动效）" : ` ${f}`;
+			},
 		},
 		"tool-search_docs": {
 			verb: "搜索",

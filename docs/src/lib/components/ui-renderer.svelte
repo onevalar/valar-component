@@ -2,6 +2,7 @@
 	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
 	import * as Accordion from "$lib/registry/ui/accordion/index.js";
 	import * as Alert from "$lib/registry/ui/alert/index.js";
+	import * as AlertDialog from "$lib/registry/ui/alert-dialog/index.js";
 	import * as Avatar from "$lib/registry/ui/avatar/index.js";
 	import * as Breadcrumb from "$lib/registry/ui/breadcrumb/index.js";
 	import * as Card from "$lib/registry/ui/card/index.js";
@@ -9,10 +10,12 @@
 	import * as Empty from "$lib/registry/ui/empty/index.js";
 	import * as Field from "$lib/registry/ui/field/index.js";
 	import * as InputOTP from "$lib/registry/ui/input-otp/index.js";
+	import * as Item from "$lib/registry/ui/item/index.js";
 	import * as Kbd from "$lib/registry/ui/kbd/index.js";
 	import * as PageLayout from "$lib/registry/ui/page-layout/index.js";
 	import * as RadioGroup from "$lib/registry/ui/radio-group/index.js";
 	import * as Select from "$lib/registry/ui/select/index.js";
+	import * as Sheet from "$lib/registry/ui/sheet/index.js";
 	import * as Table from "$lib/registry/ui/table/index.js";
 	import * as Tabs from "$lib/registry/ui/tabs/index.js";
 	import * as ToggleGroup from "$lib/registry/ui/toggle-group/index.js";
@@ -22,11 +25,14 @@
 	import { Checkbox } from "$lib/registry/ui/checkbox/index.js";
 	import { Combobox } from "$lib/registry/ui/combobox/index.js";
 	import { DatePicker } from "$lib/registry/ui/date-picker/index.js";
+	import { Gauge } from "$lib/registry/ui/gauge/index.js";
 	import { Input } from "$lib/registry/ui/input/index.js";
 	import { NumberField } from "$lib/registry/ui/number-field/index.js";
 	import { Progress } from "$lib/registry/ui/progress/index.js";
 	import { Separator } from "$lib/registry/ui/separator/index.js";
+	import { Skeleton } from "$lib/registry/ui/skeleton/index.js";
 	import { SliderField } from "$lib/registry/ui/slider-field/index.js";
+	import { StaticSparkline } from "$lib/registry/ui/sparkline/index.js";
 	import { Spinner } from "$lib/registry/ui/spinner/index.js";
 	import { Stepper } from "$lib/registry/ui/stepper/index.js";
 	import { Switch } from "$lib/registry/ui/switch/index.js";
@@ -123,7 +129,9 @@
 				{/if}
 			</PageLayout.Header>
 		{:else if n.type === "PageToolbar"}
-			<PageLayout.Toolbar>{@render nodes(list(n), path)}</PageLayout.Toolbar>
+			<PageLayout.Toolbar class="[&>[data-slot=field]]:w-full [&>[data-slot=field]]:@sm:w-64">
+				{@render nodes(list(n), path)}
+			</PageLayout.Toolbar>
 		{:else if n.type === "PageSection"}
 			{@const children = list(n)}
 			{@const flushSettingsList =
@@ -459,7 +467,13 @@
 			<Dialog.Root>
 				<Dialog.Trigger>
 					{#snippet child({ props })}
-						<Button {...props} variant="outline">{p.triggerLabel}</Button>
+						<Button
+							{...props}
+							variant={p.triggerVariant ?? "outline"}
+							size={p.triggerSize ?? "sm"}
+						>
+							{p.triggerLabel}
+						</Button>
 					{/snippet}
 				</Dialog.Trigger>
 				<Dialog.Content>
@@ -470,6 +484,115 @@
 					<div class="flex flex-col gap-4">{@render nodes(list(n), path)}</div>
 				</Dialog.Content>
 			</Dialog.Root>
+		{:else if n.type === "AlertDialog"}
+			{@const isDestructive = p.destructive !== false}
+			{@const triggerVariant = p.triggerVariant ?? (isDestructive ? "destructive" : "outline")}
+			<AlertDialog.Root>
+				<AlertDialog.Trigger>
+					{#snippet child({ props })}
+						<Button {...props} variant={triggerVariant} size="sm">{p.triggerLabel}</Button>
+					{/snippet}
+				</AlertDialog.Trigger>
+				<AlertDialog.Content appearance={isDestructive ? "danger" : "confirmation"} focusCancel>
+					<AlertDialog.Header>
+						<AlertDialog.Title>{p.title}</AlertDialog.Title>
+						<AlertDialog.Description>{p.description}</AlertDialog.Description>
+					</AlertDialog.Header>
+					<AlertDialog.Footer>
+						<AlertDialog.Cancel>{p.cancelLabel ?? "取消"}</AlertDialog.Cancel>
+						<AlertDialog.Action variant={isDestructive ? "destructive" : "default"}>
+							{p.confirmLabel}
+						</AlertDialog.Action>
+					</AlertDialog.Footer>
+				</AlertDialog.Content>
+			</AlertDialog.Root>
+		{:else if n.type === "Sheet"}
+			<Sheet.Root>
+				<Sheet.Trigger>
+					{#snippet child({ props })}
+						<Button {...props} variant={p.triggerVariant ?? "outline"} size="sm">
+							{p.triggerLabel}
+						</Button>
+					{/snippet}
+				</Sheet.Trigger>
+				<Sheet.Content side={p.side ?? "right"}>
+					<Sheet.Header>
+						<Sheet.Title>{p.title}</Sheet.Title>
+						{#if p.description}<Sheet.Description>{p.description}</Sheet.Description>{/if}
+					</Sheet.Header>
+					<div class="flex flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4">
+						{@render nodes(list(n), path)}
+					</div>
+				</Sheet.Content>
+			</Sheet.Root>
+		{:else if n.type === "ItemList"}
+			<Item.Group aria-label={p.label} class="divide-y-[0.5px] divide-border border-y-[0.5px] border-border">
+				{@render nodes(list(n), path)}
+			</Item.Group>
+		{:else if n.type === "ItemRow"}
+			<div role="listitem">
+				<Item.Root size="sm" aria-disabled={p.disabled ? "true" : undefined}>
+					<Item.Content>
+						<div class="flex min-w-0 items-center gap-2">
+							{#if p.meta}
+								<span class="shrink-0 text-xs tabular-nums text-muted-foreground">{p.meta}</span>
+							{/if}
+							<Item.Title class="truncate">{p.title}</Item.Title>
+						</div>
+						{#if p.description}<Item.Description>{p.description}</Item.Description>{/if}
+					</Item.Content>
+					{#if list(n).length}
+						<Item.Actions>{@render nodes(list(n), path)}</Item.Actions>
+					{/if}
+				</Item.Root>
+			</div>
+		{:else if n.type === "Gauge"}
+			{@const gaugeTone = p.tone ?? (Number(p.value) > 100 ? "danger" : "accent")}
+			{@const gaugeValueText = p.valueText ?? `已使用 ${Math.round(Number(p.value))}%`}
+			<div class="flex flex-wrap items-center gap-3">
+				<Gauge
+					value={p.value}
+					label={p.label}
+					valueText={gaugeValueText}
+					tone={gaugeTone}
+					class="w-20 shrink-0"
+				/>
+				<div class="flex min-w-0 flex-col gap-0.5">
+					<span class="text-sm font-medium text-foreground">{p.label}</span>
+					<span class="text-xs tabular-nums text-muted-foreground">{gaugeValueText}</span>
+				</div>
+			</div>
+		{:else if n.type === "Sparkline"}
+			<div class="flex items-center gap-3">
+				<StaticSparkline values={p.values} width="96" height="40" class="shrink-0" />
+				<div class="flex min-w-0 flex-col gap-0.5">
+					<span class="text-xs text-muted-foreground">{p.label}</span>
+					{#if p.value}
+						<span class="text-sm font-medium tabular-nums text-foreground">{p.value}</span>
+					{/if}
+				</div>
+			</div>
+		{:else if n.type === "Skeleton"}
+			{@const lineCount = Number(p.lines ?? (p.variant === "card" ? 1 : 3))}
+			{#if p.variant === "card"}
+				<div class="flex flex-col gap-3 rounded-lg border-[0.5px] border-border p-4">
+					<Skeleton class="h-4 w-1/3" />
+					<Skeleton class="h-8 w-1/2" />
+					<Skeleton class="h-3 w-2/3" />
+				</div>
+			{:else if p.variant === "text"}
+				<div class="flex flex-col gap-2">
+					{#each Array.from({ length: lineCount }) as _, idx (idx)}
+						<Skeleton class={idx === lineCount - 1 ? "h-4 w-2/3" : "h-4 w-full"} />
+					{/each}
+				</div>
+			{:else}
+				<div class="flex flex-col gap-2.5">
+					{#each Array.from({ length: lineCount }) as _, idx (idx)}
+						<Skeleton class="h-10 w-full rounded-md" />
+					{/each}
+				</div>
+			{/if}
 		{:else if n.type === "Stepper"}
 			<Stepper steps={p.steps} orientation={p.orientation} />
 		{:else if n.type === "ToggleGroup"}

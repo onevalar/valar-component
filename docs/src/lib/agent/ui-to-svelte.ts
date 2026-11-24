@@ -722,11 +722,13 @@ export function uiNodeToSvelte(root: UiNode): {
 			case "Dialog": {
 				useNs("Dialog", "dialog");
 				useNamed("Button", "button");
+				const triggerVariant = String(p.triggerVariant ?? "outline");
+				const triggerSize = String(p.triggerSize ?? "sm");
 				const lines = [
 					`${pad(depth)}<Dialog.Root>`,
 					`${pad(depth + 1)}<Dialog.Trigger>`,
 					`${pad(depth + 2)}{#snippet child({ props })}`,
-					`${pad(depth + 3)}<Button {...props} variant="outline">${escapeText(String(p.triggerLabel ?? ""))}</Button>`,
+					`${pad(depth + 3)}<Button {...props} variant=${quote(triggerVariant)} size=${quote(triggerSize)}>${escapeText(String(p.triggerLabel ?? ""))}</Button>`,
 					`${pad(depth + 2)}{/snippet}`,
 					`${pad(depth + 1)}</Dialog.Trigger>`,
 					`${pad(depth + 1)}<Dialog.Content>`,
@@ -748,6 +750,164 @@ export function uiNodeToSvelte(root: UiNode): {
 				}
 				lines.push(`${pad(depth + 1)}</Dialog.Content>`, `${pad(depth)}</Dialog.Root>`);
 				return lines.join("\n");
+			}
+			case "AlertDialog": {
+				useNs("AlertDialog", "alert-dialog");
+				useNamed("Button", "button");
+				const isDestructive = p.destructive !== false;
+				const triggerVariant = String(p.triggerVariant ?? (isDestructive ? "destructive" : "outline"));
+				const appearance = isDestructive ? "danger" : "confirmation";
+				const actionVariant = isDestructive ? ' variant="destructive"' : "";
+				return [
+					`${pad(depth)}<AlertDialog.Root>`,
+					`${pad(depth + 1)}<AlertDialog.Trigger>`,
+					`${pad(depth + 2)}{#snippet child({ props })}`,
+					`${pad(depth + 3)}<Button {...props} variant=${quote(triggerVariant)} size="sm">${escapeText(String(p.triggerLabel ?? ""))}</Button>`,
+					`${pad(depth + 2)}{/snippet}`,
+					`${pad(depth + 1)}</AlertDialog.Trigger>`,
+					`${pad(depth + 1)}<AlertDialog.Content appearance=${quote(appearance)} focusCancel>`,
+					`${pad(depth + 2)}<AlertDialog.Header>`,
+					`${pad(depth + 3)}<AlertDialog.Title>${escapeText(String(p.title ?? ""))}</AlertDialog.Title>`,
+					`${pad(depth + 3)}<AlertDialog.Description>${escapeText(String(p.description ?? ""))}</AlertDialog.Description>`,
+					`${pad(depth + 2)}</AlertDialog.Header>`,
+					`${pad(depth + 2)}<AlertDialog.Footer>`,
+					`${pad(depth + 3)}<AlertDialog.Cancel>${escapeText(String(p.cancelLabel ?? "取消"))}</AlertDialog.Cancel>`,
+					`${pad(depth + 3)}<AlertDialog.Action${actionVariant}>${escapeText(String(p.confirmLabel ?? ""))}</AlertDialog.Action>`,
+					`${pad(depth + 2)}</AlertDialog.Footer>`,
+					`${pad(depth + 1)}</AlertDialog.Content>`,
+					`${pad(depth)}</AlertDialog.Root>`,
+				].join("\n");
+			}
+			case "Sheet": {
+				useNs("Sheet", "sheet");
+				useNamed("Button", "button");
+				const triggerVariant = String(p.triggerVariant ?? "outline");
+				const side = String(p.side ?? "right");
+				const lines = [
+					`${pad(depth)}<Sheet.Root>`,
+					`${pad(depth + 1)}<Sheet.Trigger>`,
+					`${pad(depth + 2)}{#snippet child({ props })}`,
+					`${pad(depth + 3)}<Button {...props} variant=${quote(triggerVariant)} size="sm">${escapeText(String(p.triggerLabel ?? ""))}</Button>`,
+					`${pad(depth + 2)}{/snippet}`,
+					`${pad(depth + 1)}</Sheet.Trigger>`,
+					`${pad(depth + 1)}<Sheet.Content side=${quote(side)}>`,
+					`${pad(depth + 2)}<Sheet.Header>`,
+					`${pad(depth + 3)}<Sheet.Title>${escapeText(String(p.title ?? ""))}</Sheet.Title>`,
+				];
+				if (typeof p.description === "string" && p.description) {
+					lines.push(
+						`${pad(depth + 3)}<Sheet.Description>${escapeText(p.description)}</Sheet.Description>`
+					);
+				}
+				lines.push(`${pad(depth + 2)}</Sheet.Header>`);
+				if (children.length) {
+					lines.push(
+						`${pad(depth + 2)}<div class="flex flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4">`,
+						renderChildren(depth + 3),
+						`${pad(depth + 2)}</div>`
+					);
+				}
+				lines.push(`${pad(depth + 1)}</Sheet.Content>`, `${pad(depth)}</Sheet.Root>`);
+				return lines.join("\n");
+			}
+			case "ItemList": {
+				useNs("Item", "item");
+				return [
+					`${pad(depth)}<Item.Group${attr("aria-label", p.label)} class="divide-y-[0.5px] divide-border border-y-[0.5px] border-border">`,
+					...(children.length ? [renderChildren()] : []),
+					`${pad(depth)}</Item.Group>`,
+				].join("\n");
+			}
+			case "ItemRow": {
+				useNs("Item", "item");
+				const lines = [
+					`${pad(depth)}<div role="listitem">`,
+					`${pad(depth + 1)}<Item.Root size="sm"${p.disabled ? ' aria-disabled="true"' : ""}>`,
+					`${pad(depth + 2)}<Item.Content>`,
+					`${pad(depth + 3)}<div class="flex min-w-0 items-center gap-2">`,
+				];
+				if (typeof p.meta === "string" && p.meta) {
+					lines.push(
+						`${pad(depth + 4)}<span class="shrink-0 text-xs tabular-nums text-muted-foreground">${escapeText(p.meta)}</span>`
+					);
+				}
+				lines.push(
+					`${pad(depth + 4)}<Item.Title class="truncate">${escapeText(String(p.title ?? ""))}</Item.Title>`,
+					`${pad(depth + 3)}</div>`
+				);
+				if (typeof p.description === "string" && p.description) {
+					lines.push(
+						`${pad(depth + 3)}<Item.Description>${escapeText(p.description)}</Item.Description>`
+					);
+				}
+				lines.push(`${pad(depth + 2)}</Item.Content>`);
+				if (children.length) {
+					lines.push(
+						`${pad(depth + 2)}<Item.Actions>`,
+						renderChildren(depth + 3),
+						`${pad(depth + 2)}</Item.Actions>`
+					);
+				}
+				lines.push(`${pad(depth + 1)}</Item.Root>`, `${pad(depth)}</div>`);
+				return lines.join("\n");
+			}
+			case "Gauge": {
+				useNamed("Gauge", "gauge");
+				const value = Number(p.value ?? 0);
+				const tone = String(p.tone ?? (value > 100 ? "danger" : "accent"));
+				const valueText = String(p.valueText ?? `已使用 ${Math.round(value)}%`);
+				return [
+					`${pad(depth)}<div class="flex flex-wrap items-center gap-3">`,
+					`${pad(depth + 1)}<Gauge value={${value}} label=${quote(String(p.label ?? ""))} valueText=${quote(valueText)} tone=${quote(tone)} class="w-20 shrink-0" />`,
+					`${pad(depth + 1)}<div class="flex min-w-0 flex-col gap-0.5">`,
+					`${pad(depth + 2)}<span class="text-sm font-medium text-foreground">${escapeText(String(p.label ?? ""))}</span>`,
+					`${pad(depth + 2)}<span class="text-xs tabular-nums text-muted-foreground">${escapeText(valueText)}</span>`,
+					`${pad(depth + 1)}</div>`,
+					`${pad(depth)}</div>`,
+				].join("\n");
+			}
+			case "Sparkline": {
+				useNamed("StaticSparkline", "sparkline");
+				const seriesName = nextVar("series");
+				scriptLines.push(`const ${seriesName} = ${JSON.stringify(p.values ?? [])};`);
+				const lines = [
+					`${pad(depth)}<div class="flex items-center gap-3">`,
+					`${pad(depth + 1)}<StaticSparkline values={${seriesName}} width="96" height="40" class="shrink-0" />`,
+					`${pad(depth + 1)}<div class="flex min-w-0 flex-col gap-0.5">`,
+					`${pad(depth + 2)}<span class="text-xs text-muted-foreground">${escapeText(String(p.label ?? ""))}</span>`,
+				];
+				if (typeof p.value === "string" && p.value) {
+					lines.push(
+						`${pad(depth + 2)}<span class="text-sm font-medium tabular-nums text-foreground">${escapeText(p.value)}</span>`
+					);
+				}
+				lines.push(`${pad(depth + 1)}</div>`, `${pad(depth)}</div>`);
+				return lines.join("\n");
+			}
+			case "Skeleton": {
+				useNamed("Skeleton", "skeleton");
+				const variant = String(p.variant ?? "row");
+				const lineCount = Number(p.lines ?? (variant === "card" ? 1 : 3));
+				if (variant === "card") {
+					return [
+						`${pad(depth)}<div class="flex flex-col gap-3 rounded-lg border-[0.5px] border-border p-4">`,
+						`${pad(depth + 1)}<Skeleton class="h-4 w-1/3" />`,
+						`${pad(depth + 1)}<Skeleton class="h-8 w-1/2" />`,
+						`${pad(depth + 1)}<Skeleton class="h-3 w-2/3" />`,
+						`${pad(depth)}</div>`,
+					].join("\n");
+				}
+				if (variant === "text") {
+					const rows = Array.from({ length: lineCount }, (_, idx) =>
+						`${pad(depth + 1)}<Skeleton class=${quote(idx === lineCount - 1 ? "h-4 w-2/3" : "h-4 w-full")} />`
+					);
+					return [`${pad(depth)}<div class="flex flex-col gap-2">`, ...rows, `${pad(depth)}</div>`].join("\n");
+				}
+				const rows = Array.from(
+					{ length: lineCount },
+					() => `${pad(depth + 1)}<Skeleton class="h-10 w-full rounded-md" />`
+				);
+				return [`${pad(depth)}<div class="flex flex-col gap-2.5">`, ...rows, `${pad(depth)}</div>`].join("\n");
 			}
 			case "Stepper": {
 				useNamed("Stepper", "stepper");
