@@ -2,16 +2,16 @@
 	import { page } from "$app/state";
 	import BrainIcon from "@lucide/svelte/icons/brain";
 	import CircleCheckIcon from "@lucide/svelte/icons/circle-check";
+	import CreditCardIcon from "@lucide/svelte/icons/credit-card";
+	import FilePlus2Icon from "@lucide/svelte/icons/file-plus-2";
 	import LayersIcon from "@lucide/svelte/icons/layers";
-	import LayoutTemplateIcon from "@lucide/svelte/icons/layout-template";
 	import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
 	import MessageCircleDashedIcon from "@lucide/svelte/icons/message-circle-dashed";
 	import RotateCcwIcon from "@lucide/svelte/icons/rotate-ccw";
-	import SearchIcon from "@lucide/svelte/icons/search";
+	import ShieldAlertIcon from "@lucide/svelte/icons/shield-alert";
 	import SlidersHorizontalIcon from "@lucide/svelte/icons/sliders-horizontal";
-	import SparklesIcon from "@lucide/svelte/icons/sparkles";
-	import TableIcon from "@lucide/svelte/icons/table";
 	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
+	import UsersIcon from "@lucide/svelte/icons/users";
 	import WrenchIcon from "@lucide/svelte/icons/wrench";
 	import * as Alert from "$lib/registry/ui/alert/index.js";
 	import * as Bubble from "$lib/registry/ui/bubble/index.js";
@@ -23,7 +23,7 @@
 	import * as Trace from "$lib/registry/ui/trace/index.js";
 	import Markdown from "$lib/components/markdown/markdown.svelte";
 	import { ADVANCED_MODULES, ADVANCED_SCENES } from "$lib/advanced-catalog.js";
-	import { agentChat as chat } from "$lib/agent/chat.svelte.js";
+	import { agentChat as chat, newConversation } from "$lib/agent/chat.svelte.js";
 	import { getComponentInfos, toCodeName } from "$lib/agent/knowledge.js";
 	import { agentSettings } from "$lib/agent/settings.svelte.js";
 	import { usedComponentSlugs, type UiNode } from "$lib/agent/ui-catalog.js";
@@ -33,7 +33,7 @@
 	import { Button } from "$lib/registry/ui/button/index.js";
 	import AgentPrompt from "./agent-prompt.svelte";
 	import AgentSettings from "./agent-settings.svelte";
-	import UiRenderer from "./ui-renderer.svelte";
+	import UiPreviewFrame from "./ui-preview-frame.svelte";
 	import type { UIMessage } from "ai";
 
 	const locale = $derived((page.data.locale ?? "en") as Locale);
@@ -46,40 +46,40 @@
 
 	const SUGGESTION_CARDS = [
 		{
-			title: "组件库全局盘点",
-			subtitle: "查看覆盖度与对齐状态",
-			prompt: "目前组件库整体情况怎么样？",
-			icon: "sparkles",
-		},
-		{
-			title: "验证码输入框选型",
-			subtitle: "推荐适合 6 位短信验证码的组件",
-			prompt: "输入 6 位短信验证码用哪个组件？",
-			icon: "search",
-		},
-		{
-			title: "选择器方案对比",
-			subtitle: "区分 Select、Combobox 与原生选择器",
-			prompt: "下拉选择器、组合框、原生选择器怎么选？",
-			icon: "layers",
-		},
-		{
-			title: "设计一个登录表单",
-			subtitle: "用基础输入与按钮现场搭建可交互卡片",
-			prompt: "设计一个登录表单，让我看看效果",
-			icon: "layout",
-		},
-		{
-			title: "生成设置页开关组合",
-			subtitle: "自动搭配 Field、Switch 与单选行",
-			prompt: "给设置页拼一组开关和单选",
+			title: "工作区设置页",
+			subtitle: "窄栏分组、开关行与详情属性",
+			prompt: "设计一个工作区设置页，包含通知开关和基本信息",
 			icon: "sliders",
 		},
 		{
-			title: "搭建项目筛选与表格",
-			subtitle: "组合工具栏、筛选输入与数据列表",
-			prompt: "搭一个项目筛选和数据表格面板",
-			icon: "table",
+			title: "成员权限管理页",
+			subtitle: "全宽页头、筛选栏与角色表格",
+			prompt: "搭一个成员权限管理页，支持按角色筛选和邀请成员",
+			icon: "users",
+		},
+		{
+			title: "账单与用量概览",
+			subtitle: "套餐配额、用量进度与明细表",
+			prompt: "设计一个账单与用量页面，展示套餐配额和消费明细",
+			icon: "billing",
+		},
+		{
+			title: "新建项目表单",
+			subtitle: "单列输入、负责人与排期选择",
+			prompt: "设计一个新建项目表单，包含名称、负责人和目标日期",
+			icon: "form",
+		},
+		{
+			title: "高危操作确认弹窗",
+			subtitle: "破坏性二次确认与按钮层级",
+			prompt: "设计一个删除项目的确认对话框，让我看看交互效果",
+			icon: "confirm",
+		},
+		{
+			title: "选择器方案选型",
+			subtitle: "区分下拉选择、组合框与单选组",
+			prompt: "下拉选择器、组合框和单选组分别在什么场景用？",
+			icon: "layers",
 		},
 	] as const;
 
@@ -158,35 +158,82 @@
 		return out;
 	}
 
-	type Input = Record<string, string | undefined>;
+	type Input = Record<string, unknown>;
+	const strArg = (input: Input, key: string) =>
+		typeof input[key] === "string" ? (input[key] as string) : "";
 	const STEPS: Record<string, { verb: string; noun: string; target?: (input: Input) => string }> = {
 		"tool-search_patterns": {
 			verb: "搜索",
 			noun: "页面骨架",
-			target: (i) => (i.query ? `「${i.query}」` : ""),
+			target: (i) => (strArg(i, "query") ? `「${strArg(i, "query")}」` : ""),
 		},
-		"tool-get_pattern": { verb: "查阅", noun: "页面骨架", target: (i) => ` ${i.name ?? ""}` },
-		"tool-list_components": { verb: "列出", noun: "组件" },
-		"tool-search_components": { verb: "搜索", noun: "组件", target: (i) => `「${i.query ?? ""}」` },
-		"tool-get_component": { verb: "查阅", noun: "组件", target: (i) => ` ${i.name ?? ""}` },
-		"tool-get_install_command": { verb: "生成", noun: "安装命令" },
-		"tool-get_skill": { verb: "读取", noun: "技能包" },
+		"tool-get_pattern": {
+			verb: "查阅",
+			noun: "页面骨架",
+			target: (i) => (strArg(i, "name") ? ` ${strArg(i, "name")}` : ""),
+		},
+		"tool-search_components": {
+			verb: "查找",
+			noun: "组件",
+			target: (i) => {
+				const q = strArg(i, "query");
+				const cat = strArg(i, "category");
+				return q ? `「${q}」` : cat ? `（${cat}）` : "";
+			},
+		},
+		"tool-get_component": {
+			verb: "查阅",
+			noun: "组件",
+			target: (i) => (strArg(i, "name") ? ` ${strArg(i, "name")}` : ""),
+		},
+		"tool-get_skill": {
+			verb: "读取",
+			noun: "设计规范",
+			target: (i) => (strArg(i, "file") ? ` ${strArg(i, "file")}` : ""),
+		},
 		"tool-search_docs": {
 			verb: "搜索",
 			noun: "文档",
-			target: (i) => (i.query ? `「${i.query}」` : ""),
+			target: (i) => (strArg(i, "query") ? `「${strArg(i, "query")}」` : ""),
 		},
-		"tool-read_doc": { verb: "阅读", noun: "文档", target: (i) => ` ${i.path ?? ""}` },
-		"tool-get_example": { verb: "读取", noun: "示例", target: (i) => ` ${i.name ?? ""}` },
-		"tool-list_themes": { verb: "列出", noun: "主题" },
-		"tool-get_theme": { verb: "读取", noun: "主题", target: (i) => ` ${i.name ?? ""}` },
-		"tool-get_ui_catalog": { verb: "查阅", noun: "积木说明" },
+		"tool-read_doc": {
+			verb: "读取",
+			noun: "",
+			target: (i) => {
+				const path = strArg(i, "path");
+				const example = strArg(i, "example");
+				const theme = strArg(i, "theme");
+				if (path) return `文档 ${path}`;
+				if (example) return `示例 ${example}`;
+				if (theme) return theme === "list" ? "主题列表" : `主题 ${theme}`;
+				return "文档";
+			},
+		},
+		"tool-get_ui_catalog": {
+			verb: "查阅",
+			noun: "积木目录",
+			target: (i) => (Array.isArray(i.types) && i.types.length ? `（${i.types.length} 项）` : ""),
+		},
 		"tool-show_ui": {
 			verb: "拼出",
 			noun: "界面",
-			target: (i) => (i.title ? `「${i.title}」` : ""),
+			target: (i) => (strArg(i, "title") ? `「${strArg(i, "title")}」` : ""),
 		},
 		"tool-review_code": { verb: "检查", noun: "代码规范" },
+		// Keep legacy tool labels so persisted localStorage conversations remain readable.
+		"tool-list_components": { verb: "列出", noun: "组件" },
+		"tool-get_install_command": { verb: "生成", noun: "安装命令" },
+		"tool-get_example": {
+			verb: "读取",
+			noun: "示例",
+			target: (i) => (strArg(i, "name") ? ` ${strArg(i, "name")}` : ""),
+		},
+		"tool-list_themes": { verb: "列出", noun: "主题" },
+		"tool-get_theme": {
+			verb: "读取",
+			noun: "主题",
+			target: (i) => (strArg(i, "name") ? ` ${strArg(i, "name")}` : ""),
+		},
 	};
 
 	/** Names the step as a full phrase for each state, as the Trace rules ask. */
@@ -265,18 +312,18 @@
 						class="group flex min-h-[104px] flex-col justify-between rounded-[10px] border-[0.5px] border-border bg-card/80 p-3.5 text-left transition-colors duration-150 outline-none hover:bg-accent/55 focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring motion-reduce:transition-none"
 					>
 						<span class="text-muted-foreground transition-colors group-hover:text-foreground">
-							{#if card.icon === "sparkles"}
-								<SparklesIcon class="size-3.5" />
-							{:else if card.icon === "search"}
-								<SearchIcon class="size-3.5" />
-							{:else if card.icon === "layers"}
-								<LayersIcon class="size-3.5" />
-							{:else if card.icon === "sliders"}
+							{#if card.icon === "sliders"}
 								<SlidersHorizontalIcon class="size-3.5" />
-							{:else if card.icon === "table"}
-								<TableIcon class="size-3.5" />
+							{:else if card.icon === "users"}
+								<UsersIcon class="size-3.5" />
+							{:else if card.icon === "billing"}
+								<CreditCardIcon class="size-3.5" />
+							{:else if card.icon === "form"}
+								<FilePlus2Icon class="size-3.5" />
+							{:else if card.icon === "confirm"}
+								<ShieldAlertIcon class="size-3.5" />
 							{:else}
-								<LayoutTemplateIcon class="size-3.5" />
+								<LayersIcon class="size-3.5" />
 							{/if}
 						</span>
 						<div class="mt-4 space-y-0.5">
@@ -314,7 +361,7 @@
 					size="sm"
 					shape="pill"
 					disabled={busy}
-					onclick={() => (chat.messages = [])}
+					onclick={() => newConversation()}
 					class="h-7 gap-1.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
 				>
 					<RotateCcwIcon class="size-3.5" />
@@ -413,14 +460,9 @@
 														{:else if segment.kind === "ui"}
 															{@const usedSlugs = usedComponentSlugs(segment.root)}
 															<div class="flex w-full flex-col gap-2.5 p-px">
-																{#if segment.title}
-																	<p class="text-[13px] font-medium text-muted-foreground">
-																		{segment.title}
-																	</p>
-																{/if}
-																<UiRenderer root={segment.root} />
+																<UiPreviewFrame root={segment.root} title={segment.title} />
 																{#if usedSlugs.length}
-																	<div class="flex flex-wrap items-center gap-1.5 pt-1">
+																	<div class="flex flex-wrap items-center gap-1.5 pt-0.5">
 																		<span class="text-xs text-muted-foreground">本界面所用组件：</span>
 																		{#each usedSlugs as slug (slug)}
 																			<Badge
@@ -439,6 +481,20 @@
 															</div>
 														{/if}
 													{/each}
+													{#if !streaming && !busy && !chat.error && message === chat.messages.at(-1) && segs.length > 0 && segs.at(-1)?.kind === "steps"}
+														<div
+															class="flex flex-wrap items-center justify-between gap-2 rounded-lg border-[0.5px] border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground"
+														>
+															<span>本轮查证步骤后暂未输出最终结论，可点击继续生成。</span>
+															<Button
+																size="xs"
+																variant="outline"
+																onclick={() => send("请基于刚才查到的资料继续完成回答。")}
+															>
+																继续生成
+															</Button>
+														</div>
+													{/if}
 												</Message.Content>
 											</Message.Root>
 										</MessageScroller.Item>
@@ -458,8 +514,8 @@
 					<TriangleAlertIcon />
 					<Alert.Title>请求失败</Alert.Title>
 					<Alert.Description>{chat.error.message}</Alert.Description>
-					{#if /reasoning_effort|responses/i.test(chat.error.message)}
-						<Alert.Action>
+					<Alert.Action class="flex flex-wrap items-center gap-1.5">
+						{#if /reasoning_effort|responses/i.test(chat.error.message)}
 							<Button
 								size="xs"
 								variant="outline"
@@ -469,8 +525,16 @@
 									chat.clearError();
 								}}>改用 Responses 接口并关闭思考</Button
 							>
-						</Alert.Action>
-					{/if}
+						{/if}
+						<Button
+							size="xs"
+							variant="outline"
+							onclick={() => {
+								chat.clearError();
+								settingsOpen = true;
+							}}>打开模型配置</Button
+						>
+					</Alert.Action>
 				</Alert.Root>
 			</div>
 		{/if}

@@ -48,10 +48,26 @@
 	);
 
 	const QUICK_ACTIONS = [
-		{ label: "盘点组件库现状", prompt: "目前组件库整体情况怎么样？", kind: "overview" },
-		{ label: "生成登录表单界面", prompt: "设计一个登录表单，让我看看效果", kind: "layout" },
-		{ label: "生成新建任务表单", prompt: "帮我搭一个新建任务的表单", kind: "layout" },
-		{ label: "生成设置面板界面", prompt: "给设置页拼一组开关和单选", kind: "list" },
+		{
+			label: "搭一个工作区设置页",
+			prompt: "设计一个工作区设置页，包含通知开关和基本信息",
+			kind: "list",
+		},
+		{
+			label: "搭一个成员权限管理页",
+			prompt: "搭一个成员权限管理页，支持按角色筛选和邀请成员",
+			kind: "layout",
+		},
+		{
+			label: "设计新建项目表单",
+			prompt: "设计一个新建项目表单，包含名称、负责人和目标日期",
+			kind: "layout",
+		},
+		{
+			label: "盘点组件库与页面骨架",
+			prompt: "目前组件库整体情况和页面骨架有哪些？",
+			kind: "overview",
+		},
 	] as const;
 
 	$effect(() => {

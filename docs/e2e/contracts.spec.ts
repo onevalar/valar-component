@@ -291,7 +291,7 @@ test("homepage exposes five-section nav and requires model configuration before 
 	]);
 	await expect(page.getByRole("heading", { level: 1, name: "想设计点什么？" })).toBeVisible();
 	const suggestion = page.getByRole("button", {
-		name: "设计一个登录表单，让我看看效果",
+		name: "设计一个工作区设置页，包含通知开关和基本信息",
 		exact: true,
 	});
 	await expect(suggestion).toBeVisible();
