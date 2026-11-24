@@ -321,6 +321,25 @@ export function lintSource(file: string, source: string): LintFinding[] {
 			"warning",
 			"占位符避免写“请输入…”重复废话，改为直接给格式示例（如 name@company.com）"
 		);
+	const OVERLAY_CONTENT_TAGS = ["Dialog", "AlertDialog", "Sheet", "Drawer"].flatMap((ns) =>
+		part(ns, "Content")
+	);
+	const stripOverlayContents = (markup: string) => {
+		let cleaned = markup;
+		for (const contentTag of OVERLAY_CONTENT_TAGS) {
+			const openings = openingTags(cleaned, contentTag);
+			for (let i = openings.length - 1; i >= 0; i--) {
+				const opening = openings[i]!;
+				const inner = elementBody(cleaned, contentTag, opening);
+				const closeTag = `</${contentTag}>`;
+				const end = opening.text.endsWith("/>")
+					? opening.index + opening.text.length
+					: opening.index + opening.text.length + inner.length + closeTag.length;
+				cleaned = cleaned.slice(0, opening.index) + cleaned.slice(end);
+			}
+		}
+		return cleaned;
+	};
 	for (const footerTag of [
 		...part("Dialog", "Footer"),
 		...part("AlertDialog", "Footer"),
@@ -329,7 +348,7 @@ export function lintSource(file: string, source: string): LintFinding[] {
 		...part("PageLayout", "Actions"),
 	]) {
 		for (const tag of openingTags(source, footerTag)) {
-			const body = elementBody(source, footerTag, tag);
+			const body = stripOverlayContents(elementBody(source, footerTag, tag));
 			const primaryButtons = openingTags(body, "Button").filter(
 				(btn) => !NON_PRIMARY_VARIANT.test(btn.text)
 			);

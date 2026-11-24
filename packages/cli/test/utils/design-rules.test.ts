@@ -164,6 +164,7 @@ describe("lintSource", () => {
 			'<Input id="email" placeholder="请输入工作邮箱" />',
 			'<Dialog.Footer><Button>保存草稿</Button><Button variant="default">发布</Button></Dialog.Footer>',
 			'<Dialog.Footer><Button variant="outline">取消</Button><Button>保存</Button></Dialog.Footer>',
+			'<PageLayout.Actions><Dialog.Root><Dialog.Trigger>{#snippet child({ props })}<Button {...props} variant="default">新建任务</Button>{/snippet}</Dialog.Trigger><Dialog.Content><Dialog.Title>新建</Dialog.Title><Button>提交</Button></Dialog.Content></Dialog.Root></PageLayout.Actions>',
 		].join("\n");
 		expect(rules(source)).toEqual([
 			"1:valar/no-nested-card",
