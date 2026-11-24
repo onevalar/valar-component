@@ -1,0 +1,112 @@
+{
+	"$schema": "http://127.0.0.1:5186/schema/registry-item.json",
+	"name": "page-layout",
+	"title": "Page Layout 页面布局",
+	"type": "registry:ui",
+	"description": "固化页面宽度分档、单行紧凑页头、筛选工具栏、间距分组区块与设置/详情属性行的标准布局骨架。",
+	"meta": {
+		"valar": {
+			"keywords": [
+				"页面布局",
+				"页头",
+				"工具栏",
+				"设置行",
+				"属性列表",
+				"page-layout",
+				"header",
+				"toolbar",
+				"section"
+			],
+			"whenToUse": [
+				"搭建工作台列表、数据表格、系统设置、指标概览或详情页的标准页面骨架",
+				"需要固化宽窄分档（full / narrow）、单行页头对齐、间距分组和设置行/属性行结构"
+			],
+			"whenNotToUse": [
+				{
+					"case": "需要用户手动拖拽改变左右栏宽度的双栏布局",
+					"use": "resizable"
+				},
+				{
+					"case": "应用级全局左侧导航壳子",
+					"use": "sidebar"
+				},
+				{
+					"case": "聚焦型弹窗内的表单排版",
+					"use": "dialog"
+				}
+			],
+			"accessibility": [
+				"Header 渲染原生 header，Title 默认输出 h1，Section 渲染 section 并配合 h2 标题形成清晰地标层级",
+				"窄屏下自动折行与堆叠，不产生横向溢出裁切"
+			],
+			"responsive": [
+				"width='narrow' 在桌面收窄居中（max-w-3xl），width='full' 撑满工作区",
+				"Header 与 Toolbar 窄屏自动换行，PropertyRow 在移动端自动由横向切为上下排布"
+			],
+			"related": [
+				"card",
+				"field",
+				"separator",
+				"sidebar",
+				"resizable"
+			]
+		}
+	},
+	"files": [
+		{
+			"content": "# Page Layout 设计规范\n\n- 用于固化页面级排版结构，避免在业务页面中手写参差不齐的页头、工具栏、区块留白和设置行。\n- 宽度档位：`PageLayout.Root` 默认 `width=\"full\"`（列表、表格、看板、工作台）；设置页、独立表单、详情阅读和分步向导设为 `width=\"narrow\"`（收窄居中）。\n- 页头结构：`PageLayout.Header` 保持单行紧凑，左侧放 `PageLayout.Title`（默认中性标题，不加冗余副标题），右侧放 `PageLayout.Actions` 且最多只放 1 个主色强调按钮（`variant=\"default\"`）。\n- 分组克制：`PageLayout.Section` 默认 `surface=\"plain\"`，优先靠留白间距表达分组；只有明确需要成组承载（如系统设置分组）时才设为 `surface=\"card\"`，严禁在 `surface=\"card\"` 内部再嵌套 `Card` 或另一层卡片区块。\n- 属性与设置行：`PageLayout.PropertyList` + `PageLayout.PropertyRow` 支持 `layout=\"settings\"`（左标题 + 右控件，配合 `surface=\"card\"` 与 0.5px 细分隔线）和 `layout=\"detail\"`（左属性名 + 右等宽数值或控件，默认启用 `tabular-nums`）。`description` 仅在用户不看就会填错或有不可逆影响时填写。\n",
+			"type": "registry:file",
+			"target": "page-layout/RULES.md"
+		},
+		{
+			"content": "import Actions from \"./page-layout-actions.svelte\";\nimport Header from \"./page-layout-header.svelte\";\nimport PropertyList from \"./page-layout-property-list.svelte\";\nimport PropertyRow from \"./page-layout-property-row.svelte\";\nimport SectionTitle from \"./page-layout-section-title.svelte\";\nimport Section from \"./page-layout-section.svelte\";\nimport Title from \"./page-layout-title.svelte\";\nimport Toolbar from \"./page-layout-toolbar.svelte\";\nimport Root from \"./page-layout.svelte\";\n\nexport {\n\tRoot,\n\tHeader,\n\tTitle,\n\tActions,\n\tToolbar,\n\tSection,\n\tSectionTitle,\n\tPropertyList,\n\tPropertyRow,\n\t//\n\tRoot as PageLayout,\n\tHeader as PageLayoutHeader,\n\tTitle as PageLayoutTitle,\n\tActions as PageLayoutActions,\n\tToolbar as PageLayoutToolbar,\n\tSection as PageLayoutSection,\n\tSectionTitle as PageLayoutSectionTitle,\n\tPropertyList as PageLayoutPropertyList,\n\tPropertyRow as PageLayoutPropertyRow,\n};\n",
+			"type": "registry:file",
+			"target": "page-layout/index.ts"
+		},
+		{
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"page-layout-actions\"\n\tclass={cn(\"flex shrink-0 flex-wrap items-center gap-2\", className)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
+			"type": "registry:file",
+			"target": "page-layout/page-layout-actions.svelte"
+		},
+		{
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();\n</script>\n\n<header\n\tbind:this={ref}\n\tdata-slot=\"page-layout-header\"\n\tclass={cn(\"flex min-w-0 flex-wrap items-center justify-between gap-x-4 gap-y-2\", className)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</header>\n",
+			"type": "registry:file",
+			"target": "page-layout/page-layout-header.svelte"
+		},
+		{
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\tlayout = \"settings\",\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {\n\t\tlayout?: \"settings\" | \"detail\";\n\t} = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"page-layout-property-list\"\n\tdata-layout={layout}\n\tclass={cn(\n\t\t\"flex min-w-0 flex-col\",\n\t\tlayout === \"settings\" ? \"divide-y-[0.5px] divide-border\" : \"gap-2.5\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
+			"type": "registry:file",
+			"target": "page-layout/page-layout-property-list.svelte"
+		},
+		{
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\tlabel,\n\t\tdescription,\n\t\tlayout = \"settings\",\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {\n\t\tlabel: string;\n\t\tdescription?: string;\n\t\tlayout?: \"settings\" | \"detail\";\n\t} = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"page-layout-property-row\"\n\tdata-layout={layout}\n\tclass={cn(\n\t\tlayout === \"settings\"\n\t\t\t? \"flex min-w-0 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3\"\n\t\t\t: \"flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-4\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{#if layout === \"settings\"}\n\t\t<div class=\"flex min-w-0 flex-col gap-0.5\">\n\t\t\t<span class=\"text-sm font-medium text-foreground\">{label}</span>\n\t\t\t{#if description}\n\t\t\t\t<span class=\"text-xs text-muted-foreground\">{description}</span>\n\t\t\t{/if}\n\t\t</div>\n\t\t<div class=\"flex shrink-0 items-center gap-2\">\n\t\t\t{@render children?.()}\n\t\t</div>\n\t{:else}\n\t\t<span class=\"w-28 shrink-0 text-sm text-muted-foreground\">{label}</span>\n\t\t<div class=\"flex min-w-0 flex-1 items-center gap-2 text-sm tabular-nums text-foreground\">\n\t\t\t{@render children?.()}\n\t\t</div>\n\t{/if}\n</div>\n",
+			"type": "registry:file",
+			"target": "page-layout/page-layout-property-row.svelte"
+		},
+		{
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLHeadingElement>> = $props();\n</script>\n\n<h2\n\tbind:this={ref}\n\tdata-slot=\"page-layout-section-title\"\n\tclass={cn(\"text-sm font-medium text-foreground\", className)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</h2>\n",
+			"type": "registry:file",
+			"target": "page-layout/page-layout-section-title.svelte"
+		},
+		{
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\tsurface = \"plain\",\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLElement>> & {\n\t\tsurface?: \"plain\" | \"card\";\n\t} = $props();\n</script>\n\n<section\n\tbind:this={ref}\n\tdata-slot=\"page-layout-section\"\n\tdata-surface={surface}\n\tclass={cn(\n\t\t\"flex min-w-0 flex-col\",\n\t\tsurface === \"card\"\n\t\t\t? \"overflow-hidden rounded-lg border-[0.5px] border-border bg-card\"\n\t\t\t: \"gap-3\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</section>\n",
+			"type": "registry:file",
+			"target": "page-layout/page-layout-section.svelte"
+		},
+		{
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\ttag = \"h1\",\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLHeadingElement>> & {\n\t\ttag?: \"h1\" | \"h2\";\n\t} = $props();\n</script>\n\n<svelte:element\n\tthis={tag}\n\tbind:this={ref}\n\tdata-slot=\"page-layout-title\"\n\tclass={cn(\"min-w-0 truncate text-lg font-semibold tracking-tight text-foreground\", className)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</svelte:element>\n",
+			"type": "registry:file",
+			"target": "page-layout/page-layout-title.svelte"
+		},
+		{
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"page-layout-toolbar\"\n\tclass={cn(\"flex min-w-0 flex-wrap items-center justify-between gap-2\", className)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
+			"type": "registry:file",
+			"target": "page-layout/page-layout-toolbar.svelte"
+		},
+		{
+			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tchildren,\n\t\twidth = \"full\",\n\t\t...restProps\n\t}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {\n\t\twidth?: \"full\" | \"narrow\";\n\t} = $props();\n</script>\n\n<div\n\tbind:this={ref}\n\tdata-slot=\"page-layout\"\n\tdata-width={width}\n\tclass={cn(\n\t\t\"flex w-full min-w-0 flex-col gap-6\",\n\t\twidth === \"narrow\" && \"mx-auto max-w-3xl\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n</div>\n",
+			"type": "registry:file",
+			"target": "page-layout/page-layout.svelte"
+		}
+	]
+}

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { readComponentCards } from "../scripts/component-cards.js";
 import { buildCatalog, cardMarkdown, llmsSmall } from "../src/lib/registry/catalog.js";
 import { REQUIRED_CARDS } from "../src/lib/registry/component-cards.js";
+import { PAGE_PATTERNS } from "../src/lib/registry/patterns.js";
 
 const { cards, components } = readComponentCards(path.resolve("src/lib/registry/ui"));
 
@@ -44,8 +45,26 @@ describe("component cards", () => {
 	it("render alternatives into the AI-facing text", () => {
 		const select = cards.find((card) => card.name === "select")!;
 		expect(cardMarkdown(select)).toContain("选项 2–5 个且需要一眼看全：改用 `radio-group`");
-		const small = llmsSmall(buildCatalog(cards, components, "http://site"));
+		const small = llmsSmall(buildCatalog(cards, components, "http://site", {}, PAGE_PATTERNS));
 		expect(small).toContain("`select`（表单）");
 		expect(small).toContain("→radio-group");
+		expect(small).toContain("## 页面骨架配方");
+		expect(small).toContain("`settings-page`");
+	});
+
+	it("page patterns only point to existing components and patterns", () => {
+		const patternNames = new Set(PAGE_PATTERNS.map((p) => p.name));
+		const brokenComponents = PAGE_PATTERNS.flatMap((pattern) =>
+			pattern.components
+				.filter((name) => !components.includes(name))
+				.map((name) => `${pattern.name} → component:${name}`)
+		);
+		const brokenAlternatives = PAGE_PATTERNS.flatMap((pattern) =>
+			pattern.whenNotToUse
+				.filter((item) => !patternNames.has(item.use))
+				.map((item) => `${pattern.name} → pattern:${item.use}`)
+		);
+		expect(brokenComponents).toEqual([]);
+		expect(brokenAlternatives).toEqual([]);
 	});
 });

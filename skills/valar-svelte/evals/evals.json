@@ -1,46 +1,140 @@
 {
 	"skill_name": "@valar/svelte-cli",
+	"description": "Valar Svelte 10 道黄金业务盲测集：仅给自然语言业务需求，不提供任何布局/样式/组件提示，用于持续验证 Agent 自主选型、页面排版、去 AI 味文案、克制动效与 lint 零报错表现。",
 	"evals": [
 		{
 			"id": 1,
-			"prompt": "I'm building a SvelteKit app with Valar Svelte (valar style, lucide icons). Create a settings form component with fields for: full name, email address, and notification preferences (email, SMS, push notifications as toggle options). Add validation states for required fields.",
-			"expected_output": "A Svelte component using Field.FieldGroup, Field.Field, ToggleGroup, data-invalid/aria-invalid validation, gap-* spacing, and semantic colors.",
-			"files": [],
+			"name": "team-members-management",
+			"prompt": "帮我做一个团队成员与权限管理页面，支持按姓名或邮箱搜索、按角色筛选、邀请新成员、批量移除成员，以及查看成员加入时间。",
+			"expected_pattern": "data-table-view",
+			"expected_components": ["table", "input-group", "select", "checkbox", "badge", "dialog", "alert-dialog", "button"],
 			"expectations": [
-				"Uses Field.FieldGroup and Field.Field for form layout instead of raw div with space-y",
-				"Uses Switch for independent on/off notification toggles (not looping Button with manual active state)",
-				"Uses data-invalid on Field and aria-invalid on the input control for validation states",
-				"Uses gap-* (e.g. gap-4, gap-6) instead of space-y-* or space-x-* for spacing",
-				"Uses semantic color tokens (e.g. bg-background, text-muted-foreground, text-destructive) instead of raw colors like bg-red-500",
-				"No manual dark: color overrides"
+				"先检索页面骨架（data-table-view），页头单行紧凑，右上角仅 1 个主色按钮（如“邀请成员”）",
+				"表格撑满工作区宽度，时间与计数启用 tabular-nums，窄屏保持表格局部横向滚动",
+				"状态与角色 Badge 以中性灰为主，不堆砌花哨彩色标签",
+				"批量移除接入 AlertDialog 二次确认（含 Cancel，危险按钮写明动作对象如“移除成员”）",
+				"无多余说明段落，无卡片套卡片，通过 valar-svelte lint 零 error"
 			]
 		},
 		{
 			"id": 2,
-			"prompt": "Create a dialog component for editing a user profile. It should have the user's avatar at the top, input fields for name and bio, and Save/Cancel buttons with appropriate icons. Using Valar Svelte with tabler icons.",
-			"expected_output": "A Svelte component with Dialog.Title, Avatar with Avatar.Fallback, data-icon on icon buttons, no icon sizing classes, @tabler/icons-svelte imports.",
-			"files": [],
+			"name": "workspace-settings",
+			"prompt": "做一个工作区系统设置页，包含基础信息（工作区名称、默认语言）、通知偏好（邮件通知、桌面推送开关）以及底部的注销工作区危险操作。",
+			"expected_pattern": "settings-page",
+			"expected_components": ["card", "field", "input", "select", "switch", "separator", "alert-dialog", "button"],
 			"expectations": [
-				"Includes Dialog.Title for accessibility (visible or with sr-only class)",
-				"Avatar includes Avatar.Fallback",
-				"Icons on buttons use the data-icon attribute (data-icon=\"inline-start\" or data-icon=\"inline-end\")",
-				"No sizing classes on icons inside components (no size-4, w-4, h-4, etc.)",
-				"Uses tabler icons (@tabler/icons-svelte) instead of @lucide/svelte when tabler is configured",
-				"Uses Valar Svelte Dialog patterns (e.g. Dialog.Trigger wrapping the control, or bind:open on Dialog.Root)"
+				"采用 settings-page 骨架：收窄居中阅读区（约 680–840px），使用单层卡片分组与「左文案 + 右控件」横向设置行",
+				"靠间距与 0.5px 细分隔线分组，严禁卡片套卡片，严禁在圆角矩形使用单侧高亮边框",
+				"默认用中性标题自解释，不为每个开关硬写长段解释文字；开关切换即时生效不狂弹 Toast",
+				"危险区独立置于底部并拉开更大间距，注销按钮标红且带二次确认",
+				"通过 valar-svelte lint 零 error"
 			]
 		},
 		{
 			"id": 3,
-			"prompt": "Create a dashboard component that shows 4 stat cards in a grid. Each card has a title, large number, percentage change badge, and a loading skeleton state. Using Valar Svelte with lucide icons.",
-			"expected_output": "A Svelte component with full Card composition, Skeleton for loading, Badge for changes, semantic colors, gap-* spacing.",
-			"files": [],
+			"name": "billing-usage-overview",
+			"prompt": "帮我做一个账单与 API 用量监控页面，展示本月已用额度、请求总量、错误率、近 30 天调用趋势图以及按天汇总的账单明细表，需要包含加载状态。",
+			"expected_pattern": "overview-metrics",
+			"expected_components": ["card", "chart", "sparkline", "table", "skeleton", "badge", "date-picker"],
 			"expectations": [
-				"Uses full Card composition with Card.Header, Card.Title, Card.Content (not dumping everything into Card.Content)",
-				"Uses Skeleton component for loading placeholders instead of custom animate-pulse divs",
-				"Uses Badge component for percentage change instead of custom styled spans",
-				"Uses semantic color tokens instead of raw color values like bg-green-500 or text-red-600",
-				"Uses gap-* instead of space-y-* or space-x-* for spacing",
-				"Uses size-* when width and height are equal instead of separate w-* h-*"
+				"采用 overview-metrics 骨架，仅展示需求里真实的 3 项指标，不额外编造凑数 KPI 卡片",
+				"所有金额、额度、百分比和表格数值均启用 tabular-nums",
+				"图表颜色使用主题 token（var(--chart-1) 等），不写死十六进制或调色板颜色",
+				"加载态使用与真实内容等高的 Skeleton，不加整页遮罩转圈，严禁卡片悬停上浮或首屏飞入动画",
+				"通过 valar-svelte lint 零 error"
+			]
+		},
+		{
+			"id": 4,
+			"name": "issue-filter-workspace",
+			"prompt": "搭一个任务工作台页面，顶部可以切换「我负责的 / 我创建的 / 全部」，支持按状态和优先级筛选，列表为空时引导新建任务，点击任意一条在右侧查看和修改详情。",
+			"expected_pattern": "workspace-list",
+			"expected_components": ["tabs", "popover", "command", "item", "badge", "empty", "sheet", "button"],
+			"expectations": [
+				"采用 workspace-list + detail-drawer 组合：撑满宽度工作区，不使用外层大卡片套列表",
+				"点击列表项通过右侧 Sheet 抽屉展示详情（带 Sheet.Title），不跳转丢掉当前筛选条件",
+				"空状态使用 Empty 组件，文案简洁中性（如“暂无任务” + “新建任务”），不写鸡汤长句",
+				"每个视区最多 1 个主色按钮，通过 valar-svelte lint 零 error"
+			]
+		},
+		{
+			"id": 5,
+			"name": "notification-inbox",
+			"prompt": "做一个通知收件箱页面，左侧显示未读和已读通知列表并支持筛选，右侧直接阅读选中通知的完整内容，可以标记已读或归档。",
+			"expected_pattern": "split-inbox",
+			"expected_components": ["resizable", "scroll-area", "item", "badge", "empty", "dropdown-menu", "button"],
+			"expectations": [
+				"采用 split-inbox 双栏骨架（Resizable + 0.5px 分隔器），左右两栏独立滚动",
+				"标记已读或归档原地更新状态，克制使用 Toast，不弹出感叹号营销提示",
+				"窄屏下自动回退为单列浏览，不挤压双栏",
+				"通过 valar-svelte lint 零 error"
+			]
+		},
+		{
+			"id": 6,
+			"name": "create-project-dialog",
+			"prompt": "做一个新建项目的弹窗表单，包含项目名称、标识前缀、负责人和简短描述，支持提交中状态和必填校验。",
+			"expected_pattern": "form-dialog",
+			"expected_components": ["dialog", "field", "input", "textarea", "select", "spinner", "button"],
+			"expectations": [
+				"采用 form-dialog 骨架：Dialog.Title 用中性标题“新建项目”，不加冗余副标题或底部说明卡片",
+				"表单单列竖排（Field.FieldGroup + Field.Field），弹窗内不再嵌套 Card",
+				"占位符只给格式示例，不写“请输入项目名称”类废话；校验报错使用 data-invalid + aria-invalid 放在字段下方",
+				"底部按钮「取消在左、创建在右」，提交中原地禁用 + Spinner",
+				"通过 valar-svelte lint 零 error"
+			]
+		},
+		{
+			"id": 7,
+			"name": "destructive-delete-confirm",
+			"prompt": "为删除 API 密钥做一个二次确认流程：用户点击删除后弹窗确认，确认执行中禁用按钮，删除成功后提示已删除。",
+			"expected_pattern": "destructive-confirm",
+			"expected_components": ["alert-dialog", "button", "spinner", "sonner"],
+			"expectations": [
+				"采用 destructive-confirm 骨架：使用 AlertDialog 且必须包含 AlertDialog.Cancel（在左）",
+				"确认按钮文案写明动作对象（如“删除密钥”而非笼统“确定”），且使用危险语义色",
+				"说明文案一句话封顶，仅写清具体对象与不可恢复影响",
+				"跨区域结果反馈使用轻量 Sonner Toast，语气中性直给（如“已删除密钥”）",
+				"通过 valar-svelte lint 零 error"
+			]
+		},
+		{
+			"id": 8,
+			"name": "profile-and-2fa-security",
+			"prompt": "做一个个人资料与双重验证设置页，可以显示用户头像、修改昵称，以及输入 6 位短信验证码绑定手机。",
+			"expected_pattern": "settings-page",
+			"expected_components": ["card", "avatar", "field", "input", "input-otp", "button"],
+			"expectations": [
+				"收窄居中布局，Avatar 必须带 Avatar.Fallback 且等宽高使用 size-*",
+				"6 位验证码选用 InputOTP 组件（而非普通 Input）",
+				"所有输入控件通过 id 与 Field.Label 关联，严禁在标题或按钮滥用 Emoji",
+				"中英文与数字间保留标准空格（如“6 位验证码”），通过 valar-svelte lint 零 error"
+			]
+		},
+		{
+			"id": 9,
+			"name": "csv-import-wizard",
+			"prompt": "做一个三步 CSV 数据导入流程页：第 1 步上传文件、第 2 步字段映射、第 3 步预览并确认导入，每一步校验不通过不能进入下一步。",
+			"expected_pattern": "guided-stepper",
+			"expected_components": ["stepper", "field", "select", "table", "alert", "spinner", "button"],
+			"expectations": [
+				"采用 guided-stepper 骨架：使用 Stepper（而非 Tabs）承载有前后依赖的分步流程",
+				"收窄居中宽度，每步表单单列竖排，底部操作「上一步在左、下一步/导入在右」且单一主焦点",
+				"校验失败提示说清「错在哪 + 怎么改」，异步导入中仅按钮原地禁用 + Spinner，不锁全屏",
+				"通过 valar-svelte lint 零 error"
+			]
+		},
+		{
+			"id": 10,
+			"name": "ai-knowledge-chat",
+			"prompt": "做一个文档问答 AI 对话页面，初始状态居中提问并展示 3 个常用问题入口，开始对话后支持查看折叠的思考步骤、代码块展示与新对话切换。",
+			"expected_pattern": "ai-workspace",
+			"expected_components": ["input-group", "message-scroller", "message", "bubble", "trace", "code-block", "button"],
+			"expectations": [
+				"采用 ai-workspace 骨架：空态居中，对话态使用 MessageScroller 吸底流 + InputGroup（composer 形态）",
+				"思考步骤用 Trace 折叠展示，代码片段用 CodeBlock 组件",
+				"严禁消息逐条飞入/弹跳动画，动效仅使用组件默认或全局档位，不写死毫秒数",
+				"通过 valar-svelte lint 零 error"
 			]
 		}
 	]

@@ -2420,6 +2420,67 @@
 			"rules": "# Number Field 设计规范\n\n- 用于需要精确输入的数字（数量、金额、端口号），代替 `<Input type=\"number\">`；有明确范围且适合拖动时用 Slider Field。\n- 设 `id` 并用 `Field.Label for={id}` 关联可见标签（检查规则 `valar/input-label`）。\n- 按需设 `min`、`max`、`step`；超出范围或无法解析的输入会自动标为无效，不要再自己用颜色标错（检查规则 `valar/invalid-via-aria`）。\n- 加减按钮名称（`decrementLabel`、`incrementLabel`）和 `invalidMessage` 默认是中文，其他语言的界面传对应文案；数字格式默认 `locale=\"zh-CN\"`，其他语言的界面传对应 `locale`。\n- 金额、百分比、单位用 `formatOptions`（`Intl.NumberFormatOptions`）格式化，不要把单位拼进值里；值始终是数字或 `undefined`（输入框为空）。\n- 放在表单中提交时设 `name`，提交的是未格式化的数字。\n"
 		},
 		{
+			"name": "page-layout",
+			"type": "registry:ui",
+			"title": "Page Layout 页面布局",
+			"description": "固化页面宽度分档、单行紧凑页头、筛选工具栏、间距分组区块与设置/详情属性行的标准布局骨架。",
+			"categories": [
+				"展示"
+			],
+			"meta": {
+				"valar": {
+					"keywords": [
+						"页面布局",
+						"页头",
+						"工具栏",
+						"设置行",
+						"属性列表",
+						"page-layout",
+						"header",
+						"toolbar",
+						"section"
+					],
+					"whenToUse": [
+						"搭建工作台列表、数据表格、系统设置、指标概览或详情页的标准页面骨架",
+						"需要固化宽窄分档（full / narrow）、单行页头对齐、间距分组和设置行/属性行结构"
+					],
+					"whenNotToUse": [
+						{
+							"case": "需要用户手动拖拽改变左右栏宽度的双栏布局",
+							"use": "resizable"
+						},
+						{
+							"case": "应用级全局左侧导航壳子",
+							"use": "sidebar"
+						},
+						{
+							"case": "聚焦型弹窗内的表单排版",
+							"use": "dialog"
+						}
+					],
+					"accessibility": [
+						"Header 渲染原生 header，Title 默认输出 h1，Section 渲染 section 并配合 h2 标题形成清晰地标层级",
+						"窄屏下自动折行与堆叠，不产生横向溢出裁切"
+					],
+					"responsive": [
+						"width='narrow' 在桌面收窄居中（max-w-3xl），width='full' 撑满工作区",
+						"Header 与 Toolbar 窄屏自动换行，PropertyRow 在移动端自动由横向切为上下排布"
+					],
+					"related": [
+						"card",
+						"field",
+						"separator",
+						"sidebar",
+						"resizable"
+					]
+				}
+			},
+			"docs": "http://127.0.0.1:5186/docs/components/page-layout",
+			"install": "pnpm exec valar-svelte add page-layout",
+			"markdown": "# Page Layout 页面布局\n\n固化页面宽度分档、单行紧凑页头、筛选工具栏、间距分组区块与设置/详情属性行的标准布局骨架。\n\n- 分类：展示\n- 关键词：页面布局、页头、工具栏、设置行、属性列表、page-layout、header、toolbar、section\n- 安装：`pnpm exec valar-svelte add page-layout`\n\n## 何时使用\n\n- 搭建工作台列表、数据表格、系统设置、指标概览或详情页的标准页面骨架\n- 需要固化宽窄分档（full / narrow）、单行页头对齐、间距分组和设置行/属性行结构\n\n## 何时不用\n\n- 需要用户手动拖拽改变左右栏宽度的双栏布局：改用 `resizable`\n- 应用级全局左侧导航壳子：改用 `sidebar`\n- 聚焦型弹窗内的表单排版：改用 `dialog`\n\n## 无障碍\n\n- Header 渲染原生 header，Title 默认输出 h1，Section 渲染 section 并配合 h2 标题形成清晰地标层级\n- 窄屏下自动折行与堆叠，不产生横向溢出裁切\n\n## 响应式\n\n- width='narrow' 在桌面收窄居中（max-w-3xl），width='full' 撑满工作区\n- Header 与 Toolbar 窄屏自动换行，PropertyRow 在移动端自动由横向切为上下排布\n\n## 相关组件\n\n- `card`\n- `field`\n- `separator`\n- `sidebar`\n- `resizable`\n",
+			"rules": "# Page Layout 设计规范\n\n- 用于固化页面级排版结构，避免在业务页面中手写参差不齐的页头、工具栏、区块留白和设置行。\n- 宽度档位：`PageLayout.Root` 默认 `width=\"full\"`（列表、表格、看板、工作台）；设置页、独立表单、详情阅读和分步向导设为 `width=\"narrow\"`（收窄居中）。\n- 页头结构：`PageLayout.Header` 保持单行紧凑，左侧放 `PageLayout.Title`（默认中性标题，不加冗余副标题），右侧放 `PageLayout.Actions` 且最多只放 1 个主色强调按钮（`variant=\"default\"`）。\n- 分组克制：`PageLayout.Section` 默认 `surface=\"plain\"`，优先靠留白间距表达分组；只有明确需要成组承载（如系统设置分组）时才设为 `surface=\"card\"`，严禁在 `surface=\"card\"` 内部再嵌套 `Card` 或另一层卡片区块。\n- 属性与设置行：`PageLayout.PropertyList` + `PageLayout.PropertyRow` 支持 `layout=\"settings\"`（左标题 + 右控件，配合 `surface=\"card\"` 与 0.5px 细分隔线）和 `layout=\"detail\"`（左属性名 + 右等宽数值或控件，默认启用 `tabular-nums`）。`description` 仅在用户不看就会填错或有不可逆影响时填写。\n"
+		},
+		{
 			"name": "pagination",
 			"type": "registry:ui",
 			"title": "Pagination 分页",
@@ -4013,6 +4074,604 @@
 			"install": "pnpm exec valar-svelte add waffle-chart",
 			"markdown": "# Waffle Chart 百格图\n\n最大余数法分配固定一百个格子的只读占比图。\n\n- 分类：展示\n- 关键词：waffle、百格图、占比、chart\n- 安装：`pnpm exec valar-svelte add waffle-chart`\n\n## 何时使用\n\n- 用一百个格子展示类别构成，旁边保留精确图例\n\n## 何时不用\n\n- 需要准确读取每个类别的数值：改用 `table`\n\n## 无障碍\n\n- 调用方提供整体 label 和精确文字图例，不依赖颜色区分\n\n## 响应式\n\n- 正方形网格随容器缩放，固定十行十列\n\n## 相关组件\n\n- `donut-chart`\n- `chart`\n",
 			"rules": "# Waffle Chart Design Rules\n\n- Supply finite data and an accessible label. Positive totals allocate exactly 100 whole cells; zero/empty data draws no cells.\n- Largest-remainder cells are approximate; keep exact values in a nearby accessible legend.\n- Colors come from caller-owned semantic series tokens; never use color as the only explanation.\n- Read-only: do not imply that cells are buttons or add hover-only information.\n"
+		}
+	],
+	"patterns": [
+		{
+			"name": "workspace-list",
+			"title": "工作台筛选列表页",
+			"category": "列表与工作台",
+			"description": "带视图切换、多维筛选、排序分组、空态与右侧详情联动的高密度工作台。",
+			"keywords": [
+				"工作台",
+				"列表",
+				"工单",
+				"任务",
+				"筛选",
+				"分组",
+				"issues",
+				"workspace",
+				"list"
+			],
+			"layoutWidth": "full",
+			"whenToUse": [
+				"任务、工单、问题或记录列表管理，需要快速切换视图与筛选条件",
+				"条目信息精炼，点击单条需要查看或编辑详情而不离开列表上下文"
+			],
+			"whenNotToUse": [
+				{
+					"case": "需要多列数值对比、列排序或批量勾选操作",
+					"use": "data-table-view"
+				},
+				{
+					"case": "需要跨列拖拽看板或时间线排期",
+					"use": "board-timeline"
+				},
+				{
+					"case": "需要左列表右详情常驻双栏快速逐条处理",
+					"use": "split-inbox"
+				}
+			],
+			"structure": [
+				"撑满工作区宽度，内容直接铺在背景上，不用外层大卡片包裹",
+				"单行紧凑页头：左侧视图 Tabs（或标题），右侧放 1 个主操作按钮",
+				"紧凑筛选工具栏：筛选 Popover + Command 搜索 + 排序控制，靠间距与列表区隔开",
+				"列表主体：单行 Item 列表（行内信息克制、中性灰标签为主），无结果时渲染 Empty（中性标题 + 1 个操作按钮）",
+				"点击条目在右侧 Sheet 抽屉或详情面板打开，不破坏当前筛选状态"
+			],
+			"components": [
+				"page-layout",
+				"tabs",
+				"popover",
+				"command",
+				"item",
+				"badge",
+				"empty",
+				"sheet",
+				"button"
+			],
+			"referenceScene": "/advanced/my-issues",
+			"guardrails": [
+				"严禁为列表每一行套卡片，用 0.5px 细分隔线或紧凑行间距区分",
+				"同一视区最多 1 个主色强调按钮（位于页头右侧）",
+				"禁止首屏列表逐行飞入动画，内容应立刻可读"
+			],
+			"install": "pnpm exec valar-svelte add page-layout tabs popover command item badge empty sheet button",
+			"markdown": "# 工作台筛选列表页（`workspace-list`）\n\n带视图切换、多维筛选、排序分组、空态与右侧详情联动的高密度工作台。\n\n- 分类：列表与工作台\n- 宽度模式：撑满工作区宽度\n- 关键词：工作台、列表、工单、任务、筛选、分组、issues、workspace、list\n- 参考场景：/advanced/my-issues\n- 常用组件：`page-layout`、`tabs`、`popover`、`command`、`item`、`badge`、`empty`、`sheet`、`button`\n- 一键安装：`pnpm exec valar-svelte add page-layout tabs popover command item badge empty sheet button`\n\n## 何时套用\n\n- 任务、工单、问题或记录列表管理，需要快速切换视图与筛选条件\n- 条目信息精炼，点击单条需要查看或编辑详情而不离开列表上下文\n\n## 何时不适用\n\n- 需要多列数值对比、列排序或批量勾选操作：改用 `data-table-view`\n- 需要跨列拖拽看板或时间线排期：改用 `board-timeline`\n- 需要左列表右详情常驻双栏快速逐条处理：改用 `split-inbox`\n\n## 标准骨架结构\n\n1. 撑满工作区宽度，内容直接铺在背景上，不用外层大卡片包裹\n2. 单行紧凑页头：左侧视图 Tabs（或标题），右侧放 1 个主操作按钮\n3. 紧凑筛选工具栏：筛选 Popover + Command 搜索 + 排序控制，靠间距与列表区隔开\n4. 列表主体：单行 Item 列表（行内信息克制、中性灰标签为主），无结果时渲染 Empty（中性标题 + 1 个操作按钮）\n5. 点击条目在右侧 Sheet 抽屉或详情面板打开，不破坏当前筛选状态\n\n## 审美与克制红线\n\n- 严禁为列表每一行套卡片，用 0.5px 细分隔线或紧凑行间距区分\n- 同一视区最多 1 个主色强调按钮（位于页头右侧）\n- 禁止首屏列表逐行飞入动画，内容应立刻可读\n"
+		},
+		{
+			"name": "data-table-view",
+			"title": "结构化数据表格与批量管理页",
+			"category": "列表与工作台",
+			"description": "多列排序、搜索过滤、勾选批量操作与分页的数据台账页面。",
+			"keywords": [
+				"表格",
+				"数据表",
+				"成员管理",
+				"权限",
+				"订单",
+				"台账",
+				"批量操作",
+				"分页",
+				"table",
+				"data-table"
+			],
+			"layoutWidth": "full",
+			"whenToUse": [
+				"成员权限、订单明细、账单记录、资产目录等多字段结构化对比",
+				"需要列排序、行勾选批量动作或分页浏览"
+			],
+			"whenNotToUse": [
+				{
+					"case": "字段少且偏信息流/任务行浏览",
+					"use": "workspace-list"
+				},
+				{
+					"case": "左侧选条目右侧立即看长文详情",
+					"use": "split-inbox"
+				}
+			],
+			"structure": [
+				"撑满工作区宽度，单行紧凑页头：左侧标题，右侧 1 个主按钮（如“添加成员”）",
+				"表格上方紧凑工具栏：左侧搜索 InputGroup 与筛选 Select/Popover，勾选条目后原地切换显示批量操作条",
+				"单层 0.5px 边框表格容器承载 Table（复杂列排序与勾选可配合 Data Table 指南）；金额、计数与时间列启用 tabular-nums",
+				"窄屏保持表格容器内局部横向滚动，不撑破整页；底部放置 Pagination 与总数"
+			],
+			"components": [
+				"page-layout",
+				"table",
+				"input-group",
+				"select",
+				"checkbox",
+				"badge",
+				"dropdown-menu",
+				"pagination",
+				"empty",
+				"button"
+			],
+			"guardrails": [
+				"表格内状态标签默认中性灰，仅关键语义状态（错误/停用/成功）使用语义色",
+				"行内悬停仅用轻微底色变化，严禁上浮或放大动画",
+				"搜索占位符只写示例（如“按姓名或邮箱筛选”），不加多余说明段落"
+			],
+			"install": "pnpm exec valar-svelte add page-layout table input-group select checkbox badge dropdown-menu pagination empty button",
+			"markdown": "# 结构化数据表格与批量管理页（`data-table-view`）\n\n多列排序、搜索过滤、勾选批量操作与分页的数据台账页面。\n\n- 分类：列表与工作台\n- 宽度模式：撑满工作区宽度\n- 关键词：表格、数据表、成员管理、权限、订单、台账、批量操作、分页、table、data-table\n- 常用组件：`page-layout`、`table`、`input-group`、`select`、`checkbox`、`badge`、`dropdown-menu`、`pagination`、`empty`、`button`\n- 一键安装：`pnpm exec valar-svelte add page-layout table input-group select checkbox badge dropdown-menu pagination empty button`\n\n## 何时套用\n\n- 成员权限、订单明细、账单记录、资产目录等多字段结构化对比\n- 需要列排序、行勾选批量动作或分页浏览\n\n## 何时不适用\n\n- 字段少且偏信息流/任务行浏览：改用 `workspace-list`\n- 左侧选条目右侧立即看长文详情：改用 `split-inbox`\n\n## 标准骨架结构\n\n1. 撑满工作区宽度，单行紧凑页头：左侧标题，右侧 1 个主按钮（如“添加成员”）\n2. 表格上方紧凑工具栏：左侧搜索 InputGroup 与筛选 Select/Popover，勾选条目后原地切换显示批量操作条\n3. 单层 0.5px 边框表格容器承载 Table（复杂列排序与勾选可配合 Data Table 指南）；金额、计数与时间列启用 tabular-nums\n4. 窄屏保持表格容器内局部横向滚动，不撑破整页；底部放置 Pagination 与总数\n\n## 审美与克制红线\n\n- 表格内状态标签默认中性灰，仅关键语义状态（错误/停用/成功）使用语义色\n- 行内悬停仅用轻微底色变化，严禁上浮或放大动画\n- 搜索占位符只写示例（如“按姓名或邮箱筛选”），不加多余说明段落\n"
+		},
+		{
+			"name": "settings-page",
+			"title": "系统设置与偏好配置页",
+			"category": "设置与表单",
+			"description": "收窄居中阅读区、单层分组卡片与「左文案 + 右控件」横向设置行布局。",
+			"keywords": [
+				"设置",
+				"偏好",
+				"配置",
+				"账号",
+				"安全",
+				"通知设置",
+				"settings",
+				"preferences"
+			],
+			"layoutWidth": "narrow",
+			"whenToUse": [
+				"工作区设置、个人资料、通知偏好、安全与权限配置页",
+				"以开关、下拉选择、单行输入为主的长期配置项"
+			],
+			"whenNotToUse": [
+				{
+					"case": "临时创建一条记录的短表单",
+					"use": "form-dialog"
+				},
+				{
+					"case": "有严格前后校验步骤的导入或开通流程",
+					"use": "guided-stepper"
+				}
+			],
+			"structure": [
+				"收窄居中阅读区（max-w-[760px]，多板块设置可配左侧 Sidebar 导航）",
+				"单行页面标题，默认不写冗长副标题",
+				"按主题用留白间距分组；每组使用最多 1 层 Card，内部以「左标题 + 右控件」横向 Field 行排列并用 0.5px Separator 隔开",
+				"危险设置区独立放在底部并拉开更大间距，破坏性按钮单独标红并接入二次确认弹窗"
+			],
+			"components": [
+				"page-layout",
+				"sidebar",
+				"card",
+				"field",
+				"label",
+				"select",
+				"switch",
+				"input",
+				"separator",
+				"button"
+			],
+			"referenceScene": "/advanced/settings",
+			"guardrails": [
+				"严禁卡片套卡片，严禁在圆角矩形使用单侧高亮彩边",
+				"开关和下拉等即时设置项直接生效，不额外狂弹 Toast",
+				"默认只留中性标题，仅当不看就会填错或涉及不可逆影响时补一行简短说明"
+			],
+			"install": "pnpm exec valar-svelte add page-layout sidebar card field label select switch input separator button",
+			"markdown": "# 系统设置与偏好配置页（`settings-page`）\n\n收窄居中阅读区、单层分组卡片与「左文案 + 右控件」横向设置行布局。\n\n- 分类：设置与表单\n- 宽度模式：收窄居中（约 680–840px）\n- 关键词：设置、偏好、配置、账号、安全、通知设置、settings、preferences\n- 参考场景：/advanced/settings\n- 常用组件：`page-layout`、`sidebar`、`card`、`field`、`label`、`select`、`switch`、`input`、`separator`、`button`\n- 一键安装：`pnpm exec valar-svelte add page-layout sidebar card field label select switch input separator button`\n\n## 何时套用\n\n- 工作区设置、个人资料、通知偏好、安全与权限配置页\n- 以开关、下拉选择、单行输入为主的长期配置项\n\n## 何时不适用\n\n- 临时创建一条记录的短表单：改用 `form-dialog`\n- 有严格前后校验步骤的导入或开通流程：改用 `guided-stepper`\n\n## 标准骨架结构\n\n1. 收窄居中阅读区（max-w-[760px]，多板块设置可配左侧 Sidebar 导航）\n2. 单行页面标题，默认不写冗长副标题\n3. 按主题用留白间距分组；每组使用最多 1 层 Card，内部以「左标题 + 右控件」横向 Field 行排列并用 0.5px Separator 隔开\n4. 危险设置区独立放在底部并拉开更大间距，破坏性按钮单独标红并接入二次确认弹窗\n\n## 审美与克制红线\n\n- 严禁卡片套卡片，严禁在圆角矩形使用单侧高亮彩边\n- 开关和下拉等即时设置项直接生效，不额外狂弹 Toast\n- 默认只留中性标题，仅当不看就会填错或涉及不可逆影响时补一行简短说明\n"
+		},
+		{
+			"name": "split-inbox",
+			"title": "双栏分栏列表与详情页",
+			"category": "列表与工作台",
+			"description": "左侧可滚动条目列表 + 0.5px 细分隔器 + 右侧常驻详情与快捷操作区。",
+			"keywords": [
+				"收件箱",
+				"通知",
+				"双栏",
+				"分栏",
+				"审批",
+				"消息列表",
+				"inbox",
+				"split",
+				"master-detail"
+			],
+			"layoutWidth": "full",
+			"whenToUse": [
+				"通知中心、审批收件箱、待办逐条审阅，需要高频在多条记录间切换阅读与处理"
+			],
+			"whenNotToUse": [
+				{
+					"case": "偶尔点开查看单条详情，大多数时候看宽表",
+					"use": "detail-drawer"
+				}
+			],
+			"structure": [
+				"撑满工作区高度的 Resizable 双栏容器，两栏间用 0.5px 细分隔器",
+				"左栏：顶部紧凑过滤栏 + ScrollArea 独立滚动列表，选中项用柔和表面色标示；无数据时居中展示 Empty",
+				"右栏：固定顶部操作栏（已读、归档、更多菜单）+ 独立滚动详情正文与协作记录",
+				"窄屏自动切换为单列列表/详情切换，不挤压双栏"
+			],
+			"components": [
+				"resizable",
+				"scroll-area",
+				"item",
+				"popover",
+				"dropdown-menu",
+				"badge",
+				"empty",
+				"button"
+			],
+			"referenceScene": "/advanced/inbox",
+			"guardrails": [
+				"左右两栏各自独立滚动，避免整页出现双滚动条",
+				"已读/暂缓等操作原地更新状态，克制使用 Toast"
+			],
+			"install": "pnpm exec valar-svelte add resizable scroll-area item popover dropdown-menu badge empty button",
+			"markdown": "# 双栏分栏列表与详情页（`split-inbox`）\n\n左侧可滚动条目列表 + 0.5px 细分隔器 + 右侧常驻详情与快捷操作区。\n\n- 分类：列表与工作台\n- 宽度模式：撑满工作区宽度\n- 关键词：收件箱、通知、双栏、分栏、审批、消息列表、inbox、split、master-detail\n- 参考场景：/advanced/inbox\n- 常用组件：`resizable`、`scroll-area`、`item`、`popover`、`dropdown-menu`、`badge`、`empty`、`button`\n- 一键安装：`pnpm exec valar-svelte add resizable scroll-area item popover dropdown-menu badge empty button`\n\n## 何时套用\n\n- 通知中心、审批收件箱、待办逐条审阅，需要高频在多条记录间切换阅读与处理\n\n## 何时不适用\n\n- 偶尔点开查看单条详情，大多数时候看宽表：改用 `detail-drawer`\n\n## 标准骨架结构\n\n1. 撑满工作区高度的 Resizable 双栏容器，两栏间用 0.5px 细分隔器\n2. 左栏：顶部紧凑过滤栏 + ScrollArea 独立滚动列表，选中项用柔和表面色标示；无数据时居中展示 Empty\n3. 右栏：固定顶部操作栏（已读、归档、更多菜单）+ 独立滚动详情正文与协作记录\n4. 窄屏自动切换为单列列表/详情切换，不挤压双栏\n\n## 审美与克制红线\n\n- 左右两栏各自独立滚动，避免整页出现双滚动条\n- 已读/暂缓等操作原地更新状态，克制使用 Toast\n"
+		},
+		{
+			"name": "board-timeline",
+			"title": "多视图项目看板与时间线页",
+			"category": "列表与工作台",
+			"description": "列表、跨列看板与时间线里程碑同步切换的项目排期工作区。",
+			"keywords": [
+				"项目",
+				"看板",
+				"时间线",
+				"排期",
+				"里程碑",
+				"拖拽",
+				"kanban",
+				"board",
+				"timeline",
+				"projects"
+			],
+			"layoutWidth": "full",
+			"whenToUse": [
+				"需要按状态分列推进卡片（看板）或按时间跨度查看排期与里程碑（时间线）"
+			],
+			"whenNotToUse": [
+				{
+					"case": "普通单表检索与批量管理",
+					"use": "data-table-view"
+				}
+			],
+			"structure": [
+				"撑满工作区宽度，单行页头包含视图切换 Tabs（列表 / 看板 / 时间线）与右上角新建主按钮",
+				"筛选工具栏保持单行紧凑，状态和负责人筛选放入 Popover + Command",
+				"看板列使用清晰列头（状态 + tabular-nums 计数）与单层卡片，列间靠留白与极浅底色区分",
+				"时间线/日历视图日期与范围选择复用 Calendar / DatePicker，所有数值与日期等宽对齐"
+			],
+			"components": [
+				"page-layout",
+				"tabs",
+				"table",
+				"card",
+				"calendar",
+				"date-picker",
+				"popover",
+				"command",
+				"dialog",
+				"button"
+			],
+			"referenceScene": "/advanced/projects",
+			"guardrails": [
+				"看板卡片只展示核心标题与 2–3 个关键元数据，避免堆满彩色 Badge",
+				"严禁给看板卡片加悬停上浮/放大动画"
+			],
+			"install": "pnpm exec valar-svelte add page-layout tabs table card calendar date-picker popover command dialog button",
+			"markdown": "# 多视图项目看板与时间线页（`board-timeline`）\n\n列表、跨列看板与时间线里程碑同步切换的项目排期工作区。\n\n- 分类：列表与工作台\n- 宽度模式：撑满工作区宽度\n- 关键词：项目、看板、时间线、排期、里程碑、拖拽、kanban、board、timeline、projects\n- 参考场景：/advanced/projects\n- 常用组件：`page-layout`、`tabs`、`table`、`card`、`calendar`、`date-picker`、`popover`、`command`、`dialog`、`button`\n- 一键安装：`pnpm exec valar-svelte add page-layout tabs table card calendar date-picker popover command dialog button`\n\n## 何时套用\n\n- 需要按状态分列推进卡片（看板）或按时间跨度查看排期与里程碑（时间线）\n\n## 何时不适用\n\n- 普通单表检索与批量管理：改用 `data-table-view`\n\n## 标准骨架结构\n\n1. 撑满工作区宽度，单行页头包含视图切换 Tabs（列表 / 看板 / 时间线）与右上角新建主按钮\n2. 筛选工具栏保持单行紧凑，状态和负责人筛选放入 Popover + Command\n3. 看板列使用清晰列头（状态 + tabular-nums 计数）与单层卡片，列间靠留白与极浅底色区分\n4. 时间线/日历视图日期与范围选择复用 Calendar / DatePicker，所有数值与日期等宽对齐\n\n## 审美与克制红线\n\n- 看板卡片只展示核心标题与 2–3 个关键元数据，避免堆满彩色 Badge\n- 严禁给看板卡片加悬停上浮/放大动画\n"
+		},
+		{
+			"name": "form-dialog",
+			"title": "聚焦新建与编辑弹窗",
+			"category": "弹层与表单",
+			"description": "不离开当前页面的轻量创建或短表单编辑弹窗，单列竖排、取消左主操作右。",
+			"keywords": [
+				"弹窗",
+				"新建",
+				"创建",
+				"编辑表单",
+				"模态框",
+				"dialog",
+				"modal",
+				"form",
+				"create"
+			],
+			"layoutWidth": "overlay",
+			"whenToUse": [
+				"约 2–6 个字段的快速创建、重命名或局部编辑任务",
+				"希望完成后立刻回到原列表上下文"
+			],
+			"whenNotToUse": [
+				{
+					"case": "字段多、含评论动态或需要边看列表边编辑",
+					"use": "detail-drawer"
+				},
+				{
+					"case": "仅需确认删除或不可逆操作",
+					"use": "destructive-confirm"
+				},
+				{
+					"case": "多步骤长流程或全页配置",
+					"use": "settings-page"
+				}
+			],
+			"structure": [
+				"居中 Dialog，Dialog.Title 直接用中性动作标题（如“新建项目”），默认不写副标题",
+				"表单内容默认单列竖排：Field.FieldGroup + Field.Field（标签在上、控件在下），长表单在内容区内部滚动",
+				"输入占位符仅给格式示例，校验错误直接显示在对应字段下方（data-invalid + aria-invalid）",
+				"固定底部操作栏：取消按钮在左，唯一主色提交按钮在右（提交中原地禁用 + Spinner）"
+			],
+			"components": [
+				"dialog",
+				"field",
+				"input",
+				"textarea",
+				"select",
+				"switch",
+				"spinner",
+				"button"
+			],
+			"referenceScene": "/advanced/new-issue",
+			"guardrails": [
+				"弹窗内严禁再套 Card 边框",
+				"禁止放底部隐私提示卡或长段解释文案",
+				"必须包含 Dialog.Title 保证无障碍读屏"
+			],
+			"install": "pnpm exec valar-svelte add dialog field input textarea select switch spinner button",
+			"markdown": "# 聚焦新建与编辑弹窗（`form-dialog`）\n\n不离开当前页面的轻量创建或短表单编辑弹窗，单列竖排、取消左主操作右。\n\n- 分类：弹层与表单\n- 宽度模式：弹层 / 抽屉容器\n- 关键词：弹窗、新建、创建、编辑表单、模态框、dialog、modal、form、create\n- 参考场景：/advanced/new-issue\n- 常用组件：`dialog`、`field`、`input`、`textarea`、`select`、`switch`、`spinner`、`button`\n- 一键安装：`pnpm exec valar-svelte add dialog field input textarea select switch spinner button`\n\n## 何时套用\n\n- 约 2–6 个字段的快速创建、重命名或局部编辑任务\n- 希望完成后立刻回到原列表上下文\n\n## 何时不适用\n\n- 字段多、含评论动态或需要边看列表边编辑：改用 `detail-drawer`\n- 仅需确认删除或不可逆操作：改用 `destructive-confirm`\n- 多步骤长流程或全页配置：改用 `settings-page`\n\n## 标准骨架结构\n\n1. 居中 Dialog，Dialog.Title 直接用中性动作标题（如“新建项目”），默认不写副标题\n2. 表单内容默认单列竖排：Field.FieldGroup + Field.Field（标签在上、控件在下），长表单在内容区内部滚动\n3. 输入占位符仅给格式示例，校验错误直接显示在对应字段下方（data-invalid + aria-invalid）\n4. 固定底部操作栏：取消按钮在左，唯一主色提交按钮在右（提交中原地禁用 + Spinner）\n\n## 审美与克制红线\n\n- 弹窗内严禁再套 Card 边框\n- 禁止放底部隐私提示卡或长段解释文案\n- 必须包含 Dialog.Title 保证无障碍读屏\n"
+		},
+		{
+			"name": "detail-drawer",
+			"title": "右侧记录详情与属性抽屉",
+			"category": "弹层与表单",
+			"description": "右侧滑出面板承载记录详情、属性键值对与活动流，保留背后主列表可见。",
+			"keywords": [
+				"抽屉",
+				"详情",
+				"侧边面板",
+				"属性",
+				"编辑详情",
+				"sheet",
+				"drawer",
+				"detail",
+				"inspector"
+			],
+			"layoutWidth": "overlay",
+			"whenToUse": [
+				"从表格、列表或看板点击条目后，查看和编辑较完整的记录信息与动态",
+				"复杂多条件高级筛选面板"
+			],
+			"whenNotToUse": [
+				{
+					"case": "2–4 个字段的极简新建或确认",
+					"use": "form-dialog"
+				},
+				{
+					"case": "高频连续逐条处理（如收件箱）",
+					"use": "split-inbox"
+				}
+			],
+			"structure": [
+				"右侧滑出 Sheet，顶部单行固定栏：标识/面包屑 + 标题（Sheet.Title）+ 关闭按钮",
+				"主体内部独立滚动，通过清晰间距自然分隔：标题与正文区、属性键值对区、评论/活动记录区",
+				"属性项用紧凑两列对齐（左侧中性灰属性名 + 右侧 Popover/Select 就地可改控件）"
+			],
+			"components": [
+				"sheet",
+				"breadcrumb",
+				"input",
+				"textarea",
+				"badge",
+				"popover",
+				"command",
+				"separator",
+				"button"
+			],
+			"guardrails": [
+				"抽屉内部靠间距和 0.5px 细线分区，严禁堆叠嵌套卡片",
+				"必须提供 Sheet.Title（视觉隐藏时可用 sr-only）"
+			],
+			"install": "pnpm exec valar-svelte add sheet breadcrumb input textarea badge popover command separator button",
+			"markdown": "# 右侧记录详情与属性抽屉（`detail-drawer`）\n\n右侧滑出面板承载记录详情、属性键值对与活动流，保留背后主列表可见。\n\n- 分类：弹层与表单\n- 宽度模式：弹层 / 抽屉容器\n- 关键词：抽屉、详情、侧边面板、属性、编辑详情、sheet、drawer、detail、inspector\n- 常用组件：`sheet`、`breadcrumb`、`input`、`textarea`、`badge`、`popover`、`command`、`separator`、`button`\n- 一键安装：`pnpm exec valar-svelte add sheet breadcrumb input textarea badge popover command separator button`\n\n## 何时套用\n\n- 从表格、列表或看板点击条目后，查看和编辑较完整的记录信息与动态\n- 复杂多条件高级筛选面板\n\n## 何时不适用\n\n- 2–4 个字段的极简新建或确认：改用 `form-dialog`\n- 高频连续逐条处理（如收件箱）：改用 `split-inbox`\n\n## 标准骨架结构\n\n1. 右侧滑出 Sheet，顶部单行固定栏：标识/面包屑 + 标题（Sheet.Title）+ 关闭按钮\n2. 主体内部独立滚动，通过清晰间距自然分隔：标题与正文区、属性键值对区、评论/活动记录区\n3. 属性项用紧凑两列对齐（左侧中性灰属性名 + 右侧 Popover/Select 就地可改控件）\n\n## 审美与克制红线\n\n- 抽屉内部靠间距和 0.5px 细线分区，严禁堆叠嵌套卡片\n- 必须提供 Sheet.Title（视觉隐藏时可用 sr-only）\n"
+		},
+		{
+			"name": "overview-metrics",
+			"title": "核心指标概览与用量监控页",
+			"category": "数据与概览",
+			"description": "高信噪比的指标概览页：顶部核心读数卡 + 图表趋势 + 明细列表，零凑数装饰。",
+			"keywords": [
+				"概览",
+				"仪表盘",
+				"统计",
+				"指标",
+				"用量",
+				"配额",
+				"账单",
+				"图表",
+				"dashboard",
+				"metrics",
+				"billing"
+			],
+			"layoutWidth": "full",
+			"whenToUse": [
+				"账单用量、配额监控、业务核心指标总览页"
+			],
+			"whenNotToUse": [
+				{
+					"case": "纯记录管理列表，没有真实统计需求（严禁为了凑对称硬加 KPI 卡片）",
+					"use": "data-table-view"
+				}
+			],
+			"structure": [
+				"撑满工作区宽度，单行页头：左侧标题，右侧时间范围 DatePicker / Select 与导出按钮",
+				"核心指标行：3–4 张简洁单层 Card（中性标题 + tabular-nums 主数字 + 紧凑趋势 Sparkline 或中性/语义 Badge）",
+				"靠留白间距分隔下方主图表区（Chart / DonutChart / Gauge，严格使用 --chart-1～--chart-5 token）",
+				"底部可衔接明细 Table，加载中用等高 Skeleton 占位"
+			],
+			"components": [
+				"page-layout",
+				"card",
+				"chart",
+				"sparkline",
+				"donut-chart",
+				"gauge",
+				"date-picker",
+				"badge",
+				"table",
+				"skeleton"
+			],
+			"guardrails": [
+				"严禁为凑四格对称编造无业务价值的假 KPI 卡或假图表",
+				"严禁在圆角指标卡左侧加粗彩色高亮边，严禁彩色渐变背景",
+				"所有数字、百分比、金额必须开启 tabular-nums"
+			],
+			"install": "pnpm exec valar-svelte add page-layout card chart sparkline donut-chart gauge date-picker badge table skeleton",
+			"markdown": "# 核心指标概览与用量监控页（`overview-metrics`）\n\n高信噪比的指标概览页：顶部核心读数卡 + 图表趋势 + 明细列表，零凑数装饰。\n\n- 分类：数据与概览\n- 宽度模式：撑满工作区宽度\n- 关键词：概览、仪表盘、统计、指标、用量、配额、账单、图表、dashboard、metrics、billing\n- 常用组件：`page-layout`、`card`、`chart`、`sparkline`、`donut-chart`、`gauge`、`date-picker`、`badge`、`table`、`skeleton`\n- 一键安装：`pnpm exec valar-svelte add page-layout card chart sparkline donut-chart gauge date-picker badge table skeleton`\n\n## 何时套用\n\n- 账单用量、配额监控、业务核心指标总览页\n\n## 何时不适用\n\n- 纯记录管理列表，没有真实统计需求（严禁为了凑对称硬加 KPI 卡片）：改用 `data-table-view`\n\n## 标准骨架结构\n\n1. 撑满工作区宽度，单行页头：左侧标题，右侧时间范围 DatePicker / Select 与导出按钮\n2. 核心指标行：3–4 张简洁单层 Card（中性标题 + tabular-nums 主数字 + 紧凑趋势 Sparkline 或中性/语义 Badge）\n3. 靠留白间距分隔下方主图表区（Chart / DonutChart / Gauge，严格使用 --chart-1～--chart-5 token）\n4. 底部可衔接明细 Table，加载中用等高 Skeleton 占位\n\n## 审美与克制红线\n\n- 严禁为凑四格对称编造无业务价值的假 KPI 卡或假图表\n- 严禁在圆角指标卡左侧加粗彩色高亮边，严禁彩色渐变背景\n- 所有数字、百分比、金额必须开启 tabular-nums\n"
+		},
+		{
+			"name": "guided-stepper",
+			"title": "分步校验向导页",
+			"category": "设置与表单",
+			"description": "有严格先后顺序与每步门禁校验的多步流程（导入、开通、初始化）。",
+			"keywords": [
+				"向导",
+				"步骤",
+				"分步",
+				"导入",
+				"引导",
+				"开通",
+				"stepper",
+				"wizard",
+				"onboarding"
+			],
+			"layoutWidth": "narrow",
+			"whenToUse": [
+				"数据导入、服务开通、多步配置等必须按先后顺序完成且每步需要校验的流程"
+			],
+			"whenNotToUse": [
+				{
+					"case": "各板块可以随意切换、没有先后依赖",
+					"use": "settings-page"
+				},
+				{
+					"case": "字段少、一步就能填完",
+					"use": "form-dialog"
+				}
+			],
+			"structure": [
+				"收窄居中内容区（max-w-[760px]），顶部单行标题",
+				"使用 Stepper 展示清晰步骤进度与当前步校验状态（错误直接挂在步骤或字段下）",
+				"每步内容单列竖排，底部操作区左置「上一步 / 取消」、右置唯一主操作「下一步 / 完成」",
+				"异步校验期间按钮原地禁用 + Spinner，不锁死整个屏幕"
+			],
+			"components": [
+				"page-layout",
+				"stepper",
+				"field",
+				"input",
+				"select",
+				"alert",
+				"spinner",
+				"button"
+			],
+			"guardrails": [
+				"每一步校验报错必须说清「错在哪 + 怎么改」",
+				"窄屏下步骤条自动折为竖排"
+			],
+			"install": "pnpm exec valar-svelte add page-layout stepper field input select alert spinner button",
+			"markdown": "# 分步校验向导页（`guided-stepper`）\n\n有严格先后顺序与每步门禁校验的多步流程（导入、开通、初始化）。\n\n- 分类：设置与表单\n- 宽度模式：收窄居中（约 680–840px）\n- 关键词：向导、步骤、分步、导入、引导、开通、stepper、wizard、onboarding\n- 常用组件：`page-layout`、`stepper`、`field`、`input`、`select`、`alert`、`spinner`、`button`\n- 一键安装：`pnpm exec valar-svelte add page-layout stepper field input select alert spinner button`\n\n## 何时套用\n\n- 数据导入、服务开通、多步配置等必须按先后顺序完成且每步需要校验的流程\n\n## 何时不适用\n\n- 各板块可以随意切换、没有先后依赖：改用 `settings-page`\n- 字段少、一步就能填完：改用 `form-dialog`\n\n## 标准骨架结构\n\n1. 收窄居中内容区（max-w-[760px]），顶部单行标题\n2. 使用 Stepper 展示清晰步骤进度与当前步校验状态（错误直接挂在步骤或字段下）\n3. 每步内容单列竖排，底部操作区左置「上一步 / 取消」、右置唯一主操作「下一步 / 完成」\n4. 异步校验期间按钮原地禁用 + Spinner，不锁死整个屏幕\n\n## 审美与克制红线\n\n- 每一步校验报错必须说清「错在哪 + 怎么改」\n- 窄屏下步骤条自动折为竖排\n"
+		},
+		{
+			"name": "ai-workspace",
+			"title": "AI 对话与流式协作工作台",
+			"category": "AI 与协作",
+			"description": "支持空态居中提问、流式消息、折叠思考链、结构化确认与底部发送器的对话工作台。",
+			"keywords": [
+				"AI",
+				"对话",
+				"助手",
+				"聊天",
+				"流式",
+				"问答",
+				"agent",
+				"chat",
+				"assistant"
+			],
+			"layoutWidth": "full",
+			"whenToUse": [
+				"AI 对话助手、知识库问答、带工具调用轨迹与结构化交互卡片的智能工作台"
+			],
+			"whenNotToUse": [
+				{
+					"case": "传统静态表单或列表管理",
+					"use": "workspace-list"
+				}
+			],
+			"structure": [
+				"未发消息时：居中简洁标题 + InputGroup（composer 形态）+ 精简示例入口卡片",
+				"进入对话后：顶部轻量会话栏（标题 + 新对话）+ MessageScroller 吸底消息流 + 底部发送器",
+				"消息流内：用户消息使用 Bubble 右对齐，助手消息左对齐正文并按序穿插折叠 Trace 思考轨迹、CodeBlock 与 Questionnaire 确认卡"
+			],
+			"components": [
+				"message-scroller",
+				"message",
+				"bubble",
+				"trace",
+				"attachment",
+				"input-group",
+				"code-block",
+				"questionnaire",
+				"button"
+			],
+			"referenceScene": "/advanced/agent",
+			"guardrails": [
+				"未配置真实模型时严禁伪造虚假 AI 回复，应直接引导配置",
+				"严禁消息列表出现装饰性逐条飞入动画，保持流式跟底克制顺滑"
+			],
+			"install": "pnpm exec valar-svelte add message-scroller message bubble trace attachment input-group code-block questionnaire button",
+			"markdown": "# AI 对话与流式协作工作台（`ai-workspace`）\n\n支持空态居中提问、流式消息、折叠思考链、结构化确认与底部发送器的对话工作台。\n\n- 分类：AI 与协作\n- 宽度模式：撑满工作区宽度\n- 关键词：AI、对话、助手、聊天、流式、问答、agent、chat、assistant\n- 参考场景：/advanced/agent\n- 常用组件：`message-scroller`、`message`、`bubble`、`trace`、`attachment`、`input-group`、`code-block`、`questionnaire`、`button`\n- 一键安装：`pnpm exec valar-svelte add message-scroller message bubble trace attachment input-group code-block questionnaire button`\n\n## 何时套用\n\n- AI 对话助手、知识库问答、带工具调用轨迹与结构化交互卡片的智能工作台\n\n## 何时不适用\n\n- 传统静态表单或列表管理：改用 `workspace-list`\n\n## 标准骨架结构\n\n1. 未发消息时：居中简洁标题 + InputGroup（composer 形态）+ 精简示例入口卡片\n2. 进入对话后：顶部轻量会话栏（标题 + 新对话）+ MessageScroller 吸底消息流 + 底部发送器\n3. 消息流内：用户消息使用 Bubble 右对齐，助手消息左对齐正文并按序穿插折叠 Trace 思考轨迹、CodeBlock 与 Questionnaire 确认卡\n\n## 审美与克制红线\n\n- 未配置真实模型时严禁伪造虚假 AI 回复，应直接引导配置\n- 严禁消息列表出现装饰性逐条飞入动画，保持流式跟底克制顺滑\n"
+		},
+		{
+			"name": "destructive-confirm",
+			"title": "高风险二次确认与异步反馈",
+			"category": "弹层与表单",
+			"description": "删除、移除、重置等不可逆操作的标准安全确认弹窗与结果反馈范式。",
+			"keywords": [
+				"删除",
+				"确认",
+				"危险操作",
+				"撤销",
+				"不可逆",
+				"alert-dialog",
+				"confirm",
+				"delete",
+				"destructive"
+			],
+			"layoutWidth": "overlay",
+			"whenToUse": [
+				"删除项目、移除成员、重置密钥、清空数据等高风险或不可恢复操作"
+			],
+			"whenNotToUse": [
+				{
+					"case": "需要填写多个字段的普通编辑弹窗",
+					"use": "form-dialog"
+				}
+			],
+			"structure": [
+				"居中 AlertDialog（点击遮罩不误关），AlertDialog.Title 直接写明确动作（如“删除项目”）",
+				"AlertDialog.Description 一句话封顶：只写「具体对象 + 不可恢复影响」",
+				"底部固定「AlertDialog.Cancel（取消）在左，AlertDialog.Action（危险红按钮，文案带对象如“删除项目”）在右」",
+				"执行中按钮原地禁用 + Spinner；跨区域成功/失败结果用轻量 Sonner Toast 反馈（可撤销操作提供撤销按钮）"
+			],
+			"components": [
+				"alert-dialog",
+				"button",
+				"spinner",
+				"sonner"
+			],
+			"guardrails": [
+				"危险确认按钮文案严禁用笼统的“确定”，必须写明动作与对象（如“删除成员”）",
+				"必须保留 AlertDialog.Cancel 给用户清晰退路"
+			],
+			"install": "pnpm exec valar-svelte add alert-dialog button spinner sonner",
+			"markdown": "# 高风险二次确认与异步反馈（`destructive-confirm`）\n\n删除、移除、重置等不可逆操作的标准安全确认弹窗与结果反馈范式。\n\n- 分类：弹层与表单\n- 宽度模式：弹层 / 抽屉容器\n- 关键词：删除、确认、危险操作、撤销、不可逆、alert-dialog、confirm、delete、destructive\n- 常用组件：`alert-dialog`、`button`、`spinner`、`sonner`\n- 一键安装：`pnpm exec valar-svelte add alert-dialog button spinner sonner`\n\n## 何时套用\n\n- 删除项目、移除成员、重置密钥、清空数据等高风险或不可恢复操作\n\n## 何时不适用\n\n- 需要填写多个字段的普通编辑弹窗：改用 `form-dialog`\n\n## 标准骨架结构\n\n1. 居中 AlertDialog（点击遮罩不误关），AlertDialog.Title 直接写明确动作（如“删除项目”）\n2. AlertDialog.Description 一句话封顶：只写「具体对象 + 不可恢复影响」\n3. 底部固定「AlertDialog.Cancel（取消）在左，AlertDialog.Action（危险红按钮，文案带对象如“删除项目”）在右」\n4. 执行中按钮原地禁用 + Spinner；跨区域成功/失败结果用轻量 Sonner Toast 反馈（可撤销操作提供撤销按钮）\n\n## 审美与克制红线\n\n- 危险确认按钮文案严禁用笼统的“确定”，必须写明动作与对象（如“删除成员”）\n- 必须保留 AlertDialog.Cancel 给用户清晰退路\n"
 		}
 	],
 	"missingCards": []

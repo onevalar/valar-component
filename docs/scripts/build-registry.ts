@@ -21,6 +21,7 @@ import { readComponentCards } from "./component-cards.js";
 import { buildRegistry } from "./registry.js";
 import { getColorsData } from "../src/lib/components/colors/colors.js";
 import { buildCatalog } from "../src/lib/registry/catalog.js";
+import { PAGE_PATTERNS } from "../src/lib/registry/patterns.js";
 import { THEMES } from "../src/lib/registry/themes.js";
 // Same local site the rest of the docs links point at (see build-llms.ts).
 const SITE_BASE_URL = "http://127.0.0.1:5186";
@@ -190,7 +191,7 @@ export const Index = {`;
 		components: uiComponents,
 		rules,
 	} = readComponentCards(path.join(INTERNAL_REGISTRY_PATH, "ui"));
-	const catalog = buildCatalog(cards, uiComponents, SITE_BASE_URL, rules);
+	const catalog = buildCatalog(cards, uiComponents, SITE_BASE_URL, rules, PAGE_PATTERNS);
 	writeFileWithDirs(
 		path.join(REGISTRY_PATH, "catalog.json"),
 		JSON.stringify(catalog, null, "\t") + "\n"

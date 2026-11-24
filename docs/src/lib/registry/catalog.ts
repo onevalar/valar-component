@@ -1,10 +1,16 @@
 import type { ComponentCard } from "./component-cards.js";
+import { patternMarkdown, type PagePattern } from "./patterns.js";
 
 /**
- * Builds the AI-facing outputs from component cards (`ui/<name>/meta.json`): `catalog.json`,
- * `llms-small.txt` and the card section of each component's markdown. The skill and the MCP
- * server read `catalog.json`, so this is the only place the card format is turned into text.
+ * Builds the AI-facing outputs from component cards (`ui/<name>/meta.json`) and page patterns:
+ * `catalog.json`, `llms-small.txt` and the card section of each component's markdown.
+ * The skill and the MCP server read `catalog.json`, so this is the only place the format is rendered.
  */
+export type CatalogPattern = PagePattern & {
+	install: string;
+	markdown: string;
+};
+
 export type Catalog = {
 	name: "valar-svelte";
 	/** Base URL of the docs site the links point at. */
@@ -17,6 +23,8 @@ export type Catalog = {
 		/** The component's design rules (`RULES.md`), when it has them. */
 		rules?: string;
 	})[];
+	/** Proven page & section layout recipes agents consult before picking individual components. */
+	patterns: CatalogPattern[];
 	/** UI components without a card yet. Listed so gaps are visible, never skipped silently. */
 	missingCards: string[];
 };
@@ -25,7 +33,8 @@ export function buildCatalog(
 	cards: ComponentCard[],
 	uiComponents: string[],
 	site: string,
-	rules: Record<string, string> = {}
+	rules: Record<string, string> = {},
+	patterns: readonly PagePattern[] = []
 ): Catalog {
 	const byName = new Map(cards.map((card) => [card.name, card]));
 	return {
@@ -40,6 +49,14 @@ export function buildCatalog(
 				markdown: cardMarkdown(card),
 				...(rules[card.name] ? { rules: rules[card.name] } : {}),
 			})),
+		patterns: patterns.map((pattern) => {
+			const install = installCommand(pattern.components);
+			return {
+				...pattern,
+				install,
+				markdown: patternMarkdown(pattern, install),
+			};
+		}),
 		missingCards: uiComponents.filter((name) => !byName.has(name)).sort(),
 	};
 }
@@ -82,8 +99,11 @@ ${list(v.related.map((name) => `\`${name}\``))}
 `;
 }
 
-/** Short index for AI context windows: one line per component plus the selection hints. */
+/** Short index for AI context windows: page patterns + one line per component with selection hints. */
 export function llmsSmall(catalog: Catalog): string {
+	const patternLines = (catalog.patterns ?? []).map(
+		(p) => `- \`${p.name}\` ${p.title}（${p.category}）：${p.description} 常用：${p.components.join("、")}`
+	);
 	const lines = catalog.components.map((c) => {
 		const avoid = c.meta.valar.whenNotToUse
 			.filter((item) => item.use)
@@ -93,8 +113,8 @@ export function llmsSmall(catalog: Catalog): string {
 	});
 	return `# Valar Svelte
 
-> Svelte 组件库。组件以源码形式通过 \`valar-svelte add <组件>\` 安装到项目中，并附带设计规范 RULES.md。选组件前先看“不适用”提示。
-
+> Svelte 组件库。搭页面前先选页面骨架配方，再按“不适用”提示选组件；组件以源码形式通过 \`valar-svelte add <组件>\` 安装到项目中，并附带设计规范 RULES.md。
+${patternLines.length ? `\n## 页面骨架配方\n\n${patternLines.join("\n")}\n` : ""}
 ## 组件
 
 ${lines.join("\n")}
