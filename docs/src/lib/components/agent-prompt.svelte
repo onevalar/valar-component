@@ -27,7 +27,7 @@
 		large = false,
 	}: {
 		busy: boolean;
-		onSend: (text: string) => void;
+		onSend: (text: string, onDispatched?: () => void) => void;
 		onStop: () => void;
 		onSettings: () => void;
 		placeholder?: string;
@@ -40,6 +40,9 @@
 	let field = $state<HTMLTextAreaElement | null>(null);
 
 	const canSend = $derived(text.trim().length > 0 && !busy);
+	const configuredModel = $derived(
+		agentSettings.apiKey.trim() && agentSettings.model.trim() ? agentSettings.model.trim() : ""
+	);
 	const effort = $derived(
 		EFFORTS.find((item) => item.value === agentSettings.effort) ?? EFFORTS[0]
 	);
@@ -58,8 +61,9 @@
 	function onsubmit(event: SubmitEvent) {
 		event.preventDefault();
 		if (!canSend) return;
-		onSend(text);
-		text = "";
+		onSend(text, () => {
+			text = "";
+		});
 	}
 </script>
 
@@ -86,10 +90,12 @@
 					shape="pill"
 					variant="ghost"
 					class="h-6 rounded-full px-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
-					aria-label={`模型：${agentSettings.model || "内置向导"}，点击接入外部模型`}
+					aria-label={configuredModel
+						? `当前模型：${configuredModel}，点击修改模型配置`
+						: "模型配置"}
 					onclick={onSettings}
 				>
-					{agentSettings.model || "内置向导"}
+					{configuredModel || "模型配置"}
 					<ChevronDownIcon class="size-3 opacity-60" />
 				</InputGroup.Button>
 				<DropdownMenu.Root>
@@ -169,7 +175,7 @@
 						<DropdownMenu.Separator />
 						<DropdownMenu.Item onSelect={onSettings}>
 							<SlidersHorizontalIcon />
-							接入外部大模型…
+							模型配置…
 						</DropdownMenu.Item>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>

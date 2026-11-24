@@ -1,19 +1,15 @@
 <script lang="ts">
 	import { page } from "$app/state";
-	import BookOpenIcon from "@lucide/svelte/icons/book-open";
 	import SquareTerminal from "@lucide/svelte/icons/square-terminal";
 	import Separator from "$lib/registry/ui/separator/separator.svelte";
-	import * as Tooltip from "$lib/registry/ui/tooltip/index.js";
 	import { getColors } from "$lib/colors.js";
-	import { localizeHref, type Locale } from "$lib/i18n/config.js";
+	import { type Locale } from "$lib/i18n/config.js";
 	import { t } from "$lib/i18n/index.js";
 	import { getMainNavItems, sectionOf } from "$lib/navigation.js";
 	import { Button } from "$lib/registry/ui/button/index.js";
 	import AgentHistory from "./agent-history.svelte";
 	import CommandMenu from "./command-menu/command-menu.svelte";
-	import GithubLink from "./github-link.svelte";
 	import LanguageSwitcher from "./language-switcher.svelte";
-	import LayoutToggle from "./layout-toggle.svelte";
 	import MainNav from "./main-nav.svelte";
 	import MobileNav from "./mobile-nav.svelte";
 	import ModeSwitcher from "./mode-switcher.svelte";
@@ -63,31 +59,7 @@
 					<CommandMenu {colors} {closeMobileMenu} />
 				</div>
 				<Separator orientation="vertical" class="ml-2 hidden lg:block" />
-				<Tooltip.Root>
-					<Tooltip.Trigger>
-						{#snippet child({ props })}
-							<Button
-								{...props}
-								href={localizeHref("/docs/installation", locale)}
-								variant="ghost"
-								size="icon-sm"
-								aria-label={locale === "zh" ? "接入与工程文档" : "Installation & Engineering Docs"}
-								class={currentSection === "docs"
-									? "bg-accent text-foreground"
-									: "text-muted-foreground hover:text-foreground"}
-							>
-								<BookOpenIcon />
-							</Button>
-						{/snippet}
-					</Tooltip.Trigger>
-					<Tooltip.Content>
-						{locale === "zh" ? "接入与工程文档" : "Installation & Docs"}
-					</Tooltip.Content>
-				</Tooltip.Root>
 				<LanguageSwitcher />
-				<div class="hidden sm:block"><GithubLink /></div>
-				<Separator orientation="vertical" class="hidden 3xl:flex" />
-				<LayoutToggle class="hidden 3xl:flex" />
 				<Separator orientation="vertical" class="hidden sm:block" />
 				{#if page.url.pathname.startsWith(locale === "zh" ? "/zh/create" : "/create")}
 					<ModeSwitcher class="md:hidden" />

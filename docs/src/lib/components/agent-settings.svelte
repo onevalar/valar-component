@@ -2,7 +2,6 @@
 	import CheckIcon from "@lucide/svelte/icons/check";
 	import KeyRoundIcon from "@lucide/svelte/icons/key-round";
 	import ListIcon from "@lucide/svelte/icons/list";
-	import * as Alert from "$lib/registry/ui/alert/index.js";
 	import * as Field from "$lib/registry/ui/field/index.js";
 	import * as InputGroup from "$lib/registry/ui/input-group/index.js";
 	import * as Select from "$lib/registry/ui/select/index.js";
@@ -61,9 +60,6 @@
 			bind:value={agentSettings.baseURL}
 			placeholder="https://api.openai.com/v1"
 		/>
-		<Field.Description>
-			兼容 OpenAI 接口的服务地址。需使用 https；本机模型可填 http://localhost。
-		</Field.Description>
 	</Field.Field>
 
 	<Field.Field>
@@ -121,10 +117,6 @@
 
 	<Field.Set>
 		<Field.Legend variant="label">接口类型</Field.Legend>
-		<Field.Description>
-			自动：OpenAI 官方地址用 Responses，其他用 Chat
-			Completions。如果用中转地址并出现「工具与思考不能同用」之类的报错，选 Responses。
-		</Field.Description>
 		<Tabs.Root
 			bind:value={
 				() => agentSettings.apiMode,
@@ -141,9 +133,6 @@
 
 	<Field.Set>
 		<Field.Legend variant="label">思考强度</Field.Legend>
-		<Field.Description
-			>仅对支持推理的模型生效；选「默认」则不向服务传这个参数，「关闭」会明确要求不思考。</Field.Description
-		>
 		<Tabs.Root
 			bind:value={
 				() => agentSettings.effort,
@@ -157,13 +146,6 @@
 			</Tabs.List>
 		</Tabs.Root>
 	</Field.Set>
-
-	<Alert.Root role="status">
-		<Alert.Title>Key 只保存在这个浏览器里</Alert.Title>
-		<Alert.Description>
-			每次提问时由本站服务转发给上面的地址，服务器不会保存。在公共电脑上用完请点「清除设置」。
-		</Alert.Description>
-	</Alert.Root>
 
 	<div class="flex items-center justify-between gap-2 pt-1">
 		<Button variant="outline" size="sm" onclick={clearAgentSettings}>清除设置</Button>

@@ -83,27 +83,45 @@
 		},
 	] as const;
 
-	// The model settings open as a dialog only when the user clicks the model button.
+	// Model configuration dialog state and any prompt waiting for configuration to finish.
 	let settingsOpen = $state(false);
+	let pendingSend: { text: string; onDispatched?: () => void } | null = null;
 	// The reader's choice per reasoning row; until they click, it follows whether it is still running.
 	let reasoningOpen = $state<Record<string, boolean>>({});
 
 	const hero = $derived(!chat.messages.length);
 	const busy = $derived(chat.status === "submitted" || chat.status === "streaming");
+	const hasConfiguredModel = $derived(
+		Boolean(agentSettings.apiKey.trim() && agentSettings.model.trim())
+	);
 	const threadTitle = $derived.by(() => {
 		const first = chat.messages.find((item) => item.role === "user");
 		const text = first ? messageText(first).trim() : "";
 		return text.length > 32 ? `${text.slice(0, 32)}…` : text || "Valar 组件助手";
 	});
 
-	function send(text: string) {
+	function send(text: string, onDispatched?: () => void) {
 		const value = text.trim();
 		if (!value || busy) return;
+		if (!hasConfiguredModel) {
+			pendingSend = { text: value, onDispatched };
+			settingsOpen = true;
+			return;
+		}
+		onDispatched?.();
 		void chat.sendMessage({ text: value });
 	}
 
 	function onSettingsOpenChange(open: boolean) {
 		settingsOpen = open;
+		if (!open && pendingSend) {
+			const next = pendingSend;
+			pendingSend = null;
+			if (hasConfiguredModel && !busy) {
+				next.onDispatched?.();
+				void chat.sendMessage({ text: next.text });
+			}
+		}
 	}
 
 	type Part = UIMessage["parts"][number];
@@ -142,6 +160,12 @@
 
 	type Input = Record<string, string | undefined>;
 	const STEPS: Record<string, { verb: string; noun: string; target?: (input: Input) => string }> = {
+		"tool-search_patterns": {
+			verb: "搜索",
+			noun: "页面骨架",
+			target: (i) => (i.query ? `「${i.query}」` : ""),
+		},
+		"tool-get_pattern": { verb: "查阅", noun: "页面骨架", target: (i) => ` ${i.name ?? ""}` },
 		"tool-list_components": { verb: "列出", noun: "组件" },
 		"tool-search_components": { verb: "搜索", noun: "组件", target: (i) => `「${i.query ?? ""}」` },
 		"tool-get_component": { verb: "查阅", noun: "组件", target: (i) => ` ${i.name ?? ""}` },
@@ -464,8 +488,7 @@
 	<Dialog.Root open={settingsOpen} onOpenChange={onSettingsOpenChange}>
 		<Dialog.Content closeLabel="关闭" class="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
 			<Dialog.Header>
-				<Dialog.Title>模型设置</Dialog.Title>
-				<Dialog.Description>只需要填一次，之后在输入框里点模型名可以再改。</Dialog.Description>
+				<Dialog.Title>模型配置</Dialog.Title>
 			</Dialog.Header>
 			<AgentSettings onDone={() => onSettingsOpenChange(false)} />
 		</Dialog.Content>

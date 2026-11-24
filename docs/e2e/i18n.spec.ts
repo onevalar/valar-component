@@ -25,6 +25,7 @@ test("language switching preserves the document and URL state", async ({ page })
 		"基础组件",
 		"高级组件",
 		"设计规范",
+		"说明文档",
 	]);
 	await expect(page.getByRole("heading", { level: 1, name: "按钮", exact: true })).toBeVisible();
 	await page.getByRole("button", { name: "切换到English", exact: true }).first().click();

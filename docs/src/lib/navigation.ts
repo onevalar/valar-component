@@ -414,6 +414,11 @@ export function getMainNavItems(locale: Locale = "en"): NavItem[] {
 			href: to(locale, "/themes"),
 			section: "themes",
 		},
+		{
+			title: zh ? "说明文档" : "Docs",
+			href: to(locale, "/docs/installation"),
+			section: "docs",
+		},
 	];
 }
 

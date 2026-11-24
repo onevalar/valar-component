@@ -276,7 +276,7 @@ test("local CLI tarball installs into an independent, checked and built consumer
 	});
 });
 
-test("homepage exposes four-section nav and built-in AI assistant renders dynamic UI without API key", async ({
+test("homepage exposes five-section nav and requires model configuration before chatting", async ({
 	page,
 }) => {
 	await page.setViewportSize({ width: 1440, height: 900 });
@@ -287,6 +287,7 @@ test("homepage exposes four-section nav and built-in AI assistant renders dynami
 		"Basic Components",
 		"Advanced Components",
 		"Design System",
+		"Docs",
 	]);
 	await expect(page.getByRole("heading", { level: 1, name: "想设计点什么？" })).toBeVisible();
 	const suggestion = page.getByRole("button", {
@@ -295,7 +296,5 @@ test("homepage exposes four-section nav and built-in AI assistant renders dynami
 	});
 	await expect(suggestion).toBeVisible();
 	await suggestion.click();
-	await expect(page.getByRole("dialog", { name: "模型设置" })).toHaveCount(0);
-	await expect(page.getByText("登录 Valar 工作区")).toBeVisible();
-	await expect(page.getByText("本界面所用组件：")).toBeVisible();
+	await expect(page.getByRole("dialog", { name: "模型配置" })).toBeVisible();
 });
