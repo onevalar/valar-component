@@ -145,9 +145,17 @@
 		</section>
 	</div>
 
-	<a href="/linear" class={buttonVariants({ variant: "outline", class: "self-start" })}>
-		查看 Linear 对齐预览
-	</a>
+	<div class="flex flex-wrap items-center gap-2">
+		<a href="/workspace" class={buttonVariants({ variant: "default" })}>
+			成员与权限管理
+		</a>
+		<a href="/settings" class={buttonVariants({ variant: "outline" })}>
+			工作区设置
+		</a>
+		<a href="/linear" class={buttonVariants({ variant: "outline" })}>
+			Linear 对齐预览
+		</a>
+	</div>
 
 	<footer class="text-sm text-muted-foreground">
 		独立 SvelteKit 消费端 · workspace:* · 无文档站运行时依赖
