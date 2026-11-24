@@ -63,6 +63,150 @@ const stackExample: UiNode = {
 };
 
 export const UI_CATALOG = [
+	// ---- page layout -----------------------------------------------------------------------
+	define({
+		type: "PageLayout",
+		name: "页面骨架",
+		useWhen:
+			"搭建完整页面时的根容器；width=full 用于列表/表格/看板/工作台，width=narrow（居中限宽）用于设置/表单/详情页",
+		avoidWhen: "仅展示局部小卡片或单个控件时直接用 Stack 或 Card",
+		props: { width: z.enum(["full", "narrow"]).optional() },
+		children: "nodes",
+		example: {
+			type: "PageLayout",
+			props: { width: "narrow" },
+			children: [
+				{
+					type: "PageHeader",
+					props: { title: "工作区设置" },
+					children: [
+						{ type: "Button", props: { variant: "outline", size: "sm" }, children: "重置" },
+						{ type: "Button", props: { size: "sm" }, children: "保存更改" },
+					],
+				},
+				{
+					type: "PageSection",
+					props: { title: "通知偏好", surface: "card" },
+					children: [
+						{
+							type: "PropertyList",
+							props: { layout: "settings" },
+							children: [
+								{ type: "PropertyRow", props: { label: "邮件通知", checked: true } },
+								{
+									type: "PropertyRow",
+									props: {
+										label: "桌面推送",
+										description: "仅在浏览器授权后生效",
+										checked: false,
+									},
+								},
+							],
+						},
+					],
+				},
+			],
+		},
+	}),
+	define({
+		type: "PageHeader",
+		name: "页面顶栏",
+		useWhen: "页面顶部单行标题栏；title 必填且保持中性简短（不写多余副标题），右侧操作按钮放 children（最多 1 个主按钮）",
+		props: { title: label },
+		children: "nodes",
+		example: {
+			type: "PageHeader",
+			props: { title: "成员权限" },
+			children: [
+				{ type: "Button", props: { variant: "outline", size: "sm" }, children: "导出" },
+				{ type: "Button", props: { size: "sm" }, children: "邀请成员" },
+			],
+		},
+	}),
+	define({
+		type: "PageToolbar",
+		name: "页面工具栏",
+		useWhen: "顶栏下方的紧凑工具条，用于放视图切换（ToggleGroup）、筛选控件或统计徽标",
+		props: {},
+		children: "nodes",
+		example: {
+			type: "PageToolbar",
+			children: [
+				{
+					type: "ToggleGroup",
+					props: {
+						label: "视图模式",
+						defaultValue: "list",
+						options: [
+							{ value: "list", label: "列表" },
+							{ value: "board", label: "看板" },
+						],
+					},
+				},
+				{ type: "Badge", props: { variant: "secondary" }, children: "共 12 项" },
+			],
+		},
+	}),
+	define({
+		type: "PageSection",
+		name: "页面区块",
+		useWhen:
+			"页面内容区块；默认 surface=plain 用留白分隔，仅需要单层归组面板时设 surface=card（禁止内部再嵌套 Card 或 card 区块）",
+		props: {
+			title: label.optional(),
+			surface: z.enum(["plain", "card"]).optional(),
+		},
+		children: "nodes",
+		example: {
+			type: "PageSection",
+			props: { title: "通知偏好", surface: "card" },
+			children: [
+				{
+					type: "PropertyList",
+					props: { layout: "settings" },
+					children: [{ type: "PropertyRow", props: { label: "邮件通知", checked: true } }],
+				},
+			],
+		},
+	}),
+	define({
+		type: "PropertyList",
+		name: "属性列表",
+		useWhen:
+			"横向属性行容器；layout=settings 用于设置项（自带 0.5px 分隔线），layout=detail 用于详情页键值展示；children 只能是 PropertyRow",
+		props: { layout: z.enum(["settings", "detail"]).optional() },
+		children: "nodes",
+		allowedChildren: ["PropertyRow"],
+		example: {
+			type: "PropertyList",
+			props: { layout: "detail" },
+			children: [
+				{ type: "PropertyRow", props: { label: "工作区标识", value: "valar-core" } },
+				{ type: "PropertyRow", props: { label: "成员数量", value: "18" } },
+			],
+		},
+	}),
+	define({
+		type: "PropertyRow",
+		name: "属性行",
+		useWhen:
+			"PropertyList 中的单行：设置项传 checked 直接在右侧渲染开关，或在 children 放 Button／Badge／ToggleGroup；详情项传 value 展示只读值",
+		avoidWhen: "设置行内不要再嵌套 SwitchField 以免标签重复",
+		props: {
+			label,
+			description: text.optional(),
+			value: text.optional(),
+			checked: z.boolean().optional(),
+			disabled: z.boolean().optional(),
+			layout: z.enum(["settings", "detail"]).optional(),
+		},
+		children: "nodes",
+		example: {
+			type: "PropertyRow",
+			props: { label: "桌面推送", description: "仅在浏览器授权后生效", checked: false },
+		},
+	}),
+
 	// ---- layout and text -------------------------------------------------------------------
 	define({
 		type: "Stack",
@@ -714,6 +858,21 @@ export const UI_TYPES = UI_CATALOG.map((entry) => entry.type) as UiType[];
 
 export const UI_LIMITS = { nodes: 150, depth: 8, bytes: 200_000 } as const;
 
+const REDUNDANT_PLACEHOLDER = /^\s*请输入/;
+const EMOJI_PATTERN = /\p{Extended_Pictographic}/u;
+const TITLE_PROP_TYPES = new Set([
+	"PageHeader",
+	"PageSection",
+	"Dialog",
+	"Empty",
+	"AccordionItem",
+]);
+const TEXT_HEADER_TYPES = new Set(["Heading", "CardTitle", "Button", "AlertTitle"]);
+const SINGLE_PRIMARY_CONTAINERS = new Set(["PageHeader", "PageToolbar", "CardFooter"]);
+
+const isCardSurface = (type: string, props: Record<string, unknown>) =>
+	type === "Card" || (type === "PageSection" && props.surface === "card");
+
 /** Chinese, per-field error messages the agent can act on, e.g. `root.children[1].props.variant：…`. */
 export function validateUi(
 	root: unknown
@@ -729,7 +888,13 @@ export function validateUi(
 		return { ok: false, errors: ["root 不是合法的 JSON"] };
 	}
 
-	function visit(node: unknown, path: string, depth: number, allowed?: string[]) {
+	function visit(
+		node: unknown,
+		path: string,
+		depth: number,
+		allowed?: string[],
+		insideCard = false
+	) {
 		count++;
 		if (count > UI_LIMITS.nodes) {
 			if (count === UI_LIMITS.nodes + 1) errors.push(`节点总数超过 ${UI_LIMITS.nodes} 个，请精简`);
@@ -760,6 +925,10 @@ export function validateUi(
 			);
 		}
 
+		const safeProps =
+			props && typeof props === "object" && !Array.isArray(props)
+				? (props as Record<string, unknown>)
+				: {};
 		const parsed = entry.schema.safeParse(props ?? {});
 		if (!parsed.success) {
 			for (const issue of parsed.error.issues) {
@@ -770,6 +939,36 @@ export function validateUi(
 						: issue.message;
 				errors.push(`${path}.props${where}：${detail}`);
 			}
+		}
+
+		// Aesthetic guardrails (aligned with Valar maintainer guides):
+		// 1. No nested cards (Card or PageSection surface="card" inside another card surface).
+		const entersCard = isCardSurface(entry.type, safeProps);
+		if (entersCard && insideCard) {
+			errors.push(
+				`${path}：禁止卡片套卡片：内层区块改用 PageSection(surface="plain")、Stack 留白间距或 Separator 分隔`
+			);
+		}
+		// 2. No redundant "请输入…" placeholder copy.
+		if (typeof safeProps.placeholder === "string" && REDUNDANT_PLACEHOLDER.test(safeProps.placeholder)) {
+			errors.push(
+				`${path}.props.placeholder：禁止写“请输入…”重复废话，改为直接给格式示例（如 name@company.com）`
+			);
+		}
+		// 3. No Emoji as title/button icon decoration.
+		if (
+			TITLE_PROP_TYPES.has(entry.type) &&
+			typeof safeProps.title === "string" &&
+			EMOJI_PATTERN.test(safeProps.title)
+		) {
+			errors.push(`${path}.props.title：禁止在标题中使用 Emoji 作图标装饰，保持中性克制的文字表达`);
+		}
+		if (
+			TEXT_HEADER_TYPES.has(entry.type) &&
+			typeof children === "string" &&
+			EMOJI_PATTERN.test(children)
+		) {
+			errors.push(`${path}：禁止在标题或按钮中使用 Emoji 作图标装饰，保持中性克制的文字表达`);
 		}
 
 		if (entry.children === "none") {
@@ -784,12 +983,52 @@ export function validateUi(
 			if (!Array.isArray(children)) {
 				errors.push(`${path}：${entry.type} 的 children 必须是节点数组`);
 			} else {
+				// 4. Max 1 primary button per action container.
+				const isActionBar =
+					SINGLE_PRIMARY_CONTAINERS.has(entry.type) ||
+					(entry.type === "Stack" && safeProps.direction === "row");
+				if (isActionBar) {
+					let primaryCount = 0;
+					for (const child of children) {
+						if (child && typeof child === "object" && !Array.isArray(child)) {
+							const c = child as Record<string, unknown>;
+							const cp =
+								c.props && typeof c.props === "object" && !Array.isArray(c.props)
+									? (c.props as Record<string, unknown>)
+									: {};
+							if (c.type === "Button" && (cp.variant === undefined || cp.variant === "default")) {
+								primaryCount++;
+							}
+						}
+					}
+					if (primaryCount > 1) {
+						errors.push(
+							`${path}：同一操作区出现了 ${primaryCount} 个主色按钮，最多只放 1 个主操作（variant="default"），其余改用 variant="outline" 或 "ghost"`
+						);
+					}
+				}
+				if (entry.type === "PropertyRow") {
+					const hasSwitchField = children.some(
+						(child) =>
+							child &&
+							typeof child === "object" &&
+							!Array.isArray(child) &&
+							(child as Record<string, unknown>).type === "SwitchField"
+					);
+					if (hasSwitchField) {
+						errors.push(
+							`${path}：PropertyRow 内不要再嵌套 SwitchField（会重复标签），直接在 PropertyRow.props 传 checked: true/false 即可`
+						);
+					}
+				}
+				const nextInsideCard = insideCard || entersCard;
 				children.forEach((child, index) =>
 					visit(
 						child,
 						`${path}.children[${index}]`,
 						depth + 1,
-						(entry as { allowedChildren?: string[] }).allowedChildren
+						(entry as { allowedChildren?: string[] }).allowedChildren,
+						nextInsideCard
 					)
 				);
 			}
@@ -805,6 +1044,12 @@ export function validateUi(
 /** Maps a validated UI tree back to unique basic component slugs for cross-linking. */
 export function usedComponentSlugs(root: UiNode): string[] {
 	const MAP: Record<string, string[]> = {
+		PageLayout: ["page-layout"],
+		PageHeader: ["page-layout"],
+		PageToolbar: ["page-layout"],
+		PageSection: ["page-layout"],
+		PropertyList: ["page-layout"],
+		PropertyRow: ["page-layout"],
 		Separator: ["separator"],
 		Button: ["button"],
 		Badge: ["badge"],
@@ -838,6 +1083,9 @@ export function usedComponentSlugs(root: UiNode): string[] {
 	const found = new Set<string>();
 	const walk = (node: UiNode) => {
 		for (const slug of MAP[node.type] ?? []) found.add(slug);
+		if (node.type === "PropertyRow" && typeof node.props?.checked === "boolean") {
+			found.add("switch");
+		}
 		if (Array.isArray(node.children)) {
 			for (const child of node.children) walk(child);
 		}

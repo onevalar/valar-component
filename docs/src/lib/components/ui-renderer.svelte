@@ -10,6 +10,7 @@
 	import * as Field from "$lib/registry/ui/field/index.js";
 	import * as InputOTP from "$lib/registry/ui/input-otp/index.js";
 	import * as Kbd from "$lib/registry/ui/kbd/index.js";
+	import * as PageLayout from "$lib/registry/ui/page-layout/index.js";
 	import * as RadioGroup from "$lib/registry/ui/radio-group/index.js";
 	import * as Select from "$lib/registry/ui/select/index.js";
 	import * as Table from "$lib/registry/ui/table/index.js";
@@ -79,6 +80,27 @@
 	</Field.Content>
 {/snippet}
 
+{#snippet propertyRow(n: UiNode, path: string, inheritedLayout?: "settings" | "detail")}
+	{@const p = P(n)}
+	{@const children = list(n)}
+	{@const rowLayout =
+		p.layout === "detail" || p.layout === "settings"
+			? p.layout
+			: inheritedLayout ??
+				(p.value !== undefined && !children.length && typeof p.checked !== "boolean"
+					? "detail"
+					: "settings")}
+	<PageLayout.PropertyRow label={p.label} description={p.description} layout={rowLayout}>
+		{#if children.length}
+			{@render nodes(children, path)}
+		{:else if typeof p.checked === "boolean"}
+			<Switch aria-label={p.label} checked={p.checked} disabled={p.disabled} />
+		{:else if p.value !== undefined}
+			{p.value}
+		{/if}
+	</PageLayout.PropertyRow>
+{/snippet}
+
 {#snippet node(n: UiNode, path: string)}
 	{@const p = P(n)}
 	{@const id = idOf(path)}
@@ -91,7 +113,56 @@
 			</Alert.Root>
 		{/snippet}
 
-		{#if n.type === "Stack"}
+		{#if n.type === "PageLayout"}
+			<PageLayout.Root width={p.width}>{@render nodes(list(n), path)}</PageLayout.Root>
+		{:else if n.type === "PageHeader"}
+			<PageLayout.Header>
+				<PageLayout.Title tag="h2">{p.title}</PageLayout.Title>
+				{#if list(n).length}
+					<PageLayout.Actions>{@render nodes(list(n), path)}</PageLayout.Actions>
+				{/if}
+			</PageLayout.Header>
+		{:else if n.type === "PageToolbar"}
+			<PageLayout.Toolbar>{@render nodes(list(n), path)}</PageLayout.Toolbar>
+		{:else if n.type === "PageSection"}
+			{@const children = list(n)}
+			{@const flushSettingsList =
+				children.length === 1 &&
+				children[0]?.type === "PropertyList" &&
+				children[0]?.props?.layout !== "detail"}
+			{#if p.surface === "card"}
+				{#if p.title}
+					<PageLayout.Section surface="plain">
+						<PageLayout.SectionTitle>{p.title}</PageLayout.SectionTitle>
+						<PageLayout.Section surface="card" class={flushSettingsList ? "" : "gap-4 p-4"}>
+							{@render nodes(children, path)}
+						</PageLayout.Section>
+					</PageLayout.Section>
+				{:else}
+					<PageLayout.Section surface="card" class={flushSettingsList ? "" : "gap-4 p-4"}>
+						{@render nodes(children, path)}
+					</PageLayout.Section>
+				{/if}
+			{:else}
+				<PageLayout.Section surface="plain">
+					{#if p.title}<PageLayout.SectionTitle>{p.title}</PageLayout.SectionTitle>{/if}
+					{@render nodes(children, path)}
+				</PageLayout.Section>
+			{/if}
+		{:else if n.type === "PropertyList"}
+			{@const listLayout = p.layout === "detail" ? "detail" : "settings"}
+			<PageLayout.PropertyList layout={listLayout}>
+				{#each list(n) as child, i (i)}
+					{#if child.type === "PropertyRow"}
+						{@render propertyRow(child, `${path}-${i}`, listLayout)}
+					{:else}
+						{@render node(child, `${path}-${i}`)}
+					{/if}
+				{/each}
+			</PageLayout.PropertyList>
+		{:else if n.type === "PropertyRow"}
+			{@render propertyRow(n, path)}
+		{:else if n.type === "Stack"}
 			<div
 				class="flex {p.direction === 'row' ? 'flex-row flex-wrap' : 'flex-col'} {GAP[
 					p.gap as keyof typeof GAP
