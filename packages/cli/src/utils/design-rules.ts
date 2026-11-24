@@ -14,34 +14,44 @@ export { GLOBAL_RULES, lintSource, type LintFinding };
 export const RULES_START = "<!-- valar-svelte:rules:start -->";
 export const RULES_END = "<!-- valar-svelte:rules:end -->";
 
-/** Builds the managed AGENTS.md block from every installed component's RULES.md. */
+/**
+ * Builds the compact managed AGENTS.md block: global guardrails + a one-line-per-component
+ * index pointing to each installed component's local `RULES.md` (progressive disclosure,
+ * avoiding context bloat when a project installs dozens of components).
+ */
 export async function buildRulesBlock(uiDir: string, cwd: string): Promise<string> {
-	const sections: string[] = [];
+	const indexLines: string[] = [];
 	const entries = existsSync(uiDir) ? await fs.readdir(uiDir, { withFileTypes: true }) : [];
 	for (const entry of entries
 		.filter((e) => e.isDirectory())
 		.sort((a, b) => a.name.localeCompare(b.name))) {
 		const file = path.join(uiDir, entry.name, "RULES.md");
 		if (!existsSync(file)) continue;
-		const body = (await fs.readFile(file, "utf8"))
-			.trim()
-			// Nest each component's own top-level heading under this block.
-			.replace(
-				/^# (.+)$/m,
-				`### $1\n\n来源：\`${path.relative(cwd, file).split(path.sep).join("/")}\``
-			);
-		sections.push(body);
+		const firstHeading = (await fs.readFile(file, "utf8"))
+			.match(/^#\s+(.+)$/m)?.[1]
+			?.trim();
+		const rel = path.relative(cwd, file).split(path.sep).join("/");
+		indexLines.push(`- \`${entry.name}\`${firstHeading ? `（${firstHeading}）` : ""}：\`${rel}\``);
 	}
 	return [
 		RULES_START,
 		"## Valar 设计规范",
 		"",
-		"由 valar-svelte 根据已安装组件自动生成，安装或更新组件时会重写本区块，请勿手动修改区块内容。编写或修改界面前先阅读并遵守。",
+		"由 `valar-svelte` 自动维护，安装或更新组件时会重写本区块，请勿手动修改。",
 		"",
-		"### 通用",
+		"### 通用底线",
 		"",
 		GLOBAL_RULES,
-		...sections.flatMap((section) => ["", section]),
+		...(indexLines.length
+			? [
+					"",
+					"### 已安装组件规范（按需阅读）",
+					"",
+					"仅在本次任务实际用到某组件时，再读取对应的本地 `RULES.md`（或调用 MCP `get_component`），不要一次性全量加载：",
+					"",
+					...indexLines,
+				]
+			: []),
 		RULES_END,
 	].join("\n");
 }

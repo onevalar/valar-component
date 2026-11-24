@@ -17,7 +17,28 @@ export type CatalogComponent = {
 	rules?: string;
 	meta: { valar: { keywords: string[]; whenToUse: string[] } };
 };
-export type Catalog = { site: string; components: CatalogComponent[]; missingCards: string[] };
+export type CatalogPattern = {
+	name: string;
+	title: string;
+	category: string;
+	description: string;
+	keywords: string[];
+	layoutWidth: "full" | "narrow" | "overlay";
+	whenToUse: string[];
+	whenNotToUse: { case: string; use: string }[];
+	structure: string[];
+	components: string[];
+	referenceScene?: string;
+	guardrails: string[];
+	install: string;
+	markdown: string;
+};
+export type Catalog = {
+	site: string;
+	components: CatalogComponent[];
+	patterns?: CatalogPattern[];
+	missingCards: string[];
+};
 export type Skill = { name: string; files: { path: string; content: string }[] };
 
 export type McpData = { catalog(): Promise<Catalog>; skill(): Promise<Skill> };
@@ -33,6 +54,28 @@ type JsonRpcResponse = {
 const names = { type: "array", items: { type: "string" }, minItems: 1 } as const;
 
 export const MCP_TOOLS = [
+	{
+		name: "search_patterns",
+		description:
+			"按业务场景搜索 Valar 页面与区块骨架配方（如工作台列表、数据表格、系统设置、弹窗表单、双栏收件箱等）。搭页面前先调用；不传 query 则列出全部配方。",
+		inputSchema: {
+			type: "object",
+			properties: {
+				query: { type: "string", description: "业务场景关键词，中英文均可，不传则列出全部" },
+				limit: { type: "number" },
+			},
+		},
+	},
+	{
+		name: "get_pattern",
+		description:
+			"获取指定页面骨架配方的完整布局结构、审美红线、推荐组件清单与一键安装命令。name 来自 search_patterns。",
+		inputSchema: {
+			type: "object",
+			properties: { name: { type: "string" } },
+			required: ["name"],
+		},
+	},
 	{
 		name: "list_components",
 		description: "列出 Valar 组件（名称、分类、一句话用途），以及尚无说明卡的组件。",
@@ -64,14 +107,58 @@ export const MCP_TOOLS = [
 	{
 		name: "get_skill",
 		description:
-			"获取 Valar 技能包（AI 使用组件库的工作流程与规则）。不传 file 时返回 SKILL.md 和文件列表。",
+			"获取 Valar 技能包（工作流程、维护者定稿的页面组合/文案/动效指南及规则）。不传 file 时返回 SKILL.md 和文件列表。",
 		inputSchema: { type: "object", properties: { file: { type: "string" } } },
 	},
 ] as const;
 
+/** Lower-cased words; a query matches when every word appears, or via Chinese 2-char bigrams if no spaces. */
+function tokenizeQuery(query: string): string[] {
+	const lower = query.trim().toLowerCase();
+	if (!lower) return [];
+	const parts = lower.split(/\s+/).filter(Boolean);
+	return parts;
+}
+
+export function searchPatterns(catalog: Catalog, query = "", limit = 6): CatalogPattern[] {
+	const list = catalog.patterns ?? [];
+	const words = tokenizeQuery(query);
+	if (!words.length) return list.slice(0, limit || list.length);
+	const scored = list.map((p) => {
+		const strong = [p.name, p.title, p.category, ...p.keywords].join(" ").toLowerCase();
+		const weak = [p.description, ...p.whenToUse, ...p.components].join(" ").toLowerCase();
+		let score = 0;
+		for (const word of words) {
+			if (strong.includes(word)) score += 2;
+			else if (weak.includes(word)) score += 1;
+			else {
+				// Support natural Chinese phrases like "成员权限管理页" by matching 2-char sub-terms.
+				const cjk = word.match(/[\u4e00-\u9fff]{2,}/g) ?? [];
+				const bigrams = cjk.flatMap((run) =>
+					Array.from({ length: run.length - 1 }, (_, i) => run.slice(i, i + 2))
+				);
+				if (!bigrams.length) return { p, score: 0 };
+				let hits = 0;
+				for (const bg of bigrams) {
+					if (strong.includes(bg)) hits += 2;
+					else if (weak.includes(bg)) hits += 1;
+				}
+				if (!hits) return { p, score: 0 };
+				score += hits / bigrams.length;
+			}
+		}
+		return { p, score };
+	});
+	return scored
+		.filter((s) => s.score > 0)
+		.sort((a, b) => b.score - a.score || a.p.name.localeCompare(b.p.name))
+		.slice(0, limit)
+		.map((s) => s.p);
+}
+
 /** Lower-cased words; a query matches a component when every word appears in its text. */
 export function searchComponents(catalog: Catalog, query: string, limit = 5): CatalogComponent[] {
-	const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+	const words = tokenizeQuery(query);
 	if (!words.length) return [];
 	const scored = catalog.components.map((c) => {
 		const strong = [c.name, c.title, ...c.meta.valar.keywords].join(" ").toLowerCase();
@@ -94,8 +181,33 @@ export function searchComponents(catalog: Catalog, query: string, limit = 5): Ca
 const line = (c: CatalogComponent) =>
 	`- \`${c.name}\` ${c.title}（${c.categories[0]}）：${c.description}`;
 
+const patternLine = (p: CatalogPattern) =>
+	`- \`${p.name}\` ${p.title}（${p.category}）：${p.description} 推荐组件：${p.components.join("、")}`;
+
 export async function callTool(data: McpData, name: string, args: any): Promise<string> {
 	switch (name) {
+		case "search_patterns": {
+			const catalog = await data.catalog();
+			const all = catalog.patterns ?? [];
+			if (!all.length) return "当前目录尚未包含页面骨架配方。";
+			const query = String(args?.query ?? "").trim();
+			const limit = Number(args?.limit) || (query ? 6 : all.length);
+			const found = searchPatterns(catalog, query, limit);
+			return found.length
+				? `${found.map(patternLine).join("\n")}\n\n用 get_pattern 读取对应骨架的结构与红线后再组装页面。`
+				: `没有直接匹配「${query}」的页面骨架。调用不带 query 的 search_patterns 查看全部 ${all.length} 套配方。`;
+		}
+		case "get_pattern": {
+			const catalog = await data.catalog();
+			const all = catalog.patterns ?? [];
+			const found = all.find((item) => item.name === args?.name);
+			if (!found) {
+				throw new Error(
+					`没有页面骨架 ${args?.name}。可用：${all.map((p) => p.name).join("、") || "无"}`
+				);
+			}
+			return found.markdown;
+		}
 		case "list_components": {
 			const catalog = await data.catalog();
 			const list = catalog.components.filter(
@@ -164,7 +276,7 @@ export async function handleMcpMessage(
 				capabilities: { tools: {} },
 				serverInfo: { name: "valar-svelte", version },
 				instructions:
-					"Valar Svelte 组件库。写 UI 前先 search_components / get_component 选组件，遵守返回的 RULES.md；完成后在项目中运行 valar-svelte lint。",
+					"Valar Svelte 组件库。搭页面前先用 get_skill 读取设计方法（guides/），用 search_patterns / get_pattern 选页面骨架，再按需用 search_components / get_component 选组件并遵守其 RULES.md；完成后运行 valar-svelte lint。",
 			});
 		case "ping":
 			return ok({});

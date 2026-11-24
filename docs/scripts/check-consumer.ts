@@ -131,11 +131,11 @@ try {
 		path.join(app, "src/routes/+page.svelte"),
 		readFileSync(path.join(docs, "e2e/fixtures/consumer.svelte"))
 	);
-	// Design rules travel with the installed components and are enforced by `lint`.
+	// Design rules travel with the installed components (indexed in AGENTS.md) and are enforced by `lint`.
 	const agents = readFileSync(path.join(app, "AGENTS.md"), "utf8");
 	assert.match(
 		agents,
-		/<!-- valar-svelte:rules:start -->[\s\S]*### Button 设计规范[\s\S]*<!-- valar-svelte:rules:end -->/
+		/<!-- valar-svelte:rules:start -->[\s\S]*`button`（Button 设计规范）：`src\/lib\/components\/ui\/button\/RULES\.md`[\s\S]*<!-- valar-svelte:rules:end -->/
 	);
 	assert.ok(readFileSync(path.join(app, "src/lib/components/ui/button/RULES.md"), "utf8"));
 	// Global motion/border tokens: values in :root, components use the tier utilities.

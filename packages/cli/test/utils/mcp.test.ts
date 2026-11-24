@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	handleMcpMessage,
 	searchComponents,
+	searchPatterns,
 	type Catalog,
 	type McpData,
 } from "../../src/utils/mcp.js";
@@ -21,6 +22,23 @@ const catalog: Catalog = {
 	components: [
 		component("dialog", "Dialog 对话框", ["弹窗", "modal"]),
 		{ ...component("alert-dialog", "Alert Dialog", ["确认", "删除"]), rules: "# 规则" },
+	],
+	patterns: [
+		{
+			name: "settings-page",
+			title: "系统设置与偏好配置页",
+			category: "设置与表单",
+			description: "收窄居中阅读区与横向设置行。",
+			keywords: ["设置", "偏好", "settings"],
+			layoutWidth: "narrow",
+			whenToUse: ["工作区设置"],
+			whenNotToUse: [{ case: "短表单", use: "form-dialog" }],
+			structure: ["收窄居中"],
+			components: ["card", "field", "switch"],
+			guardrails: ["严禁卡片套卡片"],
+			install: "pnpm exec valar-svelte add card field switch",
+			markdown: "# 系统设置与偏好配置页\n\n严禁卡片套卡片",
+		},
 	],
 	missingCards: ["accordion"],
 };
@@ -73,5 +91,15 @@ describe("valar mcp", () => {
 		expect(missing.content[0]!.text).toContain("尚无说明卡");
 		const bad = await call("get_install_command", { names: ["button; rm -rf /"] });
 		expect(bad.isError).toBe(true);
+	});
+
+	it("searches and returns page patterns through MCP", async () => {
+		expect(searchPatterns(catalog, "工作区设置页").map((p) => p.name)).toEqual(["settings-page"]);
+		const listed = await call("search_patterns", {});
+		expect(listed.content[0]!.text).toContain("settings-page");
+		const got = await call("get_pattern", { name: "settings-page" });
+		expect(got.content[0]!.text).toContain("严禁卡片套卡片");
+		const unknown = await call("get_pattern", { name: "nope" });
+		expect(unknown.isError).toBe(true);
 	});
 });

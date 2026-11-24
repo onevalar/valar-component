@@ -1,12 +1,12 @@
 // Pure parts of the design rules (no Node APIs), so the docs site can reuse them in its assistant.
 
-export const GLOBAL_RULES = `- 颜色只用语义 token 类，如 \`bg-primary\`、\`bg-success\`、\`text-warning\`、\`bg-info\`、\`text-destructive\`、\`bg-teal/15\`、\`text-muted-foreground\`、\`border-border\`；不要用调色板色值（\`bg-blue-500\`）、黑白（\`bg-white\`）或十六进制（检查规则 \`valar/semantic-color\`）。
-- 圆角、字号、间距用 \`rounded-*\`、\`text-*\` 等档位，它们跟随全局 token；不要写 \`h-[37px]\` 这类像素任意值（检查规则 \`valar/no-arbitrary-px\`）。
-- 保留组件自带的动效、缓动曲线和边框。需要新动效时，可以显式使用 \`duration-fast\`／\`duration-normal\`／\`duration-slow\` 及 \`ease-enter\`／\`ease-exit\`／\`ease-standard\`，按 Valar 技能包的动效指南选用（检查规则 \`valar/motion-token\`）。
-- 图片都要有 \`alt\`，纯装饰的图片写 \`alt=""\`（检查规则 \`valar/image-alt\`）。
-- 先用已安装的组件及其 \`variant\`、\`size\`，再考虑自定义样式；需要新组件时用 CLI 安装，不要手写一个相似的。
-- 选组件前查组件说明卡里的“何时用／何时不用”：Valar MCP（\`valar-svelte mcp\` 的 search_components、get_component），或文档站的 \`llms-small.txt\`、registry 的 \`catalog.json\`。
-- 改完界面后运行 \`valar-svelte lint\`（用项目的包运行器，如 \`pnpm exec valar-svelte lint\`），修正所有 error。`;
+export const GLOBAL_RULES = `- 搭页面前先读 Valar 技能包里的设计方法（页面组合、界面文案、动效与反馈），并优先检索页面骨架配方（MCP \`search_patterns\` / \`get_pattern\`）；选单个组件前查说明卡里的“何时用／何时不用”（MCP \`search_components\` / \`get_component\`，或 \`llms-small.txt\` / \`catalog.json\`）。
+- 颜色只用语义 token 类（如 \`bg-primary\`、\`text-muted-foreground\`、\`border-border\`），严禁用调色板色值、黑白或十六进制（\`valar/semantic-color\`）。
+- 圆角、字号、间距用全局 token 档位，不写 \`h-[37px]\` 这类像素任意值（\`valar/no-arbitrary-px\`）。
+- 动效优先保留组件默认过渡；需显式指定时仅用 \`duration-fast／normal／slow\` 与 \`ease-enter／exit／standard\`（\`valar/motion-token\`）。
+- 图片必须提供 \`alt\`，纯装饰写 \`alt=""\`（\`valar/image-alt\`）。
+- 优先复用已安装组件及其内置 \`variant\` / \`size\`；缺组件用 CLI 安装，不要手写相似控件。
+- 完成后运行 \`pnpm exec valar-svelte lint\`，修掉所有 error 再交付。`;
 
 export type LintFinding = {
 	file: string;
@@ -34,6 +34,12 @@ const BUTTON_LAYOUT = /^(?:[\w-]+:)*-?(?:min-h|h|px|py|size|rounded)(?:-|$)/;
 const INVALID_CLASS = /^(?:[\w-]+:)*(?:border|ring|outline)-destructive(?:\/\d+)?$/;
 const CHART_LITERAL_COLOR = /\bcolor\s*:\s*["'`](?:#[\da-fA-F]{3,8}|rgba?\(|hsla?\(|oklch\()/g;
 const HAS_LABEL = /\s(?:aria-label|aria-labelledby)\s*=|\{\.\.\./;
+const ROUNDED_TOKEN = /^(?:[\w-]+:)*rounded(?:-(?!none\b)[\w[\]-]+)?$/;
+const SIDE_ACCENT_BORDER =
+	/^(?:[\w-]+:)*border-[lrtbse]-(?:[248]|\[[2-9]\d*px\]|primary|destructive|warning|info|success|(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3})(?:\/\d+)?$/;
+const HOVER_LIFT_TOKEN = /^(?:group-)?hover:(?:-?translate-y-|scale-)/;
+const REDUNDANT_PLACEHOLDER = /\splaceholder\s*=\s*(?:"请输入[^"]*"|'请输入[^']*')/g;
+const NON_PRIMARY_VARIANT = /\svariant\s*=\s*["'](?!default["'])/;
 
 /** The two ways a component part is written: `Dialog.Content` (namespace import) or `DialogContent`. */
 const part = (ns: string, name: string) => [`${ns}.${name}`, `${ns}${name}`];
@@ -276,5 +282,65 @@ export function lintSource(file: string, source: string): LintFinding[] {
 	for (const tag of tags(["img", ...part("Avatar", "Image")]))
 		if (!/\salt\s*=|\s\{alt\}|\{\.\.\./.test(tag.text))
 			add(tag.index, "valar/image-alt", "error", `${tag.name} 需要 alt；纯装饰的图片写 alt=""`);
+
+	// Aesthetic & anti-AI-slop guardrails (from maintainer-approved Valar guides).
+	for (const tag of tags(part("Card", "Root").concat("Card"))) {
+		const body = elementBody(source, tag.name, tag);
+		if (/<Card(?:\.Root)?(?=[\s/>])/.test(body))
+			add(
+				tag.index,
+				"valar/no-nested-card",
+				"error",
+				"禁止卡片套卡片：内层区块改用留白间距或 Separator 分隔"
+			);
+	}
+	for (const match of source.matchAll(/<[A-Za-z][\w.]*(?:[^>"'{}]|"[^"]*"|'[^']*'|\{[^}]*\})*>/g)) {
+		const tokens = classTokens(match[0]);
+		if (!tokens.length) continue;
+		const sideBorder = tokens.find((t) => SIDE_ACCENT_BORDER.test(t));
+		if (sideBorder && tokens.some((t) => ROUNDED_TOKEN.test(t)))
+			add(
+				match.index,
+				"valar/no-accent-side-border",
+				"error",
+				`禁止在圆角矩形中使用单侧高亮边框 \`${sideBorder}\` 作强调或装饰，改用均匀 0.5px 边框或间距/语义底色`
+			);
+		const hoverLift = tokens.find((t) => HOVER_LIFT_TOKEN.test(t));
+		if (hoverLift)
+			add(
+				match.index,
+				"valar/no-hover-lift",
+				"warning",
+				`避免给普通元素加悬停位移或缩放 \`${hoverLift}\`，悬停仅用轻微底色或描边变化`
+			);
+	}
+	for (const match of source.matchAll(REDUNDANT_PLACEHOLDER))
+		add(
+			match.index,
+			"valar/no-redundant-placeholder",
+			"warning",
+			"占位符避免写“请输入…”重复废话，改为直接给格式示例（如 name@company.com）"
+		);
+	for (const footerTag of [
+		...part("Dialog", "Footer"),
+		...part("AlertDialog", "Footer"),
+		...part("Sheet", "Footer"),
+		...part("Card", "Footer"),
+		...part("PageLayout", "Actions"),
+	]) {
+		for (const tag of openingTags(source, footerTag)) {
+			const body = elementBody(source, footerTag, tag);
+			const primaryButtons = openingTags(body, "Button").filter(
+				(btn) => !NON_PRIMARY_VARIANT.test(btn.text)
+			);
+			if (primaryButtons.length > 1)
+				add(
+					tag.index,
+					"valar/single-primary-action",
+					"warning",
+					`${footerTag} 中出现了 ${primaryButtons.length} 个主色按钮；同一操作区最多只放 1 个主操作，其余改用 outline 或 ghost`
+				);
+		}
+	}
 	return sorted();
 }

@@ -155,13 +155,31 @@ describe("lintSource", () => {
 		expect(rules(chart, "chart.ts")).toEqual(["3:valar/chart-color-token"]);
 		expect(rules('const brand = { color: "#60a5fa" };', "brand.ts")).toEqual([]);
 	});
+
+	it("catches anti-AI-slop layout, decoration, copy, and action rules", () => {
+		const source = [
+			"<Card.Root><Card.Content><Card.Root><Card.Content>套娃</Card.Content></Card.Root></Card.Content></Card.Root>",
+			'<div class="rounded-lg border-l-4 border-primary p-4">单侧高亮边</div>',
+			'<div class="rounded-lg border hover:-translate-y-0.5 transition">上浮卡片</div>',
+			'<Input id="email" placeholder="请输入工作邮箱" />',
+			'<Dialog.Footer><Button>保存草稿</Button><Button variant="default">发布</Button></Dialog.Footer>',
+			'<Dialog.Footer><Button variant="outline">取消</Button><Button>保存</Button></Dialog.Footer>',
+		].join("\n");
+		expect(rules(source)).toEqual([
+			"1:valar/no-nested-card",
+			"2:valar/no-accent-side-border",
+			"3:valar/no-hover-lift",
+			"4:valar/no-redundant-placeholder",
+			"5:valar/single-primary-action",
+		]);
+	});
 });
 
 describe("project files", () => {
 	let dir: string;
 	afterEach(() => rmSync(dir, { recursive: true, force: true }));
 
-	it("writes one managed AGENTS.md block from installed RULES.md and keeps user text", async () => {
+	it("writes one compact AGENTS.md index block from installed RULES.md and keeps user text", async () => {
 		dir = mkdtempSync(path.join(os.tmpdir(), "valar-rules-"));
 		const ui = path.join(dir, "src/lib/components/ui");
 		mkdirSync(path.join(ui, "button"), { recursive: true });
@@ -176,9 +194,9 @@ describe("project files", () => {
 		const agents = readFileSync(path.join(dir, "AGENTS.md"), "utf8");
 		expect(agents.startsWith("# 我的项目\n\n自己的说明。\n\n" + RULES_START)).toBe(true);
 		expect(agents.split(RULES_START)).toHaveLength(2);
-		expect(agents).toContain("### Button 设计规范");
-		expect(agents).toContain("`src/lib/components/ui/button/RULES.md`");
-		expect(agents).toContain("一个区域一个主按钮");
+		expect(agents).toContain("### 已安装组件规范（按需阅读）");
+		expect(agents).toContain("- `button`（Button 设计规范）：`src/lib/components/ui/button/RULES.md`");
+		expect(agents).not.toContain("一个区域一个主按钮");
 		expect(agents).not.toContain("card");
 		expect(agents.trimEnd().endsWith(RULES_END)).toBe(true);
 
