@@ -126,24 +126,50 @@ export const UI_CATALOG = [
 	define({
 		type: "PageToolbar",
 		name: "页面工具栏",
-		useWhen: "顶栏下方的紧凑工具条，用于放视图切换（ToggleGroup）、筛选控件或统计徽标",
+		useWhen:
+			"顶栏下方的紧凑工具条，放 SearchInput（搜索框）、FilterSelect（紧凑筛选下拉）、ToggleGroup、ButtonGroup 或统计 Badge；左右分栏时放 2 个直接子项（可用 Stack(row, gap=sm) 各自归组）",
+		avoidWhen: "不要把带顶部标签的 InputField 或 SelectField 直接放进工具栏（会撑高行高导致同行按钮错位），改用 SearchInput 和 FilterSelect",
 		props: {},
 		children: "nodes",
 		example: {
 			type: "PageToolbar",
 			children: [
 				{
-					type: "ToggleGroup",
-					props: {
-						label: "视图模式",
-						defaultValue: "list",
-						options: [
-							{ value: "list", label: "列表" },
-							{ value: "board", label: "看板" },
-						],
-					},
+					type: "Stack",
+					props: { direction: "row", gap: "sm" },
+					children: [
+						{
+							type: "SearchInput",
+							props: { label: "搜索记录", placeholder: "关键词或编号", value: "付款审批" },
+						},
+						{
+							type: "FilterSelect",
+							props: {
+								label: "状态筛选",
+								value: "all",
+								options: [
+									{ value: "all", label: "全部状态" },
+									{ value: "open", label: "进行中" },
+								],
+							},
+						},
+					],
 				},
-				{ type: "Badge", props: { variant: "secondary" }, children: "共 12 项" },
+				{
+					type: "Stack",
+					props: { direction: "row", gap: "sm" },
+					children: [
+						{ type: "Badge", props: { variant: "secondary" }, children: "共 12 项" },
+						{
+							type: "ButtonGroup",
+							props: { label: "命中切换", variant: "pill" },
+							children: [
+								{ type: "Button", props: { variant: "ghost", size: "sm" }, children: "上一处" },
+								{ type: "Button", props: { variant: "ghost", size: "sm" }, children: "下一处" },
+							],
+						},
+					],
+				},
 			],
 		},
 	}),
@@ -211,15 +237,64 @@ export const UI_CATALOG = [
 	define({
 		type: "Stack",
 		name: "堆叠布局",
-		useWhen: "把几个元素按一个方向排开：direction=column 竖排，row 横排（窄屏自动换行）",
-		avoidWhen: "需要等宽的多列时用 Grid",
+		useWhen:
+			"把几个元素按一个方向排开：direction=column 竖排，row 横排（窄屏自动换行）；横排可配 justify=between 左右分散对齐",
+		avoidWhen: "需要等宽的多列时用 Grid；左右不等宽主从双栏用 SplitLayout",
 		props: {
 			direction: z.enum(["column", "row"]).optional(),
 			gap,
 			align: z.enum(["start", "center", "end"]).optional(),
+			justify: z.enum(["start", "between", "end"]).optional(),
 		},
 		children: "nodes",
 		example: stackExample,
+	}),
+	define({
+		type: "SplitLayout",
+		name: "双栏分栏布局",
+		useWhen:
+			"主从双栏视图（如左侧命中/会话列表 + 右侧消息原文或详情、左侧筛选/导航 + 右侧正文）；ratio 支持 1:2、2:1、1:1，窄屏自动折为单列；children 必须恰好 2 个节点",
+		avoidWhen: "等宽 2～4 列卡片矩阵用 Grid",
+		props: {
+			ratio: z.enum(["1:2", "2:1", "1:1"]).optional(),
+			gap,
+			divided: z.boolean().optional(),
+		},
+		children: "nodes",
+		example: {
+			type: "SplitLayout",
+			props: { ratio: "1:2", divided: true },
+			children: [
+				{
+					type: "ItemList",
+					props: { label: "命中列表" },
+					children: [
+						{
+							type: "ItemRow",
+							props: { meta: "10:24", title: "付款审批已提交复核", active: true },
+							children: [{ type: "Badge", props: { variant: "secondary" }, children: "2 / 3" }],
+						},
+					],
+				},
+				{
+					type: "MessageList",
+					props: { label: "对话原文", highlight: "付款审批" },
+					children: [
+						{
+							type: "ChatMessage",
+							props: {
+								sender: "林岚",
+								avatar: "林",
+								time: "10:24",
+								content: "这笔付款审批已经提交财务复核，预计下午完成。",
+								active: true,
+								meta: "第 2 / 3 处",
+							},
+						},
+					],
+				},
+			],
+		},
 	}),
 	define({
 		type: "Grid",
@@ -286,6 +361,27 @@ export const UI_CATALOG = [
 		},
 		children: "text",
 		example: { type: "Button", props: { variant: "outline" }, children: "取消" },
+	}),
+	define({
+		type: "ButtonGroup",
+		name: "相连按钮组",
+		useWhen:
+			"把 2～4 个相关紧凑操作连成一体（如“上一处／下一处”、翻页或分体操作）；children 只能是 Button，组内统一用 variant=ghost 或 outline、size=sm",
+		avoidWhen: "单选视图切换用 ToggleGroup；普通独立按钮用 Stack(row)",
+		props: {
+			label: label.optional(),
+			variant: z.enum(["default", "pill"]).optional(),
+		},
+		children: "nodes",
+		allowedChildren: ["Button"],
+		example: {
+			type: "ButtonGroup",
+			props: { label: "命中跳转", variant: "pill" },
+			children: [
+				{ type: "Button", props: { variant: "ghost", size: "sm" }, children: "上一处" },
+				{ type: "Button", props: { variant: "ghost", size: "sm" }, children: "下一处" },
+			],
+		},
 	}),
 	define({
 		type: "Badge",
@@ -466,12 +562,58 @@ export const UI_CATALOG = [
 		example: { type: "CardFooter", children: [{ type: "Button", children: "确定" }] },
 	}),
 
+	// ---- toolbar controls (compact, no visible top label) -----------------------------------
+	define({
+		type: "SearchInput",
+		name: "工具栏搜索框",
+		useWhen:
+			"工具栏或列表顶部的紧凑搜索框（自带放大镜图标与可清除输入，无顶部标签，与同行按钮齐平）；可配 actionLabel 在框内放触发按钮",
+		avoidWhen: "常规表单需要独立可见标签时用 InputField",
+		props: {
+			label,
+			placeholder: z.string().max(120).optional(),
+			value: z.string().max(200).optional(),
+			actionLabel: label.optional(),
+			disabled: z.boolean().optional(),
+		},
+		children: "none",
+		example: {
+			type: "SearchInput",
+			props: { label: "搜索对话", placeholder: "关键词、发送人", value: "付款审批", actionLabel: "查询" },
+		},
+	}),
+	define({
+		type: "FilterSelect",
+		name: "工具栏筛选下拉",
+		useWhen: "工具栏或列表头部的紧凑筛选下拉（无顶部标签，与 SearchInput、按钮齐平）",
+		avoidWhen: "常规表单里带可见标签的下拉用 SelectField",
+		props: {
+			label,
+			options: z.array(option).min(2).max(40),
+			placeholder: z.string().max(80).optional(),
+			value: z.string().max(80).optional(),
+			disabled: z.boolean().optional(),
+		},
+		children: "none",
+		example: {
+			type: "FilterSelect",
+			props: {
+				label: "按发送人筛选",
+				value: "all",
+				options: [
+					{ value: "all", label: "全部成员" },
+					{ value: "finance", label: "财务团队" },
+				],
+			},
+		},
+	}),
+
 	// ---- form fields: every input comes with its label ---------------------------------------
 	define({
 		type: "InputField",
 		name: "输入框（带标签）",
-		useWhen: "单行文本、邮箱、密码、数字等输入；label 必填",
-		avoidWhen: "多行文字用 TextareaField；固定选项用 SelectField 或 RadioGroupField",
+		useWhen: "表单内的单行文本、邮箱、密码、数字等输入；label 必填",
+		avoidWhen: "工具栏搜索改用 SearchInput；多行文字用 TextareaField；固定选项用 SelectField 或 RadioGroupField",
 		props: {
 			...fieldBase,
 			type: z.enum(["text", "email", "password", "number", "search", "url", "tel"]).optional(),
@@ -896,11 +1038,12 @@ export const UI_CATALOG = [
 		type: "ItemRow",
 		name: "列表行",
 		useWhen:
-			"ItemList 中的单条紧凑行：左放编号/标题/可选副说明，右放 children（Badge、Button、Sheet 或 AlertDialog）",
+			"ItemList 中的单条紧凑行：左放编号/标题/可选副说明，右放 children（Badge、Button、Sheet 或 AlertDialog）；主从分栏里可用 active=true 标记当前选中/命中行",
 		props: {
 			title: label,
 			meta: label.optional(),
 			description: text.optional(),
+			active: z.boolean().optional(),
 			disabled: z.boolean().optional(),
 		},
 		children: "nodes",
@@ -908,6 +1051,75 @@ export const UI_CATALOG = [
 			type: "ItemRow",
 			props: { meta: "DS-42", title: "核对菜单键盘导航与焦点归位", description: "今日更新" },
 			children: [{ type: "Badge", props: { variant: "secondary" }, children: "进行中" }],
+		},
+	}),
+	define({
+		type: "MessageList",
+		name: "对话消息流",
+		useWhen:
+			"展示对话记录、审批讨论、客服/AI 聊天原文或带关键词定位的消息上下文；highlight 可自动高亮每条消息里的命中关键词；children 只能是 ChatMessage",
+		avoidWhen: "纯列表条目用 ItemList；结构化表格用 Table",
+		props: {
+			label: label.optional(),
+			highlight: z.string().max(80).optional(),
+		},
+		children: "nodes",
+		allowedChildren: ["ChatMessage"],
+		example: {
+			type: "MessageList",
+			props: { label: "对话原文", highlight: "付款审批" },
+			children: [
+				{
+					type: "ChatMessage",
+					props: {
+						sender: "林岚",
+						avatar: "林",
+						time: "10:18",
+						content: "供应商合同附件已补齐，准备发起付款审批。",
+					},
+				},
+				{
+					type: "ChatMessage",
+					props: {
+						sender: "我",
+						avatar: "我",
+						time: "10:24",
+						role: "self",
+						content: "已确认金额无误，这条付款审批请优先走加急通道。",
+						active: true,
+						meta: "第 2 / 3 处",
+					},
+				},
+			],
+		},
+	}),
+	define({
+		type: "ChatMessage",
+		name: "对话消息",
+		useWhen:
+			"MessageList 中的单条消息：含发件人、头像缩写、时间、正文，支持 role=other/self 左右对齐、highlight 关键词高亮及 active=true 当前定位高亮",
+		props: {
+			sender: label,
+			avatar: z.string().max(4).optional(),
+			time: z.string().max(40).optional(),
+			role: z.enum(["other", "self"]).optional(),
+			content: text,
+			highlight: z.string().max(80).optional(),
+			active: z.boolean().optional(),
+			meta: label.optional(),
+		},
+		children: "none",
+		example: {
+			type: "ChatMessage",
+			props: {
+				sender: "林岚",
+				avatar: "林",
+				time: "10:24",
+				content: "付款审批单已通过初审。",
+				highlight: "付款审批",
+				active: true,
+				meta: "命中",
+			},
 		},
 	}),
 	define({
@@ -1030,8 +1242,26 @@ const TITLE_PROP_TYPES = new Set([
 ]);
 const LABEL_EMOJI_TYPES = new Set(["Gauge", "Sparkline"]);
 const TEXT_HEADER_TYPES = new Set(["Heading", "CardTitle", "Button", "AlertTitle"]);
-const SINGLE_PRIMARY_CONTAINERS = new Set(["PageHeader", "PageToolbar", "CardFooter", "ItemRow"]);
+const SINGLE_PRIMARY_CONTAINERS = new Set([
+	"PageHeader",
+	"PageToolbar",
+	"CardFooter",
+	"ItemRow",
+	"ButtonGroup",
+]);
 const OVERLAY_ROOTS = new Set(["Dialog", "Sheet"]);
+const TOP_LABELED_TOOLBAR_FIELDS = new Set([
+	"InputField",
+	"TextareaField",
+	"SelectField",
+	"RadioGroupField",
+	"SliderField",
+	"InputOtpField",
+	"NumberField",
+	"TagsInputField",
+	"DatePickerField",
+	"ComboboxField",
+]);
 
 const isCardSurface = (type: string, props: Record<string, unknown>) =>
 	type === "Card" || (type === "PageSection" && props.surface === "card");
@@ -1146,6 +1376,15 @@ export function validateUi(
 				`${path}.props.triggerLabel：禁止在触发按钮中使用 Emoji 作图标装饰，保持中性克制的文字表达`
 			);
 		}
+		if (
+			entry.type === "SearchInput" &&
+			typeof safeProps.actionLabel === "string" &&
+			EMOJI_PATTERN.test(safeProps.actionLabel)
+		) {
+			errors.push(
+				`${path}.props.actionLabel：禁止在搜索操作按钮中使用 Emoji 作图标装饰，保持中性克制的文字表达`
+			);
+		}
 		if (entry.type === "AlertDialog" && typeof safeProps.confirmLabel === "string") {
 			if (EMOJI_PATTERN.test(safeProps.confirmLabel)) {
 				errors.push(
@@ -1206,6 +1445,23 @@ export function validateUi(
 						);
 					}
 				}
+				if (entry.type === "PageToolbar") {
+					const labeledField = children.find(
+						(child) =>
+							child &&
+							typeof child === "object" &&
+							!Array.isArray(child) &&
+							TOP_LABELED_TOOLBAR_FIELDS.has(String((child as Record<string, unknown>).type ?? ""))
+					) as Record<string, unknown> | undefined;
+					if (labeledField) {
+						errors.push(
+							`${path}：PageToolbar 内不要直接放带顶部标签的 ${String(labeledField.type)}（会撑高行高导致同行按钮错位），请改用无顶部标签的 SearchInput 或 FilterSelect`
+						);
+					}
+				}
+				if (entry.type === "SplitLayout" && children.length !== 2) {
+					errors.push(`${path}：SplitLayout 必须恰好包含 2 个子节点（左栏与右栏），当前为 ${children.length} 个`);
+				}
 				if (entry.type === "PropertyRow") {
 					const hasSwitchField = children.some(
 						(child) =>
@@ -1251,6 +1507,9 @@ export function usedComponentSlugs(root: UiNode): string[] {
 		PropertyRow: ["page-layout"],
 		Separator: ["separator"],
 		Button: ["button"],
+		ButtonGroup: ["button-group", "button"],
+		SearchInput: ["input-group"],
+		FilterSelect: ["select"],
 		Badge: ["badge"],
 		Alert: ["alert"],
 		Progress: ["progress"],
@@ -1280,6 +1539,8 @@ export function usedComponentSlugs(root: UiNode): string[] {
 		Sheet: ["sheet", "button"],
 		ItemList: ["item"],
 		ItemRow: ["item"],
+		MessageList: ["message", "bubble", "avatar"],
+		ChatMessage: ["message", "bubble", "avatar"],
 		Gauge: ["gauge"],
 		Sparkline: ["sparkline"],
 		Skeleton: ["skeleton"],

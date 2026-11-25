@@ -1,17 +1,23 @@
 <script lang="ts">
+	import SearchIcon from "@lucide/svelte/icons/search";
 	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
+	import XIcon from "@lucide/svelte/icons/x";
 	import * as Accordion from "$lib/registry/ui/accordion/index.js";
 	import * as Alert from "$lib/registry/ui/alert/index.js";
 	import * as AlertDialog from "$lib/registry/ui/alert-dialog/index.js";
 	import * as Avatar from "$lib/registry/ui/avatar/index.js";
 	import * as Breadcrumb from "$lib/registry/ui/breadcrumb/index.js";
+	import * as Bubble from "$lib/registry/ui/bubble/index.js";
+	import * as ButtonGroup from "$lib/registry/ui/button-group/index.js";
 	import * as Card from "$lib/registry/ui/card/index.js";
 	import * as Dialog from "$lib/registry/ui/dialog/index.js";
 	import * as Empty from "$lib/registry/ui/empty/index.js";
 	import * as Field from "$lib/registry/ui/field/index.js";
+	import * as InputGroup from "$lib/registry/ui/input-group/index.js";
 	import * as InputOTP from "$lib/registry/ui/input-otp/index.js";
 	import * as Item from "$lib/registry/ui/item/index.js";
 	import * as Kbd from "$lib/registry/ui/kbd/index.js";
+	import * as Message from "$lib/registry/ui/message/index.js";
 	import * as PageLayout from "$lib/registry/ui/page-layout/index.js";
 	import * as RadioGroup from "$lib/registry/ui/radio-group/index.js";
 	import * as Select from "$lib/registry/ui/select/index.js";
@@ -41,15 +47,17 @@
 
 	/**
 	 * Draws a validated UI tree (see `ui-catalog.ts`) with the library's own components.
-	 * Layout nodes (Stack, Grid, Heading, Text) are the only things drawn here directly, and they
-	 * only use spacing and type steps from the design tokens. Every node sits in its own error
-	 * boundary, so one bad node shows a notice instead of blanking the whole answer.
+	 * Layout nodes (Stack, Grid, SplitLayout, Heading, Text) are the only things drawn here directly,
+	 * and they only use spacing and type steps from the design tokens. Every node sits in its own
+	 * error boundary, so one bad node shows a notice instead of blanking the whole answer.
 	 */
 	let { root }: { root: UiNode } = $props();
 
 	const uid = $props.id();
 	let comboValues = $state<Record<string, string[]>>({});
 	let otpValues = $state<Record<string, string>>({});
+	let searchValues = $state<Record<string, string>>({});
+	let filterValues = $state<Record<string, string>>({});
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	type Props = Record<string, any>;
@@ -65,7 +73,49 @@
 		3: "grid-cols-1 @sm:grid-cols-2 @2xl:grid-cols-3",
 		4: "grid-cols-1 @sm:grid-cols-2 @2xl:grid-cols-4",
 	} as const;
+	const SPLIT_RATIO = {
+		"1:2": "@2xl:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]",
+		"2:1": "@2xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]",
+		"1:1": "@2xl:grid-cols-2",
+	} as const;
 	const ALIGN = { start: "items-start", center: "items-center", end: "items-end" } as const;
+	const JUSTIFY = { start: "justify-start", between: "justify-between", end: "justify-end" } as const;
+	const TOP_LABELED_FIELDS = new Set([
+		"InputField",
+		"TextareaField",
+		"SelectField",
+		"RadioGroupField",
+		"SliderField",
+		"InputOtpField",
+		"NumberField",
+		"TagsInputField",
+		"DatePickerField",
+		"ComboboxField",
+	]);
+	const hasTopLabeledField = (items: UiNode[]) =>
+		items.some((item) => TOP_LABELED_FIELDS.has(item.type));
+
+	function splitHighlight(content: string, query?: string): { text: string; hit: boolean }[] {
+		const term = query?.trim();
+		if (!term) return [{ text: content, hit: false }];
+		const lowerContent = content.toLowerCase();
+		const lowerTerm = term.toLowerCase();
+		const parts: { text: string; hit: boolean }[] = [];
+		let cursor = 0;
+		let matchAt = lowerContent.indexOf(lowerTerm, cursor);
+		while (matchAt !== -1) {
+			if (matchAt > cursor) {
+				parts.push({ text: content.slice(cursor, matchAt), hit: false });
+			}
+			parts.push({ text: content.slice(matchAt, matchAt + term.length), hit: true });
+			cursor = matchAt + term.length;
+			matchAt = lowerContent.indexOf(lowerTerm, cursor);
+		}
+		if (cursor < content.length) {
+			parts.push({ text: content.slice(cursor), hit: false });
+		}
+		return parts.length ? parts : [{ text: content, hit: false }];
+	}
 </script>
 
 {#snippet nodes(items: UiNode[], path: string)}
@@ -107,6 +157,52 @@
 	</PageLayout.PropertyRow>
 {/snippet}
 
+{#snippet chatMessage(n: UiNode, inheritedHighlight?: string)}
+	{@const p = P(n)}
+	{@const isSelf = p.role === "self"}
+	{@const align = isSelf ? "end" : "start"}
+	{@const fallback = String(p.avatar ?? p.sender ?? "?").slice(0, 2)}
+	{@const parts = splitHighlight(String(p.content ?? ""), p.highlight ?? inheritedHighlight)}
+	<div
+		class={p.active
+			? "rounded-lg bg-accent/55 p-2.5 ring-1 ring-inset ring-primary/35"
+			: undefined}
+		data-active-message={p.active ? "true" : undefined}
+	>
+		<Message.Root {align}>
+			<Message.Avatar class="self-start">
+				<Avatar.Root>
+					<Avatar.Fallback>{fallback}</Avatar.Fallback>
+				</Avatar.Root>
+			</Message.Avatar>
+			<Message.Content class="gap-1">
+				<Message.Header class="gap-2">
+					<span>{p.sender}</span>
+					{#if p.time}
+						<span class="font-normal tabular-nums">{p.time}</span>
+					{/if}
+					{#if p.meta}
+						<Badge variant={p.active ? "default" : "secondary"}>{p.meta}</Badge>
+					{/if}
+				</Message.Header>
+				<Bubble.Root {align} variant={isSelf ? "muted" : "outline"}>
+					<Bubble.Content>
+						{#each parts as seg, idx (idx)}
+							{#if seg.hit}
+								<mark class="rounded-xs bg-primary/20 px-0.5 font-medium text-foreground"
+									>{seg.text}</mark
+								>
+							{:else}
+								{seg.text}
+							{/if}
+						{/each}
+					</Bubble.Content>
+				</Bubble.Root>
+			</Message.Content>
+		</Message.Root>
+	</div>
+{/snippet}
+
 {#snippet node(n: UiNode, path: string)}
 	{@const p = P(n)}
 	{@const id = idOf(path)}
@@ -129,8 +225,14 @@
 				{/if}
 			</PageLayout.Header>
 		{:else if n.type === "PageToolbar"}
-			<PageLayout.Toolbar class="[&>[data-slot=field]]:w-full [&>[data-slot=field]]:@sm:w-64">
-				{@render nodes(list(n), path)}
+			{@const children = list(n)}
+			{@const hasLabeled = hasTopLabeledField(children)}
+			<PageLayout.Toolbar
+				class="{hasLabeled ? 'items-end' : 'items-center'} {children.length === 2
+					? 'justify-between'
+					: 'justify-start'} [&>[data-slot=field]]:w-full [&>[data-slot=field]]:@sm:w-64 [&>[data-slot=input-group]]:w-full [&>[data-slot=input-group]]:@sm:w-64"
+			>
+				{@render nodes(children, path)}
 			</PageLayout.Toolbar>
 		{:else if n.type === "PageSection"}
 			{@const children = list(n)}
@@ -171,15 +273,49 @@
 		{:else if n.type === "PropertyRow"}
 			{@render propertyRow(n, path)}
 		{:else if n.type === "Stack"}
+			{@const children = list(n)}
+			{@const isRow = p.direction === "row"}
+			{@const defaultRowAlign = hasTopLabeledField(children) ? "items-end" : "items-center"}
 			<div
-				class="flex {p.direction === 'row' ? 'flex-row flex-wrap' : 'flex-col'} {GAP[
+				class="flex {isRow ? 'flex-row flex-wrap' : 'flex-col'} {GAP[
 					p.gap as keyof typeof GAP
-				] ?? GAP.md} {p.direction === 'row'
-					? (ALIGN[p.align as keyof typeof ALIGN] ?? 'items-center')
-					: (ALIGN[p.align as keyof typeof ALIGN] ?? '')}"
+				] ?? GAP.md} {isRow
+					? (ALIGN[p.align as keyof typeof ALIGN] ?? defaultRowAlign)
+					: (ALIGN[p.align as keyof typeof ALIGN] ?? '')} {isRow && p.justify
+					? (JUSTIFY[p.justify as keyof typeof JUSTIFY] ?? '')
+					: ''} {isRow && children.length > 1
+					? '[&>[data-slot=field]]:w-full [&>[data-slot=field]]:@sm:w-60 [&>[data-slot=input-group]]:w-full [&>[data-slot=input-group]]:@sm:w-64'
+					: ''}"
 			>
-				{@render nodes(list(n), path)}
+				{@render nodes(children, path)}
 			</div>
+		{:else if n.type === "SplitLayout"}
+			{@const children = list(n)}
+			{@const ratioCls =
+				SPLIT_RATIO[p.ratio as keyof typeof SPLIT_RATIO] ?? SPLIT_RATIO["1:2"]}
+			{#if p.divided}
+				<div
+					class="grid grid-cols-1 items-start divide-y-[0.5px] divide-border {ratioCls} @2xl:divide-x-[0.5px] @2xl:divide-y-0"
+				>
+					{#each children as child, i (i)}
+						<div
+							class={i === 0
+								? "min-w-0 pb-4 @2xl:pr-4 @2xl:pb-0"
+								: "min-w-0 pt-4 @2xl:pt-0 @2xl:pl-4"}
+						>
+							{@render node(child, `${path}-${i}`)}
+						</div>
+					{/each}
+				</div>
+			{:else}
+				<div
+					class="grid grid-cols-1 items-start {GAP[p.gap as keyof typeof GAP] ?? GAP.md} {ratioCls}"
+				>
+					{#each children as child, i (i)}
+						<div class="min-w-0">{@render node(child, `${path}-${i}`)}</div>
+					{/each}
+				</div>
+			{/if}
 		{:else if n.type === "Grid"}
 			<div
 				class="grid {COLUMNS[p.columns as keyof typeof COLUMNS] ?? COLUMNS[2]} {GAP[
@@ -201,6 +337,70 @@
 		{:else if n.type === "Button"}
 			<Button variant={p.variant} size={p.size} href={p.href} disabled={p.disabled}>{str(n)}</Button
 			>
+		{:else if n.type === "ButtonGroup"}
+			{@const children = list(n)}
+			{@const groupVariant = p.variant ?? "pill"}
+			<ButtonGroup.Root variant={groupVariant} aria-label={p.label}>
+				{#each children as child, i (i)}
+					{#if i > 0 && groupVariant === "pill"}
+						<ButtonGroup.Separator />
+					{/if}
+					{@render node(child, `${path}-${i}`)}
+				{/each}
+			</ButtonGroup.Root>
+		{:else if n.type === "SearchInput"}
+			{@const curVal = searchValues[path] ?? p.value ?? ""}
+			<InputGroup.Root class="w-full @sm:w-64">
+				<InputGroup.Addon>
+					<SearchIcon />
+				</InputGroup.Addon>
+				<InputGroup.Input
+					type="search"
+					aria-label={p.label}
+					placeholder={p.placeholder}
+					value={curVal}
+					disabled={p.disabled}
+					class="[&::-webkit-search-cancel-button]:appearance-none"
+					oninput={(event) => (searchValues[path] = event.currentTarget.value)}
+				/>
+				{#if (curVal && !p.disabled) || p.actionLabel}
+					<InputGroup.Addon align="inline-end">
+						{#if curVal && !p.disabled}
+							<InputGroup.Button
+								size="icon-xs"
+								variant="ghost"
+								aria-label="清除搜索"
+								onclick={() => (searchValues[path] = "")}
+							>
+								<XIcon />
+							</InputGroup.Button>
+						{/if}
+						{#if p.actionLabel}
+							<InputGroup.Button size="xs" variant="secondary" disabled={p.disabled}>
+								{p.actionLabel}
+							</InputGroup.Button>
+						{/if}
+					</InputGroup.Addon>
+				{/if}
+			</InputGroup.Root>
+		{:else if n.type === "FilterSelect"}
+			{@const curVal = filterValues[path] ?? p.value}
+			<Select.Root
+				type="single"
+				value={curVal}
+				onValueChange={(value) => (filterValues[path] = value)}
+				items={p.options}
+				disabled={p.disabled}
+			>
+				<Select.Trigger size="sm" aria-label={p.label}>
+					<Select.Value placeholder={p.placeholder ?? p.label} />
+				</Select.Trigger>
+				<Select.Content>
+					{#each p.options as option (option.value)}
+						<Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
+					{/each}
+				</Select.Content>
+			</Select.Root>
 		{:else if n.type === "Badge"}
 			<Badge variant={p.variant}>{str(n)}</Badge>
 		{:else if n.type === "Alert"}
@@ -531,7 +731,12 @@
 			</Item.Group>
 		{:else if n.type === "ItemRow"}
 			<div role="listitem">
-				<Item.Root size="sm" aria-disabled={p.disabled ? "true" : undefined}>
+				<Item.Root
+					size="sm"
+					class={p.active ? "bg-accent/70" : undefined}
+					aria-current={p.active ? "true" : undefined}
+					aria-disabled={p.disabled ? "true" : undefined}
+				>
 					<Item.Content>
 						<div class="flex min-w-0 items-center gap-2">
 							{#if p.meta}
@@ -546,6 +751,18 @@
 					{/if}
 				</Item.Root>
 			</div>
+		{:else if n.type === "MessageList"}
+			<div role="log" aria-label={p.label ?? "对话记录"} class="flex flex-col gap-4">
+				{#each list(n) as child, i (i)}
+					{#if child.type === "ChatMessage"}
+						{@render chatMessage(child, p.highlight)}
+					{:else}
+						{@render node(child, `${path}-${i}`)}
+					{/if}
+				{/each}
+			</div>
+		{:else if n.type === "ChatMessage"}
+			{@render chatMessage(n)}
 		{:else if n.type === "Gauge"}
 			{@const gaugeTone = p.tone ?? (Number(p.value) > 100 ? "danger" : "accent")}
 			{@const gaugeValueText = p.valueText ?? `已使用 ${Math.round(Number(p.value))}%`}

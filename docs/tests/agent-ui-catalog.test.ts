@@ -22,10 +22,16 @@ describe("agent UI catalog and aesthetic guardrails", () => {
 			"PageSection",
 			"PropertyList",
 			"PropertyRow",
+			"SplitLayout",
+			"SearchInput",
+			"FilterSelect",
+			"ButtonGroup",
 			"AlertDialog",
 			"Sheet",
 			"ItemList",
 			"ItemRow",
+			"MessageList",
+			"ChatMessage",
 			"Gauge",
 			"Sparkline",
 			"Skeleton",
@@ -307,6 +313,73 @@ describe("agent UI catalog and aesthetic guardrails", () => {
 			],
 		};
 		expect(validateUi(sheetInsideCardOk)).toMatchObject({ ok: true });
+	});
+
+	it("rejects top-labeled fields in PageToolbar and enforces SplitLayout / ButtonGroup rules", () => {
+		const badToolbarInput: UiNode = {
+			type: "PageToolbar",
+			children: [
+				{ type: "InputField", props: { label: "关键词", value: "付款审批" } },
+				{ type: "Button", children: "查询" },
+			],
+		};
+		const badToolbarSelect: UiNode = {
+			type: "PageToolbar",
+			children: [
+				{
+					type: "SelectField",
+					props: {
+						label: "状态",
+						options: [
+							{ value: "all", label: "全部" },
+							{ value: "done", label: "已完成" },
+						],
+					},
+				},
+			],
+		};
+		for (const bad of [badToolbarInput, badToolbarSelect]) {
+			const res = validateUi(bad);
+			expect(res.ok).toBe(false);
+			if (!res.ok) {
+				expect(res.errors.some((e) => e.includes("SearchInput") && e.includes("FilterSelect"))).toBe(
+					true
+				);
+			}
+		}
+
+		const badSplit: UiNode = {
+			type: "SplitLayout",
+			children: [{ type: "Text", children: "只有一栏" }],
+		};
+		const splitRes = validateUi(badSplit);
+		expect(splitRes.ok).toBe(false);
+		if (!splitRes.ok) {
+			expect(splitRes.errors.some((e) => e.includes("恰好包含 2 个子节点"))).toBe(true);
+		}
+
+		const badButtonGroup: UiNode = {
+			type: "ButtonGroup",
+			children: [
+				{ type: "Button", children: "上一处" },
+				{ type: "Button", children: "下一处" },
+			],
+		};
+		const groupRes = validateUi(badButtonGroup);
+		expect(groupRes.ok).toBe(false);
+		if (!groupRes.ok) {
+			expect(groupRes.errors.some((e) => e.includes("最多只放 1 个主操作"))).toBe(true);
+		}
+
+		const badSearchEmoji: UiNode = {
+			type: "SearchInput",
+			props: { label: "搜索", actionLabel: "🔍 查询" },
+		};
+		const emojiRes = validateUi(badSearchEmoji);
+		expect(emojiRes.ok).toBe(false);
+		if (!emojiRes.ok) {
+			expect(emojiRes.errors.some((e) => e.includes("Emoji"))).toBe(true);
+		}
 	});
 });
 
@@ -716,6 +789,147 @@ describe("deterministic uiNodeToSvelte code generator", () => {
 		expect(out.code).toContain('import { Skeleton } from "$lib/components/ui/skeleton/index.js";');
 		expect(out.code).toContain('tone="danger"');
 		expect(lintSource("billing-workspace.svelte", out.code)).toEqual([]);
+	});
+
+	it("generates lint-clean Svelte 5 code for conversation search + SplitLayout + MessageList and aligns labeled rows", () => {
+		const transcriptPage: UiNode = {
+			type: "PageLayout",
+			props: { width: "full" },
+			children: [
+				{
+					type: "PageHeader",
+					props: { title: "对话记录" },
+					children: [{ type: "Button", props: { variant: "outline", size: "sm" }, children: "导出记录" }],
+				},
+				{
+					type: "PageToolbar",
+					children: [
+						{
+							type: "Stack",
+							props: { direction: "row", gap: "sm" },
+							children: [
+								{
+									type: "SearchInput",
+									props: {
+										label: "搜索关键词",
+										placeholder: "关键词、发送人",
+										value: "付款审批",
+										actionLabel: "查询",
+									},
+								},
+								{
+									type: "FilterSelect",
+									props: {
+										label: "按发送人筛选",
+										value: "all",
+										options: [
+											{ value: "all", label: "全部成员" },
+											{ value: "finance", label: "财务团队" },
+										],
+									},
+								},
+							],
+						},
+						{
+							type: "Stack",
+							props: { direction: "row", gap: "sm" },
+							children: [
+								{ type: "Badge", props: { variant: "secondary" }, children: "第 2 / 3 处" },
+								{
+									type: "ButtonGroup",
+									props: { label: "命中切换", variant: "pill" },
+									children: [
+										{ type: "Button", props: { variant: "ghost", size: "sm" }, children: "上一处" },
+										{ type: "Button", props: { variant: "ghost", size: "sm" }, children: "下一处" },
+									],
+								},
+							],
+						},
+					],
+				},
+				{
+					type: "SplitLayout",
+					props: { ratio: "1:2", divided: true },
+					children: [
+						{
+							type: "ItemList",
+							props: { label: "命中结果" },
+							children: [
+								{
+									type: "ItemRow",
+									props: { meta: "10:18", title: "发起付款审批前确认合同" },
+									children: [{ type: "Badge", props: { variant: "outline" }, children: "1 / 3" }],
+								},
+								{
+									type: "ItemRow",
+									props: { meta: "10:24", title: "付款审批优先走加急通道", active: true },
+									children: [{ type: "Badge", props: { variant: "secondary" }, children: "2 / 3" }],
+								},
+							],
+						},
+						{
+							type: "MessageList",
+							props: { label: "对话原文", highlight: "付款审批" },
+							children: [
+								{
+									type: "ChatMessage",
+									props: {
+										sender: "林岚",
+										avatar: "林",
+										time: "10:18",
+										content: "供应商合同附件已补齐，准备发起付款审批。",
+									},
+								},
+								{
+									type: "ChatMessage",
+									props: {
+										sender: "我",
+										avatar: "我",
+										time: "10:24",
+										role: "self",
+										content: "已确认金额无误，这条付款审批请优先走加急通道。",
+										active: true,
+										meta: "第 2 / 3 处",
+									},
+								},
+							],
+						},
+					],
+				},
+			],
+		};
+
+		expect(validateUi(transcriptPage)).toMatchObject({ ok: true });
+		const out = uiNodeToSvelte(transcriptPage);
+		expect(out.components).toEqual(
+			expect.arrayContaining([
+				"page-layout",
+				"input-group",
+				"select",
+				"button-group",
+				"item",
+				"message",
+				"bubble",
+				"avatar",
+			])
+		);
+		expect(out.code).toContain('import SearchIcon from "@lucide/svelte/icons/search";');
+		expect(out.code).toContain("<mark class=");
+		expect(out.code).toContain("<ButtonGroup.Separator />");
+		expect(lintSource("transcript-search.svelte", out.code)).toEqual([]);
+
+		// Defensive alignment when a horizontal Stack contains a top-labeled InputField alongside a Button.
+		const inlineRow: UiNode = {
+			type: "Stack",
+			props: { direction: "row", gap: "sm" },
+			children: [
+				{ type: "InputField", props: { label: "关键词", value: "付款审批" } },
+				{ type: "Button", children: "查询" },
+			],
+		};
+		const inlineOut = uiNodeToSvelte(inlineRow);
+		expect(inlineOut.code).toContain("items-end");
+		expect(lintSource("inline-row.svelte", inlineOut.code)).toEqual([]);
 	});
 });
 

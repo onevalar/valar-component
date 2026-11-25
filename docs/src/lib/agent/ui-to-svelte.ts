@@ -13,7 +13,45 @@ const COLUMNS = {
 	3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
 	4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
 } as const;
+const SPLIT_RATIO = {
+	"1:2": "lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]",
+	"2:1": "lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]",
+	"1:1": "lg:grid-cols-2",
+} as const;
 const ALIGN = { start: "items-start", center: "items-center", end: "items-end" } as const;
+const JUSTIFY = { start: "justify-start", between: "justify-between", end: "justify-end" } as const;
+const TOP_LABELED_FIELDS = new Set([
+	"InputField",
+	"TextareaField",
+	"SelectField",
+	"RadioGroupField",
+	"SliderField",
+	"InputOtpField",
+	"NumberField",
+	"TagsInputField",
+	"DatePickerField",
+	"ComboboxField",
+]);
+const hasTopLabeledField = (items: UiNode[]) =>
+	items.some((item) => TOP_LABELED_FIELDS.has(item.type));
+
+function splitHighlight(content: string, query?: string): { text: string; hit: boolean }[] {
+	const term = query?.trim();
+	if (!term) return [{ text: content, hit: false }];
+	const lowerContent = content.toLowerCase();
+	const lowerTerm = term.toLowerCase();
+	const parts: { text: string; hit: boolean }[] = [];
+	let cursor = 0;
+	let matchAt = lowerContent.indexOf(lowerTerm, cursor);
+	while (matchAt !== -1) {
+		if (matchAt > cursor) parts.push({ text: content.slice(cursor, matchAt), hit: false });
+		parts.push({ text: content.slice(matchAt, matchAt + term.length), hit: true });
+		cursor = matchAt + term.length;
+		matchAt = lowerContent.indexOf(lowerTerm, cursor);
+	}
+	if (cursor < content.length) parts.push({ text: content.slice(cursor), hit: false });
+	return parts.length ? parts : [{ text: content, hit: false }];
+}
 
 const escapeText = (value: string) =>
 	value
@@ -44,12 +82,16 @@ export function uiNodeToSvelte(root: UiNode): {
 	installCommand: string;
 	components: string[];
 } {
+	const defaultImports = new Map<string, string>();
 	const namespaceImports = new Map<string, string>();
 	const namedImports = new Map<string, Set<string>>();
 	const scriptLines: string[] = [];
 	let fieldSeq = 0;
 	let varSeq = 0;
 
+	const useDefault = (symbol: string, path: string) => {
+		defaultImports.set(symbol, path);
+	};
 	const useNs = (alias: string, slug: string) => {
 		namespaceImports.set(alias, `$lib/components/ui/${slug}/index.js`);
 	};
@@ -117,6 +159,69 @@ export function uiNodeToSvelte(root: UiNode): {
 		return `${pad(depth)}<PageLayout.PropertyRow${rowAttrs} />`;
 	};
 
+	const renderChatMessage = (n: UiNode, depth: number, inheritedHighlight?: string): string => {
+		useNs("Message", "message");
+		useNs("Bubble", "bubble");
+		useNs("Avatar", "avatar");
+		const p = P(n);
+		const isSelf = p.role === "self";
+		const align = isSelf ? "end" : "start";
+		const fallback = String(p.avatar ?? p.sender ?? "?").slice(0, 2);
+		const parts = splitHighlight(
+			String(p.content ?? ""),
+			typeof p.highlight === "string" ? p.highlight : inheritedHighlight
+		);
+		const body = parts
+			.map((seg) =>
+				seg.hit
+					? `<mark class="rounded-xs bg-primary/20 px-0.5 font-medium text-foreground">${escapeText(seg.text)}</mark>`
+					: escapeText(seg.text)
+			)
+			.join("");
+		const innerDepth = p.active ? depth + 1 : depth;
+		const lines: string[] = [];
+		if (p.active) {
+			lines.push(
+				`${pad(depth)}<div class="rounded-lg bg-accent/55 p-2.5 ring-1 ring-inset ring-primary/35">`
+			);
+		}
+		lines.push(
+			`${pad(innerDepth)}<Message.Root align=${quote(align)}>`,
+			`${pad(innerDepth + 1)}<Message.Avatar class="self-start">`,
+			`${pad(innerDepth + 2)}<Avatar.Root>`,
+			`${pad(innerDepth + 3)}<Avatar.Fallback>${escapeText(fallback)}</Avatar.Fallback>`,
+			`${pad(innerDepth + 2)}</Avatar.Root>`,
+			`${pad(innerDepth + 1)}</Message.Avatar>`,
+			`${pad(innerDepth + 1)}<Message.Content class="gap-1">`,
+			`${pad(innerDepth + 2)}<Message.Header class="gap-2">`,
+			`${pad(innerDepth + 3)}<span>${escapeText(String(p.sender ?? ""))}</span>`
+		);
+		if (typeof p.time === "string" && p.time) {
+			lines.push(
+				`${pad(innerDepth + 3)}<span class="font-normal tabular-nums">${escapeText(p.time)}</span>`
+			);
+		}
+		if (typeof p.meta === "string" && p.meta) {
+			useNamed("Badge", "badge");
+			const badgeVariant = p.active ? "default" : "secondary";
+			lines.push(
+				`${pad(innerDepth + 3)}<Badge variant=${quote(badgeVariant)}>${escapeText(p.meta)}</Badge>`
+			);
+		}
+		lines.push(
+			`${pad(innerDepth + 2)}</Message.Header>`,
+			`${pad(innerDepth + 2)}<Bubble.Root align=${quote(align)} variant=${quote(isSelf ? "muted" : "outline")}>`,
+			`${pad(innerDepth + 3)}<Bubble.Content>${body}</Bubble.Content>`,
+			`${pad(innerDepth + 2)}</Bubble.Root>`,
+			`${pad(innerDepth + 1)}</Message.Content>`,
+			`${pad(innerDepth)}</Message.Root>`
+		);
+		if (p.active) {
+			lines.push(`${pad(depth)}</div>`);
+		}
+		return lines.join("\n");
+	};
+
 	const renderNode = (n: UiNode, depth: number): string => {
 		const p = P(n);
 		const children = list(n);
@@ -146,7 +251,12 @@ export function uiNodeToSvelte(root: UiNode): {
 			case "PageToolbar": {
 				useNs("PageLayout", "page-layout");
 				if (!children.length) return `${pad(depth)}<PageLayout.Toolbar />`;
-				return `${pad(depth)}<PageLayout.Toolbar>\n${renderChildren()}\n${pad(depth)}</PageLayout.Toolbar>`;
+				const clsParts = [
+					hasTopLabeledField(children) ? "items-end" : "",
+					children.length !== 2 ? "justify-start" : "",
+				].filter(Boolean);
+				const clsAttr = clsParts.length ? ` class=${quote(clsParts.join(" "))}` : "";
+				return `${pad(depth)}<PageLayout.Toolbar${clsAttr}>\n${renderChildren()}\n${pad(depth)}</PageLayout.Toolbar>`;
 			}
 			case "PageSection": {
 				useNs("PageLayout", "page-layout");
@@ -201,15 +311,44 @@ export function uiNodeToSvelte(root: UiNode): {
 				return renderPropertyRow(n, depth);
 
 			case "Stack": {
-				const dir = p.direction === "row" ? "flex-row flex-wrap" : "flex-col";
+				const isRow = p.direction === "row";
+				const dir = isRow ? "flex-row flex-wrap" : "flex-col";
 				const gapCls = GAP[(p.gap as keyof typeof GAP) ?? "md"] ?? GAP.md;
-				const alignCls =
-					p.direction === "row"
-						? (ALIGN[p.align as keyof typeof ALIGN] ?? "items-center")
-						: (ALIGN[p.align as keyof typeof ALIGN] ?? "");
-				const cls = ["flex", dir, gapCls, alignCls].filter(Boolean).join(" ");
+				const defaultRowAlign = hasTopLabeledField(children) ? "items-end" : "items-center";
+				const alignCls = isRow
+					? (ALIGN[p.align as keyof typeof ALIGN] ?? defaultRowAlign)
+					: (ALIGN[p.align as keyof typeof ALIGN] ?? "");
+				const justifyCls = isRow && p.justify ? (JUSTIFY[p.justify as keyof typeof JUSTIFY] ?? "") : "";
+				const cls = ["flex", dir, gapCls, alignCls, justifyCls].filter(Boolean).join(" ");
 				if (!children.length) return `${pad(depth)}<div class=${quote(cls)}></div>`;
 				return `${pad(depth)}<div class=${quote(cls)}>\n${renderChildren()}\n${pad(depth)}</div>`;
+			}
+			case "SplitLayout": {
+				const ratioCls =
+					SPLIT_RATIO[p.ratio as keyof typeof SPLIT_RATIO] ?? SPLIT_RATIO["1:2"];
+				if (p.divided) {
+					const cls = `grid grid-cols-1 items-start divide-y-[0.5px] divide-border ${ratioCls} lg:divide-x-[0.5px] lg:divide-y-0`;
+					const panes = children.map((child, idx) => {
+						const paneCls =
+							idx === 0 ? "min-w-0 pb-4 lg:pr-4 lg:pb-0" : "min-w-0 pt-4 lg:pt-0 lg:pl-4";
+						return [
+							`${pad(depth + 1)}<div class=${quote(paneCls)}>`,
+							renderNode(child, depth + 2),
+							`${pad(depth + 1)}</div>`,
+						].join("\n");
+					});
+					return [`${pad(depth)}<div class=${quote(cls)}>`, ...panes, `${pad(depth)}</div>`].join(
+						"\n"
+					);
+				}
+				const gapCls = GAP[(p.gap as keyof typeof GAP) ?? "md"] ?? GAP.md;
+				const cls = `grid grid-cols-1 items-start ${gapCls} ${ratioCls}`;
+				const panes = children.map((child) =>
+					[`${pad(depth + 1)}<div class="min-w-0">`, renderNode(child, depth + 2), `${pad(depth + 1)}</div>`].join(
+						"\n"
+					)
+				);
+				return [`${pad(depth)}<div class=${quote(cls)}>`, ...panes, `${pad(depth)}</div>`].join("\n");
 			}
 			case "Grid": {
 				const cols = COLUMNS[(p.columns as keyof typeof COLUMNS) ?? 2] ?? COLUMNS[2];
@@ -239,6 +378,76 @@ export function uiNodeToSvelte(root: UiNode): {
 					attr("disabled", p.disabled),
 				].join("");
 				return `${pad(depth)}<Button${attrs}>${escapeText(str(n))}</Button>`;
+			}
+			case "ButtonGroup": {
+				useNs("ButtonGroup", "button-group");
+				const groupVariant = String(p.variant ?? "pill");
+				const lines = [
+					`${pad(depth)}<ButtonGroup.Root variant=${quote(groupVariant)}${attr("aria-label", p.label)}>`,
+				];
+				children.forEach((child, idx) => {
+					if (idx > 0 && groupVariant === "pill") {
+						lines.push(`${pad(depth + 1)}<ButtonGroup.Separator />`);
+					}
+					lines.push(renderNode(child, depth + 1));
+				});
+				lines.push(`${pad(depth)}</ButtonGroup.Root>`);
+				return lines.join("\n");
+			}
+			case "SearchInput": {
+				useDefault("SearchIcon", "@lucide/svelte/icons/search");
+				useNs("InputGroup", "input-group");
+				const stateName = nextVar("query");
+				scriptLines.push(
+					`let ${stateName} = $state(${typeof p.value === "string" ? quote(p.value) : '""'});`
+				);
+				const inputAttrs = [
+					' type="search"',
+					attr("aria-label", p.label),
+					attr("placeholder", p.placeholder),
+					` bind:value={${stateName}}`,
+					attr("disabled", p.disabled),
+				].join("");
+				const lines = [
+					`${pad(depth)}<InputGroup.Root class="w-full sm:max-w-xs">`,
+					`${pad(depth + 1)}<InputGroup.Addon>`,
+					`${pad(depth + 2)}<SearchIcon />`,
+					`${pad(depth + 1)}</InputGroup.Addon>`,
+					`${pad(depth + 1)}<InputGroup.Input${inputAttrs} />`,
+				];
+				if (typeof p.actionLabel === "string" && p.actionLabel) {
+					lines.push(
+						`${pad(depth + 1)}<InputGroup.Addon align="inline-end">`,
+						`${pad(depth + 2)}<InputGroup.Button size="xs" variant="secondary"${attr("disabled", p.disabled)}>${escapeText(p.actionLabel)}</InputGroup.Button>`,
+						`${pad(depth + 1)}</InputGroup.Addon>`
+					);
+				}
+				lines.push(`${pad(depth)}</InputGroup.Root>`);
+				return lines.join("\n");
+			}
+			case "FilterSelect": {
+				useNs("Select", "select");
+				const options = Array.isArray(p.options)
+					? (p.options as { value: string; label: string }[])
+					: [];
+				const stateName = nextVar("filter");
+				const optsName = `${stateName}Options`;
+				scriptLines.push(`const ${optsName} = ${JSON.stringify(options)};`);
+				scriptLines.push(
+					`let ${stateName} = $state(${typeof p.value === "string" ? quote(p.value) : '""'});`
+				);
+				return [
+					`${pad(depth)}<Select.Root type="single" bind:value={${stateName}} items={${optsName}}${attr("disabled", p.disabled)}>`,
+					`${pad(depth + 1)}<Select.Trigger size="sm"${attr("aria-label", p.label)}>`,
+					`${pad(depth + 2)}<Select.Value placeholder=${quote(String(p.placeholder ?? p.label ?? "筛选"))} />`,
+					`${pad(depth + 1)}</Select.Trigger>`,
+					`${pad(depth + 1)}<Select.Content>`,
+					`${pad(depth + 2)}{#each ${optsName} as option (option.value)}`,
+					`${pad(depth + 3)}<Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>`,
+					`${pad(depth + 2)}{/each}`,
+					`${pad(depth + 1)}</Select.Content>`,
+					`${pad(depth)}</Select.Root>`,
+				].join("\n");
 			}
 			case "Badge":
 				useNamed("Badge", "badge");
@@ -822,7 +1031,7 @@ export function uiNodeToSvelte(root: UiNode): {
 				useNs("Item", "item");
 				const lines = [
 					`${pad(depth)}<div role="listitem">`,
-					`${pad(depth + 1)}<Item.Root size="sm"${p.disabled ? ' aria-disabled="true"' : ""}>`,
+					`${pad(depth + 1)}<Item.Root size="sm"${p.active ? ' class="bg-accent/70" aria-current="true"' : ""}${p.disabled ? ' aria-disabled="true"' : ""}>`,
 					`${pad(depth + 2)}<Item.Content>`,
 					`${pad(depth + 3)}<div class="flex min-w-0 items-center gap-2">`,
 				];
@@ -851,6 +1060,23 @@ export function uiNodeToSvelte(root: UiNode): {
 				lines.push(`${pad(depth + 1)}</Item.Root>`, `${pad(depth)}</div>`);
 				return lines.join("\n");
 			}
+			case "MessageList": {
+				const inheritedHighlight = typeof p.highlight === "string" ? p.highlight : undefined;
+				const items = children
+					.map((child) =>
+						child.type === "ChatMessage"
+							? renderChatMessage(child, depth + 1, inheritedHighlight)
+							: renderNode(child, depth + 1)
+					)
+					.join("\n");
+				return [
+					`${pad(depth)}<div role="log"${attr("aria-label", p.label ?? "对话记录")} class="flex flex-col gap-4">`,
+					...(items ? [items] : []),
+					`${pad(depth)}</div>`,
+				].join("\n");
+			}
+			case "ChatMessage":
+				return renderChatMessage(n, depth);
 			case "Gauge": {
 				useNamed("Gauge", "gauge");
 				const value = Number(p.value ?? 0);
@@ -941,6 +1167,9 @@ export function uiNodeToSvelte(root: UiNode): {
 	const markup = renderNode(root, 0);
 
 	const importLines: string[] = [
+		...[...defaultImports.entries()]
+			.sort(([a], [b]) => a.localeCompare(b))
+			.map(([symbol, path]) => `\timport ${symbol} from "${path}";`),
 		...[...namespaceImports.entries()]
 			.sort(([a], [b]) => a.localeCompare(b))
 			.map(([alias, path]) => `\timport * as ${alias} from "${path}";`),
