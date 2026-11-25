@@ -6,6 +6,7 @@
 	import ArrowUpRight from "@lucide/svelte/icons/arrow-up-right";
 	import CopyIcon from "@lucide/svelte/icons/copy";
 	import { toast } from "svelte-sonner";
+	import * as Breadcrumb from "$lib/registry/ui/breadcrumb/index.js";
 	import * as Tabs from "$lib/registry/ui/tabs/index.js";
 	import ComponentCodeViewer from "$lib/components/component-code-viewer/component-code-viewer.svelte";
 	import ComponentGuide from "$lib/components/component-guide.svelte";
@@ -59,9 +60,6 @@
 	const hasFramework = $derived(["svelte", "react", "vue"].includes(requestedFramework ?? ""));
 	let tab = $state("states");
 	let copyingAiSpec = $state(false);
-	const showSvelteLinks = $derived(
-		tab !== "usage" || !["react", "vue"].includes(requestedFramework ?? "")
-	);
 	$effect(() => {
 		path;
 		tab = hasFramework ? "usage" : showStates ? "states" : "guide";
@@ -103,9 +101,8 @@
 
 {#if isComponent}
 	<!--
-		A single component is its own level: the category row of the catalog is gone, and a labelled
-		back button takes its place, naming the page it returns to. The title row and the two tabs stay
-		put, only the content under them changes. Both tabs share one centered column.
+		A single component is its own level: workspace breadcrumb -> title row with a single
+		restrained AI spec action -> dedicated tab row cleanly separating the three views.
 	-->
 	<div
 		data-slot="docs"
@@ -115,33 +112,63 @@
 		<Tabs.Root bind:value={tab} class="gap-6">
 			<div class="flex flex-col gap-4">
 				<div data-llm-ignore>
-					<Button
-						href="{isBasic ? basicHref : advancedHref}#{category?.key ?? (isBasic ? '' : 'all')}"
-						variant="outline"
-						size="sm"
+					<Breadcrumb.Root
+						appearance="workspace"
+						aria-label={locale === "zh" ? "当前位置" : "Breadcrumb"}
 					>
-						<ArrowLeftIcon />
-						{t("components.backTo", {
-							name: category
-								? category[locale === "zh" ? "zh" : "en"]
-								: isBasic
-									? t("components.basic")
-									: t("components.complex"),
-						})}
-					</Button>
+						<Breadcrumb.List>
+							<Breadcrumb.Item>
+								<Breadcrumb.Link href={isBasic ? basicHref : advancedHref}>
+									{isBasic ? t("components.basic") : t("components.complex")}
+								</Breadcrumb.Link>
+							</Breadcrumb.Item>
+							{#if category}
+								<Breadcrumb.Separator />
+								<Breadcrumb.Item>
+									<Breadcrumb.Link href="{isBasic ? basicHref : advancedHref}#{category.key}">
+										{category[locale === "zh" ? "zh" : "en"]}
+									</Breadcrumb.Link>
+								</Breadcrumb.Item>
+							{/if}
+							<Breadcrumb.Separator />
+							<Breadcrumb.Item>
+								<Breadcrumb.Page>{doc.title}</Breadcrumb.Page>
+							</Breadcrumb.Item>
+						</Breadcrumb.List>
+					</Breadcrumb.Root>
 				</div>
-				<div class="flex flex-wrap items-end justify-between gap-4">
-					<div class="flex min-w-0 flex-col gap-1">
-						<h1 class="text-3xl font-semibold tracking-tight">{doc.title}</h1>
+
+				<div class="flex flex-wrap items-start justify-between gap-4">
+					<div class="flex min-w-0 flex-1 flex-col gap-1.5">
+						<div class="flex flex-wrap items-center gap-2.5">
+							<h1 class="text-3xl font-semibold tracking-tight">{doc.title}</h1>
+							{#if alignment !== "aligned"}
+								<Badge variant="outline" data-alignment-status={alignment}>
+									{t(
+										alignment === "partial"
+											? "components.alignmentPartial"
+											: "components.alignmentPending"
+									)}
+								</Badge>
+							{/if}
+						</div>
 						{#if doc.description}
-							<p class="text-muted-foreground">{doc.description}</p>
-						{/if}
-						{#if alignment !== "aligned"}
-							<Badge variant="outline" data-alignment-status={alignment}>
-								{t(alignment === "partial" ? "components.alignmentPartial" : "components.alignmentPending")}
-							</Badge>
+							<p class="text-sm text-muted-foreground sm:text-base">{doc.description}</p>
 						{/if}
 					</div>
+					<Button
+						variant="outline"
+						size="sm"
+						class="shrink-0"
+						disabled={copyingAiSpec}
+						onclick={copyAiSpec}
+					>
+						<CopyIcon />
+						{locale === "zh" ? "复制 AI 组件规范" : "Copy AI Spec"}
+					</Button>
+				</div>
+
+				<div class="border-b-[0.5px] border-border pb-3">
 					<Tabs.List>
 						{#if showStates}
 							<Tabs.Trigger value="states">{t("components.states")}</Tabs.Trigger>
@@ -150,36 +177,6 @@
 						<Tabs.Trigger value="usage">{t("usage.tab")}</Tabs.Trigger>
 					</Tabs.List>
 				</div>
-				{#if showSvelteLinks}
-					<div class="flex flex-wrap items-center gap-2">
-						<Button
-							variant="outline"
-							size="sm"
-							disabled={copyingAiSpec}
-							onclick={copyAiSpec}
-						>
-							<CopyIcon />
-							{locale === "zh" ? "复制 AI 组件规范" : "Copy AI Spec"}
-						</Button>
-						{#if docLink}
-							<Badge href={docLink} variant="secondary" target="_blank" rel="noreferrer">
-								{t("docs.docs")}
-								<ArrowUpRight aria-hidden="true" />
-							</Badge>
-						{/if}
-						{#if apiLink}
-							<Badge href={apiLink} variant="secondary" target="_blank" rel="noreferrer">
-								{t("docs.apiReference")}
-								<ArrowUpRight aria-hidden="true" />
-							</Badge>
-						{/if}
-						{#if source}
-							{#key page.url.pathname}
-								<ComponentCodeViewer item={source} allowSidebar={true} />
-							{/key}
-						{/if}
-					</div>
-				{/if}
 			</div>
 
 			{#if showStates}
@@ -207,6 +204,13 @@
 			<Tabs.Content value="usage">
 				{#if tab === "usage"}
 					<FrameworkUsage {slug}>
+						{#snippet svelteAction()}
+							{#if source}
+								{#key page.url.pathname}
+									<ComponentCodeViewer item={source} allowSidebar={true} />
+								{/key}
+							{/if}
+						{/snippet}
 						<Markdown viewerData={data.viewerData} />
 					</FrameworkUsage>
 				{/if}
@@ -225,7 +229,7 @@ the docs container. The issue this resolves is prominent on slow connections (3G
 	>
 		{#if showToc}
 			<div
-				class="sticky top-[calc(var(--header-height)+1px)] z-30 ml-auto hidden h-[90svh] w-(--sidebar-width) flex-col gap-4 overflow-hidden overscroll-none pb-8 xl:flex"
+				class="sticky top-0 z-30 ml-auto hidden h-[90svh] w-(--sidebar-width) flex-col gap-4 overflow-hidden overscroll-none pb-8 xl:flex"
 				data-llm-ignore
 			>
 				<div class="h-(--top-spacing) shrink-0"></div>

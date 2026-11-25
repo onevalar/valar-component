@@ -18,6 +18,12 @@
 
 	let current = $state("all");
 	let query = $state("");
+	let searchInput = $state<HTMLInputElement | null>(null);
+
+	function clearSearch() {
+		query = "";
+		searchInput?.focus();
+	}
 
 	const categories = $derived(basicCategories(locale));
 	const infoBySlug = $derived(
@@ -79,38 +85,47 @@
 	);
 </script>
 
-<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-5">
 	{#if categories.length}
-		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-			<InputGroup.Root class="w-full sm:max-w-sm">
-				<InputGroup.Addon align="inline-start">
-					<SearchIcon class="size-4 text-muted-foreground" />
-				</InputGroup.Addon>
+		<div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+			{#if !trimmed}
+				<ComponentCategoryNav section="basic" bind:value={current} />
+			{:else}
+				<p class="text-xs text-muted-foreground tabular-nums" aria-live="polite">
+					{locale === "zh" ? `找到 ${cards.length} 个匹配组件` : `${cards.length} matching`}
+				</p>
+			{/if}
+			<InputGroup.Root appearance="settings-search" class="w-full shrink-0 sm:ml-auto sm:w-52">
 				<InputGroup.Input
+					bind:ref={searchInput}
 					type="search"
 					bind:value={query}
 					placeholder={t("components.filter")}
 					aria-label={t("components.filter")}
+					onkeydown={(event) => {
+						if (event.key === "Escape" && query) {
+							event.preventDefault();
+							event.stopPropagation();
+							clearSearch();
+						}
+					}}
 				/>
-				{#if query}
-					<InputGroup.Addon align="inline-end">
+				<InputGroup.Addon aria-hidden="true">
+					<SearchIcon class="size-3.5" />
+				</InputGroup.Addon>
+				<InputGroup.Addon align="inline-end">
+					{#if query}
 						<InputGroup.Button
 							size="icon-xs"
 							aria-label={t("common.clear")}
-							onclick={() => (query = "")}
+							onclick={clearSearch}
 						>
-							<XIcon />
+							<XIcon class="size-3" />
 						</InputGroup.Button>
-					</InputGroup.Addon>
-				{/if}
+					{/if}
+				</InputGroup.Addon>
 			</InputGroup.Root>
-			<p class="text-xs text-muted-foreground tabular-nums">
-				{locale === "zh" ? `共 ${cards.length} 个基础组件` : `${cards.length} basic components`}
-			</p>
 		</div>
-		{#if !trimmed}
-			<ComponentCategoryNav section="basic" bind:value={current} />
-		{/if}
 		{#if cards.length}
 			<ComponentCardGrid items={cards} />
 		{:else}

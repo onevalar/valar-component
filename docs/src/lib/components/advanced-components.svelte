@@ -19,6 +19,12 @@
 
 	let category = $state("all");
 	let query = $state("");
+	let searchInput = $state<HTMLInputElement | null>(null);
+
+	function clearSearch() {
+		query = "";
+		searchInput?.focus();
+	}
 
 	const docs = $derived(
 		aiElements.filter((doc) => doc.locale === locale && doc.path !== "ai-elements")
@@ -110,37 +116,46 @@
 	});
 </script>
 
-<div class="flex flex-col gap-6">
-	<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-		<InputGroup.Root class="w-full sm:max-w-sm">
-			<InputGroup.Addon align="inline-start">
-				<SearchIcon class="size-4 text-muted-foreground" />
-			</InputGroup.Addon>
+<div class="flex flex-col gap-5">
+	<div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+		{#if !trimmed}
+			<ComponentCategoryNav section="advanced" bind:value={category} />
+		{:else}
+			<p class="text-xs text-muted-foreground tabular-nums" aria-live="polite">
+				{zh ? `找到 ${cards.length} 个匹配项` : `${cards.length} matching`}
+			</p>
+		{/if}
+		<InputGroup.Root appearance="settings-search" class="w-full shrink-0 sm:ml-auto sm:w-52">
 			<InputGroup.Input
+				bind:ref={searchInput}
 				type="search"
 				bind:value={query}
-				placeholder={zh ? "按名称或场景搜索高级组件…" : "Filter advanced components…"}
-				aria-label={zh ? "按名称或场景搜索高级组件…" : "Filter advanced components…"}
+				placeholder={zh ? "筛选高级组件…" : "Filter advanced…"}
+				aria-label={zh ? "筛选高级组件…" : "Filter advanced…"}
+				onkeydown={(event) => {
+					if (event.key === "Escape" && query) {
+						event.preventDefault();
+						event.stopPropagation();
+						clearSearch();
+					}
+				}}
 			/>
-			{#if query}
-				<InputGroup.Addon align="inline-end">
+			<InputGroup.Addon aria-hidden="true">
+				<SearchIcon class="size-3.5" />
+			</InputGroup.Addon>
+			<InputGroup.Addon align="inline-end">
+				{#if query}
 					<InputGroup.Button
 						size="icon-xs"
 						aria-label={t("common.clear")}
-						onclick={() => (query = "")}
+						onclick={clearSearch}
 					>
-						<XIcon />
+						<XIcon class="size-3" />
 					</InputGroup.Button>
-				</InputGroup.Addon>
-			{/if}
+				{/if}
+			</InputGroup.Addon>
 		</InputGroup.Root>
-		<p class="text-xs text-muted-foreground tabular-nums">
-			{zh ? `共 ${cards.length} 个高级组件与场景` : `${cards.length} advanced scenes & modules`}
-		</p>
 	</div>
-	{#if !trimmed}
-		<ComponentCategoryNav section="advanced" bind:value={category} />
-	{/if}
 	{#if cards.length}
 		<ComponentCardGrid items={cards} />
 	{:else}

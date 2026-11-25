@@ -4,7 +4,6 @@
 	import { MediaQuery } from "svelte/reactivity";
 	import * as Dialog from "$lib/registry/ui/dialog/index.js";
 	import { createFileTreeForRegistryItemFiles } from "$lib/registry/registry-utils.js";
-	import { badgeVariants } from "$lib/registry/ui/badge/badge.svelte";
 	import ComponentCodeViewerCode from "./component-code-viewer-code.svelte";
 	import type { HighlightedBlock } from "../../../routes/api/block/[block]/+server.js";
 	import type { Pane } from "paneforge";
@@ -25,11 +24,17 @@
 </script>
 
 <script lang="ts">
+	import { page } from "$app/state";
+	import { Button } from "$lib/registry/ui/button/index.js";
+	import { localeFromPathname } from "$lib/i18n/config.js";
 	import { t } from "$lib/i18n/index.js";
 	let {
 		item,
 		allowSidebar = false,
 	}: Pick<ComponentCodeViewerContextType, "item" | "allowSidebar"> = $props();
+
+	const locale = $derived(localeFromPathname(page.url.pathname));
+	const triggerLabel = $derived(locale === "zh" ? "查看源码" : "Component Source");
 
 	const tree = $derived(createFileTreeForRegistryItemFiles(item.files));
 	const highlightedFiles = $derived(item.files);
@@ -92,8 +97,13 @@
 </script>
 
 <Dialog.Root>
-	<Dialog.Trigger class={badgeVariants({ variant: "secondary" })} data-llm-ignore>
-		Component Source <CodeIcon aria-hidden="true" />
+	<Dialog.Trigger data-llm-ignore>
+		{#snippet child({ props })}
+			<Button {...props} variant="outline" size="sm">
+				<CodeIcon aria-hidden="true" />
+				{triggerLabel}
+			</Button>
+		{/snippet}
 	</Dialog.Trigger>
 	<Dialog.Content
 		bind:ref={contentRef}

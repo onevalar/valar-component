@@ -7,7 +7,6 @@
 	import LayersIcon from "@lucide/svelte/icons/layers";
 	import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
 	import MessageCircleDashedIcon from "@lucide/svelte/icons/message-circle-dashed";
-	import RotateCcwIcon from "@lucide/svelte/icons/rotate-ccw";
 	import ShieldAlertIcon from "@lucide/svelte/icons/shield-alert";
 	import SlidersHorizontalIcon from "@lucide/svelte/icons/sliders-horizontal";
 	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
@@ -23,7 +22,7 @@
 	import * as Trace from "$lib/registry/ui/trace/index.js";
 	import Markdown from "$lib/components/markdown/markdown.svelte";
 	import { ADVANCED_MODULES, ADVANCED_SCENES } from "$lib/advanced-catalog.js";
-	import { agentChat as chat, newConversation } from "$lib/agent/chat.svelte.js";
+	import { agentChat as chat } from "$lib/agent/chat.svelte.js";
 	import { getComponentInfos, toCodeName } from "$lib/agent/knowledge.js";
 	import { agentSettings } from "$lib/agent/settings.svelte.js";
 	import { usedComponentSlugs, type UiNode } from "$lib/agent/ui-catalog.js";
@@ -94,11 +93,6 @@
 	const hasConfiguredModel = $derived(
 		Boolean(agentSettings.apiKey.trim() && agentSettings.model.trim())
 	);
-	const threadTitle = $derived.by(() => {
-		const first = chat.messages.find((item) => item.role === "user");
-		const text = first ? messageText(first).trim() : "";
-		return text.length > 32 ? `${text.slice(0, 32)}…` : text || "Valar 组件助手";
-	});
 
 	function send(text: string, onDispatched?: () => void) {
 		const value = text.trim();
@@ -356,23 +350,6 @@
 			</div>
 		</div>
 	{:else}
-		<div class="border-b-[0.5px] border-border/80">
-			<div class="mx-auto flex h-11 w-full max-w-[824px] items-center justify-between gap-3 px-4">
-				<span class="truncate text-[13px] font-medium text-foreground">{threadTitle}</span>
-				<Button
-					variant="ghost"
-					size="sm"
-					shape="pill"
-					disabled={busy}
-					onclick={() => newConversation()}
-					class="h-7 gap-1.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
-				>
-					<RotateCcwIcon class="size-3.5" />
-					新对话
-				</Button>
-			</div>
-		</div>
-
 		<MessageScroller.Provider>
 			<div class="min-h-0 flex-1">
 				{#if !chat.messages.length}

@@ -66,7 +66,7 @@
 		{#if all.length > 1}
 			<nav
 				aria-label="本页内容"
-				class="sticky top-[calc(var(--header-height)+1rem)] hidden h-fit flex-col lg:flex"
+				class="sticky top-4 hidden h-fit flex-col lg:flex"
 			>
 				{#each all as item (item.id)}
 					<Button href="#{item.id}" variant="ghost" size="sm" class="justify-start">

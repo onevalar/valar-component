@@ -12,7 +12,11 @@
 	import vuePackage from "../../../../packages/vue-ui/package.json" with { type: "json" };
 	import type { Snippet } from "svelte";
 
-	let { slug, children }: { slug: string; children: Snippet } = $props();
+	let {
+		slug,
+		children,
+		svelteAction,
+	}: { slug: string; children: Snippet; svelteAction?: Snippet } = $props();
 	const frameworks = [
 		{ value: "svelte", label: "Svelte" },
 		{ value: "react", label: "React" },
@@ -77,7 +81,12 @@ pnpm --filter @valar/${framework}-ui pack --pack-destination ./dist/packages`);
 	<div class="flex min-w-0 flex-col gap-6">
 		{#if framework === "svelte"}
 			<section class="min-w-0" aria-label={t("usage.svelteSource")}>
-				<p class="mb-4 text-sm text-muted-foreground">{t("usage.svelteOnly")}</p>
+				<div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+					<p class="text-sm text-muted-foreground">{t("usage.svelteOnly")}</p>
+					{#if svelteAction}
+						{@render svelteAction()}
+					{/if}
+				</div>
 				{@render children()}
 			</section>
 		{:else if !example}

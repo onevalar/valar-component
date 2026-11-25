@@ -26,6 +26,7 @@ test("Svelte remains the default; framework selection, focus, copy and refresh a
 	await expect(page).toHaveURL(/\?ref=usage&framework=react$/);
 	await expect(page.getByRole("tab", { name: "React", exact: true })).toBeFocused();
 	await expect(page.getByRole("link", { name: "API 参考", exact: true })).toHaveCount(0);
+	await expect(page.getByRole("button", { name: "查看源码", exact: true })).toHaveCount(0);
 	const example = page.locator("[data-usage-example]");
 	await expect(example).toContainText('import { Button } from "@valar/react-ui/button"');
 	await example.getByRole("button", { name: "复制代码", exact: true }).click();
@@ -57,7 +58,8 @@ test("Svelte remains the default; framework selection, focus, copy and refresh a
 		"aria-selected",
 		"true"
 	);
-	await expect(page.getByRole("link", { name: "API 参考", exact: true })).toBeVisible();
+	await expect(page.getByRole("link", { name: "API 参考", exact: true })).toHaveCount(0);
+	await expect(page.getByRole("button", { name: "查看源码", exact: true })).toBeVisible();
 	await page.getByRole("tab", { name: "状态与调节", exact: true }).click();
 	await expect(page.getByRole("region", { name: "Button 样式调节", exact: true })).toBeVisible();
 	expect(errors).toEqual([]);

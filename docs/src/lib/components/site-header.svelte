@@ -33,7 +33,7 @@
 	}
 </script>
 
-<header class="sticky top-0 z-50 w-full border-b-[0.5px] border-border/80 bg-background/95 backdrop-blur-xs">
+<header class="z-50 w-full shrink-0 border-b-[0.5px] border-border/80 bg-background/95 backdrop-blur-xs">
 	<div
 		class="container-wrapper px-3 group-has-data-[slot=designer]/layout:max-w-none sm:px-6 3xl:fixed:px-0"
 	>
@@ -45,10 +45,8 @@
 			<a
 				href={locale === "zh" ? "/zh" : "/"}
 				aria-label={t("header.home")}
-				class="mr-1.5 ml-2 flex shrink-0 items-baseline gap-1.5 sm:mr-5 sm:gap-2 lg:ml-0"
-				><span class="text-lg font-semibold tracking-tight">Valar</span><span
-					class="text-xs text-muted-foreground">Svelte</span
-				></a
+				class="mr-1.5 ml-2 flex shrink-0 items-baseline sm:mr-5 lg:ml-0"
+				><span class="text-lg font-semibold tracking-tight">Valar</span></a
 			>
 			<MainNav items={mainNavItems} class="hidden lg:flex" />
 			<div class="ml-auto flex items-center gap-1 sm:gap-2 md:flex-1 md:justify-end">
