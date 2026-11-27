@@ -10,7 +10,6 @@ import {
 	PaperclipIcon,
 	XIcon,
 } from "lucide-react";
-import { Dialog as DialogPrimitive } from "radix-ui";
 import { Button } from "./button.tsx";
 import { composingCommandInputs, isCommandComposing } from "./command-keyboard.ts";
 import {
@@ -24,6 +23,7 @@ import {
 import {
 	Dialog,
 	DialogClose,
+	DialogContent,
 	DialogDescription,
 	DialogOverlay,
 	DialogPortal,
@@ -268,12 +268,14 @@ export function IssueComposer({
 		<Dialog open={open} onOpenChange={changeOpen}>
 			<DialogPortal>
 				<DialogOverlay />
-				<DialogPrimitive.Content
+				<DialogContent
+					showOverlay={false}
+					showCloseButton={false}
 					data-slot="dialog-content"
 					data-expanded={expanded}
 					style={tokens}
 					className={cn(
-						"fixed left-1/2 z-50 w-[calc(100%-24px)] -translate-x-1/2 rounded-[21px] bg-(--composer-surface) text-foreground [color-scheme:light] shadow-[0_12px_36px_#0003] outline-none dark:[color-scheme:dark]",
+						"fixed left-1/2 z-50 w-[calc(100%-24px)] -translate-x-1/2 translate-y-0 rounded-[21px] bg-(--composer-surface) text-foreground [color-scheme:light] shadow-[0_12px_36px_#0003] outline-none dark:[color-scheme:dark]",
 						"transition-[max-width,top] [transition-duration:220ms,300ms] ease-[cubic-bezier(0.43,0.07,0.59,0.94)] motion-reduce:animate-none! motion-reduce:transition-none motion-reduce:duration-0! data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
 						expanded
 							? "top-[max(8px,6svh)] max-w-[820px]"
@@ -589,7 +591,7 @@ export function IssueComposer({
 						</form>
 					</TooltipProvider>
 					<div ref={setFloatingRoot} />
-				</DialogPrimitive.Content>
+				</DialogContent>
 			</DialogPortal>
 		</Dialog>
 	);

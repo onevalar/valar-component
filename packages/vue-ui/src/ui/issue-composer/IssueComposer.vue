@@ -7,7 +7,6 @@ import {
 	PaperclipIcon,
 	XIcon,
 } from "@lucide/vue";
-import { DialogContent, DialogPortal } from "reka-ui";
 import { computed, nextTick, ref, shallowRef, useId, watch } from "vue";
 import IssueGlyph from "./IssueGlyph.vue";
 import {
@@ -28,7 +27,15 @@ import {
 	CommandList,
 	CommandShortcut,
 } from "../command";
-import { Dialog, DialogClose, DialogDescription, DialogOverlay, DialogTitle } from "../dialog";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogOverlay,
+	DialogPortal,
+	DialogTitle,
+} from "../dialog";
 import { Input } from "../input";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { Switch } from "../switch";
@@ -232,10 +239,12 @@ async function removeAttachment(index: number) {
 		<DialogPortal>
 			<DialogOverlay />
 			<DialogContent
+				:show-overlay="false"
+				:show-close-button="false"
 				data-slot="dialog-content"
 				:data-expanded="expanded"
 				:style="tokens"
-				class="fixed left-1/2 z-50 w-[calc(100%-24px)] -translate-x-1/2 rounded-[21px] bg-(--composer-surface) text-foreground [color-scheme:light] shadow-[0_12px_36px_#0003] transition-[max-width,top] [transition-duration:220ms,300ms] ease-[cubic-bezier(0.43,0.07,0.59,0.94)] outline-none motion-reduce:animate-none! motion-reduce:transition-none motion-reduce:duration-0! dark:[color-scheme:dark] data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
+				class="fixed left-1/2 z-50 w-[calc(100%-24px)] -translate-x-1/2 translate-y-0 rounded-[21px] bg-(--composer-surface) text-foreground [color-scheme:light] shadow-[0_12px_36px_#0003] transition-[max-width,top] [transition-duration:220ms,300ms] ease-[cubic-bezier(0.43,0.07,0.59,0.94)] outline-none motion-reduce:animate-none! motion-reduce:transition-none motion-reduce:duration-0! dark:[color-scheme:dark] data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
 				:class="
 					expanded
 						? 'top-[max(8px,6svh)] max-w-[820px]'

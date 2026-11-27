@@ -2,13 +2,21 @@
 import { XIcon } from "@lucide/vue";
 import { reactiveOmit } from "@vueuse/core";
 import { cn } from "cn";
-import { DialogClose, DialogContent, DialogPortal } from "reka-ui";
 import { useTemplateRef } from "vue";
 import Command from "./Command.vue";
 import { Button } from "../button";
-import { Dialog, DialogDescription, DialogOverlay, DialogTitle, DialogTrigger } from "../dialog";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogOverlay,
+	DialogPortal,
+	DialogTitle,
+	DialogTrigger,
+} from "../dialog";
+import type { DialogPortalProps } from "../dialog/DialogContent.vue";
 import type { CommandProps } from "./context";
-import type { DialogContentEmits, DialogPortalProps } from "reka-ui";
 
 defineOptions({ inheritAttrs: false });
 const props = withDefaults(
@@ -32,12 +40,13 @@ const props = withDefaults(
 		vimBindings: true,
 	}
 );
-const emit = defineEmits<
-	Pick<DialogContentEmits, "closeAutoFocus" | "openAutoFocus" | "escapeKeyDown"> & {
-		"update:open": [value: boolean];
-		"update:modelValue": [value: string];
-	}
->();
+const emit = defineEmits<{
+	closeAutoFocus: [event: Event];
+	openAutoFocus: [event: Event];
+	escapeKeyDown: [event: KeyboardEvent];
+	"update:open": [value: boolean];
+	"update:modelValue": [value: string];
+}>();
 
 const commandProps = reactiveOmit(
 	props,
@@ -66,13 +75,16 @@ function onOpenAutoFocus(event: Event) {
 			<DialogOverlay class="bg-transparent! backdrop-blur-none!" />
 			<DialogContent
 				v-bind="$attrs"
+				:portal-props="portalProps"
+				:show-overlay="false"
+				:show-close-button="false"
 				data-slot="dialog-content"
 				data-command-dialog=""
 				:data-command-close="showCloseButton ? '' : undefined"
 				aria-modal="true"
 				:class="
 					cn(
-						'cn-command-dialog fixed left-1/2 z-50 flex w-full -translate-x-1/2 flex-col overflow-hidden p-0 outline-none',
+						'cn-command-dialog top-auto left-1/2 z-50 flex w-full -translate-x-1/2 translate-y-0 flex-col overflow-hidden p-0 outline-none',
 						props.class
 					)
 				"

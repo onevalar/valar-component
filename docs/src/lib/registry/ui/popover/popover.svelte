@@ -7,8 +7,10 @@
 		type PopoverPayloadChangeReason,
 	} from "@ui-sdk/svelte/popover";
 	import type { ChangeDetails, DismissAttemptDetails } from "@ui-sdk/core";
-	import { setContext, type Snippet } from "svelte";
+	import { getContext, setContext, type Snippet } from "svelte";
 	import { POPOVER_POLICY_KEY, type PopoverDismissPolicy } from "./context.js";
+
+	const PARENT_ESCAPE_KEY = Symbol.for("valar-dialog-parent-escape");
 
 	let {
 		open = $bindable(),
@@ -48,6 +50,7 @@
 	} = $props();
 
 	let policy: PopoverDismissPolicy = {};
+	const parentEscape = getContext<(() => void) | undefined>(PARENT_ESCAPE_KEY);
 	setContext(POPOVER_POLICY_KEY, {
 		set(next: PopoverDismissPolicy) {
 			policy = next;
@@ -70,6 +73,9 @@
 					policy.escapeKeydownBehavior === "defer-otherwise-ignore")
 			) {
 				details.cancel();
+				if (policy.escapeKeydownBehavior === "defer-otherwise-ignore") {
+					parentEscape?.();
+				}
 				return;
 			}
 			if (details.reason === "outside-press" && policy.onInteractOutside) {

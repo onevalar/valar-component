@@ -3,10 +3,20 @@
 import * as React from "react";
 import { cn } from "cn";
 import { CheckIcon, SearchIcon, XIcon } from "lucide-react";
-import { Dialog as DialogPrimitive } from "radix-ui";
 import { Button } from "./button.tsx";
 import { composingCommandInputs, isCommandComposing } from "./command-keyboard.ts";
-import { DialogDescription, DialogOverlay, DialogTitle } from "./dialog.tsx";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogOverlay,
+	DialogTitle,
+	DialogTrigger,
+	type DialogContentProps,
+	type DialogPortalProps,
+	type DialogProps,
+} from "./dialog.tsx";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group.tsx";
 
 type DivProps = React.ComponentProps<"div">;
@@ -676,19 +686,13 @@ export function CommandShortcut({ className, ...props }: React.ComponentProps<"s
 }
 
 export type CommandDialogProps = CommandProps &
-	React.ComponentProps<typeof DialogPrimitive.Root> & {
+	Omit<DialogProps, "children"> & {
 		description?: string;
 		trigger?: React.ReactElement;
 		showCloseButton?: boolean;
 		closeLabel?: string;
-		portalProps?: Omit<
-			React.ComponentProps<typeof DialogPrimitive.Portal>,
-			"children" | "forceMount"
-		>;
-		contentProps?: Omit<
-			React.ComponentProps<typeof DialogPrimitive.Content>,
-			"asChild" | "children" | "forceMount"
-		>;
+		portalProps?: Omit<DialogPortalProps, "children" | "forceMount">;
+		contentProps?: Omit<DialogContentProps, "asChild" | "children" | "forceMount">;
 	};
 
 export function CommandDialog({
@@ -710,73 +714,65 @@ export function CommandDialog({
 }: CommandDialogProps) {
 	const previousFocus = React.useRef<HTMLElement | null>(null);
 	return (
-		<DialogPrimitive.Root
-			open={open}
-			defaultOpen={defaultOpen}
-			onOpenChange={onOpenChange}
-			modal={modal}
-		>
-			{trigger && (
-				<DialogPrimitive.Trigger data-slot="dialog-trigger" asChild>
-					{trigger}
-				</DialogPrimitive.Trigger>
-			)}
-			<DialogPrimitive.Portal {...portalProps}>
-				<DialogOverlay className="bg-transparent! backdrop-blur-none!" />
-				<DialogPrimitive.Content
-					{...contentProps}
-					data-slot="dialog-content"
-					data-command-dialog=""
-					data-command-close={showCloseButton ? "" : undefined}
-					className={cn(
-						"cn-dialog-content cn-command-dialog fixed left-1/2 z-50 flex! w-full -translate-x-1/2 flex-col overflow-hidden! p-0! outline-none",
-						className,
-						contentProps?.className
-					)}
-					onOpenAutoFocus={(event) => {
-						if (event.target instanceof HTMLElement) {
-							const focused = event.target.ownerDocument.activeElement;
-							previousFocus.current = focused instanceof HTMLElement ? focused : null;
-						}
-						contentProps?.onOpenAutoFocus?.(event);
-					}}
-					onCloseAutoFocus={(event) => {
-						contentProps?.onCloseAutoFocus?.(event);
-						if (
-							!event.defaultPrevented &&
-							!trigger &&
-							modal !== false &&
-							previousFocus.current?.isConnected
-						) {
-							event.preventDefault();
-							previousFocus.current.focus({ preventScroll: true });
-						}
-						previousFocus.current = null;
-					}}
-					onEscapeKeyDown={(event) => {
-						if (isCommandComposing(event)) event.preventDefault();
-						else contentProps?.onEscapeKeyDown?.(event);
-					}}
-				>
-					<DialogTitle className="sr-only">{title}</DialogTitle>
-					<DialogDescription className="sr-only">{description}</DialogDescription>
-					<Command {...props} label={label}>
-						{children}
-					</Command>
-					{showCloseButton && (
-						<DialogPrimitive.Close data-slot="dialog-close" asChild>
-							<Button
-								variant="ghost"
-								size="icon-sm"
-								className="cn-dialog-close"
-								aria-label={closeLabel}
-							>
-								<XIcon aria-hidden="true" />
-							</Button>
-						</DialogPrimitive.Close>
-					)}
-				</DialogPrimitive.Content>
-			</DialogPrimitive.Portal>
-		</DialogPrimitive.Root>
+		<Dialog open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} modal={modal}>
+			{trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+			<DialogOverlay className="bg-transparent! backdrop-blur-none!" />
+			<DialogContent
+				{...contentProps}
+				portalProps={portalProps}
+				showOverlay={false}
+				showCloseButton={false}
+				data-slot="dialog-content"
+				data-command-dialog=""
+				data-command-close={showCloseButton ? "" : undefined}
+				className={cn(
+					"cn-dialog-content cn-command-dialog top-auto left-1/2 z-50 flex! w-full -translate-x-1/2 translate-y-0 flex-col overflow-hidden! p-0! outline-none",
+					className,
+					contentProps?.className
+				)}
+				onOpenAutoFocus={(event) => {
+					if (event.target instanceof HTMLElement) {
+						const focused = event.target.ownerDocument.activeElement;
+						previousFocus.current = focused instanceof HTMLElement ? focused : null;
+					}
+					contentProps?.onOpenAutoFocus?.(event);
+				}}
+				onCloseAutoFocus={(event) => {
+					contentProps?.onCloseAutoFocus?.(event);
+					if (
+						!event.defaultPrevented &&
+						!trigger &&
+						modal !== false &&
+						previousFocus.current?.isConnected
+					) {
+						event.preventDefault();
+						previousFocus.current.focus({ preventScroll: true });
+					}
+					previousFocus.current = null;
+				}}
+				onEscapeKeyDown={(event) => {
+					if (isCommandComposing(event)) event.preventDefault();
+					else contentProps?.onEscapeKeyDown?.(event);
+				}}
+			>
+				<DialogTitle className="sr-only">{title}</DialogTitle>
+				<DialogDescription className="sr-only">{description}</DialogDescription>
+				<Command {...props} label={label}>
+					{children}
+				</Command>
+				{showCloseButton && (
+					<DialogClose asChild>
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							className="cn-dialog-close"
+							aria-label={closeLabel}
+						>
+							<XIcon aria-hidden="true" />
+						</Button>
+					</DialogClose>
+				)}
+			</DialogContent>
+		</Dialog>
 	);
 }

@@ -1,7 +1,13 @@
 <script lang="ts">
-	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
+	import type { Snippet } from "svelte";
 
-	let { ...restProps }: AlertDialogPrimitive.PortalProps = $props();
+	let {
+		children,
+	}: {
+		to?: string | Element | DocumentFragment | null;
+		disabled?: boolean;
+		children?: Snippet;
+	} = $props();
 </script>
 
-<AlertDialogPrimitive.Portal {...restProps} />
+{@render children?.()}

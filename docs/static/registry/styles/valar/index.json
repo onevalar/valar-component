@@ -99,6 +99,10 @@
 		"title": "Alert Dialog 确认对话框",
 		"type": "registry:ui",
 		"description": "打断用户、要求确认的对话框，用于不可撤销或重要的操作。",
+		"dependencies": [
+			"@ui-sdk/svelte",
+			"@ui-sdk/core"
+		],
 		"registryDependencies": [
 			"button"
 		],
@@ -1142,6 +1146,10 @@
 		"title": "Dialog 对话框",
 		"type": "registry:ui",
 		"description": "覆盖在页面上的窗口，用于需要专注完成的内容或表单，背后内容不可操作。",
+		"dependencies": [
+			"@ui-sdk/svelte",
+			"@ui-sdk/core"
+		],
 		"registryDependencies": [
 			"button"
 		],
@@ -2907,6 +2915,10 @@
 		"title": "Sheet 侧边面板",
 		"type": "registry:ui",
 		"description": "在屏幕边缘的模态层或工作区侧栏中展示辅助内容。",
+		"dependencies": [
+			"@ui-sdk/svelte",
+			"@ui-sdk/core"
+		],
 		"registryDependencies": [
 			"button"
 		],

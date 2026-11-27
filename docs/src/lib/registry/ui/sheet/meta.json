@@ -1,6 +1,7 @@
 {
 	"name": "sheet",
 	"type": "registry:ui",
+	"dependencies": ["@ui-sdk/svelte", "@ui-sdk/core"],
 	"title": "Sheet 侧边面板",
 	"description": "在屏幕边缘的模态层或工作区侧栏中展示辅助内容。",
 	"categories": ["弹层"],

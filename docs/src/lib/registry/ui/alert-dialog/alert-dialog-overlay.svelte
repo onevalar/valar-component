@@ -1,17 +1,38 @@
 <script lang="ts">
-	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
+	import { DialogBackdrop as SdkBackdrop } from "@ui-sdk/svelte/dialog";
+	import type { Snippet } from "svelte";
+	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/utils.js";
+	import { bindElementRef } from "./context.js";
 
 	let {
 		ref = $bindable(null),
 		class: className,
+		children,
 		...restProps
-	}: AlertDialogPrimitive.OverlayProps = $props();
+	}: Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+		ref?: HTMLDivElement | HTMLElement | null;
+		children?: Snippet;
+	} = $props();
+
+	const refAttachment = bindElementRef<HTMLDivElement>((el) => {
+		ref = el;
+	});
 </script>
 
-<AlertDialogPrimitive.Overlay
-	bind:ref
+<SdkBackdrop
 	data-slot="alert-dialog-overlay"
 	class={cn("cn-alert-dialog-overlay fixed inset-0 z-50", className)}
 	{...restProps}
-/>
+>
+	{#snippet render({ props, state })}
+		<div
+			{...props}
+			{...refAttachment}
+			data-slot="alert-dialog-overlay"
+			data-state={state.open ? "open" : "closed"}
+		>
+			{@render children?.()}
+		</div>
+	{/snippet}
+</SdkBackdrop>

@@ -1,35 +1,41 @@
 <script setup lang="ts">
+import { AlertDialogClose as SdkClose } from "@ui-sdk/vue/alert-dialog";
 import { cn } from "cn";
-import { DialogClose, useForwardExpose } from "reka-ui";
-import { buttonVariants } from "../button/index.js";
-import type { ButtonVariants } from "../button/index.js";
-import type { DialogCloseProps } from "reka-ui";
-import type { HTMLAttributes } from "vue";
+import type { Component, HTMLAttributes } from "vue";
+import { buttonVariants, type ButtonVariants } from "../button/index.js";
+import DisclosureElement from "../collapsible/DisclosureElement";
+
+defineOptions({ inheritAttrs: false });
 
 const props = withDefaults(
-	defineProps<
-		DialogCloseProps & {
-			variant?: ButtonVariants["variant"];
-			size?: ButtonVariants["size"];
-			class?: HTMLAttributes["class"];
-		}
-	>(),
+	defineProps<{
+		as?: string | Component;
+		asChild?: boolean;
+		variant?: ButtonVariants["variant"];
+		size?: ButtonVariants["size"];
+		class?: HTMLAttributes["class"];
+	}>(),
 	{ variant: "outline", size: "default" }
 );
-const { forwardRef } = useForwardExpose();
 </script>
 
 <template>
-	<DialogClose
-		:ref="forwardRef"
-		:as="as"
-		:as-child="asChild"
+	<SdkClose
+		v-bind="$attrs"
 		data-slot="alert-dialog-cancel"
 		:data-variant="variant"
 		:class="
 			cn(buttonVariants({ variant, size, shape: 'pill' }), 'cn-alert-dialog-cancel', props.class)
 		"
 	>
-		<slot />
-	</DialogClose>
+		<template #render="{ props: part }">
+			<DisclosureElement
+				:as="props.as ?? 'button'"
+				:as-child="props.asChild"
+				:part="{ ...part, 'data-slot': 'alert-dialog-cancel' }"
+			>
+				<slot />
+			</DisclosureElement>
+		</template>
+	</SdkClose>
 </template>

@@ -1,17 +1,32 @@
 <script lang="ts">
-	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
+	import { DialogTitle as SdkTitle } from "@ui-sdk/svelte/dialog";
+	import type { Snippet } from "svelte";
+	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/utils.js";
+	import { bindElementRef } from "./context.js";
 
 	let {
 		ref = $bindable(null),
 		class: className,
+		children,
 		...restProps
-	}: AlertDialogPrimitive.TitleProps = $props();
+	}: Omit<HTMLAttributes<HTMLHeadingElement>, "children"> & {
+		ref?: HTMLHeadingElement | HTMLElement | null;
+		level?: 1 | 2 | 3 | 4 | 5 | 6;
+		children?: Snippet;
+	} = $props();
+
+	const refAttachment = bindElementRef<HTMLHeadingElement>((el) => {
+		ref = el;
+	});
 </script>
 
-<AlertDialogPrimitive.Title
-	bind:ref
+<SdkTitle
 	data-slot="alert-dialog-title"
 	class={cn("cn-font-heading cn-alert-dialog-title", className)}
 	{...restProps}
-/>
+>
+	{#snippet render({ props })}
+		<h2 {...props} {...refAttachment} data-slot="alert-dialog-title">{@render children?.()}</h2>
+	{/snippet}
+</SdkTitle>

@@ -1,23 +1,28 @@
 <script setup lang="ts">
-import { reactiveOmit } from "@vueuse/core";
+import { DialogTitle as SdkTitle } from "@ui-sdk/vue/dialog";
 import { cn } from "cn";
-import { DialogTitle, useForwardProps } from "reka-ui";
-import type { DialogTitleProps } from "reka-ui";
-import type { HTMLAttributes } from "vue";
+import type { Component, HTMLAttributes } from "vue";
+import DisclosureElement from "../collapsible/DisclosureElement";
 
-const props = defineProps<DialogTitleProps & { class?: HTMLAttributes["class"] }>();
+defineOptions({ inheritAttrs: false });
 
-const delegatedProps = reactiveOmit(props, "class");
-
-const forwardedProps = useForwardProps(delegatedProps);
+const props = defineProps<{
+	as?: string | Component;
+	asChild?: boolean;
+	class?: HTMLAttributes["class"];
+}>();
 </script>
 
 <template>
-	<DialogTitle
+	<SdkTitle
+		v-bind="$attrs"
 		data-slot="dialog-title"
-		v-bind="forwardedProps"
 		:class="cn('cn-dialog-title cn-font-heading', props.class)"
 	>
-		<slot />
-	</DialogTitle>
+		<template #render="{ props: part }">
+			<DisclosureElement :as="props.as ?? 'h2'" :as-child="props.asChild" :part="part">
+				<slot />
+			</DisclosureElement>
+		</template>
+	</SdkTitle>
 </template>

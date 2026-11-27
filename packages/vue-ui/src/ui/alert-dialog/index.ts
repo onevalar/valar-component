@@ -1,6 +1,7 @@
-export { AlertDialogRoot as AlertDialog, AlertDialogPortal } from "reka-ui";
+export { default as AlertDialog } from "./AlertDialog.vue";
 export { default as AlertDialogAction } from "./AlertDialogAction.vue";
 export { default as AlertDialogContent } from "./AlertDialogContent.vue";
+export { DialogPortal as AlertDialogPortal } from "../dialog/index.js";
 export {
 	AlertDialogCancel,
 	AlertDialogDescription,

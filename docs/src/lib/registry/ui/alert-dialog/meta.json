@@ -1,6 +1,7 @@
 {
 	"name": "alert-dialog",
 	"type": "registry:ui",
+	"dependencies": ["@ui-sdk/svelte", "@ui-sdk/core"],
 	"title": "Alert Dialog 确认对话框",
 	"description": "打断用户、要求确认的对话框，用于不可撤销或重要的操作。",
 	"categories": ["弹层"],

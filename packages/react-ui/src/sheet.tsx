@@ -3,15 +3,19 @@
 import * as React from "react";
 import { cn } from "cn";
 import { XIcon } from "lucide-react";
-import { Dialog as Primitive, Slot } from "radix-ui";
+import { Slot } from "radix-ui";
 import { Button } from "./button.tsx";
 import {
 	Dialog,
 	DialogClose,
+	DialogContent,
 	DialogDescription,
+	DialogOverlay,
 	DialogPortal,
 	DialogTitle,
 	DialogTrigger,
+	type DialogContentProps,
+	type DialogOverlayProps,
 } from "./dialog.tsx";
 
 export { Dialog as Sheet, DialogPortal as SheetPortal };
@@ -24,13 +28,10 @@ export function SheetClose(props: React.ComponentProps<typeof DialogClose>) {
 	return <DialogClose {...{ "data-slot": "sheet-close" }} {...props} />;
 }
 
-export function SheetOverlay({
-	className,
-	...props
-}: React.ComponentProps<typeof Primitive.Overlay>) {
+export function SheetOverlay({ className, ...props }: DialogOverlayProps) {
 	return (
-		<Primitive.Overlay
-			data-slot="sheet-overlay"
+		<DialogOverlay
+			{...{ "data-slot": "sheet-overlay" }}
 			className={cn(
 				"cn-sheet-overlay fixed inset-0 z-50 duration-100 motion-reduce:animate-none! data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
 				className
@@ -41,13 +42,34 @@ export function SheetOverlay({
 }
 
 export type SheetSide = "top" | "right" | "bottom" | "left";
-export type SheetContentProps = React.ComponentProps<typeof Primitive.Content> & {
+export type SheetContentProps = Omit<DialogContentProps, "showOverlay" | "overlayClassName"> & {
 	side?: SheetSide;
 	appearance?: "default" | "details";
 	showCloseButton?: boolean;
 	closeLabel?: string;
-	portalProps?: false | Omit<React.ComponentProps<typeof DialogPortal>, "children">;
 };
+
+function trapSheetTab(event: React.KeyboardEvent<HTMLDivElement>) {
+	if (event.key !== "Tab" || event.defaultPrevented) return;
+	const el = event.currentTarget;
+	if (el.getAttribute("aria-modal") !== "true") return;
+	const tabbables = Array.from(
+		el.querySelectorAll<HTMLElement>(
+			'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
+		)
+	).filter((node) => node.getClientRects().length > 0);
+	if (!tabbables.length) return;
+	const first = tabbables[0];
+	const last = tabbables[tabbables.length - 1];
+	const active = el.ownerDocument.activeElement;
+	if (event.shiftKey && (active === first || active === el || !el.contains(active))) {
+		event.preventDefault();
+		last.focus();
+	} else if (!event.shiftKey && (active === last || !el.contains(active))) {
+		event.preventDefault();
+		first.focus();
+	}
+}
 
 export function SheetContent({
 	className,
@@ -56,40 +78,48 @@ export function SheetContent({
 	showCloseButton = true,
 	closeLabel = "关闭",
 	portalProps,
-	forceMount,
+	inline,
+	onKeyDown,
 	children,
 	...props
 }: SheetContentProps) {
-	const content = (
-		<Primitive.Content
-			data-slot="sheet-content"
-			data-side={side}
-			data-appearance={appearance}
-			className={cn(
-				"cn-sheet-content max-h-dvh min-h-0 outline-none motion-reduce:animate-none! motion-reduce:transition-none data-open:animate-in data-open:fade-in-0 data-[side=bottom]:data-open:slide-in-from-bottom-10 data-[side=left]:data-open:slide-in-from-left-10 data-[side=right]:data-open:slide-in-from-right-10 data-[side=top]:data-open:slide-in-from-top-10 data-closed:animate-out data-closed:fade-out-0 data-[side=bottom]:data-closed:slide-out-to-bottom-10 data-[side=left]:data-closed:slide-out-to-left-10 data-[side=right]:data-closed:slide-out-to-right-10 data-[side=top]:data-closed:slide-out-to-top-10",
-				appearance === "details" && "cn-sheet-details",
-				className
+	const resolvedInline = inline ?? portalProps === false;
+	return (
+		<>
+			{!resolvedInline && (
+				<SheetOverlay
+					className={appearance === "details" ? "cn-sheet-details-overlay" : undefined}
+				/>
 			)}
-			forceMount={forceMount}
-			{...props}
-		>
-			<Slot.Slottable>{children}</Slot.Slottable>
-			{showCloseButton && (
-				<SheetClose asChild>
-					<Button variant="ghost" className="cn-sheet-close" size="icon-sm" aria-label={closeLabel}>
-						<XIcon aria-hidden="true" />
-					</Button>
-				</SheetClose>
-			)}
-		</Primitive.Content>
-	);
-	return portalProps === false ? (
-		content
-	) : (
-		<DialogPortal {...portalProps} forceMount={forceMount ?? portalProps?.forceMount}>
-			<SheetOverlay className={appearance === "details" ? "cn-sheet-details-overlay" : undefined} />
-			{content}
-		</DialogPortal>
+			<DialogContent
+				{...props}
+				portalProps={portalProps}
+				inline={inline}
+				showOverlay={false}
+				showCloseButton={false}
+				data-slot="sheet-content"
+				data-side={side}
+				data-appearance={appearance}
+				onKeyDown={(event) => {
+					onKeyDown?.(event);
+					trapSheetTab(event);
+				}}
+				className={cn(
+					"cn-sheet-content top-auto left-auto max-h-dvh min-h-0 translate-x-0 translate-y-0 outline-none motion-reduce:animate-none! motion-reduce:transition-none data-open:animate-in data-open:fade-in-0 data-[side=bottom]:data-open:slide-in-from-bottom-10 data-[side=left]:data-open:slide-in-from-left-10 data-[side=right]:data-open:slide-in-from-right-10 data-[side=top]:data-open:slide-in-from-top-10 data-closed:animate-out data-closed:fade-out-0 data-[side=bottom]:data-closed:slide-out-to-bottom-10 data-[side=left]:data-closed:slide-out-to-left-10 data-[side=right]:data-closed:slide-out-to-right-10 data-[side=top]:data-closed:slide-out-to-top-10",
+					appearance === "details" && "cn-sheet-details",
+					className
+				)}
+			>
+				<Slot.Slottable>{children}</Slot.Slottable>
+				{showCloseButton && (
+					<SheetClose asChild>
+						<Button variant="ghost" className="cn-sheet-close" size="icon-sm" aria-label={closeLabel}>
+							<XIcon aria-hidden="true" />
+						</Button>
+					</SheetClose>
+				)}
+			</DialogContent>
+		</>
 	);
 }
 
@@ -174,7 +204,6 @@ export function SheetPanel({
 			focusOnClose.current = section.contains(section.ownerDocument.activeElement);
 			onOpenChange(false);
 		}
-		// Radix's inner dismissable layers process Escape on the document first.
 		view?.addEventListener("keydown", handleEscape);
 		return () => view?.removeEventListener("keydown", handleEscape);
 	}, [open, onOpenChange]);

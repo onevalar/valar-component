@@ -1,21 +1,35 @@
 <script setup lang="ts">
-import { reactiveOmit } from "@vueuse/core";
+import { DialogBackdrop as SdkBackdrop } from "@ui-sdk/vue/dialog";
 import { cn } from "cn";
-import { DialogOverlay } from "reka-ui";
-import type { DialogOverlayProps } from "reka-ui";
-import type { HTMLAttributes } from "vue";
+import { computed, useAttrs, type HTMLAttributes } from "vue";
 
-const props = defineProps<DialogOverlayProps & { class?: HTMLAttributes["class"] }>();
+defineOptions({ inheritAttrs: false });
 
-const delegatedProps = reactiveOmit(props, "class");
+const props = defineProps<{
+	class?: HTMLAttributes["class"];
+	forceMount?: boolean;
+}>();
+
+const attrs = useAttrs();
+const resolvedDataSlot = computed(
+	() => (attrs["data-slot"] as string | undefined) ?? "dialog-overlay"
+);
 </script>
 
 <template>
-	<DialogOverlay
-		data-slot="dialog-overlay"
-		v-bind="delegatedProps"
+	<SdkBackdrop
+		v-bind="$attrs"
+		:data-slot="resolvedDataSlot"
 		:class="cn('cn-dialog-overlay fixed inset-0 isolate z-50', props.class)"
 	>
-		<slot />
-	</DialogOverlay>
+		<template #render="{ props: part, state }">
+			<div
+				v-bind="part"
+				:data-slot="resolvedDataSlot"
+				:data-state="state.open ? 'open' : 'closed'"
+			>
+				<slot />
+			</div>
+		</template>
+	</SdkBackdrop>
 </template>

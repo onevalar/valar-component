@@ -1,18 +1,25 @@
 <script setup lang="ts">
-import { DialogOverlay, useForwardExpose } from "reka-ui";
-import type { DialogOverlayProps } from "reka-ui";
+import { AlertDialogBackdrop as SdkBackdrop } from "@ui-sdk/vue/alert-dialog";
+import { cn } from "cn";
+import type { HTMLAttributes } from "vue";
 
-const props = defineProps<DialogOverlayProps>();
-const { forwardRef } = useForwardExpose();
+defineOptions({ inheritAttrs: false });
+
+const props = defineProps<{
+	class?: HTMLAttributes["class"];
+}>();
 </script>
 
 <template>
-	<DialogOverlay
-		:ref="forwardRef"
-		v-bind="props"
+	<SdkBackdrop
+		v-bind="$attrs"
 		data-slot="alert-dialog-overlay"
-		class="cn-alert-dialog-overlay fixed inset-0 z-50"
+		:class="cn('cn-alert-dialog-overlay fixed inset-0 z-50', props.class)"
 	>
-		<slot />
-	</DialogOverlay>
+		<template #render="{ props: part, state }">
+			<div v-bind="part" data-slot="alert-dialog-overlay" :data-state="state.open ? 'open' : 'closed'">
+				<slot />
+			</div>
+		</template>
+	</SdkBackdrop>
 </template>
