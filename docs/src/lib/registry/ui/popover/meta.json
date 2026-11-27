@@ -3,6 +3,7 @@
 	"type": "registry:ui",
 	"title": "Popover 弹出层",
 	"description": "点击触发的小浮层，展示附加内容或简短表单。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
 	"categories": ["弹层"],
 	"meta": {
 		"valar": {

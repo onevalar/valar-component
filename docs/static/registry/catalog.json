@@ -2604,6 +2604,11 @@
 			"categories": [
 				"弹层"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
+			],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -3024,6 +3029,11 @@
 			"description": "从一组固定选项中选择一个值，选项收在下拉面板里。",
 			"categories": [
 				"表单"
+			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
 			],
 			"meta": {
 				"valar": {

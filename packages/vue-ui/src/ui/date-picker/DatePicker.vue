@@ -273,8 +273,12 @@ function isSelected(option: Timeframe) {
 					:aria-describedby="error ? `${valueId}-error` : undefined"
 					:placeholder="prompt"
 					class="cn-date-picker-input"
-					@update:model-value="(next) => (typed = String(next))"
-					@input="error = ''"
+					@update:model-value="
+						(next) => {
+							typed = String(next);
+							error = '';
+						}
+					"
 					@compositionstart="composing = true"
 					@compositionend="composing = false"
 					@keydown="chooseTyped"

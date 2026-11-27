@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { SelectItemText } from "reka-ui";
-import type { SelectItemTextProps } from "reka-ui";
+import type { HTMLAttributes } from "vue";
 
-const props = defineProps<SelectItemTextProps>();
+const props = defineProps<{ class?: HTMLAttributes["class"] }>();
 </script>
 
 <template>
-	<SelectItemText data-slot="select-item-text" v-bind="props">
+	<span data-slot="select-item-text" :class="props.class">
 		<slot />
-	</SelectItemText>
+	</span>
 </template>

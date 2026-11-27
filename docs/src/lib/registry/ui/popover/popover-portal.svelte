@@ -1,7 +1,13 @@
 <script lang="ts">
-	import { Popover as PopoverPrimitive } from "bits-ui";
+	import type { Snippet } from "svelte";
 
-	let { ...restProps }: PopoverPrimitive.PortalProps = $props();
+	let {
+		children,
+	}: {
+		to?: string | Element | DocumentFragment | null;
+		disabled?: boolean;
+		children?: Snippet;
+	} = $props();
 </script>
 
-<PopoverPrimitive.Portal {...restProps} />
+{@render children?.()}

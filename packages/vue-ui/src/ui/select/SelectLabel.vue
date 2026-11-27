@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import { reactiveOmit } from "@vueuse/core";
+import { SelectGroupLabel as SdkGroupLabel } from "@ui-sdk/vue/select";
 import { cn } from "cn";
-import { SelectLabel, useForwardProps } from "reka-ui";
-import type { SelectLabelProps } from "reka-ui";
-import type { HTMLAttributes } from "vue";
+import { inject, type HTMLAttributes } from "vue";
+import { SELECT_GROUP_KEY } from "./context";
 
-const props = defineProps<SelectLabelProps & { class?: HTMLAttributes["class"] }>();
-const forwarded = useForwardProps(reactiveOmit(props, "class"));
+const props = defineProps<{ class?: HTMLAttributes["class"] }>();
+const inGroup = inject(SELECT_GROUP_KEY, false);
 </script>
 
 <template>
-	<SelectLabel
-		data-slot="select-label"
-		v-bind="forwarded"
-		:class="cn('cn-select-label', props.class)"
-	>
+	<SdkGroupLabel v-if="inGroup" data-slot="select-label" :class="cn('cn-select-label', props.class)">
 		<slot />
-	</SelectLabel>
+	</SdkGroupLabel>
+	<div v-else data-slot="select-label" :class="cn('cn-select-label', props.class)">
+		<slot />
+	</div>
 </template>

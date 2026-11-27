@@ -1,21 +1,15 @@
 <script setup lang="ts">
-import { reactiveOmit } from "@vueuse/core";
+import { SelectGroup as SdkGroup } from "@ui-sdk/vue/select";
 import { cn } from "cn";
-import { SelectGroup } from "reka-ui";
-import type { SelectGroupProps } from "reka-ui";
-import type { HTMLAttributes } from "vue";
+import { provide, type HTMLAttributes } from "vue";
+import { SELECT_GROUP_KEY } from "./context";
 
-const props = defineProps<SelectGroupProps & { class?: HTMLAttributes["class"] }>();
-
-const delegatedProps = reactiveOmit(props, "class");
+const props = defineProps<{ class?: HTMLAttributes["class"] }>();
+provide(SELECT_GROUP_KEY, true);
 </script>
 
 <template>
-	<SelectGroup
-		data-slot="select-group"
-		v-bind="delegatedProps"
-		:class="cn('cn-select-group', props.class)"
-	>
+	<SdkGroup data-slot="select-group" :class="cn('cn-select-group', props.class)">
 		<slot />
-	</SelectGroup>
+	</SdkGroup>
 </template>

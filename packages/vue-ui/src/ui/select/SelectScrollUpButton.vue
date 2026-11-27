@@ -1,23 +1,16 @@
 <script setup lang="ts">
 import IconPlaceholder from "@/registry/bases/reka/components/icon-placeholder/IconPlaceholder.vue";
-import { reactiveOmit } from "@vueuse/core";
 import { cn } from "cn";
-import { SelectScrollUpButton, useForwardProps } from "reka-ui";
-import type { SelectScrollUpButtonProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
 
-const props = defineProps<SelectScrollUpButtonProps & { class?: HTMLAttributes["class"] }>();
-
-const delegatedProps = reactiveOmit(props, "class");
-
-const forwardedProps = useForwardProps(delegatedProps);
+const props = defineProps<{ class?: HTMLAttributes["class"] }>();
 </script>
 
 <template>
-	<SelectScrollUpButton
+	<div
 		data-slot="select-scroll-up-button"
-		v-bind="forwardedProps"
-		:class="cn('cn-select-scroll-up-button', props.class)"
+		aria-hidden="true"
+		:class="cn('cn-select-scroll-up-button hidden', props.class)"
 	>
 		<slot>
 			<IconPlaceholder
@@ -28,5 +21,5 @@ const forwardedProps = useForwardProps(delegatedProps);
 				remixicon="RiArrowUpSLine"
 			/>
 		</slot>
-	</SelectScrollUpButton>
+	</div>
 </template>

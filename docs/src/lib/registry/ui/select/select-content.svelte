@@ -1,48 +1,115 @@
 <script lang="ts">
-	import { Select as SelectPrimitive } from "bits-ui";
-	import { cn, type WithoutChild } from "$lib/utils.js";
-	import type { WithoutChildrenOrChild } from "$lib/utils.js";
-	import SelectPortal from "./select-portal.svelte";
-	import SelectScrollDownButton from "./select-scroll-down-button.svelte";
-	import SelectScrollUpButton from "./select-scroll-up-button.svelte";
-	import type { ComponentProps } from "svelte";
+	import { SelectContent as SdkContent } from "@ui-sdk/svelte/select";
+	import type { Anchor, Side } from "@ui-sdk/core";
+	import type { StyleProperties } from "svelte-toolbelt";
+	import type { Snippet } from "svelte";
+	import type { HTMLAttributes } from "svelte/elements";
+	import { cn } from "$lib/utils.js";
+	import {
+		bindElementRef,
+		observeHighlightedReveal,
+		resolvePortalContainer,
+		toStyleString,
+	} from "./context.js";
+
+	export type SelectPortalProps = {
+		to?: string | Element | DocumentFragment | null;
+		disabled?: boolean;
+	};
 
 	let {
 		ref = $bindable(null),
 		class: className,
+		style,
+		side = "bottom",
+		align = "start",
 		sideOffset = 4,
+		alignOffset = 0,
+		collisionPadding = 8,
+		arrowPadding,
+		anchor,
+		alignItemWithTrigger = false,
 		portalProps,
-		children,
-		preventScroll = true,
+		container: containerProp,
+		forceMount = false,
+		keepMounted,
 		appearance = "default",
+		// Legacy Bits props accepted for source compatibility.
+		preventScroll: _preventScroll,
+		avoidCollisions: _avoidCollisions,
+		strategy: _strategy,
+		children,
 		...restProps
-	}: WithoutChild<SelectPrimitive.ContentProps> & {
-		portalProps?: WithoutChildrenOrChild<ComponentProps<typeof SelectPortal>>;
+	}: Omit<HTMLAttributes<HTMLDivElement>, "style" | "children"> & {
+		ref?: HTMLDivElement | HTMLElement | null;
+		style?: StyleProperties | string | null;
+		side?: Side;
+		align?: "start" | "center" | "end";
+		sideOffset?: number;
+		alignOffset?: number;
+		collisionPadding?: number;
+		arrowPadding?: number;
+		anchor?: Anchor | string | null;
+		alignItemWithTrigger?: boolean;
+		portalProps?: SelectPortalProps;
+		container?: Element | DocumentFragment | null;
+		forceMount?: boolean;
+		keepMounted?: boolean;
 		appearance?: "default" | "settings";
+		preventScroll?: boolean;
+		avoidCollisions?: boolean;
+		strategy?: "fixed" | "absolute";
+		children?: Snippet;
 	} = $props();
+
+	const resolvedContainer = $derived(
+		portalProps?.disabled
+			? undefined
+			: (containerProp ?? resolvePortalContainer(portalProps?.to))
+	);
+	const resolvedKeepMounted = $derived(keepMounted ?? forceMount);
+	let stopReveal: (() => void) | undefined;
+	const refAttachment = bindElementRef<HTMLDivElement>((el) => {
+		ref = el;
+		stopReveal?.();
+		stopReveal = el ? observeHighlightedReveal(el) : undefined;
+	});
+	const compatVars =
+		"--bits-select-content-available-height:var(--available-height);--bits-select-anchor-width:var(--anchor-width);--bits-select-content-transform-origin:var(--transform-origin);";
 </script>
 
-<!-- parity-ignore-upstream: data-[align-trigger=true]:animate-none | Radix marks its item-aligned mode with data-align-trigger; Bits only positions the content as a popper -->
-<!-- parity-ignore-upstream: data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1 | Radix offsets popper content with per-side translates; Bits takes the same gap as the sideOffset prop, which also works for the logical sides -->
-<!-- parity-ignore-upstream: data-[position=popper]:h-(--radix-select-trigger-height) data-[position=popper]:w-full data-[position=popper]:min-w-(--radix-select-trigger-width) | Radix gates the viewport sizing behind its popper mode; Bits applies the trigger-width minimum to the content and sizes the viewport to its contents -->
-<SelectPortal {...portalProps}>
-	<SelectPrimitive.Content
-		bind:ref
-		{sideOffset}
-		{preventScroll}
-		data-slot="select-content"
-		class={cn(
-			"cn-select-content cn-select-content-logical cn-menu-target cn-overlay-surface relative z-50 max-h-(--bits-select-content-available-height) max-w-[calc(100vw-1rem)] min-w-[min(max(8rem,var(--bits-select-anchor-width,8rem)),calc(100vw-1rem))] origin-(--bits-select-content-transform-origin) overflow-x-hidden overflow-y-auto",
-			appearance === "settings" && "cn-select-content-settings animate-none!",
-			className
-		)}
-		collisionPadding={8}
-		{...restProps}
-	>
-		<SelectScrollUpButton />
-		<SelectPrimitive.Viewport class="cn-select-viewport w-full min-w-0 scroll-my-1 px-1.5 py-1">
-			{@render children?.()}
-		</SelectPrimitive.Viewport>
-		<SelectScrollDownButton />
-	</SelectPrimitive.Content>
-</SelectPortal>
+<!-- parity-ignore-upstream: data-[align-trigger=true]:animate-none | Radix marks its item-aligned mode with data-align-trigger; UI SDK aligns via alignItemWithTrigger -->
+<!-- parity-ignore-upstream: data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1 | UI SDK uses sideOffset directly -->
+<!-- parity-ignore-upstream: data-[position=popper]:h-(--radix-select-trigger-height) data-[position=popper]:w-full data-[position=popper]:min-w-(--radix-select-trigger-width) | UI SDK exposes --anchor-width directly -->
+<SdkContent
+	{side}
+	{align}
+	{sideOffset}
+	{alignOffset}
+	{collisionPadding}
+	{arrowPadding}
+	{anchor}
+	{alignItemWithTrigger}
+	keepMounted={resolvedKeepMounted}
+	container={resolvedContainer}
+	data-slot="select-content"
+	class={cn(
+		"cn-select-content cn-select-content-logical cn-menu-target cn-overlay-surface relative z-50 max-h-(--available-height) max-w-[calc(100vw-1rem)] min-w-[min(max(8rem,var(--anchor-width,8rem)),calc(100vw-1rem))] origin-(--transform-origin) overflow-x-hidden overflow-y-auto",
+		appearance === "settings" && "cn-select-content-settings animate-none!",
+		className
+	)}
+	style={`${compatVars}${toStyleString(style) ?? ""}`}
+	{...restProps}
+>
+	{#snippet render({ props, state })}
+		<div
+			{...props}
+			{...refAttachment}
+			data-state={state.open ? "open" : "closed"}
+		>
+			<div class="cn-select-viewport w-full min-w-0 scroll-my-1 px-1.5 py-1">
+				{@render children?.()}
+			</div>
+		</div>
+	{/snippet}
+</SdkContent>

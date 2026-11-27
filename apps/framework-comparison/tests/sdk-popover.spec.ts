@@ -47,7 +47,7 @@ for (const backend of ["radix", "ui-sdk"]) {
 			await expect(panel).toBeHidden();
 		});
 
-		test("checks whether the portalled Radix Select can coexist with its parent", async ({
+		test("checks that the UI SDK Select coexists cleanly with its parent Popover", async ({
 			page,
 		}) => {
 			const trigger = page.getByRole("button", { name: "Display options" });
@@ -57,15 +57,6 @@ for (const backend of ["radix", "ui-sdk"]) {
 			await trigger.click();
 			await expect(trigger).toHaveAttribute("aria-expanded", "true");
 			await grouping.press("ArrowDown");
-			if (backend === "ui-sdk") {
-				// beta.17 treats focus entering the foreign portal as focus leaving the popup.
-				// If this starts passing as a normal nested popup, revisit the migration gate.
-				await expect(trigger).toHaveAttribute("aria-expanded", "false");
-				await expect(panel).toBeHidden();
-				await expect(list).toBeHidden();
-				await expect(trigger).not.toBeFocused();
-				return;
-			}
 			await expect(list).toBeVisible();
 			await page.keyboard.press("Escape");
 			await expect(list).toBeHidden();

@@ -1,22 +1,36 @@
 <script lang="ts">
-	import { Select as SelectPrimitive } from "bits-ui";
+	import { SelectGroupLabel as SdkGroupLabel } from "@ui-sdk/svelte/select";
+	import type { StyleProperties } from "svelte-toolbelt";
+	import type { Snippet } from "svelte";
+	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/utils.js";
-	import type { ComponentProps } from "svelte";
+	import { bindElementRef, toStyleString } from "./context.js";
 
 	let {
 		ref = $bindable(null),
 		class: className,
+		style,
 		children,
 		...restProps
-	}: ComponentProps<typeof SelectPrimitive.GroupHeading> = $props();
+	}: Omit<HTMLAttributes<HTMLDivElement>, "style" | "children"> & {
+		ref?: HTMLDivElement | HTMLElement | null;
+		style?: StyleProperties | string | null;
+		children?: Snippet;
+	} = $props();
+
+	const refAttachment = bindElementRef<HTMLDivElement>((el) => {
+		ref = el;
+	});
 </script>
 
-<!-- parity-ignore: Bits splits Group / GroupHeading where Radix has a single Label; the slot keeps our name -->
-<SelectPrimitive.GroupHeading
-	bind:ref
+<!-- parity-ignore: UI SDK uses SelectGroupLabel inside SelectGroup; keep our slot name -->
+<SdkGroupLabel
 	data-slot="select-group-heading"
 	class={cn("cn-select-label", className)}
+	style={toStyleString(style)}
 	{...restProps}
 >
-	{@render children?.()}
-</SelectPrimitive.GroupHeading>
+	{#snippet render({ props })}
+		<div {...props} {...refAttachment}>{@render children?.()}</div>
+	{/snippet}
+</SdkGroupLabel>

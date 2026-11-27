@@ -1,7 +1,13 @@
 <script lang="ts">
-	import { Select as SelectPrimitive } from "bits-ui";
+	import type { Snippet } from "svelte";
 
-	let { ...restProps }: SelectPrimitive.PortalProps = $props();
+	let {
+		children,
+	}: {
+		to?: string | Element | DocumentFragment | null;
+		disabled?: boolean;
+		children?: Snippet;
+	} = $props();
 </script>
 
-<SelectPrimitive.Portal {...restProps} />
+{@render children?.()}

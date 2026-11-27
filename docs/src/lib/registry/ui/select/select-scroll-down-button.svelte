@@ -1,19 +1,20 @@
 <script lang="ts">
-	import { Select as SelectPrimitive } from "bits-ui";
 	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
-	import { cn, type WithoutChildrenOrChild } from "$lib/utils.js";
+	import { cn } from "$lib/utils.js";
+	import type { HTMLAttributes } from "svelte/elements";
 
 	let {
 		ref = $bindable(null),
 		class: className,
 		...restProps
-	}: WithoutChildrenOrChild<SelectPrimitive.ScrollDownButtonProps> = $props();
+	}: HTMLAttributes<HTMLDivElement> & { ref?: HTMLDivElement | null } = $props();
 </script>
 
-<SelectPrimitive.ScrollDownButton
-	bind:ref
+<div
+	bind:this={ref}
 	data-slot="select-scroll-down-button"
-	class={cn("cn-select-scroll-down-button", className)}
+	aria-hidden="true"
+	class={cn("cn-select-scroll-down-button hidden", className)}
 	{...restProps}
 >
 	<IconPlaceholder
@@ -23,4 +24,4 @@
 		phosphor="CaretDownIcon"
 		remixicon="RiArrowDownSLine"
 	/>
-</SelectPrimitive.ScrollDownButton>
+</div>

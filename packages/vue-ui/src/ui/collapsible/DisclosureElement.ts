@@ -34,7 +34,16 @@ export default defineComponent({
 			const children = slots.default?.();
 			const child =
 				props.asChild || props.as === "template" ? firstElement(children ?? []) : undefined;
-			if (child) return cloneVNode(child, props.part, true);
+			if (child) {
+				const childProps = (child.props ?? {}) as Record<string, unknown>;
+				const mergedPart: Record<string, unknown> = { ...props.part };
+				if (childProps["aria-labelledby"] !== undefined) {
+					mergedPart["aria-labelledby"] = childProps["aria-labelledby"];
+				} else if (childProps["aria-label"] !== undefined) {
+					delete mergedPart["aria-labelledby"];
+				}
+				return cloneVNode(child, mergedPart, true);
+			}
 			const tag = props.as === "template" ? "div" : props.as;
 			return typeof tag === "string"
 				? h(tag, props.part, children)

@@ -1,18 +1,34 @@
 <script lang="ts">
-	import { Separator } from "$lib/registry/ui/separator/index.js";
+	import { SelectSeparator as SdkSeparator } from "@ui-sdk/svelte/select";
+	import type { StyleProperties } from "svelte-toolbelt";
+	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/utils.js";
-	import type { Separator as SeparatorPrimitive } from "bits-ui";
+	import { bindElementRef, toStyleString } from "./context.js";
 
 	let {
 		ref = $bindable(null),
 		class: className,
+		style,
+		decorative: _decorative,
 		...restProps
-	}: SeparatorPrimitive.RootProps = $props();
+	}: Omit<HTMLAttributes<HTMLDivElement>, "style"> & {
+		ref?: HTMLDivElement | HTMLElement | null;
+		style?: StyleProperties | string | null;
+		decorative?: boolean;
+	} = $props();
+
+	const refAttachment = bindElementRef<HTMLDivElement>((el) => {
+		ref = el;
+	});
 </script>
 
-<Separator
-	bind:ref
+<SdkSeparator
 	data-slot="select-separator"
-	class={cn("cn-select-separator pointer-events-none", className)}
+	class={cn("cn-select-separator pointer-events-none h-[0.5px] bg-border", className)}
+	style={toStyleString(style)}
 	{...restProps}
-/>
+>
+	{#snippet render({ props })}
+		<div {...props} {...refAttachment}></div>
+	{/snippet}
+</SdkSeparator>
