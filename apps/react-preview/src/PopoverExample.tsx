@@ -1,15 +1,7 @@
+import * as nativePopover from "@valar/react-ui/popover";
 import { Button } from "@valar/react-ui/button";
 import { Checkbox } from "@valar/react-ui/checkbox";
 import { Input } from "@valar/react-ui/input";
-import {
-	Popover,
-	PopoverClose,
-	PopoverContent,
-	PopoverDescription,
-	PopoverHeader,
-	PopoverTitle,
-	PopoverTrigger,
-} from "@valar/react-ui/popover";
 import {
 	Select,
 	SelectContent,
@@ -19,10 +11,16 @@ import {
 } from "@valar/react-ui/select";
 import { Separator } from "@valar/react-ui/separator";
 import { useId, useState } from "react";
+import type { sdkPopoverPilot } from "./SdkPopoverPilot.js";
 
 const row = "flex min-h-8 items-center justify-between gap-2";
+const { PopoverDescription, PopoverHeader, PopoverTitle } = nativePopover;
 
-export default function PopoverExample() {
+export default function PopoverExample({
+	parts = nativePopover,
+	defaultOptionsOpen,
+}: { parts?: typeof sdkPopoverPilot; defaultOptionsOpen?: boolean } = {}) {
+	const { Popover, PopoverTrigger, PopoverContent, PopoverClose } = parts;
 	const id = useId();
 	const [open, setOpen] = useState(false);
 	const [name, setName] = useState("Valar");
@@ -68,7 +66,7 @@ export default function PopoverExample() {
 						</form>
 					</PopoverContent>
 				</Popover>
-				<Popover>
+				<Popover defaultOpen={defaultOptionsOpen}>
 					<PopoverTrigger asChild>
 						<Button variant="outline">Display options</Button>
 					</PopoverTrigger>

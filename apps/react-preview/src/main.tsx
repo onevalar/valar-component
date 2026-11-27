@@ -29,12 +29,15 @@ const templates = import.meta.glob<React.ComponentType<{ block: string; chinese?
 	{ import: "default" }
 );
 const loadExample = examples[`./examples/${example}.tsx`];
-const Preview =
-	example === "popover" ? PopoverExample : example === "separator" ? SeparatorExample : App;
+const Preview = example === "separator" ? SeparatorExample : App;
 
 async function mount() {
 	const Template = template ? await templates[`./blocks/${template}.tsx`]?.() : undefined;
 	const Fixture = !template && loadExample && (await loadExample());
+	const sdkPopover =
+		example === "popover" && params.get("backend") === "ui-sdk"
+			? (await import("./SdkPopoverPilot.js")).sdkPopoverPilot
+			: undefined;
 	createRoot(document.getElementById("root")!).render(
 		<React.StrictMode>
 			{Template && example ? (
@@ -47,6 +50,8 @@ async function mount() {
 					empty={params.get("scenario") === "empty"}
 					singleTeam={params.get("scenario") === "single"}
 				/>
+			) : example === "popover" ? (
+				<PopoverExample parts={sdkPopover} defaultOptionsOpen={params.get("options") === "open"} />
 			) : (
 				<Preview disabled={params.get("disabled") === "1"} />
 			)}
