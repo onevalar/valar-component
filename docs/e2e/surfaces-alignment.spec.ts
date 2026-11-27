@@ -20,11 +20,12 @@ for (const colorScheme of ["light", "dark"] as const) {
 				page,
 			}) => {
 				await page.goto(`${zh}/card`);
-				const card = slot(page, "card")
-					.filter({ has: page.getByText("Login to your account") })
-					.first();
+				const demo = page.getByRole("region", { name: "Card 样式调节", exact: true });
+				const card = slot(demo, "card").filter({
+					has: page.getByText("Login to your account", { exact: true }),
+				});
 				const title = slot(card, "card-title");
-				const action = card.getByRole("button", { name: "Sign Up" });
+				const action = card.getByRole("button", { name: "Sign Up", exact: true });
 				await expect(action).toHaveCSS("height", "28px");
 				const [c, t, a] = await Promise.all([rect(card), rect(title), rect(action)]);
 				expect(a.x).toBeGreaterThanOrEqual(c.x + 12);

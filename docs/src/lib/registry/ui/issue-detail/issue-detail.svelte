@@ -139,19 +139,22 @@
 	function editKeys(event: KeyboardEvent) {
 		if (
 			!editing ||
+			event.defaultPrevented ||
 			event.isComposing ||
 			!(event.target instanceof Node) ||
 			!form.contains(event.target)
 		)
-			return;
+			return false;
 		if (event.key === "Escape") {
 			event.preventDefault();
 			void stopEdit();
-		}
-		if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+		} else if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
 			event.preventDefault();
 			if (!event.repeat) form.requestSubmit();
+		} else {
+			return false;
 		}
+		return true;
 	}
 
 	function updateIssue(update: IssueDetailUpdate) {
@@ -353,6 +356,7 @@
 						{content}
 						{chinese}
 						focusOnMount={editing === "description"}
+						onEditorKeyDown={editKeys}
 						onChange={() => (changedDescription = true)}
 					/>
 					<div class="flex justify-end gap-2">

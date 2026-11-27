@@ -334,7 +334,7 @@
 		{/if}
 	</div>
 	{#if !editing}{@render status()}{/if}
-	<div class="sample" data-tuning-current>
+	<div class="sample" class:sample-unclipped={spec.component === "chart"} data-tuning-current>
 		{@render children({
 			overrides: currentOverrides as Partial<V>,
 			style: source?.style ?? "style-valar",
@@ -578,6 +578,9 @@
 		overflow: auto;
 		border: 1px solid var(--border);
 		border-radius: 12px;
+	}
+	.sample-unclipped {
+		max-height: none;
 	}
 	.probe {
 		position: absolute;

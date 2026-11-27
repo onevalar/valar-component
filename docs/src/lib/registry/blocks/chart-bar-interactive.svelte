@@ -121,7 +121,7 @@
 	]);
 </script>
 
-<Card.Root>
+<Card.Root class="w-full">
 	<Card.Header class="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
 		<div class="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
 			<Card.Title>Bar Chart - Interactive</Card.Title>
@@ -166,7 +166,14 @@
 								day: "2-digit",
 							});
 						},
-						ticks: (scale) => scaleUtc(scale.domain(), scale.range()).ticks(),
+						ticks: (scale) => {
+							const domain = scale.domain();
+							const [start, end] = scale.range();
+							const dates = scaleUtc([domain[0], domain[domain.length - 1]], [start, end]);
+							return dates
+								.ticks(Math.max(2, Math.floor((end - start) / 58)))
+								.filter((date) => dates(date) >= start + 24 && dates(date) <= end - 24);
+						},
 					},
 				}}
 			>

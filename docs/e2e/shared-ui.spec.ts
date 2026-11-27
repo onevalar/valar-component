@@ -770,7 +770,9 @@ test("Issue activity keeps comment drafts, threads and property changes scoped t
 	await expect(thread.getByRole("list", { name: "评论附件" })).toContainText("notes.txt");
 	await options.click();
 	await detail.getByRole("menuitem", { name: "编辑评论", exact: true }).click();
+	await expect(editor).toBeFocused();
 	await editor.fill("评论已修改");
+	await expect(editor).toHaveText("评论已修改");
 	await editor.press("Control+Enter");
 	await expect(timeline.getByText("评论已修改", { exact: true })).toBeVisible();
 	await expect(timeline.getByText("已编辑", { exact: true })).toBeVisible();

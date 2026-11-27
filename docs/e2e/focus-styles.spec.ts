@@ -127,12 +127,8 @@ test("compound textareas and number fields avoid double inner/outer focus outlin
 		});
 
 	await page.goto("/zh/docs/components/input-group");
-	const textareaGroup = page
-		.locator('[data-slot="input-group"]:has(textarea[data-slot="input-group-control"])')
-		.first();
-	const textareaControl = textareaGroup
-		.locator('textarea[data-slot="input-group-control"]')
-		.first();
+	const textareaControl = page.locator("#block-start-textarea");
+	const textareaGroup = page.locator('[data-slot="input-group"]').filter({ has: textareaControl });
 	await textareaControl.click();
 	await expect(textareaControl).toBeFocused();
 	await expect(textareaControl).toHaveCSS("outline-style", "none");

@@ -70,7 +70,8 @@ test("Dropdown Menu keeps a scrolled page and nested menus inside the narrow vie
 	await page.goto("/docs/components/dropdown-menu");
 	const trigger = page.getByRole("button", { name: "Complex Menu" });
 	await trigger.scrollIntoViewIfNeeded();
-	const initialScroll = await page.evaluate(() => window.scrollY);
+	const docsViewport = page.locator('[data-slot="scroll-area-viewport"]').filter({ has: trigger });
+	const initialScroll = await docsViewport.evaluate((element) => element.scrollTop);
 	expect(initialScroll).toBeGreaterThan(0);
 	await trigger.press("Enter");
 	const root = page.locator('[data-slot="dropdown-menu-content"]');
@@ -104,7 +105,7 @@ test("Dropdown Menu keeps a scrolled page and nested menus inside the narrow vie
 	await expect(submenus).toHaveCount(2);
 	await fitsViewport(submenus.nth(1));
 	await fitsViewport(root);
-	expect(await page.evaluate(() => window.scrollY)).toBe(initialScroll);
+	await expect(docsViewport).toHaveJSProperty("scrollTop", initialScroll);
 	await page.keyboard.press("ArrowLeft");
 	await expect(more).toBeFocused();
 	await page.keyboard.press("ArrowLeft");

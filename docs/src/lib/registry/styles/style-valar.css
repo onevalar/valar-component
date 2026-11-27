@@ -367,7 +367,7 @@
   }
 
   .cn-card-settings {
-    @apply gap-0 bg-[color:var(--valar-settings-card-surface,light-dark(white,lch(9.232%_.85_272)))] py-0 *:data-[slot=card-content]:px-0;
+    @apply gap-0 bg-[color:var(--valar-settings-card-surface,var(--valar-settings-card-surface-base,white))] dark:[--valar-settings-card-surface-base:lch(9.232%_.85_272)] py-0 *:data-[slot=card-content]:px-0;
   }
 
   .cn-card-title {

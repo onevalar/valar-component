@@ -9,8 +9,14 @@
 	 */
 	let { name }: { name: string } = $props();
 
-	const modules = import.meta.glob<{ default: Component }>("/src/lib/registry/examples/*.svelte");
-	const loader = $derived(modules[`/src/lib/registry/examples/${name}.svelte`]);
+	const modules = import.meta.glob<{ default: Component }>([
+		"/src/lib/registry/examples/*.svelte",
+		"/src/lib/registry/blocks/chart-bar-interactive.svelte",
+	]);
+	const loader = $derived(
+		modules[`/src/lib/registry/examples/${name}.svelte`] ??
+			modules[`/src/lib/registry/blocks/${name}.svelte`]
+	);
 </script>
 
 {#if loader}

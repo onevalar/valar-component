@@ -595,6 +595,16 @@ test("Chart editor scopes real portaled tooltips and preserves accessible data",
 	page,
 }) => {
 	await page.goto("/docs/components/chart", { waitUntil: "networkidle" });
+	const sample = page
+		.getByRole("region", { name: "Chart 样式调节", exact: true })
+		.locator("[data-tuning-current]");
+	const chart = sample.locator("[data-chart]");
+	await expect(chart).toBeVisible();
+	await expect.poll(async () => (await chart.boundingBox())!.width).toBeGreaterThan(200);
+	await expect.poll(() => sample.evaluate((el) => el.scrollHeight - el.clientHeight)).toBe(0);
+	const mobileSeries = sample.getByRole("button", { name: /^Mobile / });
+	await mobileSeries.click();
+	await expect(mobileSeries).toHaveAttribute("data-active", "true");
 	await tunerButton(page, "Chart").click();
 	const editor = page.getByRole("dialog", { name: "Chart · 组件参数", exact: true });
 	const current = editor.locator("[data-tuning-current]");
@@ -630,6 +640,33 @@ test("Chart editor scopes real portaled tooltips and preserves accessible data",
 	await expect(
 		page.getByRole("slider", { name: "横向留白（基准 px）", exact: true })
 	).toHaveAttribute("aria-valuenow", "24");
+});
+
+test("Chart keeps date labels inside the narrow plot without overlaps", async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto("/docs/components/chart");
+	const chart = page
+		.getByRole("region", { name: "Chart 样式调节", exact: true })
+		.locator("[data-chart]");
+	await expect
+		.poll(() =>
+			chart.evaluate((plot) => {
+				const area = plot.getBoundingClientRect();
+				const labels = Array.from(plot.querySelectorAll(".lc-axis-tick-label"), (label) =>
+					label.getBoundingClientRect()
+				);
+				return (
+					labels.length >= 2 &&
+					labels.every(
+						(label, index) =>
+							label.width > 0 &&
+							label.left >= (labels[index - 1]?.right ?? area.left) &&
+							label.right <= area.right
+					)
+				);
+			})
+		)
+		.toBe(true);
 });
 
 test("Sidebar editor isolates cookies, breakpoint portals and nested Escape", async ({
@@ -2140,7 +2177,19 @@ test("Tabs editor tunes both orientations and variants without changing keyboard
 	await expect(unselected).toHaveCSS("color", "oklch(0.672 0.006 272)");
 	await expect(page.locator("html")).not.toHaveClass(/dark/);
 	await editor.getByRole("radio", { name: "浅色", exact: true }).click();
-	await expect(unselected).toHaveCSS("color", "oklab(0.218 0.000623736 -0.00293444 / 0.6)");
+	await expect
+		.poll(() =>
+			unselected.evaluate((element) => {
+				const color = getComputedStyle(element).color;
+				return color.startsWith("oklab(") ? color.match(/-?\d+(?:\.\d+)?/g)?.map(Number) : null;
+			})
+		)
+		.toEqual([
+			expect.closeTo(0.218, 6),
+			expect.closeTo(0.000623736, 6),
+			expect.closeTo(-0.00293444, 6),
+			expect.closeTo(0.6, 6),
+		]);
 	await editor.getByRole("button", { name: /^水平列表高度 / }).click();
 	await editor.getByRole("option", { name: "40px", exact: true }).click();
 	await setNumber(page, "列表与内容间距（px）", 14);
