@@ -321,6 +321,12 @@ describe("toVersionedName", () => {
 		expect(toVersionedName("foo", "", cwd)).toBe("foo");
 	});
 
+	it("exports an exact consumer-installable version for catalog dependencies", () => {
+		mockInstalledVersion("0.1.0-beta.17");
+		expect(toVersionedName("@ui-sdk/core", "catalog:", cwd)).toBe("@ui-sdk/core@0.1.0-beta.17");
+		expect(toVersionedName("@ui-sdk/core", "catalog:sdk", cwd)).toBe("@ui-sdk/core@0.1.0-beta.17");
+	});
+
 	it("resolves `workspace:*` to the installed package's exact version", () => {
 		mockInstalledVersion("1.2.3");
 		expect(toVersionedName("@valar/svelte-primitives", "workspace:*", cwd)).toBe(

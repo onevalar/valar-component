@@ -13,6 +13,8 @@
 		"@fontsource-variable/geist": "^5.2.8",
 		"@internationalized/date": "3.12.0",
 		"@tanstack/vue-table": "9.0.0",
+		"@ui-sdk/core": "catalog:",
+		"@ui-sdk/vue": "catalog:",
 		"@unovis/ts": "^1.6.7",
 		"@unovis/vue": "^1.6.7",
 		"@valar/vue-ui": "workspace:*",

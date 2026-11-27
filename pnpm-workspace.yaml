@@ -15,6 +15,10 @@ allowBuilds:
 catalog:
   "@sveltejs/kit": ^2.60.1
   "@sveltejs/vite-plugin-svelte": ^6.2.4
+  "@ui-sdk/core": 0.1.0-beta.17
+  "@ui-sdk/react": 0.1.0-beta.17
+  "@ui-sdk/svelte": 0.1.0-beta.17
+  "@ui-sdk/vue": 0.1.0-beta.17
   svelte: ^5.57.2
   svelte-check: ^4.7.4
   tsdown: ^0.22.14

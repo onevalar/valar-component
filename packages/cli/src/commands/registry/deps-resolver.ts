@@ -125,6 +125,7 @@ const WORKSPACE_RANGE_ALIASES = new Set(["*", "^", "~"]);
 /**
  * Constructs the `pkg-name@version` string.
  *
+ * Catalogs are local to pnpm workspaces; registry consumers get the tested installed version.
  * Workspace protocol versions (`workspace:*`, `workspace:^`, etc.) only resolve inside a
  * monorepo, so we'll first try to resolve their versions with the proper version range,
  * which is derived from the workspace protocol, to then falling back to the
@@ -132,6 +133,12 @@ const WORKSPACE_RANGE_ALIASES = new Set(["*", "^", "~"]);
  */
 export function toVersionedName(name: string, version: string | undefined, cwd: string) {
 	if (!version) return name;
+
+	if (version.startsWith("catalog:")) {
+		const pkgVersion = getDependencyPackageInfo(cwd, name)?.pkg.version;
+		if (!pkgVersion) throw new Error(`Install ${name} before building the registry (${version})`);
+		return `${name}@${pkgVersion}`;
+	}
 
 	if (version.startsWith(WORKSPACE_PROTOCOL)) {
 		const versionRange = version.slice(WORKSPACE_PROTOCOL.length);

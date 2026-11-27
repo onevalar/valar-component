@@ -40,6 +40,8 @@
 		"@tiptap/core": "3.33.1",
 		"@tiptap/pm": "3.33.1",
 		"@tiptap/starter-kit": "3.33.1",
+		"@ui-sdk/core": "catalog:",
+		"@ui-sdk/vue": "catalog:",
 		"@unovis/ts": "^1.6.7",
 		"@unovis/vue": "^1.6.7",
 		"@vueuse/core": "^14.4.0",
