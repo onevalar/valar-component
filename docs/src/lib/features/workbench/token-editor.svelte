@@ -407,6 +407,7 @@
 								class="min-w-0 [&>span]:truncate [&>span]:text-xs"
 								label={alpha ? `${token}（透明 ${alpha}）` : token}
 								value={oklchToHex(value) ?? "#000000"}
+								alpha={false}
 								onValueChange={(hex) => setColor(token, hex)}
 							/>
 						{/each}

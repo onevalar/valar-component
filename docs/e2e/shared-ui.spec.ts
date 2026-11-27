@@ -2,6 +2,73 @@ import { test, expect } from "@playwright/test";
 
 test.use({ baseURL: "http://127.0.0.1:5190" });
 
+test("workspace settings validates keyboard and button submissions and describes the controls", async ({
+	page,
+}) => {
+	await page.goto("/settings", { waitUntil: "networkidle" });
+	const name = page.getByRole("textbox", { name: "工作区名称" });
+	const save = page.getByRole("button", { name: "保存更改" });
+	const success = page.getByText("已保存工作区设置", { exact: true });
+	const error = page.getByRole("alert");
+	const help = "请输入 2–40 字的工作区名称。";
+	await page.getByText("工作区名称", { exact: true }).click();
+	await expect(name).toBeFocused();
+	await name.fill("");
+	await name.press("Enter");
+	await expect(error).toHaveText("工作区名称不能为空。");
+	await expect(name).toBeFocused();
+	await expect(name).toHaveAttribute("aria-invalid", "true");
+	await expect(name).toHaveAccessibleDescription(`${help} 工作区名称不能为空。`);
+
+	await name.fill(" 甲 ");
+	await save.click();
+	await expect(error).toHaveText("工作区名称必须为 2–40 字。");
+	await expect(name).toBeFocused();
+	await expect(name).toHaveValue(" 甲 ");
+	await expect(success).toBeHidden();
+
+	await name.fill("产品");
+	await name.press("Enter");
+	await expect(success).toBeVisible();
+	await expect(error).toBeHidden();
+	await expect(name).not.toHaveAttribute("aria-invalid", "true");
+	await expect(name).toHaveAccessibleDescription(help);
+
+	await name.fill("研".repeat(40));
+	await save.click();
+	await expect(success).toBeVisible();
+	await expect(error).toBeHidden();
+	await name.fill("研".repeat(41));
+	await save.press("Enter");
+	await expect(success).toBeHidden();
+	await expect(error).toHaveText("工作区名称必须为 2–40 字。");
+	await expect(name).toBeFocused();
+
+	await page.getByRole("button", { name: "重置", exact: true }).click();
+	await expect(page.getByRole("status")).toHaveText("已重置为默认配置");
+	await expect(name).toHaveValue("Valar 产品组");
+	await expect(name).toHaveAccessibleDescription(help);
+	await name.press("Tab");
+	const language = page.getByRole("combobox", { name: "默认语言" });
+	await expect(language).toBeFocused();
+	await language.press("Space");
+	await expect(page.getByRole("listbox")).toBeVisible();
+	await page.keyboard.press("ArrowDown");
+	await page.keyboard.press("Escape");
+	await expect(language).toBeFocused();
+	await expect(language).toHaveText("简体中文");
+	await page.keyboard.press("Tab");
+	await expect(page.getByRole("switch", { name: "邮件通知" })).toBeFocused();
+	await page.keyboard.press("Tab");
+	const push = page.getByRole("switch", { name: "桌面推送" });
+	await expect(push).toBeFocused();
+	await expect(push).toHaveAccessibleDescription("仅在浏览器授权后生效");
+	await expect(push).not.toBeChecked();
+	await page.keyboard.press("Space");
+	await expect(push).toBeChecked();
+	await expect(page.getByRole("status")).toHaveText("已重置为默认配置");
+});
+
 test("workspace consumer preserves public interactions without the docs runtime", async ({
 	page,
 }) => {

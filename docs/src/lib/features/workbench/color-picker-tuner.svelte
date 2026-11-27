@@ -33,11 +33,11 @@
 {#snippet canvas(pane: Pane)}
 	<div class="grid min-w-0 gap-5 p-4 md:p-6">
 		<p class="text-xs text-muted-foreground">
-			打开真实取色器，试输入 #abc 后回车、完整六位、未完成的 #1e 或无效字符。
-			只调整自有布局；原生颜色窗口由浏览器管理，不预览它的外观，也不改主题 token。
+			打开真实取色器，可拖拽色板与色相/不透明度滑条、切换 HEX/RGB/HSL/OKLCH，或输入 #abc 后回车。
+			只调整自有布局，不修改主题 token。
 		</p>
 		<form class="grid min-w-0 gap-4" onsubmit={(event) => submit(event, pane)}>
-			<div class="color-picker-stage min-h-[420px] min-w-0">
+			<div class="color-picker-stage min-h-[500px] min-w-0">
 				<ColorPicker
 					id={`${id}-${pane}-color`}
 					label="演示颜色"
@@ -45,6 +45,7 @@
 					bind:value={states[pane].value}
 					onValueChange={() => states[pane].events++}
 					{presets}
+					showRecent={false}
 					{contentProps}
 				/>
 			</div>

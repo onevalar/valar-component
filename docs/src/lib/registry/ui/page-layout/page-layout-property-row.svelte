@@ -8,11 +8,14 @@
 		children,
 		label,
 		description,
+		descriptionId,
 		layout = "settings",
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		label: string;
 		description?: string;
+		/** ID of the visible settings description for a control's aria-describedby. */
+		descriptionId?: string;
 		layout?: "settings" | "detail";
 	} = $props();
 </script>
@@ -33,7 +36,7 @@
 		<div class="flex min-w-0 flex-col gap-0.5">
 			<span class="text-sm font-medium text-foreground">{label}</span>
 			{#if description}
-				<span class="text-xs text-muted-foreground">{description}</span>
+				<span id={descriptionId} class="text-xs text-muted-foreground">{description}</span>
 			{/if}
 		</div>
 		<div class="flex shrink-0 items-center gap-2">
@@ -41,7 +44,7 @@
 		</div>
 	{:else}
 		<span class="w-28 shrink-0 text-sm text-muted-foreground">{label}</span>
-		<div class="flex min-w-0 flex-1 items-center gap-2 text-sm tabular-nums text-foreground">
+		<div class="flex min-w-0 flex-1 items-center gap-2 text-sm text-foreground tabular-nums">
 			{@render children?.()}
 		</div>
 	{/if}

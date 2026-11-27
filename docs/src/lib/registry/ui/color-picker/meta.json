@@ -2,20 +2,24 @@
 	"name": "color-picker",
 	"type": "registry:ui",
 	"title": "Color Picker 颜色选择",
-	"description": "用色盘、十六进制输入或预设色块选择颜色，值为 #rrggbb。",
+	"description": "自研交互色盘、色相与不透明度滑条、HEX/RGB/HSL/OKLCH 切换、吸管取色、一键复制与预设/最近使用色块。",
 	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
 	"categories": ["表单"],
 	"meta": {
 		"valar": {
-			"keywords": ["颜色", "color", "取色", "色板", "picker"],
-			"whenToUse": ["选择任意颜色或从预设色中挑选"],
+			"keywords": ["颜色", "color", "取色", "色板", "picker", "吸管", "透明度", "oklch"],
+			"whenToUse": ["选择任意颜色、调节透明度、多格式编辑或从预设色中挑选"],
 			"whenNotToUse": [
 				{
 					"case": "只在少数固定颜色间选择",
 					"use": "radio-group"
 				}
 			],
-			"accessibility": ["触发器读出标签和当前色值", "十六进制输入有错误提示"],
+			"accessibility": [
+				"触发器读出标签和当前色值",
+				"二维色板、色相与不透明度滑条均支持键盘方向键与 Shift 大步调节",
+				"十六进制输入有图标与文案错误提示，选中色块使用自适应高对比度勾选标记"
+			],
 			"responsive": ["面板在窄屏下保持在视口内"],
 			"related": ["slider-field", "popover"]
 		}

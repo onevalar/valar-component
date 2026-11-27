@@ -1,6 +1,6 @@
 ---
 title: Color Picker
-description: 选择颜色：色盘、十六进制输入与预设色块，值为 #rrggbb。
+description: Interactive 2D color board, hue and alpha sliders, HEX / RGB / HSL / OKLCH editing, EyeDropper, and recent/preset swatches.
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/color-picker
@@ -13,34 +13,31 @@ links:
 
 <ComponentPreview name="color-picker-demo"><div></div></ComponentPreview>
 
-## 安装
+## Installation
 
 <PMAddComp name="color-picker" />
 
-依赖 Valar 的 Popover，CLI 会一并安装。
+Depends on Valar's Popover, which the CLI installs automatically.
 
-## 用法
+## Usage
 
 ```svelte
 <script lang="ts">
-  import { ColorPicker } from "$lib/components/ui/color-picker/index.js";
+  import { ColorPicker } from "$lib/registry/ui/color-picker/index.js";
   let color = $state("#2563eb");
 </script>
 
 <ColorPicker
-  label="主色"
+  label="Primary"
   bind:value={color}
-  presets={["#0f172a", "#2563eb"]}
+  presets={["#0f172a", "#2563eb", "#0ea5e9", "#16a34a", "#eab308", "#f97316", "#dc2626", "#9333ea"]}
 />
 ```
 
-## 行为合同
+## Behavior contract
 
-- `value` 始终是小写六位十六进制 `#rrggbb`；外部传入的三位简写会被展开，无效值显示为 `#000000`。导出的 `normalizeHex` 可在其他地方复用同一规则。
-- 弹层内提供浏览器原生色盘（Chromium 等浏览器自带取色器）、十六进制输入和可选预设色块，三者实时同步。
-- 十六进制输入：输入满六位时立即生效；三位简写在 Enter 或失焦时展开生效；未完成的输入不会修改当前值，失焦后恢复为当前值。出现非十六进制字符时提示错误。
-- 预设色块是带 `aria-pressed` 的按钮，当前颜色处于按下状态。弹层的打开、关闭、焦点归还和 Esc 行为来自 Bits UI Popover。
-- `contentProps` 透传 Popover.Content 的配置（不含 `children`／`child`），例如 `sideOffset`、`class` 或 `portalProps`；默认仍使用 Portal，只有需要容器内渲染时才传 `portalProps={{ disabled: true }}`。面板样式只影响 Color Picker，不修改全局 Popover。
-- 根节点 `class` 与 `contentProps.class` 中的显式工具类优先于各自默认类；面板使用专属 `data-slot="color-picker-content"`，包括默认 Portal 渲染时。
-- 传入 `name` 时以 `#rrggbb` 参与原生表单提交。
-- 当前不支持透明度、OKLCH／HSL 等其他色彩空间的直接编辑；原生色盘的外观由浏览器决定。
+- Alpha is enabled by default (`alpha={true}`): opaque values emit 6-digit lowercase `#rrggbb`, while translucent values emit 8-digit `#rrggbbaa`. Pass `alpha={false}` when only opaque hex colors are accepted.
+- The popover provides a built-in 2D saturation/value canvas, hue rainbow slider, and checkerboard alpha slider with pointer capture dragging and keyboard arrow (`Shift` for coarse step) support while preserving hue at black/white boundaries.
+- Switch and edit live across `HEX`, `RGB`, `HSL`, and `OKLCH`; the copy button copies the active CSS format, and an EyeDropper button appears automatically in browsers supporting the EyeDropper API.
+- Recently committed colors are stored locally (up to 8 entries; pass `showRecent={false}` to disable) alongside optional preset swatches with luminance-adaptive checkmarks for readable contrast on light and dark colors.
+- `contentProps` forwards Popover.Content options (excluding `children`/`child`), and passing `name` submits the normalized hex value in native forms.

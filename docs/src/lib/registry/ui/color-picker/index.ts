@@ -1,1 +1,21 @@
 export { default as ColorPicker, normalizeHex, type ColorPickerProps } from "./color-picker.svelte";
+export {
+	formatColor,
+	hexToRgba,
+	hslaToRgba,
+	hsvaToRgba,
+	isLightColor,
+	normalizeHexColor,
+	oklchaToRgba,
+	parseColorInput,
+	rgbaToCss,
+	rgbaToHex,
+	rgbaToHsla,
+	rgbaToHsva,
+	rgbaToOklcha,
+	type ColorFormat,
+	type HslaColor,
+	type HsvaColor,
+	type OklchaColor,
+	type RgbaColor,
+} from "./color.js";
