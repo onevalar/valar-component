@@ -116,25 +116,55 @@ for (const version of versions) {
 	test(`${version.id}: calendar choices and fresh two-click range`, async ({ page }) => {
 		await open(page, version.url);
 		const calendar = page.locator('[data-demo="calendar"]');
+		const today = calendar.getByRole("button", { name: /2026年11月12日/ });
+		// The date button owns the selection surface, not its wider layout cell.
+		await expect(today.locator("xpath=ancestor::td[1]")).toHaveCSS(
+			"background-color",
+			"rgba(0, 0, 0, 0)"
+		);
 		await calendar.getByRole("button", { name: /2026年11月17日/ }).click();
 		await expect(page.locator('[data-result="calendar"]')).toHaveText("2026-11-17");
 		await page.keyboard.press("ArrowRight");
 		await page.keyboard.press("Enter");
 		await expect(page.locator('[data-result="calendar"]')).toHaveText("2026-11-18");
-		await calendar.getByRole("button", { name: "选择月份", exact: true }).click();
-		await expect(page.getByRole("button", { name: /^(?:[1-9]|1[0-2])月$/ })).toHaveCount(12);
-		await page.getByRole("button", { name: "12月", exact: true }).click();
+		const month = calendar.getByRole("combobox", { name: "月份", exact: true });
+		const year = calendar.getByRole("combobox", { name: "年份", exact: true });
+		const list = page.getByRole("listbox");
+		await month.press("Enter");
+		await expect(list.getByRole("option")).toHaveCount(12);
+		await expect.poll(() => activeOption(page)).toBe("11月");
+		await page.keyboard.press("End");
+		await expect.poll(() => activeOption(page)).toBe("12月");
+		await page.keyboard.press("Enter");
+		await expect(list).toBeHidden();
+		await expect(month).toBeFocused();
 		await calendar.getByRole("button", { name: /2026年12月17日/ }).click();
 		await expect(page.locator('[data-result="calendar"]')).toHaveText("2026-12-17");
-		await calendar.getByRole("button", { name: "选择年份", exact: true }).click();
-		await expect(page.getByRole("button", { name: /^20[0-9]{2}年$/ })).toHaveCount(12);
-		await page.getByRole("button", { name: "2027年", exact: true }).click();
+		await year.click();
+		await expect(list.getByRole("option", { name: "2026年", selected: true })).toBeAttached();
+		await expect(list.getByRole("option", { name: "1950年", exact: true })).toBeAttached();
+		await expect(list).toHaveCSS("overflow-y", /auto|scroll/);
+		expect((await list.boundingBox())!.height).toBeLessThanOrEqual(240);
+		await page.keyboard.press("Escape");
+		await expect(list).toBeHidden();
+		await expect(year).toBeFocused();
+		await year.click();
+		await list.getByRole("option", { name: "2027年", exact: true }).click();
+		await expect(year).toBeFocused();
 		await calendar.getByRole("button", { name: /2027年12月17日/ }).click();
 		await expect(page.locator('[data-result="calendar"]')).toHaveText("2027-12-17");
 		const range = page.locator('[data-demo="range-calendar"]');
 		await range.getByRole("button", { name: /2026年11月18日/ }).click();
 		await expect(page.locator('[data-result="range-calendar"]')).toHaveText("2026-11-18 –");
 		await range.getByRole("button", { name: /2026年11月20日/ }).click();
+		await expect(page.locator('[data-result="range-calendar"]')).toHaveText(
+			"2026-11-18 – 2026-11-20"
+		);
+		const rangeMonth = range.getByRole("combobox", { name: "月份", exact: true });
+		await rangeMonth.click();
+		await list.getByRole("option", { name: "12月", exact: true }).click();
+		await expect(rangeMonth).toBeFocused();
+		await expect(range.getByRole("button", { name: /2026年12月17日/ })).toBeVisible();
 		await expect(page.locator('[data-result="range-calendar"]')).toHaveText(
 			"2026-11-18 – 2026-11-20"
 		);
@@ -293,6 +323,8 @@ test("same theme and public-control geometry across native frameworks", async ({
 				await page.evaluate(() => {
 					const selectors = [
 						'[data-demo="button"] button',
+						'[data-demo="button"] button[data-variant="outline"]',
+						'[data-demo="button"] button[data-size="icon"]',
 						'[data-demo="input"] input',
 						'[role="checkbox"]',
 						'[data-demo="select"] [role="combobox"]',
@@ -336,9 +368,26 @@ test("calendar geometry and Chinese weekdays match across native frameworks", as
 			const section = page.locator(`[data-demo="${id}"]`);
 			const root = await section.locator(`[data-slot="${id}"]`).boundingBox();
 			const day = await section.getByRole("button", { name: /2026年11月17日/ }).boundingBox();
-			expect(day?.width).toBe(36);
-			expect(day?.height).toBe(36);
+			expect(day?.width).toBe(28);
+			expect(day?.height).toBe(28);
 			expect(root?.width).toBe(contentWidth);
+			const [prev, month, year, next] = await Promise.all([
+				section.getByRole("button", { name: /Previous|前往上个月/ }).boundingBox(),
+				section.getByRole("combobox", { name: "月份", exact: true }).boundingBox(),
+				section.getByRole("combobox", { name: "年份", exact: true }).boundingBox(),
+				section.getByRole("button", { name: /Next|前往下个月/ }).boundingBox(),
+			]);
+			expect(month!.height).toBe(28);
+			expect(year!.height).toBe(28);
+			expect(year!.x - (month!.x + month!.width)).toBeGreaterThanOrEqual(7.5);
+			if (id === "calendar") {
+				expect(month!.x - (prev!.x + prev!.width)).toBeGreaterThanOrEqual(7.5);
+				expect(next!.x - (year!.x + year!.width)).toBeGreaterThanOrEqual(7.5);
+			} else {
+				expect(
+					month!.y - Math.max(prev!.y + prev!.height, next!.y + next!.height)
+				).toBeGreaterThanOrEqual(7.5);
+			}
 			// DayPicker hides its visual weekday row from accessibility because
 			// each date already has a full label. This check compares rendered copy.
 			const weekdays = await section.locator('[role="columnheader"], thead th').allTextContents();

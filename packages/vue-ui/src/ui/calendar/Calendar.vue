@@ -130,7 +130,9 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 			)
 		"
 	>
-		<CalendarHeader class="pt-0">
+		<CalendarHeader
+			:class="effectiveLayout ? 'px-[calc(max(var(--cell-size),1.75rem)+0.5rem)]' : undefined"
+		>
 			<slot
 				name="calendar-heading"
 				:date="date"
@@ -138,19 +140,19 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 				:year="ReuseYearTemplate"
 			>
 				<template v-if="effectiveLayout === 'month-and-year'">
-					<div class="flex items-center justify-center gap-1.5">
+					<div class="flex items-center justify-center gap-2">
 						<ReuseMonthTemplate :date="date" />
 						<ReuseYearTemplate :date="date" />
 					</div>
 				</template>
 				<template v-else-if="effectiveLayout === 'month-only'">
-					<div class="flex items-center justify-center gap-1.5">
+					<div class="flex items-center justify-center gap-2">
 						<ReuseMonthTemplate :date="date" />
 						{{ formatter.custom(toDate(date), { year: "numeric" }) }}
 					</div>
 				</template>
 				<template v-else-if="effectiveLayout === 'year-only'">
-					<div class="flex items-center justify-center gap-1.5">
+					<div class="flex items-center justify-center gap-2">
 						{{ formatter.custom(toDate(date), { month: "short" }) }}
 						<ReuseYearTemplate :date="date" />
 					</div>
@@ -173,10 +175,18 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 		</CalendarHeader>
 
 		<div class="mt-4 flex flex-col gap-y-4 sm:flex-row sm:gap-x-4 sm:gap-y-0">
-			<CalendarGrid v-for="month in grid" :key="month.value.toString()">
+			<CalendarGrid
+				v-for="month in grid"
+				:key="month.value.toString()"
+				:class="effectiveLayout ? 'min-w-[calc(max(var(--cell-size),1.75rem)*2+11rem)]' : undefined"
+			>
 				<CalendarGridHead>
 					<CalendarGridRow>
-						<CalendarHeadCell v-for="day in weekDays" :key="day">
+						<CalendarHeadCell
+							v-for="day in weekDays"
+							:key="day"
+							:class="effectiveLayout ? 'flex-1' : undefined"
+						>
 							{{ day }}
 						</CalendarHeadCell>
 					</CalendarGridRow>
@@ -187,7 +197,12 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 						:key="`weekDate-${index}`"
 						class="mt-2 w-full"
 					>
-						<CalendarCell v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate">
+						<CalendarCell
+							v-for="weekDate in weekDates"
+							:key="weekDate.toString()"
+							:date="weekDate"
+							:class="effectiveLayout ? 'flex flex-1 items-center justify-center' : undefined"
+						>
 							<CalendarCellTrigger :day="weekDate" :month="month.value" />
 						</CalendarCell>
 					</CalendarGridRow>

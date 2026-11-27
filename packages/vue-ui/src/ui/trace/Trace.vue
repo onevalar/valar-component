@@ -1,0 +1,19 @@
+<script setup lang="ts">
+import { cn } from "cn";
+import type { HTMLAttributes } from "vue";
+const props = defineProps<{ class?: HTMLAttributes["class"] }>();
+</script>
+
+<template>
+	<div
+		data-slot="trace"
+		:class="
+			cn(
+				'cn-trace flex w-full min-w-0 flex-col *:has-[>[data-slot=trace-line]]:flex *:has-[>[data-slot=trace-line]]:w-fit *:has-[>[data-slot=trace-line]]:max-w-full *:has-[>[data-slot=trace-line]]:min-w-0 *:has-[>[data-slot=trace-line]]:text-start *:has-[>[data-slot=trace-line]]:outline-none',
+				props.class
+			)
+		"
+	>
+		<slot />
+	</div>
+</template>

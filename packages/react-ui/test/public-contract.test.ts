@@ -115,7 +115,9 @@ test("calendar dropdowns compose month before year and keep formatter/component 
 		React.createElement(RangeCalendar, { month, today: month, captionLayout: "dropdown" }),
 	]) {
 		const html = renderToStaticMarkup(calendar);
-		assert.ok(html.indexOf('aria-label="选择月份"') < html.indexOf('aria-label="选择年份"'));
+		const month = html.indexOf('data-calendar-caption="month"');
+		const year = html.indexOf('data-calendar-caption="year"');
+		assert.ok(month >= 0 && year > month);
 		assert.match(html, /2026年/);
 	}
 	const custom = renderToStaticMarkup(
@@ -123,6 +125,7 @@ test("calendar dropdowns compose month before year and keep formatter/component 
 			month,
 			captionLayout: "dropdown",
 			formatters: { formatYearDropdown: (date) => `Year ${date.getFullYear()}` },
+			labels: { labelYearDropdown: () => "Change year" },
 			components: {
 				DropdownNav: ({ children, ...props }) =>
 					React.createElement("div", { ...props, "data-custom-nav": "yes" }, children),
@@ -131,6 +134,7 @@ test("calendar dropdowns compose month before year and keep formatter/component 
 	);
 	assert.match(custom, /data-custom-nav="yes"/);
 	assert.match(custom, /Year 2026/);
+	assert.match(custom, /<button[^>]*aria-label="Change year"/);
 });
 
 test("calendar captions allow the source's future years and preserve explicit native limits", () => {

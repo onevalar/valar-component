@@ -51,6 +51,27 @@ VCOMP-005／006 不是跨框架转换，而是为替代 DialKit 控件新增的 
 - 不代表全库77组、全部API或像素等价；真实触屏、读屏、Windows/Linux实机、SSR/hydration、完整IME/RTL、多thumb和普通动效时序待验。来源、公开接口、复现命令与完整边界见[第一批集成验收](porting-records/first-batch-frameworks.md)。
 - 按用户新方向接入原5186文档站：「使用组件」选择Svelte/React/Vue，默认状态和调参仍为Svelte；九组之外显示尚未提供。18份原生示例类型通过，原站6项浏览器检查通过，额外比较服务已关闭。整站生产构建被既有RulerSlider虚拟CSS问题阻塞，旧组件路由也同错，不计为已通过，详见同一集成记录首页。
 
+### VCOMP-010 · 三框架覆盖（2026-11-26，本地实现已交付，兼容性部分待验）
+
+以 Svelte 的 79 项公开组件、`form` 表单辅助及公开的业务区块为基线。三边使用同一套 Valar token 和行为合同，但保留框架原生 API；不把公共主题、目录占位或照搬 Svelte 示例当作 React/Vue 支持。继续使用同一文档站。工作台是文档工具，不作为三个组件包的运行时依赖。
+
+| 顺序 | 交付范围 | 当前进度 |
+| --- | --- | --- |
+| 1 | 复核已做的九组是否跟上当前 Svelte 默认值、变体与表单合同；补齐已导出的 Popover | [Popover](porting-records/popover-svelte-to-react-vue.md) 默认表单和显示选项已在两边接通。[Button／Calendar 复核](porting-records/button-calendar-parity.md)恢复了原生文字按钮的默认胶囊、默认月历的圆形日期格、年月 Select 和范围月历分行。原 36 px 断言更新为当前基准 28 px；支持范围仍以记录为准。 |
+| 2 | 第 1 批表单与高复用原语；第 2 批内容、反馈与布局 | [第 1 批 13 项](porting-records/form-primitives-svelte-to-react-vue.md)及[第 2 批 18 项](porting-records/content-layout-svelte-to-react-vue.md)已验收代表场景；Typography 为独立指南。 |
+| 3 | 第 3 批菜单、弹层与导航：Alert Dialog、Context Menu、Drawer、Dropdown Menu、Hover Card、Menubar、Navigation Menu、Sheet、Sidebar、Sonner | [10 项](porting-records/navigation-overlays-svelte-to-react-vue.md)已通过代表场景验收，覆盖增加至 52/79。 |
+| 4 | 第 4 批复杂输入与数据（含 Forms、Data Table 指南）；第 5 批可视化与仪表 | [第 4 批 10 项](porting-records/complex-inputs-svelte-to-react-vue.md)与[第 5 批 7 项](porting-records/visualization-meters-svelte-to-react-vue.md)均通过代表场景及独立安装，React/Vue 各有 69/79 组。 |
+| 5 | 第 6 批对话与业务组件、第 7 批 AI 组合与公开区块、第 8 批总验收 | [第 6 批 10 项](porting-records/conversation-business-svelte-to-react-vue.md)通过代表场景和独立安装，React/Vue 各 79/79 组原生组件。[第 7–8 批](porting-records/compositions-svelte-to-react-vue.md)交付 6 个业务场景、21 个 AI 组合及 78 个区块的安装映射；三端独立安装通过，整站 E2E 尚未全绿，特化模板仍为部分覆盖。 |
+| 6 | 第 9 批修复整站回归 | [第 9 批](porting-records/compositions-svelte-to-react-vue.md#第-9-批整站回归修复)的生产定向回归 12/12；主跑仍有两项失败，修复后单独复验通过。 |
+| 7 | 第 10–13 批交付其余区块 | [78 个区块](porting-records/registry-blocks-svelte-to-react-vue.md)各有 React/Vue 原生预览及源码入口：15 个认证、32 个日历、29 个侧栏、Dashboard 和组件展示。默认 Svelte 并保留 registry 安装名；目标模板的简化和适用状态见验收记录。 |
+| 8 | 第 14 批独立消费与兼容性回归 | [验收记录](porting-records/registry-blocks-svelte-to-react-vue.md#环境与证据)记录独立 tarball、SSR/hydration、三浏览器、RTL 和模拟触摸及输入法；真实设备、系统输入法、实际读屏及未验证的变体状态不标记通过。 |
+
+2026-11-27 · 第 0 批基线：`pnpm build` 完成文档站和 Playground 生产构建，旧 Ruler Slider 虚拟 CSS 错误未复现。第 1 批在 React/Vue 独立 tarball 消费项目和 Svelte 对照中通过 58 项 Chromium 检查（20 项新增和 38 项既有回归）；文档生产预览通过 8 项检查，包含 26 个新增原生用法入口。本地可用不等于全部变体与设备已经验收。
+
+2026-11-27 · 第 2 批：React/Vue 独立 tarball 消费项目和 Svelte 对照通过 78 项 Chromium 检查（20 项新增、58 项既有回归）；适用状态和未验项见[转换记录](porting-records/content-layout-svelte-to-react-vue.md)。
+
+每组分别标记「无实现／部分实现／已通过约定验收」。组件只有实际公共导出和可运行的安装示例才能标记「本地可用」；完整交付还需按[转换规范](COMPONENT_PORTING.md)验行为、浅深主题、键盘和适用状态，并在独立消费者安装实际分发产物。三边对每项基线分别有记录后才宣布完整。未获授权不改变 npm 发布或部署状态。
+
 前三项优先参考此前讨论的 Vue 版对应组件行为，最终使用适合 Svelte 的原生实现。Direction／RTL 作为跨组件能力评估，不因缺少同名目录就认定完全不支持 RTL，也不机械复制其他框架的 Provider。
 
 ### VCOMP-001 · Number Field

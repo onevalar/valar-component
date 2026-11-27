@@ -15,12 +15,13 @@
 	import DocsToc from "$lib/components/docs-toc.svelte";
 	import FrameworkUsage from "$lib/components/framework-usage.svelte";
 	import Metadata from "$lib/components/metadata.svelte";
+	import NativeFrameworkPreview from "$lib/components/native-framework-preview.svelte";
 	import {
 		basicComponentAlignment,
 		isAdvancedModuleSlug,
 	} from "$lib/basic-component-visibility.js";
-	import { categoryOf } from "$lib/component-categories.js";
 	import { buildComponentAiSpec } from "$lib/component-ai-spec.js";
+	import { categoryOf } from "$lib/component-categories.js";
 	import { copyText } from "$lib/hooks/use-clipboard.svelte.js";
 	import { localeFromPathname, localizeHref } from "$lib/i18n/config.js";
 	import { t } from "$lib/i18n/index.js";
@@ -64,7 +65,12 @@
 		path;
 		tab = hasFramework ? "usage" : showStates ? "states" : "guide";
 	});
-	const showToc = $derived(!wide && !isComponent);
+	const isFormsGuide = $derived(path === localizeHref("/docs/forms", locale));
+	const showToc = $derived(
+		!wide &&
+			!isComponent &&
+			!(isFormsGuide && (requestedFramework === "react" || requestedFramework === "vue"))
+	);
 	const isChangelog = $derived(page.url.pathname.startsWith("/docs/changelog"));
 
 	async function copyAiSpec() {
@@ -89,6 +95,15 @@
 		}
 	}
 </script>
+
+{#snippet aiPreview(framework: "react" | "vue")}
+	<NativeFrameworkPreview
+		{framework}
+		example={`ai-${slug}`}
+		title={doc.title}
+		tall={slug === "chat"}
+	/>
+{/snippet}
 
 <Metadata
 	title={doc.title}
@@ -197,13 +212,20 @@
 			<Tabs.Content value="guide">
 				{#if tab === "guide"}
 					{#key path}
-						<ComponentGuide {slug} sourceDir={isBasicPath ? "components" : "ai-elements"} {locale} />
+						<ComponentGuide
+							{slug}
+							sourceDir={isBasicPath ? "components" : "ai-elements"}
+							{locale}
+						/>
 					{/key}
 				{/if}
 			</Tabs.Content>
 			<Tabs.Content value="usage">
 				{#if tab === "usage"}
-					<FrameworkUsage {slug}>
+					<FrameworkUsage
+						slug={isAdvancedPath ? `ai-${slug}` : slug}
+						nativePreview={isAdvancedPath ? aiPreview : undefined}
+					>
 						{#snippet svelteAction()}
 							{#if source}
 								{#key page.url.pathname}
@@ -324,7 +346,11 @@ the docs container. The issue this resolves is prominent on slow connections (3G
 				{/if}
 
 				<div class="w-full flex-1 pb-16 *:data-[slot=alert]:first:mt-0 sm:pb-0">
-					<Markdown viewerData={data.viewerData} />
+					{#if isFormsGuide}
+						<FrameworkUsage {slug}><Markdown viewerData={data.viewerData} /></FrameworkUsage>
+					{:else}
+						<Markdown viewerData={data.viewerData} />
+					{/if}
 				</div>
 				{#if !isChangelog && !wide}
 					<div class="hidden h-16 w-full items-center gap-2 px-4 sm:flex sm:px-0" data-llm-ignore>

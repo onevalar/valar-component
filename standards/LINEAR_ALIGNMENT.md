@@ -151,6 +151,30 @@
 
 共享包和 Playground 类型检查无错误或警告，Playground 生产构建通过。Chromium 的 3 项消费端测试验证了设置控件尺寸、My issues 创建流程、Issue Composer 展开、窄屏、深色和焦点恢复。临时 SvelteKit 项目通过本地 CLI 一次安装三个区块，生成各自的路由，原首页保留。文档 251 项测试和 CLI 转换器 68 项测试通过。
 
+2026-11-26 · 跨框架交付：Popover 和 Separator 在同一组件文档站提供 React / Vue「使用组件」入口，包内分别从 `@valar/{react,vue}-ui/popover`、`@valar/{react,vue}-ui/separator` 导入。Svelte registry `popover`、`separator` 与共享包保持不变。普通表单、浅深显示选项、窄短屏、嵌套 Select、归焦与两种方向的分隔线在工作区及独立 tarball 消费项目各通过 8 项浏览器检查。详细状态和未验范围见 [Popover](porting-records/popover-svelte-to-react-vue.md) 与 [Separator](porting-records/separator-svelte-to-react-vue.md)。
+
+2026-11-26 · [首批 Button／Calendar 复核](porting-records/button-calendar-parity.md)：保留 Svelte registry `button`、`calendar`、`range-calendar` 和同名共享包入口；React/Vue 同名子路径及文档「使用组件」示例沿用既有 API。恢复独立文字按钮默认胶囊、28 px 日期格、年月 Select 及范围月历分行。下一批从 Label / Field 开始。
+
+2026-11-27 · [高复用原语第 1 批](porting-records/form-primitives-svelte-to-react-vue.md)：13 组保留对应的 Svelte registry 和 `@valar/svelte-ui` 入口，补 `@valar/{react,vue}-ui/<slug>` 与同一站点的两份原生代码。独立 tarball 消费端验收设置行、错误提示、开关、Tab、快捷键提示和相邻操作，覆盖浅色宽屏、深色窄屏、焦点和表单。Vue 设置行修正 20 px 间距偏差；未覆盖的设备和状态仍标待验，不提升基础目录对齐等级。下一批为内容、反馈、布局组件及 Typography 指南。
+
+2026-11-27 · [内容、反馈与布局第 2 批](porting-records/content-layout-svelte-to-react-vue.md)：18 组保留对应的 Svelte registry 和共享包入口，补同一站点的原生 React/Vue 用法及 `@valar/{react,vue}-ui/<slug>`。Typography 仅增加指南。独立 tarball 消费端验证了 320 px 深色问题列表的 44 px 行高、标题截断和日期留白，以及 Properties 28 px 触发器、开合后的相邻控件、滚动与分栏；其余状态按转换记录标注。下一批为菜单、弹层与导航，先做独立原语再组合 Sidebar。
+
+2026-11-27 · [菜单、弹层与导航第 3 批](porting-records/navigation-overlays-svelte-to-react-vue.md)：保留对应 Svelte registry 和共享包入口，补 10 组 `@valar/{react,vue}-ui/<slug>` 与同一站点「使用组件」代码。独立 tarball 回归通过 94 项，生产文档用法通过 13 项。验证了桌面 28 px 导航行与 6 px 图文间距、320 px 下 288 px 移动侧栏、嵌套菜单归焦、四边 Sheet、拖动关闭与深色通知。其余设备与变体按转换记录标待验，不改变基础目录等级。下一批为复杂输入和数据，先 Command，后 Combobox。
+
+2026-11-27 · [复杂输入与数据第 4 批](porting-records/complex-inputs-svelte-to-react-vue.md)：新增 10 组 React/Vue 共用 Valar 主题的 SDK 子路径和文档用法；Forms 与 Data Table 仅为组合指南，原 Svelte registry 与共享包保留。独立 tarball 和三框架 Chromium 回归通过 118 项，生产文档 15 项与触屏导航 1 项通过。浅深预览验证了日期窄屏单行粒度、颜色弹层名称与归焦，以及设置表 32／44 px 行高、标签和复选相邻状态。完整设备、读屏及变体仍按记录待验，不提升基础目录对齐等级。下一批为可视化与仪表。
+
+2026-11-27 · [可视化与仪表第 5 批](porting-records/visualization-meters-svelte-to-react-vue.md)：新增 7 组原生 SDK 子路径、预览与同站用法，复用 Valar 图表语义色；Svelte registry 与共享包入口不变。两包独立构建，三框架 Chromium 132 项和生产文档 17 项通过。浅宽和深窄预览检查图例、缺失和超量读数、纹理边界与居中标尺；完整变体和设备按转换记录继续跟踪。下一批为对话与业务组件，不提升原 Svelte 基础目录的对齐等级。
+
+2026-11-27 · [对话与业务第 6 批](porting-records/conversation-business-svelte-to-react-vue.md)：新增 10 组原生 SDK 子路径和同站用法，Svelte registry 与共享包不变。独立 tarball 构建和两端类型检查通过；14 项新增 Chromium 用例、18 项生产文档用例通过，全量主跑与既有图表悬浮复跑分别记录。浅宽与深窄预览验证附件取消、消息相邻、Trace 展开、表单校验和 Issue 详情编辑。下一批为六个共享场景、AI 组合及区块清单，不提升原 Svelte 基础目录的对齐等级。
+
+2026-11-27 · [业务场景与 AI 组合第 7 批](porting-records/compositions-svelte-to-react-vue.md)：在同一文档站提供六个业务场景和 21 个中英文 AI 组合的原生预览与复制入口，原 Svelte registry 和共享包仍可用。浅宽和深窄检查了相邻工具按钮、列表行高、Agent 输入区与 Trace，以及 Projects 拖拽和键盘移动。78 个其他 Svelte 区块有中英文安装映射；非等价项保持部分覆盖，不提升基础目录等级。下一批为独立消费和生产文档回归。
+
+2026-11-27 · [独立消费与生产回归第 8 批](porting-records/compositions-svelte-to-react-vue.md#第-8-批独立安装与生产回归)：React/Vue 本地 tarball，以及 Svelte CLI registry 和共享包 tarball，均通过独立安装、生产构建及代表场景。三框架 Chromium 146/146，生产文档专项 23/23。整站并非全绿；9 项仍未通过的断言在未改动基线上同样复现。后续单列整站修复，原生区块模板从登录、注册和 OTP 开始，实机与辅助技术等另行验收。
+
+2026-11-27 · [整站回归修复第 9 批](porting-records/compositions-svelte-to-react-vue.md#第-9-批整站回归修复)：生产定向回归 12/12，覆盖设置卡表面、Chart 调节器、问题详情快捷键、窄屏菜单、Tabs 色值及独立 CLI 安装。入口和整站回归结果以验收记录为准，不提升基础目录对齐等级。下一批复用现有表单、Card、Input OTP 和主题，补登录、注册及验证码的原生模板。
+
+2026-11-27 · [区块模板与最终兼容性第 10–14 批](porting-records/registry-blocks-svelte-to-react-vue.md)：同站提供 78 个区块的两端原生预览及源码，Svelte 保留 CLI、`/view/` 和共享包入口。代表场景复核了宽窄布局、浅深主题、认证错误归焦、周数列和相邻星期的文字间距、侧栏菜单与 288 px 移动抽屉；仪表板验证图表工具、表格与抽屉，组件展示验证输入布局。区块有意保留示例数据和宿主接入边界，不提高基础组件 Linear 等级。后续实机验收为触摸、系统中文输入法和实际读屏，详细差异与已执行回归见验收记录。
+
 ## 本地预览与进度快照
 
 2026-11-12 · 本轮完成到 Issue 订阅、回应与线程解决。文档站的「设计 token」页（`/zh/themes`）汇集各场景入口。基础组件页用于查看单项用法和默认状态，工作区的组合样式和交互在各自的场景页中验收。

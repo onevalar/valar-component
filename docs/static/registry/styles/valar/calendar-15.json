@@ -3,11 +3,14 @@
 	"name": "calendar-15",
 	"type": "registry:block",
 	"devDependencies": [
-		"@lucide/svelte@^1.27.0"
+		"@internationalized/date@^3.12.0"
+	],
+	"registryDependencies": [
+		"calendar"
 	],
 	"files": [
 		{
-			"content": "<script lang=\"ts\">\n\timport Construction from \"@lucide/svelte/icons/construction\";\n</script>\n\n<div class=\"flex h-full flex-col items-center justify-center gap-4\">\n\t<Construction class=\"size-10\" />\n\t<span>This block is under construction. Check back soon!</span>\n</div>\n",
+			"content": "<script lang=\"ts\">\n\timport { CalendarDate } from \"@internationalized/date\";\n\timport Calendar from \"$UI$/calendar/calendar.svelte\";\n\n\tlet value = $state<CalendarDate | undefined>(new CalendarDate(2025, 6, 12));\n</script>\n\n<Calendar type=\"single\" bind:value showWeekNumbers class=\"rounded-lg border shadow-sm\" />\n",
 			"type": "registry:component",
 			"target": "calendar-15.svelte"
 		}

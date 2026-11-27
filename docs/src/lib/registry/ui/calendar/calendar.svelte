@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { isEqualMonth, type DateValue } from "@internationalized/date";
+	import {
+		getDayOfWeek,
+		GregorianCalendar,
+		isEqualMonth,
+		toCalendar,
+		type DateValue,
+	} from "@internationalized/date";
 	import { Calendar as CalendarPrimitive } from "bits-ui";
 	import { cn, type WithoutChildrenOrChild } from "$lib/utils.js";
 	import CalendarCaption from "./calendar-caption.svelte";
@@ -35,6 +41,7 @@
 		monthFormat: monthFormatProp,
 		yearFormat = "numeric",
 		day,
+		showWeekNumbers = false,
 		disableDaysOutsideMonth = false,
 		...restProps
 	}: WithoutChildrenOrChild<CalendarPrimitive.RootProps> & {
@@ -46,6 +53,8 @@
 		monthFormat?: CalendarPrimitive.MonthSelectProps["monthFormat"];
 		yearFormat?: CalendarPrimitive.YearSelectProps["yearFormat"];
 		day?: Snippet<[{ day: DateValue; outsideMonth: boolean }]>;
+		/** Display ISO 8601 week numbers. The week containing January 4 is week 1. */
+		showWeekNumbers?: boolean;
 	} = $props();
 
 	const appearanceClass = $derived(appearance === "project-date" && "cn-calendar-project-date");
@@ -55,6 +64,14 @@
 		if (captionLayout.startsWith("dropdown")) return "short";
 		return "long";
 	});
+	const weekLabel = $derived(locale.startsWith("zh") ? "周" : "Week");
+	const gregorian = new GregorianCalendar();
+
+	function isoWeek(date: DateValue) {
+		const thursday = toCalendar(date, gregorian).add({ days: 3 - getDayOfWeek(date, "en-GB") });
+		const newYear = thursday.set({ month: 1, day: 1 });
+		return Math.floor((gregorian.toJulianDay(thursday) - gregorian.toJulianDay(newYear)) / 7) + 1;
+	}
 </script>
 
 <!--
@@ -115,6 +132,11 @@ get along, so we shut typescript up by casting `value` to `never`.
 					<CalendarGrid>
 						<CalendarGridHead>
 							<CalendarGridRow class="select-none">
+								{#if showWeekNumbers}
+									<CalendarHeadCell aria-label={weekLabel} title={weekLabel}>
+										{locale.startsWith("zh") ? "周" : "Wk"}
+									</CalendarHeadCell>
+								{/if}
 								{#each weekdays as weekday, i (i)}
 									<CalendarHeadCell class={hasCaptionSelect ? "flex-1" : undefined}>
 										{weekday.slice(0, 2)}
@@ -125,6 +147,16 @@ get along, so we shut typescript up by casting `value` to `never`.
 						<CalendarGridBody>
 							{#each month.weeks as weekDates (weekDates)}
 								<CalendarGridRow class="mt-2 w-full">
+									{#if showWeekNumbers && weekDates[0]}
+										{@const number = isoWeek(weekDates[0])}
+										<th
+											scope="row"
+											aria-label={locale.startsWith("zh") ? `第 ${number} 周` : `Week ${number}`}
+											class="grid size-(--cell-size) shrink-0 place-items-center text-xs font-normal text-muted-foreground tabular-nums select-none"
+										>
+											{number}
+										</th>
+									{/if}
 									{#each weekDates as date (date)}
 										<CalendarCell
 											{date}

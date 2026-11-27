@@ -60,52 +60,53 @@ const yearRange = computed(
 );
 
 const forwarded = useForwardPropsEmits(delegatedProps, emits);
+const hasCaptionSelect = computed(() => props.captionLayout && props.captionLayout !== "label");
 </script>
 
 <template>
 	<RangeCalendarRoot
 		v-slot="{ grid, weekDays, date }"
 		data-slot="range-calendar"
-		:class="cn('cn-calendar cn-range-calendar-geometry p-3', props.class)"
+		:class="cn('cn-calendar cn-range-calendar-geometry relative p-3', props.class)"
 		v-bind="forwarded"
 		v-model:placeholder="placeholder"
 	>
-		<RangeCalendarHeader>
-			<slot name="calendar-heading" :date="date">
-				<div
-					v-if="captionLayout && captionLayout !== 'label'"
-					class="flex items-center justify-center gap-1.5"
-				>
-					<CalendarCaption
-						v-if="captionLayout !== 'dropdown-years'"
-						:date="date"
-						kind="month"
-						:locale="locale"
-						:disabled="disabled"
-						@select="(month) => (placeholder = placeholder.set({ month }))"
-					/>
-					<span v-else>{{ date.month }}</span>
-					<CalendarCaption
-						v-if="captionLayout !== 'dropdown-months'"
-						:date="date"
-						kind="year"
-						:locale="locale"
-						:year-range="yearRange"
-						:disabled="disabled"
-						@select="(year) => (placeholder = placeholder.set({ year }))"
-					/>
-					<span v-else>{{ date.year }}</span>
-				</div>
-				<RangeCalendarHeading v-else />
-			</slot>
-
-			<nav
-				class="pointer-events-none absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1"
+		<nav
+			class="pointer-events-none absolute inset-x-3 top-3 flex items-center justify-between gap-1"
+		>
+			<RangeCalendarPrevButton />
+			<RangeCalendarNextButton />
+		</nav>
+		<div :class="hasCaptionSelect && '@container/range w-[calc(var(--cell-size)*7)] max-w-full'">
+			<RangeCalendarHeader
+				:class="hasCaptionSelect && '@max-[256px]/range:mt-[calc(var(--cell-size)+0.5rem)]'"
 			>
-				<RangeCalendarPrevButton />
-				<RangeCalendarNextButton />
-			</nav>
-		</RangeCalendarHeader>
+				<slot name="calendar-heading" :date="date">
+					<div v-if="hasCaptionSelect" class="flex items-center justify-center gap-2">
+						<CalendarCaption
+							v-if="captionLayout !== 'dropdown-years'"
+							:date="date"
+							kind="month"
+							:locale="locale"
+							:disabled="disabled"
+							@select="(month) => (placeholder = placeholder.set({ month }))"
+						/>
+						<span v-else>{{ date.month }}</span>
+						<CalendarCaption
+							v-if="captionLayout !== 'dropdown-months'"
+							:date="date"
+							kind="year"
+							:locale="locale"
+							:year-range="yearRange"
+							:disabled="disabled"
+							@select="(year) => (placeholder = placeholder.set({ year }))"
+						/>
+						<span v-else>{{ date.year }}</span>
+					</div>
+					<RangeCalendarHeading v-else />
+				</slot>
+			</RangeCalendarHeader>
+		</div>
 
 		<div class="mt-4 flex flex-col gap-y-4 sm:flex-row sm:gap-x-4 sm:gap-y-0">
 			<RangeCalendarGrid v-for="month in grid" :key="month.value.toString()">

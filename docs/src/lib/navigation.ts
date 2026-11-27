@@ -184,7 +184,7 @@ function generateGetStartedNav(locale: Locale): SidebarNavItem[] {
 	];
 }
 
-const INSTALL_ORDER = ["sveltekit", "vite", "astro", "manual"];
+const INSTALL_ORDER = ["sveltekit", "vite", "astro", "manual", "registry-blocks"];
 
 function generateInstallationNav(locale: Locale): SidebarNavItem[] {
 	const docs = docsFor(installation, locale);

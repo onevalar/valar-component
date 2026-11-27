@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Construction from "@lucide/svelte/icons/construction";
+	import { CalendarDate } from "@internationalized/date";
+	import Calendar from "$lib/registry/ui/calendar/calendar.svelte";
+
+	let value = $state<CalendarDate | undefined>(new CalendarDate(2025, 6, 12));
 </script>
 
-<div class="flex h-full flex-col items-center justify-center gap-4">
-	<Construction class="size-10" />
-	<span>This block is under construction. Check back soon!</span>
-</div>
+<Calendar type="single" bind:value showWeekNumbers class="rounded-lg border shadow-sm" />

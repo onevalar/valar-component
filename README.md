@@ -1,6 +1,6 @@
 # Valar / Svelte
 
-Valar 是个人组件库系列品牌，Svelte 是当前完整的框架实现。React、Vue 已有本地第一批九组原生组件，尚非完整库，也未发布。
+Valar 是个人组件库系列品牌，文档站默认使用 Svelte。React、Vue 各提供 79 项本地原生公共组件，均未发布到 npm。
 
 本项目在完整技术基线上独立维护组件、文档、CLI 和 registry。Valar Svelte 已建立独立的品牌和分发配置，并按 Linear 参考逐批调整组件与组合。
 
@@ -16,12 +16,13 @@ npx --yes pnpm@12.14.0 dev
 当前本地预览为 http://127.0.0.1:5186 。生成内容就绪后可单独启动：
 
 ```sh
+pnpm --filter docs build:framework-previews
 pnpm --filter docs exec vite dev --host 127.0.0.1 --port 5186 --strictPort
 ```
 
 ## 源码目录
 
-- `docs/src/lib/registry/ui/`：79 个组件目录（含 Issue Composer 与 Issue Detail）。
+- `docs/src/lib/registry/ui/`：79 项公开组件（含 Issue Composer 与 Issue Detail）及 `form` 表单辅助，共 80 个目录。
 - `docs/src/lib/registry/examples/`、`blocks/`：示例与组合区块。
 - `docs/src/lib/registry/styles/`：唯一的组件风格 `valar`（2026-11-07 起，原上游 Nova；其余七套已移除）。
 - `docs/content/`：Valar 文档与组件用法。
@@ -50,9 +51,11 @@ pnpm dev:playground
 
 **继续使用原来的 5186 文档站，不需要另开网站。** 组件页默认仍展示 Svelte 的「状态与调节」；打开「使用组件」，选择 Svelte、React 或 Vue，查看对应的安装、主题和可复制代码。链接里的 `?framework=react` / `vue` / `svelte` 可保留选择，刷新后仍有效。Svelte 使用原有文档。
 
-React/Vue 第一批为 Button、Input、Checkbox、Select、Dialog、Calendar、RangeCalendar、Slider、Chart，共九组。其他组件明确显示「尚未提供」，不会把 Svelte 示例当作 React/Vue 用法。React/Vue 目前仍是 private、未发布包，页面提供本地 tarball 安装步骤，不表示可从 npm 直接下载。
+React/Vue 目前各有 79/79 组原生组件通过代表场景和独立安装验证。[第 6 批](standards/porting-records/conversation-business-svelte-to-react-vue.md)补齐 10 组对话和业务组件。Forms、Data Table、Typography、AI 组合及区块单独计数；79/79 不代表全部变体、设备和组合都已验收。两包均为 private、未发布，文档提供本地 tarball 安装步骤。
 
-原生接口、真实验收结果、安装和未验证边界见[第一批集成记录](standards/porting-records/first-batch-frameworks.md)。三框架对比应用仅保留为内部验收工具，当前额外的5212/5213/5214服务已关闭，不是使用入口；需要维护者复现时才运行 `build:frameworks` / `preview:frameworks` / `test:frameworks`。不代表全库77组或SSR、触屏、屏幕阅读器已对齐。
+[第 7 批](standards/porting-records/compositions-svelte-to-react-vue.md)让六个业务场景及 21 个中英文 AI 组合在原站切换 Svelte、React 或 Vue。[78 个注册表区块](docs/content/zh/installation/registry-blocks.md)保留 Svelte 安装名，并提供 React 和 Vue 原生预览及可复制源码；模板差异与实机待验项见[区块验收记录](standards/porting-records/registry-blocks-svelte-to-react-vue.md)。
+
+原生接口、安装和验证边界见[组件补充清单](standards/COMPONENT_BACKLOG.md)的 VCOMP-010 及所链接的转换记录。三框架对比应用仅用于内部验收，不是使用入口；维护者可按需运行 `build:frameworks` / `preview:frameworks` / `test:frameworks`。
 
 仅检查现有文档站的框架选择入口，不启动任何额外服务：
 
@@ -101,9 +104,9 @@ pnpm build
 pnpm --filter docs test:e2e
 ```
 
-浏览器回归会启动临时生产预览服务器，检查 Slider 的可访问名称、表单重置和 Enter 提交、Stepper 异步失败／取消、搜索按需加载与失败重试，以及 320／390／768px 文档布局与触摸导航。最后一项会打包实际 CLI，在工作区之外创建 SvelteKit 消费者，执行 init／add、严格第三方类型检查、生产构建和浏览器表单检查，结束后清理临时项目。不会发布包或部署。消费者显式带入类型补丁与 pnpm 兼容配置，步骤见站内安装说明的“严格检查第三方类型”。
+浏览器回归会启动临时生产预览服务器，检查 Slider 的可访问名称、表单重置和 Enter 提交、Stepper 异步失败／取消、搜索按需加载与失败重试，以及 320／390／768px 文档布局与触摸导航。不会发布包或部署。消费者显式带入类型补丁与 pnpm 兼容配置，步骤见站内安装说明。
 
-复用已运行的文档站时可设置 `E2E_BASE_URL`；单独执行消费者检查时使用 `pnpm --filter docs test:consumer`，通过 `REGISTRY_URL` 指定正在运行的 registry。默认地址仍是本地开发 registry。
+复用已运行的文档站时可设置 `E2E_BASE_URL`。`pnpm --filter docs test:consumer` 可独立验证私有 CLI／primitives tarball、registry 安装、严格类型检查和实际交互；运行前先构建包并启动本地 registry，或通过 `REGISTRY_URL` 指定 registry 地址。三框架独立安装的验证范围见[验收记录](standards/porting-records/compositions-svelte-to-react-vue.md)。
 
 自有 GitHub CI 在 main push 和 pull request 时执行冻结安装、单元测试、工作区类型检查、整站构建和上述浏览器／消费者回归；只读仓库权限，没有发布或部署步骤。
 

@@ -23,6 +23,10 @@
 </script>
 
 <script lang="ts">
+	import { page } from "$app/state";
+	import { localeFromPathname, localizeHref } from "$lib/i18n/config.js";
+	import { blockTemplate } from "../../../../apps/block-template.js";
+
 	let {
 		item,
 		tree,
@@ -50,6 +54,7 @@
 	let resizablePaneRef = $state<Pane>(null!);
 	let iframeKey = $state<number>(0);
 	let activeFileCodeToCopy = $state<string>("");
+	const locale = $derived(localeFromPathname(page.url.pathname));
 
 	BlockViewerContext.set({
 		get item() {
@@ -97,6 +102,14 @@
 	class="group/block-view-wrapper flex min-w-0 scroll-mt-24 flex-col-reverse items-stretch gap-4 overflow-hidden md:flex-col"
 	style="--height: {item.meta?.iframeHeight ?? '930px'}"
 >
+	{#if blockTemplate(item.name)}
+		<a
+			class="self-end rounded-sm text-sm text-muted-foreground underline underline-offset-4 focus-visible:text-foreground"
+			href={localizeHref(`/block-templates/${item.name}`, locale)}
+		>
+			{locale === "zh" ? "Svelte / React / Vue 区块源码" : "Svelte / React / Vue block source"}
+		</a>
+	{/if}
 	<BlockViewerToolbar />
 	<BlockViewerView />
 	<BlockViewerCode />

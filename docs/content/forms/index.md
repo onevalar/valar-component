@@ -1,6 +1,6 @@
 ---
-title: Formsnap
-description: Building forms with Formsnap, Superforms, & Zod.
+title: Forms
+description: Compose accessible forms, with field validation and feedback.
 links:
   doc: https://formsnap.dev
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/form

@@ -1,5 +1,15 @@
+import popoverExample from "../../../../apps/vue-preview/src/PopoverExample.vue?raw";
+import separatorExample from "../../../../apps/vue-preview/src/SeparatorExample.vue?raw";
+
+const nativeExamples = import.meta.glob<string>("../../../../apps/vue-preview/src/examples/*.vue", {
+	query: "?raw",
+	import: "default",
+});
+
 // Standalone examples using the same public compositions as apps/vue-preview.
-export const vueExamples: Record<string, string> = {
+const examples: Partial<Record<string, string>> = {
+	popover: popoverExample,
+	separator: separatorExample,
 	button: `<script setup lang="ts">
 import { ref } from "vue";
 import { Button } from "@valar/vue-ui/button";
@@ -197,3 +207,9 @@ const tooltipTemplate = componentToString(config, ChartTooltipContent, { hideLab
   </ChartContainer>
 </template>`,
 };
+
+export function vueExample(slug: string) {
+	return (
+		examples[slug] ?? nativeExamples[`../../../../apps/vue-preview/src/examples/${slug}.vue`]?.()
+	);
+}

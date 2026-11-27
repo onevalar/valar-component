@@ -98,8 +98,10 @@ test("distribution has closed relative dependencies, public component paths and 
 		);
 		for (const match of source.matchAll(/(?:from\s+|import\s*)["'](\.[^"']+)["']/g)) {
 			const target = path.resolve(path.dirname(filename), match[1]);
+			// Vite and TypeScript resolve explicit .js specifiers to shipped .ts sources.
+			const sourceTarget = target.endsWith(".js") ? target.slice(0, -3) : target;
 			assert.ok(
-				[target, `${target}.ts`, `${target}/index.ts`].some((candidate) =>
+				[target, `${sourceTarget}.ts`, `${target}/index.ts`].some((candidate) =>
 					fs.existsSync(candidate)
 				),
 				`${filename} -> ${target}`

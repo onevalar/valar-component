@@ -1,7 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createThemeCss, getValarStyleMap, styleSource } from "../../../scripts/valar-style.ts";
+import {
+	createNativeCodeHighlighter,
+	createNativeThemeCss,
+	getValarStyleMap,
+	styleSource,
+} from "../../../scripts/valar-style.ts";
 
 const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const root = path.resolve(pkg, "../..");
@@ -27,13 +32,17 @@ for (const name of fs.readdirSync(source).sort()) {
 	const notice = upstream.has(component)
 		? `// Adapted from shadcn-ui/ui apps/v4/registry/bases/radix/ui/${name}\n// SHA 42f3bb63b46a69e52a24bd005cdc9ec15ba7a7b9; Copyright (c) 2023 shadcn; MIT (see LICENSE).\n`
 		: "// Valar React adaptation. See NOTICE.md for source provenance.\n";
-	const content = styleSource(fs.readFileSync(path.join(source, name), "utf8"), map);
+	const content = styleSource(fs.readFileSync(path.join(source, name), "utf8"), map).replaceAll(
+		"--bits-popover-",
+		"--radix-popover-"
+	);
 	if (content.includes("@/") || /\bfrom\s+["'](?:svelte|bits-ui|\$lib)/.test(content)) {
 		throw new Error(`Unresolved host/runtime dependency in ${name}`);
 	}
 	generated.set(name, notice + content);
 }
-generated.set("theme.css", createThemeCss(root, ["./**/*.{ts,tsx}"]));
+generated.set("code-highlighter.ts", createNativeCodeHighlighter(root));
+generated.set("theme.css", createNativeThemeCss(root, ["./**/*.{ts,tsx}"]));
 
 fs.mkdirSync(output, { recursive: true });
 for (const [name, content] of generated) {

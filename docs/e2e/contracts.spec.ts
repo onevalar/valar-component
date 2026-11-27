@@ -245,7 +245,7 @@ test.describe("phone layout and touch navigation", () => {
 		await page.setViewportSize({ width: 390, height: 844 });
 		await page.goto("/docs/components/data-table", { waitUntil: "networkidle" });
 		await page.getByRole("button", { name: "Toggle menu Menu", exact: true }).tap();
-		const link = page.getByRole("link", { name: "Formsnap", exact: true });
+		const link = page.getByRole("link", { name: "Forms", exact: true });
 		const href = await link.getAttribute("href");
 		await link.scrollIntoViewIfNeeded();
 		await link.tap();

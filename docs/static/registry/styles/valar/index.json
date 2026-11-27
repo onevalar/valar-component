@@ -3903,7 +3903,9 @@
 	{
 		"name": "calendar-15",
 		"type": "registry:block",
-		"registryDependencies": [],
+		"registryDependencies": [
+			"calendar"
+		],
 		"relativeUrl": "calendar-15.json"
 	},
 	{

@@ -65,10 +65,10 @@ test("Svelte remains the default; framework selection, focus, copy and refresh a
 	expect(errors).toEqual([]);
 });
 
-test("all nine native usage pages expose the correct package, theme and extra dependencies", async ({
+test("native usage pages expose the correct package, theme and extra dependencies", async ({
 	page,
 }) => {
-	test.setTimeout(90_000);
+	test.setTimeout(120_000);
 	for (const framework of ["react", "vue"]) {
 		for (const slug of [
 			"button",
@@ -76,16 +76,18 @@ test("all nine native usage pages expose the correct package, theme and extra de
 			"checkbox",
 			"select",
 			"dialog",
+			"popover",
 			"calendar",
 			"range-calendar",
 			"slider",
 			"chart",
+			"separator",
 		]) {
 			await page.goto(`/zh/docs/components/${slug}?framework=${framework}`, {
-				waitUntil: "networkidle",
+				waitUntil: "domcontentloaded",
 			});
 			const usage = page.locator(`[data-framework-usage=${framework}]`);
-			await expect(usage).toContainText("本地可用 · 第一批");
+			await expect(usage, `${framework}/${slug}`).toContainText("本地可用", { timeout: 15_000 });
 			await expect(usage).toContainText(`valar-${framework}-ui-0.1.0.tgz`);
 			await expect(usage).toContainText(`@import "@valar/${framework}-ui/theme.css"`);
 			await expect(page.locator("[data-usage-example]")).toContainText(
@@ -106,23 +108,194 @@ test("all nine native usage pages expose the correct package, theme and extra de
 	}
 });
 
-test("unavailable implementations do not pretend to offer installation or native code", async ({
+for (const framework of ["react", "vue"]) {
+	test(`${framework}: high-reuse primitives have native, copyable examples`, async ({ page }) => {
+		test.setTimeout(180_000);
+		for (const slug of [
+			"label",
+			"field",
+			"textarea",
+			"switch",
+			"tabs",
+			"kbd",
+			"tooltip",
+			"radio-group",
+			"native-select",
+			"input-group",
+			"toggle",
+			"toggle-group",
+			"button-group",
+		]) {
+			await page.goto(`/zh/docs/components/${slug}?framework=${framework}`, {
+				waitUntil: "domcontentloaded",
+			});
+			const usage = page.locator(`[data-framework-usage=${framework}]`);
+			await expect(usage, `${framework}/${slug}`).toContainText("本地可用", { timeout: 15_000 });
+			const example = usage.locator("[data-usage-example]");
+			await expect(example).toContainText(`@valar/${framework}-ui/${slug}`);
+			await expect(example.getByRole("button", { name: "复制代码", exact: true })).toBeVisible();
+			await expect(example).not.toContainText("$lib/components/ui");
+		}
+	});
+
+	test(`${framework}: content, feedback and layout have native, copyable examples`, async ({
+		page,
+	}) => {
+		test.setTimeout(180_000);
+		for (const slug of [
+			"accordion",
+			"alert",
+			"aspect-ratio",
+			"avatar",
+			"badge",
+			"breadcrumb",
+			"card",
+			"carousel",
+			"collapsible",
+			"empty",
+			"item",
+			"page-layout",
+			"pagination",
+			"progress",
+			"resizable",
+			"scroll-area",
+			"skeleton",
+			"spinner",
+		]) {
+			await page.goto(`/zh/docs/components/${slug}?framework=${framework}`, {
+				waitUntil: "domcontentloaded",
+			});
+			const usage = page.locator(`[data-framework-usage=${framework}]`);
+			await expect(usage, `${framework}/${slug}`).toContainText("本地可用", { timeout: 15_000 });
+			const example = usage.locator("[data-usage-example]");
+			await expect(example).toContainText(`@valar/${framework}-ui/${slug}`);
+			await expect(example.getByRole("button", { name: "复制代码", exact: true })).toBeVisible();
+		}
+	});
+
+	test(`${framework}: menus, overlays and navigation have native, copyable examples`, async ({
+		page,
+	}) => {
+		test.setTimeout(180_000);
+		for (const slug of [
+			"alert-dialog",
+			"context-menu",
+			"drawer",
+			"dropdown-menu",
+			"hover-card",
+			"menubar",
+			"navigation-menu",
+			"sheet",
+			"sidebar",
+			"sonner",
+		]) {
+			await page.goto(`/zh/docs/components/${slug}?framework=${framework}`, {
+				waitUntil: "domcontentloaded",
+			});
+			const usage = page.locator(`[data-framework-usage=${framework}]`);
+			await expect(usage, `${framework}/${slug}`).toContainText("本地可用", { timeout: 15_000 });
+			const example = usage.locator("[data-usage-example]");
+			await expect(example).toContainText(`@valar/${framework}-ui/${slug}`);
+			await expect(example.getByRole("button", { name: "复制代码", exact: true })).toBeVisible();
+			if (slug === "sidebar") await expect(example).toContainText("Issues refreshed");
+		}
+	});
+
+	test(`${framework}: complex inputs and composition guides publish the correct public usage`, async ({
+		page,
+	}) => {
+		test.setTimeout(120_000);
+		const usage = page.locator(`[data-framework-usage=${framework}]`);
+		const example = usage.locator("[data-usage-example]");
+		for (const slug of [
+			"command",
+			"combobox",
+			"table",
+			"date-picker",
+			"number-field",
+			"slider-field",
+			"input-otp",
+			"tags-input",
+			"stepper",
+			"color-picker",
+		]) {
+			await page.goto(`/zh/docs/components/${slug}?framework=${framework}`, {
+				waitUntil: "domcontentloaded",
+			});
+			await expect(usage, `${framework}/${slug}`).toContainText("本地可用", { timeout: 15_000 });
+			await expect(example).toContainText(`@valar/${framework}-ui/${slug}`);
+			await expect(example.getByRole("button", { name: "复制代码", exact: true })).toBeVisible();
+		}
+		await page.goto(`/zh/docs/components/data-table?framework=${framework}`, {
+			waitUntil: "domcontentloaded",
+		});
+		await expect(usage).toContainText(`@tanstack/${framework}-table@9.0.0`, { timeout: 15_000 });
+		await expect(example).toContainText(`@valar/${framework}-ui/table`);
+		await expect(example).not.toContainText(`@valar/${framework}-ui/data-table`);
+		await page.goto(`/zh/docs/forms?framework=${framework}`, { waitUntil: "domcontentloaded" });
+		await expect(usage).toContainText("保存真实数据时仍需服务端校验", { timeout: 15_000 });
+		await expect(example).toContainText(`@valar/${framework}-ui/field`);
+		await expect(example).toContainText("aria-describedby");
+		await expect(example.getByRole("button", { name: "复制代码", exact: true })).toBeVisible();
+		await page.getByRole("tab", { name: "Svelte", exact: true }).click();
+		await expect(page.getByRole("region", { name: "Svelte 安装与用法" })).toContainText(
+			"sveltekit-superforms"
+		);
+	});
+
+	test(`${framework}: visualizations and meters expose their native package entries`, async ({
+		page,
+	}) => {
+		test.setTimeout(90_000);
+		const usage = page.locator(`[data-framework-usage=${framework}]`);
+		for (const slug of [
+			"donut-chart",
+			"gauge",
+			"ruler-slider",
+			"sparkline",
+			"texture-fill",
+			"tick-meter",
+			"waffle-chart",
+		]) {
+			await page.goto(`/zh/docs/components/${slug}?framework=${framework}`, {
+				waitUntil: "domcontentloaded",
+			});
+			await expect(usage, `${framework}/${slug}`).toContainText("本地可用", { timeout: 15_000 });
+			const example = usage.locator("[data-usage-example]");
+			await expect(example).toContainText(`@valar/${framework}-ui/${slug}`);
+			await expect(example.getByRole("button", { name: "复制代码", exact: true })).toBeVisible();
+		}
+	});
+
+	test(`${framework}: conversation and issue pages expose their native package entries`, async ({ page }) => {
+		test.setTimeout(90_000);
+		const usage = page.locator(`[data-framework-usage=${framework}]`);
+		for (const slug of ["attachment", "bubble", "code-block", "marker", "message", "message-scroller", "questionnaire", "trace", "issue-composer", "issue-detail"]) {
+			await page.goto(`/zh/docs/components/${slug}?framework=${framework}`, { waitUntil: "domcontentloaded" });
+			await expect(usage, `${framework}/${slug}`).toContainText("本地可用", { timeout: 15_000 });
+			const example = usage.locator("[data-usage-example]");
+			await expect(example).toContainText(`@valar/${framework}-ui/${slug}`);
+			await expect(example.getByRole("button", { name: "复制代码", exact: true })).toBeVisible();
+		}
+	});
+}
+
+test("typography offers semantic markup without presenting an installable component", async ({
 	page,
 }) => {
-	await page.goto("/zh/docs/components/accordion?framework=react", { waitUntil: "networkidle" });
-	await expect(page.locator("[data-framework-usage=react]").getByRole("status")).toContainText(
-		"尚未提供"
-	);
-	await expect(page.locator("[data-usage-example]")).toHaveCount(0);
-	await expect(page.getByRole("button", { name: "复制代码", exact: true })).toHaveCount(0);
-	await page.getByRole("tab", { name: "Vue", exact: true }).click();
-	await expect(page.locator("[data-framework-usage=vue]").getByRole("status")).toContainText(
-		"尚未提供"
-	);
-	await page.getByRole("tab", { name: "Svelte", exact: true }).click();
-	await expect(page.getByRole("region", { name: "Svelte 安装与用法" })).toContainText(
-		"@valar/svelte-cli"
-	);
+	test.setTimeout(60_000);
+	for (const framework of ["react", "vue"]) {
+		await page.goto(`/zh/docs/components/typography?framework=${framework}`, {
+			waitUntil: "domcontentloaded",
+		});
+		const usage = page.locator(`[data-framework-usage=${framework}]`);
+		await expect(usage).toContainText("这里是排版指南，不是可安装组件", { timeout: 15_000 });
+		const example = usage.locator("[data-usage-example]");
+		await expect(example).toContainText("<blockquote");
+		await expect(example).toContainText(framework === "react" ? "className=" : "<template>");
+		await expect(example.getByRole("button", { name: "复制代码", exact: true })).toBeVisible();
+		await expect(usage).not.toContainText("pnpm add");
+	}
 });
 
 test("the existing language switch preserves the framework and invalid choices retain the default", async ({

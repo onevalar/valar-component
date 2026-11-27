@@ -1,0 +1,111 @@
+/* The native Sonner engines inject unlayered styles. These selectors apply only
+   to Valar's styled toasts; custom/unstyled toasts still own their presentation. */
+.valar-toaster .valar-toast[data-sonner-toast][data-styled="true"] {
+	padding-inline: var(--valar-toast-padding-x, 16px);
+	padding-block: var(--valar-toast-padding-y, 16px);
+	gap: var(--valar-toast-gap, 6px);
+	border-radius: 16px;
+}
+
+.valar-toaster [data-sonner-toast]:focus-visible,
+.valar-toaster [data-sonner-toast][data-styled="true"] [data-close-button]:focus-visible {
+	box-shadow:
+		0 4px 12px rgb(0 0 0 / 0.1),
+		inset 0 0 0 1px var(--ring);
+}
+
+.valar-toaster [data-sonner-toast][data-styled="true"] [data-button]:focus-visible {
+	box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.valar-workspace-toaster[data-sonner-toaster] {
+	width: 384px;
+	font-family: inherit;
+	--valar-workspace-toast-bg: lch(100% 0 282);
+	--valar-workspace-toast-text: lch(10% 0 282);
+	--valar-workspace-toast-secondary: lch(40% 1 282);
+	--valar-workspace-toast-shadow:
+		0 0 0 0.5px rgb(0 0 0 / 0.088), 0 6px 18px rgb(0 0 0 / 0.02), 0 3px 9px rgb(0 0 0 / 0.04),
+		0 1px 1px rgb(0 0 0 / 0.04);
+}
+
+.valar-workspace-toaster[data-sonner-theme="dark"] {
+	--valar-workspace-toast-bg: lch(12.72% 0.85 272);
+	--valar-workspace-toast-text: lch(100% 0 272);
+	--valar-workspace-toast-secondary: lch(64.714% 1.425 272);
+	--valar-workspace-toast-shadow:
+		0 0 0 0.5px rgb(255 255 255 / 0.148), 0 3px 8px rgb(0 0 0 / 0.125),
+		0 2px 5px rgb(0 0 0 / 0.125), 0 1px 1px rgb(0 0 0 / 0.125);
+}
+
+.valar-workspace-toaster .valar-toast[data-sonner-toast][data-styled="true"] {
+	width: 100%;
+	min-height: 41px;
+	padding-inline: var(--valar-toast-padding-x, 12px);
+	padding-block: var(--valar-toast-padding-y, 12px);
+	gap: var(--valar-toast-gap, 8px);
+	border-width: 0.5px;
+	border-radius: 12px;
+	box-shadow: var(--valar-workspace-toast-shadow);
+
+	&[data-rich-colors="false"] {
+		border: 0;
+		background: var(--valar-workspace-toast-bg);
+		color: var(--valar-workspace-toast-text);
+
+		:is([data-description], [data-icon]) {
+			color: var(--valar-workspace-toast-secondary);
+		}
+	}
+
+	&:focus-visible {
+		outline: 1px solid var(--ring);
+		outline-offset: -1px;
+	}
+
+	:is([data-title], [data-description]) {
+		line-height: 16px;
+	}
+
+	[data-icon],
+	[data-icon] svg {
+		width: 16px;
+		height: 16px;
+		margin: 0;
+	}
+
+	[data-close-button] {
+		position: static;
+		order: 1;
+		flex: none;
+		width: 24px;
+		height: 24px;
+		margin-block: -4px;
+		transform: none;
+		border: 0;
+		background: transparent;
+		color: var(--valar-workspace-toast-secondary);
+
+		&:hover {
+			background: transparent;
+			color: var(--valar-workspace-toast-text);
+		}
+
+		&:focus-visible {
+			box-shadow: inset 0 0 0 1px var(--ring);
+		}
+
+		svg {
+			width: 12px;
+			height: 12px;
+		}
+	}
+}
+
+@media (max-width: 600px) {
+	.valar-workspace-toaster[data-sonner-toaster][data-x-position] {
+		left: var(--mobile-offset-left);
+		right: var(--mobile-offset-right);
+		width: auto;
+	}
+}

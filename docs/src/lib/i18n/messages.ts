@@ -44,7 +44,14 @@ export const en = {
 	"usage.framework": "Framework",
 	"usage.preview":
 		"The states and tuning views use Svelte. Choose the implementation for your project here.",
-	"usage.available": "Available locally · first batch",
+	"usage.compositionPreview":
+		"Try the composition and copy the example for your framework. The preview uses sample data.",
+	"usage.nativePreview": "Interactive preview",
+	"usage.openPreview": "Open preview in a new tab",
+	"usage.previewTitle": "{framework} preview: {title}",
+	"usage.loadingExample": "Loading example code…",
+	"usage.loadError": "The example code could not load. Reload the page to try again.",
+	"usage.available": "Available locally",
 	"usage.pending": "Not available yet",
 	"usage.unavailable":
 		"This component has not been added to Valar {framework} yet. Its Svelte version is available; no {framework} install command or code is provided here.",
@@ -59,6 +66,13 @@ export const en = {
 		"Replace /absolute/path/to/valar with your local Valar repository path. The output directory is dist/packages at the repository root.",
 	"usage.theme": "3. Theme · app.css",
 	"usage.example": "4. Usage example",
+	"usage.markupExample": "Usage example",
+	"usage.typography":
+		"Use semantic HTML with Tailwind CSS 4 and your Valar theme. Typography is a guide, not an installable component.",
+	"usage.dataTable":
+		"This guide composes Valar Table with TanStack Table v9 for sorting, filtering, pagination, selection, and column visibility. There is no separate data-table import.",
+	"usage.forms":
+		"Compose a native form with Valar Field and Input. This example handles validation and focus locally; validate again on the server when saving real data. There is no separate form import.",
 	"usage.svelteSource": "Svelte installation and usage",
 	"usage.svelteOnly": "These instructions and examples use Svelte.",
 	"usage.copy": "Copy code",
@@ -294,7 +308,13 @@ export const zh: Record<MessageKey, string> = {
 	"usage.tab": "使用组件",
 	"usage.framework": "使用框架",
 	"usage.preview": "状态与调节页面默认展示 Svelte；在这里选择你的项目要使用的框架版本。",
-	"usage.available": "本地可用 · 第一批",
+	"usage.compositionPreview": "试用示例数据中的交互，并复制项目所用框架的示例代码。",
+	"usage.nativePreview": "交互预览",
+	"usage.openPreview": "在新标签页打开预览",
+	"usage.previewTitle": "{framework} 预览：{title}",
+	"usage.loadingExample": "正在加载示例代码…",
+	"usage.loadError": "无法加载示例代码，请刷新页面重试。",
+	"usage.available": "本地可用",
 	"usage.pending": "尚未提供",
 	"usage.unavailable":
 		"这个组件尚未加入 Valar {framework}。目前可使用 Svelte 版本；这里不会提供不存在的 {framework} 安装命令或代码。",
@@ -309,6 +329,13 @@ export const zh: Record<MessageKey, string> = {
 		"将 /absolute/path/to/valar 替换为本机 Valar 仓库路径。打包结果位于仓库根目录的 dist/packages。",
 	"usage.theme": "3. 导入主题 · app.css",
 	"usage.example": "4. 使用代码",
+	"usage.markupExample": "使用代码",
+	"usage.typography":
+		"用语义化 HTML、Tailwind CSS 4 和 Valar 主题排版。这里是排版指南，不是可安装组件。",
+	"usage.dataTable":
+		"本指南组合 Valar Table 和 TanStack Table v9，实现排序、筛选、分页、选择和列显隐，不需要单独导入 data-table 组件。",
+	"usage.forms":
+		"使用原生表单组合 Valar Field 与 Input。示例在本地处理校验和焦点；保存真实数据时仍需服务端校验。不需要单独导入 form 组件。",
 	"usage.svelteSource": "Svelte 安装与用法",
 	"usage.svelteOnly": "以下安装说明和示例使用 Svelte。",
 	"usage.copy": "复制代码",

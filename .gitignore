@@ -112,6 +112,7 @@ docs/static/llms-full.txt
 docs/static/docs.md
 docs/static/zh.md
 docs/static/registry/temp
+docs/static/framework-previews/
 
 sv-addons/registry/static/r
 repro/src/lib/hooks

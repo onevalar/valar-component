@@ -23,6 +23,13 @@ export function styleSource(source: string, styleMap: Record<string, string>): s
 		.replace(/\bcn-menu-(?:target|translucent)\b/g, "");
 }
 
+/** Both tarballs carry the same framework-free tokenizer and streaming cache. */
+export function createNativeCodeHighlighter(root: string): string {
+	return ["docs/src/lib/registry/lib/highlighter.ts", "scripts/native-code-stream.ts"]
+		.map((file) => fs.readFileSync(path.join(root, file), "utf8"))
+		.join("\n");
+}
+
 /** Paths are relative to the generated stylesheet, so tarball consumers scan their own SDK. */
 export function createThemeCss(root: string, sources = ["./ui", "./hooks", "./lib"]): string {
 	const theme = BASE_THEMES.find((entry) => entry.name === "neutral")!;
@@ -45,5 +52,13 @@ export function createThemeCss(root: string, sources = ["./ui", "./hooks", "./li
 		}) +
 		"\n" +
 		fs.readFileSync(path.join(root, "packages/cli/src/tailwind.css"), "utf8")
+	);
+}
+
+export function createNativeThemeCss(root: string, sources: string[]): string {
+	return (
+		createThemeCss(root, sources) +
+		"\n" +
+		fs.readFileSync(path.join(root, "scripts/native-sonner.css"), "utf8")
 	);
 }

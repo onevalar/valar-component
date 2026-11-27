@@ -31,6 +31,13 @@ const buttonVariants = cva(
 				square: "",
 			},
 		},
+		compoundVariants: [
+			{
+				shape: "auto",
+				size: ["default", "xs", "sm", "lg"],
+				class: "cn-button-shape-auto-text",
+			},
+		],
 		defaultVariants: {
 			variant: "default",
 			size: "default",

@@ -1,5 +1,18 @@
+import popoverExample from "../../../../apps/react-preview/src/PopoverExample.tsx?raw";
+import separatorExample from "../../../../apps/react-preview/src/SeparatorExample.tsx?raw";
+
+const nativeExamples = import.meta.glob<string>(
+	"../../../../apps/react-preview/src/examples/*.tsx",
+	{
+		query: "?raw",
+		import: "default",
+	}
+);
+
 // Standalone examples using the same public compositions as apps/react-preview.
-export const reactExamples: Record<string, string> = {
+const examples: Partial<Record<string, string>> = {
+	popover: popoverExample,
+	separator: separatorExample,
 	button: `import { useState } from "react";
 import { Button } from "@valar/react-ui/button";
 
@@ -177,3 +190,9 @@ export default function ChartExample() {
   );
 }`,
 };
+
+export function reactExample(slug: string) {
+	return (
+		examples[slug] ?? nativeExamples[`../../../../apps/react-preview/src/examples/${slug}.tsx`]?.()
+	);
+}

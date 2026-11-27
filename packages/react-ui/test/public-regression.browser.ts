@@ -39,7 +39,7 @@ test("public preview: asymmetric scalar bounds, calendar/range selection, popper
 			};
 		});
 		assert.deepEqual(geometry, {
-			extraHeight: 12,
+			extraHeight: 48,
 			padding: "12px",
 			gridMargin: "16px",
 			gridGap: "4px",
@@ -101,18 +101,14 @@ test("public preview: asymmetric scalar bounds, calendar/range selection, popper
 
 		for (const name of ["calendar", "range-calendar"]) {
 			const calendar = page.locator(`[data-demo="${name}"]`);
-			const month = calendar.getByRole("button", { name: "选择月份" });
-			const year = calendar.getByRole("button", { name: "选择年份" });
+			const month = calendar.getByRole("combobox", { name: "月份" });
+			const year = calendar.getByRole("combobox", { name: "年份" });
 			await expect(month).toHaveText("11月");
 			await expect(year).toHaveText("2026年");
 			const captionOrder = await calendar
-				.getByRole("button")
-				.evaluateAll((buttons) =>
-					buttons
-						.map((button) => button.getAttribute("aria-label"))
-						.filter((label) => label === "选择月份" || label === "选择年份")
-				);
-			assert.deepEqual(captionOrder, ["选择月份", "选择年份"]);
+				.getByRole("combobox")
+				.evaluateAll((triggers) => triggers.map((trigger) => trigger.getAttribute("aria-label")));
+			assert.deepEqual(captionOrder, ["月份", "年份"]);
 			await month.focus();
 			await page.keyboard.press("Tab");
 			await expect(year).toBeFocused();
@@ -123,13 +119,13 @@ test("public preview: asymmetric scalar bounds, calendar/range selection, popper
 		}
 
 		const calendar = page.locator('[data-demo="calendar"]');
-		await calendar.getByRole("button", { name: "选择月份" }).click();
-		await expect(page.getByRole("button", { name: /^(?:[1-9]|1[0-2])月$/ })).toHaveCount(12);
-		await page.getByRole("button", { name: "12月", exact: true }).click();
+		await calendar.getByRole("combobox", { name: "月份" }).click();
+		await expect(page.getByRole("listbox").getByRole("option")).toHaveCount(12);
+		await page.getByRole("option", { name: "12月", exact: true }).click();
 		await expect(calendar.getByRole("button", { name: "前往下个月" })).toBeEnabled();
-		await calendar.getByRole("button", { name: "选择年份" }).click();
-		await expect(page.getByRole("button", { name: /^20[0-9]{2}年$/ })).toHaveCount(12);
-		await page.getByRole("button", { name: "2027年", exact: true }).click();
+		await calendar.getByRole("combobox", { name: "年份" }).click();
+		await expect(page.getByRole("option", { name: "1950年", exact: true })).toBeAttached();
+		await page.getByRole("option", { name: "2027年", exact: true }).click();
 		await calendar.getByRole("button", { name: /2027年12月17日/ }).click();
 		await expect(page.locator('[data-result="calendar"]')).toHaveText("2027-12-17");
 
@@ -182,6 +178,42 @@ test("public preview: asymmetric scalar bounds, calendar/range selection, popper
 		assert.deepEqual(disabledData, {});
 		await checkRangeBackground();
 		assert.deepEqual(errors, []);
+	} finally {
+		await browser.close();
+	}
+});
+
+test("public radio group selects on arrow navigation even when keyup precedes deferred focus", async () => {
+	const browser = await chromium.launch({
+		executablePath:
+			process.env.VALAR_TEST_BROWSER ??
+			(process.platform === "darwin"
+				? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+				: undefined),
+		headless: true,
+	});
+	try {
+		const page = await browser.newPage();
+		const url = new URL(process.env.VALAR_REACT_PREVIEW_URL ?? "http://127.0.0.1:5213/");
+		url.searchParams.set("example", "radio-group");
+		await page.goto(url.href);
+		const group = page.getByRole("radiogroup", { name: "Delivery method" });
+		const email = group.getByRole("radio", { name: "Email" });
+		const digest = group.getByRole("radio", { name: "Digest" });
+		await expect(email).toBeChecked();
+		await expect(group.getByRole("radio", { name: "Disabled" })).toBeDisabled();
+		await email.focus();
+		await email.evaluate((item) => {
+			// Put keydown and keyup in the same task so the Radix focus timer cannot run first.
+			const event = { key: "ArrowDown", bubbles: true, cancelable: true };
+			item.dispatchEvent(new KeyboardEvent("keydown", event));
+			item.dispatchEvent(new KeyboardEvent("keyup", event));
+		});
+		await expect(digest).toBeFocused();
+		await expect(digest).toBeChecked();
+		await digest.press("ArrowDown");
+		await expect(email).toBeFocused();
+		await expect(email).toBeChecked();
 	} finally {
 		await browser.close();
 	}

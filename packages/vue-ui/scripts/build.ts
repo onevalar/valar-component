@@ -1,7 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createThemeCss, getValarStyleMap, styleSource } from "../../../scripts/valar-style.ts";
+import {
+	createNativeCodeHighlighter,
+	createNativeThemeCss,
+	getValarStyleMap,
+	styleSource,
+} from "../../../scripts/valar-style.ts";
 
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 const packageRoot = path.join(root, "packages/vue-ui");
@@ -20,6 +25,8 @@ export function nativeStyle(source: string): string {
 		source
 			.replaceAll("--bits-select-", "--reka-select-")
 			.replaceAll("--bits-popover-", "--reka-popover-")
+			.replaceAll("--bits-floating-available-width", "--reka-popper-available-width")
+			.replaceAll("--bits-link-preview-", "--reka-hover-card-")
 			.replaceAll("data-[highlighted=true]", "data-[highlighted]")
 			.replaceAll("data-[checked=true]", "data-[state=checked]")
 			// These are valid unquoted CSS identifiers. Removing the optional quotes
@@ -58,7 +65,8 @@ for (const file of files) {
 	}
 	generated.set(path.join(output, relative), source);
 }
-generated.set(path.join(output, "theme.css"), createThemeCss(root, ["./ui", "./lib"]));
+generated.set(path.join(output, "lib", "code-highlighter.ts"), createNativeCodeHighlighter(root));
+generated.set(path.join(output, "theme.css"), createNativeThemeCss(root, ["./ui", "./lib"]));
 for (const name of ["LICENSE", "PROVENANCE.md"]) {
 	generated.set(path.join(output, name), fs.readFileSync(path.join(packageRoot, name), "utf8"));
 }

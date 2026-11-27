@@ -1,6 +1,6 @@
 ---
-title: Formsnap
-description: 使用 Formsnap、Superforms 和 Zod 构建表单。
+title: 表单
+description: 组合无障碍表单，为字段提供校验与反馈。
 links:
   doc: https://formsnap.dev
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/form
