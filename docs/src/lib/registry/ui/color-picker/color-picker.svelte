@@ -697,7 +697,7 @@
 					</div>
 					<button
 						type="button"
-						aria-label={copied ? "已复制色值" : `复制 ${formattedValue}`}
+						aria-label={copied ? "已复制色值" : "复制当前色值"}
 						title={copied ? "已复制" : `复制 ${formattedValue}`}
 						onclick={copyFormatted}
 						class="inline-flex size-6.5 shrink-0 items-center justify-center rounded-md border-[0.5px] border-border bg-background text-muted-foreground outline-none transition-colors duration-150 hover:bg-accent hover:text-foreground focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-ring"

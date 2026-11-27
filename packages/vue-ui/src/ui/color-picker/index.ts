@@ -4,3 +4,23 @@ export {
 	type ColorPickerContentProps,
 	type ColorPickerProps,
 } from "./ColorPicker.vue";
+export {
+	formatColor,
+	hexToRgba,
+	hslaToRgba,
+	hsvaToRgba,
+	isLightColor,
+	normalizeHexColor,
+	oklchaToRgba,
+	parseColorInput,
+	rgbaToCss,
+	rgbaToHex,
+	rgbaToHsla,
+	rgbaToHsva,
+	rgbaToOklcha,
+	type ColorFormat,
+	type HslaColor,
+	type HsvaColor,
+	type OklchaColor,
+	type RgbaColor,
+} from "./color";

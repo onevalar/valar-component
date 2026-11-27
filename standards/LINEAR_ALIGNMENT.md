@@ -136,6 +136,8 @@
 
 ## 当前交付
 
+2026-11-27 · [Color Picker 三端升级对齐](porting-records/color-picker-svelte-to-react-vue.md)：将自研二维 SV 色板、色相与不透明度滑条（支持 `#rrggbbaa` 表单提交）、HEX／RGB／HSL／OKLCH 格式切换、渐进吸管取色、一键复制与固定单层「预设色／最近使用」切换栏从 Svelte 同步至 `@valar/react-ui/color-picker` 与 `@valar/vue-ui/color-picker`，保留 UI SDK 表单底座与既有公开入口。React／Vue 静态类型、单元测试、文档站三端实时预览及 8 项浅深／窄屏 Chromium 回归全部通过；真机触屏、系统中文输入法与屏幕阅读器待后续实机验收。
+
 2026-11-27 · UI SDK 第 3–11 批：在现有 React／Vue／Svelte 子路径和 Svelte registry 中，Toggle、Tabs、Button、Avatar、Progress、Pagination、Scroll Area、Input、Textarea、Color Picker、Carousel 的常用路径接入 `0.1.0-beta.17`。Field、Input Group、Attachment、Button Group、Item、Trace 复用 SDK 已迁原语，Ruler Slider、Stepper 仅复用 Core 的部分行为。保持 Valar token 和现有基础目录等级。证据见 [Toggle／Tabs](porting-records/toggle-tabs-legacy-to-ui-sdk.md)、[独立原语和表单](porting-records/independent-primitives-legacy-to-ui-sdk.md)、[弹层和日期](porting-records/overlays-dates-legacy-to-ui-sdk.md)、[轮播与业务组合](porting-records/batches-9-10-legacy-to-ui-sdk.md)。
 
 本轮 46 项中，11 项常用路径直接接入、8 项通过组合或 Core 部分接入、27 项未替换底层。文档实际验收覆盖浅深 Tabs、窄屏 Carousel 的 16 px 间距与相邻箭头、Avatar 照片／缩写、Color Picker 展开、色值及归焦；`pnpm build`、文档单测 267/267、生产产物定向 Chromium 9/9 和三端类型检查通过。三端本地 tarball 各验证 7 个代表入口，Svelte 独立 CLI 安装另通过严格类型、生产构建和浏览器回归。SDK 工作区 catalog 在 registry 生成时解析为可独立安装的精确版本。Radix／Reka／Bits UI 及 Embla 仍有实际入口，不删除。下一批优先三端同换 Popover＋Select，补公开定位、表单、嵌套关闭与归焦；Slider／Number Field／OTP 和日期模型另按各自合同验收。
