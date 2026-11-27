@@ -8,6 +8,7 @@ import { exec } from "tinyexec";
 import * as project from "./project.js";
 import { detectPM } from "./auto-detect.js";
 import { error } from "./errors.js";
+import { getDependencyPackageInfo } from "./get-package-info.js";
 import { silentOutput } from "./node-utils.js";
 import type { PackageJson } from "type-fest";
 
@@ -49,7 +50,9 @@ export async function installDependencies({
 		const inDeps = pkg.dependencies?.[name];
 		const inDevDeps = pkg.devDependencies?.[name];
 		const existing = inDeps ?? inDevDeps;
-		const depVersion = semver.coerce(existing);
+		const depVersion = existing?.startsWith("file:")
+			? getDependencyPackageInfo(cwd, name)?.pkg.version
+			: semver.coerce(existing);
 
 		// If the dependency is already installed and satisfies the requested version, skip it.
 		if (depVersion && semver.satisfies(depVersion, version, { loose: true })) {

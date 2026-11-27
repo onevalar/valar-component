@@ -1,8 +1,6 @@
 <script lang="ts">
-	import * as Accordion from "$lib/components/ui/accordion/index.js";
 	import * as Avatar from "$lib/components/ui/avatar/index.js";
-	import * as Dialog from "$lib/components/ui/dialog/index.js";
-	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+	import * as Questionnaire from "$lib/components/ui/questionnaire/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { NumberField, type NumberFieldProps } from "$lib/components/ui/number-field/index.js";
 	import { Slider } from "$lib/components/ui/slider/index.js";
@@ -22,9 +20,11 @@
 		<Avatar.Image src={avatarSrc} alt="Lin" />
 		<Avatar.Fallback>LN</Avatar.Fallback>
 	</Avatar.Root>
-	<button onclick={() => (avatarSrc = "data:image/png;base64,broken")}>Break avatar</button>
-	<button onclick={() => (avatarSrc = "/avatar-02.png")}>Restore avatar</button>
-	<button onclick={() => (avatarSrc = "")}>Clear avatar</button>
+	<Button variant="outline" onclick={() => (avatarSrc = "data:image/png;base64,broken")}>
+		Break avatar
+	</Button>
+	<Button variant="outline" onclick={() => (avatarSrc = "/avatar-02.png")}>Restore avatar</Button>
+	<Button variant="outline" onclick={() => (avatarSrc = "")}>Clear avatar</Button>
 </section>
 
 <form
@@ -35,39 +35,20 @@
 >
 	<NumberField {...settings} name="amount" defaultValue={0.3} aria-label="Amount" />
 	<TagsInput name="tags" defaultValue={["Svelte"]} aria-label="Tags" />
-	<button type="submit">Submit</button><button type="reset">Reset</button>
-	<output>{result}</output>
+	<Button type="submit">Submit</Button>
+	<Button variant="outline" type="reset">Reset</Button>
+	<output class="border transition duration-fast ease-standard">{result}</output>
 </form>
 <Slider type="single" value={35} aria-label="Volume" />
 <Stepper {steps} aria-label="Checkout">
 	{#snippet children({ step, next })}<p>{step.title}</p>
-		<button onclick={next}>Next</button>{/snippet}
+		<Button onclick={next}>Next</Button>{/snippet}
 </Stepper>
-<Button>Tuned button</Button>
-<Dialog.Root>
-	<Dialog.Trigger>Open tuned dialog</Dialog.Trigger>
-	<Dialog.Content>
-		<Dialog.Title>Tuned dialog</Dialog.Title>
-		<Dialog.Description>Installed from the designer workbench.</Dialog.Description>
-		<Dialog.Close>Close tuned dialog</Dialog.Close>
-	</Dialog.Content>
-</Dialog.Root>
-<Accordion.Root>
-	<Accordion.Item value="first"
-		><Accordion.Trigger>First tuned section</Accordion.Trigger><Accordion.Content
-			>First content</Accordion.Content
-		></Accordion.Item
-	>
-	<Accordion.Item value="second"
-		><Accordion.Trigger>Second tuned section</Accordion.Trigger><Accordion.Content
-			>Second content</Accordion.Content
-		></Accordion.Item
-	>
-</Accordion.Root>
-<Tooltip.Provider
-	><Tooltip.Root
-		><Tooltip.Trigger>Tuned tooltip</Tooltip.Trigger><Tooltip.Content
-			>Installed tooltip</Tooltip.Content
-		></Tooltip.Root
-	></Tooltip.Provider
->
+<Questionnaire.Root items={[{ name: "framework", choices: [{ value: "svelte" }] }]}>
+	<Questionnaire.Item name="framework">
+		<Questionnaire.Title>Choose a framework</Questionnaire.Title>
+		<Questionnaire.Choices>
+			<Questionnaire.Choice value="svelte">Svelte</Questionnaire.Choice>
+		</Questionnaire.Choices>
+	</Questionnaire.Item>
+</Questionnaire.Root>

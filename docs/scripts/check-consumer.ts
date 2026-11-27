@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import path from "node:path";
-import { execFileSync, spawn } from "node:child_process";
+import { execFileSync, spawn, spawnSync } from "node:child_process";
 import {
 	copyFileSync,
 	mkdirSync,
@@ -14,23 +14,29 @@ import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { chromium, expect } from "@playwright/test";
 import { DEFAULT_PRESET_CONFIG, encodePreset } from "@valar/svelte-cli/preset";
-import { defaultPreset } from "../src/lib/features/workbench/model.js";
 
 const docs = fileURLToPath(new URL("..", import.meta.url));
 const root = path.resolve(docs, "..");
-const temp = mkdtempSync(path.join(tmpdir(), "valar-consumer-"));
+// A number before the tarball filename must not be mistaken for its package version.
+const temp = mkdtempSync(path.join(tmpdir(), "valar-consumer-2026-"));
 const app = path.join(temp, "app");
 const env = {
 	...process.env,
 	CI: "true",
-	REGISTRY_URL: process.env.REGISTRY_URL ?? "http://127.0.0.1:5186/registry",
+	REGISTRY_URL: (process.env.REGISTRY_URL ?? "http://127.0.0.1:5186/registry").replace(/\/$/, ""),
 };
 function run(command: string, args: string[], cwd = app) {
 	execFileSync(command, args, { cwd, env, stdio: "inherit", timeout: 120_000 });
 }
 let server: ReturnType<typeof spawn> | undefined;
 try {
-	run("pnpm", ["--filter", "@valar/svelte-cli", "pack", "--pack-destination", temp], root);
+	const tarballs = ["@valar/svelte-cli", "@valar/svelte-primitives"].map((name) => {
+		run("pnpm", ["--filter", name, "pack", "--pack-destination", temp], root);
+		const prefix = `${name.slice(1).replace("/", "-")}-`;
+		const file = readdirSync(temp).find((file) => file.startsWith(prefix) && file.endsWith(".tgz"));
+		assert.ok(file, `No tarball produced for ${name}`);
+		return path.join(temp, file);
+	});
 	run(
 		path.join(root, "sv-addons/registry/node_modules/.bin/sv"),
 		["create", app, "--types", "ts", "--template", "minimal", "--no-add-ons", "--no-install"],
@@ -43,9 +49,11 @@ try {
 		"@sveltejs/kit",
 		"@sveltejs/vite-plugin-svelte",
 		"vite",
+		"svelte-check",
 		"typescript",
 		"tailwindcss",
 		"@tailwindcss/vite",
+		"@internationalized/date",
 	]) {
 		pkg.devDependencies[dependency] = JSON.parse(
 			readFileSync(path.join(docs, "node_modules", dependency, "package.json"), "utf8")
@@ -79,11 +87,8 @@ try {
 		path.join(app, "vite.config.ts"),
 		'import { sveltekit } from "@sveltejs/kit/vite"; import adapter from "@sveltejs/adapter-auto"; import tailwindcss from "@tailwindcss/vite"; import { defineConfig } from "vite"; export default defineConfig({plugins: [tailwindcss(), sveltekit({adapter: adapter()})]});'
 	);
-	const tarball = path.join(
-		temp,
-		readdirSync(temp).find((file) => file.endsWith(".tgz"))!
-	);
-	run("pnpm", ["add", "-D", tarball]);
+	// Both packages are private. Questionnaire's declared dependency must stay on the tarball.
+	run("pnpm", ["add", "-D", ...tarballs]);
 	const cli = path.join(app, "node_modules/.bin/valar-svelte");
 	run(cli, [
 		"init",
@@ -104,29 +109,32 @@ try {
 		"--reinstall",
 		"--no-deps-install",
 	]);
-	run(cli, ["add", "avatar", "number-field", "tags-input", "stepper", "slider", "--yes"]);
-	const workbenchPreset = structuredClone(defaultPreset);
-	Object.assign(workbenchPreset.values, {
-		"button.height": 58,
-		"dialog.closeOnEscape": false,
-		"tooltip.delayDuration": 650,
-		"tooltip.side": "bottom",
-		"accordion.type": "multiple",
-	});
-	const exportResponse = await fetch(new URL("/api/workbench/export", env.REGISTRY_URL), {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(workbenchPreset),
-	});
-	assert.ok(exportResponse.ok, `workbench export failed: ${await exportResponse.clone().text()}`);
-	const presetFile = path.join(app, "valar-preset.json");
-	writeFileSync(presetFile, await exportResponse.text());
-	// Exercise --cwd path resolution from outside the target app, not only absolute paths.
-	run(cli, ["add", "valar-preset.json", "--cwd", app, "--yes", "--overwrite"], temp);
-	assert.match(
-		JSON.parse(readFileSync(packagePath, "utf8")).devDependencies["@valar/svelte-cli"],
-		/^file:/
+	// Inline tuner exports are version backups, not installable registry items. Use a real
+	// registry item to exercise local JSON resolution relative to --cwd, not the caller.
+	const itemUrl = new URL("styles/valar/questionnaire.json", `${env.REGISTRY_URL}/`);
+	const itemResponse = await fetch(itemUrl);
+	assert.ok(itemResponse.ok, `Failed to fetch ${itemUrl}: HTTP ${itemResponse.status}`);
+	writeFileSync(path.join(app, "questionnaire.json"), await itemResponse.text());
+	run(
+		cli,
+		[
+			"add",
+			"avatar",
+			"number-field",
+			"tags-input",
+			"stepper",
+			"slider",
+			"questionnaire.json",
+			"--cwd",
+			app,
+			"--yes",
+		],
+		temp
 	);
+	const { devDependencies } = JSON.parse(readFileSync(packagePath, "utf8"));
+	for (const name of ["@valar/svelte-cli", "@valar/svelte-primitives"]) {
+		assert.match(devDependencies[name], /^file:.*\.tgz$/, `${name} must use a local tarball`);
+	}
 	writeFileSync(
 		path.join(app, "src/routes/+page.svelte"),
 		readFileSync(path.join(docs, "e2e/fixtures/consumer.svelte"))
@@ -138,21 +146,17 @@ try {
 		/<!-- valar-svelte:rules:start -->[\s\S]*`button`（Button 设计规范）：`src\/lib\/components\/ui\/button\/RULES\.md`[\s\S]*<!-- valar-svelte:rules:end -->/
 	);
 	assert.ok(readFileSync(path.join(app, "src/lib/components/ui/button/RULES.md"), "utf8"));
-	// Global motion/border tokens: values in :root, components use the tier utilities.
+	// The generated app CSS carries the global tokens; components opt in to motion tiers.
 	const appCss = readFileSync(path.join(app, "src/app.css"), "utf8");
 	assert.match(appCss, /--motion-duration-fast: 100ms;/);
 	assert.match(appCss, /--border-width: 1px;/);
 	assert.doesNotMatch(appCss, /--motion-duration-fast: var\(/);
-	assert.match(
-		readFileSync(path.join(app, "src/lib/components/ui/dialog/dialog-content.svelte"), "utf8"),
-		/duration-(?:100|fast)/
-	);
 	run(cli, ["lint"]);
 	const violation = path.join(app, "src/routes/violation.svelte");
 	writeFileSync(violation, '<p class="text-blue-500">x</p>');
-	assert.throws(() =>
-		execFileSync(cli, ["lint"], { cwd: app, env, stdio: "pipe", timeout: 60_000 })
-	);
+	const lint = spawnSync(cli, ["lint"], { cwd: app, env, encoding: "utf8", timeout: 60_000 });
+	assert.equal(lint.status, 1, lint.stderr);
+	assert.match(lint.stdout, /violation\.svelte:1.*valar\/semantic-color/);
 	rmSync(violation);
 	copyFileSync(
 		path.join(docs, "e2e/fixtures/consumer-types.ts"),
@@ -202,12 +206,11 @@ try {
 	assert.ok(ready, "consumer preview did not start");
 	const browser = await chromium.launch({
 		executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
-		args: [
-			"--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4",
-		],
 	});
 	try {
 		const page = await browser.newPage();
+		const pageErrors: Error[] = [];
+		page.on("pageerror", (error) => pageErrors.push(error));
 		await page.goto("http://127.0.0.1:5199", { waitUntil: "networkidle" });
 		const avatarGroup = page.getByRole("group", { name: "Avatar source changes", exact: true });
 		const avatar = avatarGroup.locator('[data-slot="avatar"]');
@@ -248,15 +251,11 @@ try {
 		}
 		const amount = page.getByRole("spinbutton", { name: "Amount", exact: true });
 		await amount.fill("1.2");
+		await expect(amount).toHaveValue("1.2");
 		await page.getByRole("button", { name: "Reset", exact: true }).click();
-		await amount.waitFor();
-		await page.waitForFunction(
-			() => document.querySelector<HTMLInputElement>('[role="spinbutton"]')?.value === "0.3"
-		);
+		await expect(amount).toHaveValue("0.3");
 		await page.getByRole("button", { name: "Reset", exact: true }).click();
-		await page.waitForFunction(
-			() => document.querySelector<HTMLInputElement>('[role="spinbutton"]')?.value === "0.3"
-		);
+		await expect(amount).toHaveValue("0.3");
 		await page.getByRole("textbox", { name: "Tags", exact: true }).fill("Valar");
 		await page.getByRole("textbox", { name: "Tags", exact: true }).press("Enter");
 		assert.equal(await page.locator("output").textContent(), "");
@@ -269,65 +268,25 @@ try {
 			["tags", "Svelte"],
 			["tags", "Valar"],
 		]);
-		assert.equal(await page.getByRole("slider", { name: "Volume", exact: true }).count(), 1);
-		const tunedButton = page.getByRole("button", { name: "Tuned button", exact: true });
-		assert.equal(await tunedButton.evaluate((node) => getComputedStyle(node).height), "58px");
-		await page.getByRole("button", { name: "Open tuned dialog", exact: true }).click();
-		await page.keyboard.press("Escape");
-		assert.equal(
-			await page.getByRole("dialog").count(),
-			1,
-			"exported Escape default was not installed"
-		);
-		// Tier utilities compile in the consumer and resolve to the :root token values.
-		// (The tuned Dialog itself is retimed by the workbench preset CSS, so probe directly.)
+		await expect(page.getByRole("slider", { name: "Volume", exact: true })).toHaveCount(1);
+		const stepper = page.getByRole("group", { name: "Checkout", exact: true });
+		await expect(stepper.getByRole("region", { name: "First", exact: true })).toBeVisible();
+		await stepper.getByRole("button", { name: "Next", exact: true }).click();
+		await expect(stepper.getByRole("region", { name: "Last", exact: true })).toBeVisible();
+		const choice = page.getByRole("radio", { name: "Svelte", exact: true });
+		await choice.check();
+		await expect(choice).toBeChecked();
+		// The fixture explicitly opts in to the motion tiers.
 		assert.deepEqual(
-			await page.evaluate(() => {
-				const probe = document.createElement("div");
-				probe.className = "border transition duration-fast";
-				document.body.append(probe);
-				const style = getComputedStyle(probe);
-				const result = [
-					style.transitionDuration,
-					style.transitionTimingFunction,
-					style.borderTopWidth,
-				];
-				probe.remove();
-				return result;
+			await page.locator("output").evaluate((node) => {
+				const style = getComputedStyle(node);
+				return [style.transitionDuration, style.transitionTimingFunction, style.borderTopWidth];
 			}),
 			["0.1s", "cubic-bezier(0.4, 0, 0.2, 1)", "1px"]
 		);
-		await page.getByRole("button", { name: "Close tuned dialog", exact: true }).click();
-		await page.getByRole("button", { name: "First tuned section", exact: true }).click();
-		await page.getByRole("button", { name: "Second tuned section", exact: true }).click();
-		assert.equal(
-			await page
-				.getByRole("button", { name: "First tuned section", exact: true })
-				.getAttribute("aria-expanded"),
-			"true"
-		);
-		assert.equal(
-			await page
-				.getByRole("button", { name: "Second tuned section", exact: true })
-				.getAttribute("aria-expanded"),
-			"true"
-		);
-		assert.equal(await page.evaluate(() => matchMedia("(hover: hover)").matches), true);
-		await page.getByRole("button", { name: "Tuned tooltip", exact: true }).hover();
-		// This wait tests a real delay boundary: the upstream 0ms default must fail here.
-		await page.waitForTimeout(200);
-		const tooltip = page.locator('[data-slot="tooltip-content"]');
-		assert.equal(await tooltip.count(), 0, "exported tooltip delay was not installed");
-		await tooltip.waitFor();
-		assert.equal(await tooltip.getAttribute("data-side"), "bottom");
-		assert.equal(
-			await page
-				.getByRole("button", { name: "Tuned tooltip", exact: true })
-				.getAttribute("aria-describedby"),
-			await tooltip.getAttribute("id")
-		);
+		assert.deepEqual(pageErrors, []);
 		console.log(
-			"PASS independent tarball install, strict check/build, same-instance Avatar source changes, reset/tag/Slider contracts and installed workbench CSS/Dialog/Accordion/Tooltip defaults"
+			"PASS independent CLI/primitives tarballs, named and local JSON registry installs, lint, strict check/build, same-instance Avatar, form/Slider/Stepper/Questionnaire and CSS tokens"
 		);
 	} finally {
 		await browser.close();
