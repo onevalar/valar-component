@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { ColorPicker as SdkColorPicker, createColorPickerController } from "@ui-sdk/react/color-picker";
 import { cn } from "cn";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover.tsx";
 
@@ -50,6 +51,7 @@ export function ColorPicker({
 	const fallbackId = React.useId();
 	const id = idProp ?? fallbackId;
 	const [localValue, setValue] = React.useState(defaultValue);
+	const [controller] = React.useState(createColorPickerController);
 	const current = normalizeHex(value ?? localValue) ?? "#000000";
 	const [open, setOpen] = React.useState(false);
 	const [draft, setDraft] = React.useState<string>();
@@ -62,10 +64,13 @@ export function ColorPicker({
 		if (disabled) setOpen(false);
 	}, [disabled]);
 
-	function update(next: string | undefined) {
-		if (disabled || !next || next === current) return;
+	function onColorChange(next: string) {
 		if (value === undefined) setValue(next);
 		onValueChange?.(next);
+	}
+
+	function update(next: string | undefined) {
+		if (!disabled && next && next !== current) controller.setValue(next, { reason: "input-commit" });
 	}
 
 	function onOpenChange(next: boolean) {
@@ -88,9 +93,16 @@ export function ColorPicker({
 	}
 
 	return (
-		<div
+		<SdkColorPicker
 			{...props}
 			id={idProp}
+			controller={controller}
+			value={current}
+			space="srgb"
+			format="hex"
+			disabled={disabled}
+			name={name}
+			onValueChange={onColorChange}
 			data-slot="color-picker"
 			data-disabled={disabled || undefined}
 			className={cn("grid gap-2", className)}
@@ -195,7 +207,6 @@ export function ColorPicker({
 					)}
 				</PopoverContent>
 			</Popover>
-			{name && <input type="hidden" name={name} value={current} disabled={disabled} />}
-		</div>
+		</SdkColorPicker>
 	);
 }

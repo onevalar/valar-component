@@ -3,6 +3,12 @@
 	"type": "registry:ui",
 	"title": "Avatar 头像",
 	"description": "表示用户的图片，加载失败时显示缩写等后备内容。",
+	"dependencies": [
+		"@ui-sdk/core@0.1.0-beta.17",
+		"@ui-sdk/svelte@0.1.0-beta.17",
+		"bits-ui",
+		"svelte-toolbelt@0.10.6"
+	],
 	"categories": ["展示"],
 	"meta": {
 		"valar": {

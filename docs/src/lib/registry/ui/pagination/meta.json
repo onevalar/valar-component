@@ -3,6 +3,12 @@
 	"type": "registry:ui",
 	"title": "Pagination 分页",
 	"description": "页码与上一页、下一页导航。",
+	"dependencies": [
+		"@ui-sdk/core@0.1.0-beta.17",
+		"@ui-sdk/svelte@0.1.0-beta.17",
+		"bits-ui",
+		"svelte-toolbelt@0.10.6"
+	],
 	"categories": ["导航"],
 	"meta": {
 		"valar": {

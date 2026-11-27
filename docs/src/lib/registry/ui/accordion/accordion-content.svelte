@@ -1,28 +1,74 @@
 <script lang="ts">
-	import { Accordion as AccordionPrimitive } from "bits-ui";
-	import { cn, type WithoutChild } from "$lib/utils.js";
+	import { AccordionPanel } from "@ui-sdk/svelte/accordion";
+	import { styleToString, type StyleProperties } from "svelte-toolbelt";
+	import { createAttachmentKey } from "svelte/attachments";
+	import { cn } from "$lib/utils.js";
+	import { getAccordionOrientation } from "./context.js";
+	import type { HTMLAttributes } from "svelte/elements";
 
 	let {
 		ref = $bindable(null),
 		class: className,
+		style,
+		forceMount = false,
+		hiddenUntilFound = false,
 		children,
 		...restProps
-	}: WithoutChild<AccordionPrimitive.ContentProps> = $props();
+	}: Omit<HTMLAttributes<HTMLDivElement>, "style"> & {
+		ref?: HTMLElement | null;
+		style?: StyleProperties | string | null;
+		forceMount?: boolean;
+		hiddenUntilFound?: boolean;
+	} = $props();
+
+	const orientation = getAccordionOrientation();
+	const refKey = createAttachmentKey();
+	function setRef(element: HTMLElement) {
+		ref = element;
+		return () => {
+			ref = null;
+		};
+	}
+
+	const panelStyle = $derived(
+		styleToString({
+			"--bits-accordion-content-height": "var(--accordion-panel-height)",
+			"--bits-accordion-content-width": "var(--accordion-panel-width)",
+			...(typeof style === "object" ? style : {}),
+		}) + (typeof style === "string" ? `;${style}` : "")
+	);
 </script>
 
-<!-- parity-ignore-upstream: h-(--radix-accordion-content-height) | Radix leaves the height var unset until measured; Bits initializes it to 0px, so pinning the inner height to it would collapse the content before the first measurement -->
-<AccordionPrimitive.Content
-	bind:ref
+<AccordionPanel
+	keepMounted
+	{hiddenUntilFound}
 	data-slot="accordion-content"
-	class="cn-accordion-content overflow-hidden"
+	data-accordion-content=""
+	data-orientation={orientation()}
+	class="cn-accordion-content overflow-hidden motion-reduce:animate-none!"
+	style={panelStyle}
 	{...restProps}
 >
-	<div
-		class={cn(
-			"cn-accordion-content-inner [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
-			className
-		)}
-	>
-		{@render children?.()}
-	</div>
-</AccordionPrimitive.Content>
+	{#snippet render({ props, state })}
+		{@const attributes = { ...props, [refKey]: setRef }}
+		<div
+			{...attributes}
+			data-slot="accordion-content"
+			data-state={state.open ? "open" : "closed"}
+			hidden={forceMount && !hiddenUntilFound
+				? undefined
+				: props.hidden === ""
+					? true
+					: (props.hidden as boolean | "until-found" | undefined)}
+		>
+			<div
+				class={cn(
+					"cn-accordion-content-inner [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+					className
+				)}
+			>
+				{@render children?.()}
+			</div>
+		</div>
+	{/snippet}
+</AccordionPanel>

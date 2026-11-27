@@ -1,6 +1,6 @@
 ---
 title: Carousel
-description: A carousel with motion and swipe built using Embla.
+description: A swipeable carousel powered by UI SDK, with Embla options and plugins supported when requested.
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/carousel
@@ -28,7 +28,9 @@ links:
 
 ## About
 
-The carousel component is built using the [Embla Carousel](https://www.embla-carousel.com/docs/v8/get-started/svelte) library.
+Without `opts`, `plugins`, or `setApi`, the carousel uses UI SDK. Its viewport supports swipe, arrow keys, Home and End. Slides outside the view are removed from keyboard and assistive-technology navigation unless they still hold focus. At either edge, the unavailable control remains focusable and is announced as disabled.
+
+Pass `opts`, `plugins`, or `setApi` to use [Embla Carousel 8](https://www.embla-carousel.com/docs/v8/get-started/svelte). Embla's API object, plugin hooks and options are not emulated by UI SDK. Choose the engine when mounting; adding or removing the last Embla prop can remount the carousel. In Vue, `@init-api` also selects Embla; use `engine="embla"` if you need the exposed Embla API from a template ref without an event listener.
 
 ## Installation
 
@@ -41,11 +43,11 @@ The carousel component is built using the [Embla Carousel](https://www.embla-car
 
 <Step>
 
-Install `embla-carousel-svelte`:
+Install UI SDK and the Embla compatibility dependency:
 
 </Step>
 
-<PMInstall command="embla-carousel-svelte -D" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 embla-carousel-svelte" />
 
 <Step>
 
@@ -69,7 +71,7 @@ Copy and paste the following code into your project.
 ```
 
 ```svelte showLineNumbers
-<Carousel.Root>
+<Carousel.Root aria-label="Project highlights">
   <Carousel.Content>
     <Carousel.Item>...</Carousel.Item>
     <Carousel.Item>...</Carousel.Item>

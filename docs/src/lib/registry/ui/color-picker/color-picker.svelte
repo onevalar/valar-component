@@ -30,6 +30,7 @@
 </script>
 
 <script lang="ts">
+	import { ColorPicker as SdkColorPicker, createColorPickerController } from "@ui-sdk/svelte/color-picker";
 	import { onMount, untrack } from "svelte";
 	import * as Popover from "$lib/registry/ui/popover/index.js";
 	import { cn } from "$lib/utils.js";
@@ -49,40 +50,62 @@
 	const generated = $props.id();
 	const id = $derived(idProp ?? generated);
 	const current = $derived(normalizeHex(value) ?? "#000000");
+	const controller = createColorPickerController();
 	let text = $state("");
 	let open = $state(false);
-	let root: HTMLDivElement;
+	let root = $state<HTMLDivElement | null>(null);
 	let editorOwned = $state(false);
+	let composing = false;
 	// A portaled panel keeps its editor ownership even outside the editor's DOM subtree.
 	onMount(() => {
-		editorOwned = !!root.closest('[role="dialog"][data-component-tuner]');
+		editorOwned = !!root?.closest('[role="dialog"][data-component-tuner]');
 	});
 	// Partial input such as "#1e" is still being typed; only impossible characters are errors.
 	const invalid = $derived(!/^#?[\da-f]{0,6}$/i.test(text.trim()));
 
 	$effect(() => {
 		// Opening resets the text box to the real value.
-		if (open) text = untrack(() => current);
+		if (disabled && open) open = false;
+		else if (open) {
+			text = untrack(() => current);
+			composing = false;
+		}
 	});
 
 	function set(next: string | undefined) {
-		if (!next || next === current) return;
+		if (!disabled && next && next !== current) controller.setValue(next, { reason: "input-commit" });
+	}
+	function onColorChange(next: string) {
 		value = next;
 		onValueChange?.(next);
 	}
+	function edit(next: string, isComposing = false) {
+		text = next;
+		// Apply a six-digit value live; shorthand applies on Enter or blur.
+		if (!composing && !isComposing && /^#?[\da-f]{6}$/i.test(next.trim())) set(normalizeHex(next));
+	}
 	function commitText() {
-		set(normalizeHex(text));
+		if (!composing) set(normalizeHex(text));
 		text = current;
 	}
 </script>
 
-<div
-	bind:this={root}
+<SdkColorPicker
+	{controller}
+	value={current}
+	space="srgb"
+	format="hex"
+	{disabled}
+	{name}
+	onValueChange={onColorChange}
 	data-slot="color-picker"
 	data-disabled={disabled || undefined}
 	class={cn("grid gap-2", "cn-color-picker", className)}
 	{...restProps}
 >
+	{#snippet render({ props, state, children })}
+		<div bind:this={root} {...props}>{@render children?.(state)}</div>
+	{/snippet}
 	<span id={`${id}-label`} class="text-[13px] leading-[17px] font-medium text-foreground">{label}</span>
 	<Popover.Root bind:open>
 		<Popover.Trigger
@@ -120,22 +143,27 @@
 					type="text"
 					aria-label={`${label}：十六进制`}
 					aria-invalid={invalid || undefined}
+					aria-describedby={invalid ? `${id}-error` : undefined}
 					spellcheck="false"
 					autocomplete="off"
 					maxlength={7}
-					bind:value={text}
-					oninput={() => {
-						// Apply full six-digit values live; shorthand applies on Enter or blur.
-						if (/^#?[\da-f]{6}$/i.test(text.trim())) set(normalizeHex(text));
+					value={text}
+					oncompositionstart={() => (composing = true)}
+					oncompositionend={(event) => {
+						composing = false;
+						edit(event.currentTarget.value);
 					}}
+					oninput={(event) => edit(event.currentTarget.value, event instanceof InputEvent && event.isComposing)}
 					onkeydown={(event) => {
-						if (event.key === "Enter") commitText();
+						if (event.key !== "Enter" || event.isComposing || composing) return;
+						event.preventDefault();
+						commitText();
 					}}
 					onblur={commitText}
 					class="h-8 rounded-md border-[0.5px] border-[color:lch(86.5%_0_282)] bg-white px-2.5 font-mono text-xs tabular-nums text-foreground outline-none transition-colors duration-150 dark:border-[color:lch(30.833%_1.93_272)] dark:bg-[lch(9.232%_.85_272)] focus-visible:border-ring focus-visible:outline-solid focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring aria-invalid:border-destructive"
 				/>
 			</label>
-			{#if invalid}<p class="text-xs text-destructive">
+			{#if invalid}<p id={`${id}-error`} class="text-xs text-destructive">
 					只能输入十六进制字符 0-9、a-f，如 #1e40af。
 				</p>{/if}
 			{#if presets.length}
@@ -160,5 +188,4 @@
 			{/if}
 		</Popover.Content>
 	</Popover.Root>
-	{#if name}<input type="hidden" {name} value={current} {disabled} />{/if}
-</div>
+</SdkColorPicker>

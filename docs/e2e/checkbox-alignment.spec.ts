@@ -1,5 +1,36 @@
 import { expect, test } from "@playwright/test";
 
+test("CheckboxGroup submits selected values, requires one item and resets to defaults", async ({
+	page,
+}) => {
+	await page.goto("/docs/components/checkbox");
+	const group = page
+		.getByRole("group", { name: "Show these items on the desktop:", exact: true })
+		.and(page.locator('[data-slot="checkbox-group"]'));
+	const hardDisks = group.getByRole("checkbox", { name: "Hard disks", exact: true });
+	const external = group.getByRole("checkbox", { name: "External disks", exact: true });
+	const form = page
+		.locator("form")
+		.filter({ has: page.getByRole("button", { name: "Reset desktop options" }) });
+	const fields = () =>
+		form.evaluate((node) => new FormData(node as HTMLFormElement).getAll("desktop-items"));
+	const valid = () => form.evaluate((node) => (node as HTMLFormElement).checkValidity());
+
+	await expect(hardDisks).toBeChecked();
+	await expect(external).toBeChecked();
+	await expect.poll(fields).toEqual(["hard-disks", "external-disks"]);
+	await hardDisks.press("Space");
+	await expect.poll(fields).toEqual(["external-disks"]);
+	await expect.poll(valid).toBe(true);
+	await external.press("Enter");
+	await expect(external).toBeChecked();
+	await external.press("Space");
+	await expect.poll(valid).toBe(false);
+	await expect.poll(fields).toEqual([]);
+	await form.getByRole("button", { name: "Reset desktop options" }).click();
+	await expect.poll(fields).toEqual(["hard-disks", "external-disks"]);
+});
+
 for (const colorScheme of ["light", "dark"] as const) {
 	test(`Checkbox displays selection, mixed state and linked errors in ${colorScheme}`, async ({
 		page,

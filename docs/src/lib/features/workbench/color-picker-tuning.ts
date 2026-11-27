@@ -29,7 +29,7 @@ export function parseColorPickerSource(files: { target: string; content: string 
 		if (literal === undefined) throw new Error("Color Picker registry 缺少自身样式");
 		return cn(literal);
 	};
-	const root = classes(/<div\b([\s\S]*?data-slot="color-picker"[\s\S]*?)>/);
+	const root = classes(/<(?:SdkColorPicker|div)\b([^>]*?\bdata-slot="color-picker"[^>]*?)>/);
 	const content = classes(/<Popover\.Content\b([\s\S]*?)>/);
 	const gap = sourceWord("gap-(\\d+(?:\\.5)?)", root);
 	const width = sourceWord("w-(\\d+)", content);

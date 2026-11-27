@@ -44,7 +44,7 @@ export function parseAvatarSource(files: { target: string; content: string }[]):
 } {
 	const words = (name: string) => {
 		const file = files.find((file) => file.target.split("/").at(-1) === `${name}.svelte`);
-		const args = /class=\{cn\(([\s\S]*?),\s*className\s*\)/.exec(file?.content ?? "")?.[1];
+		const args = /(?:class=\{|const classes = \$derived\()\s*cn\(([\s\S]*?),\s*className\s*\)/.exec(file?.content ?? "")?.[1];
 		if (args === undefined) throw new Error(`Avatar registry 缺少 ${name} 的 cn 样式`);
 		return [...args.matchAll(/"([^"\n]*)"/g)].flatMap((match) => match[1].split(/\s+/));
 	};

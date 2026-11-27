@@ -13,5 +13,5 @@ const { forwardRef } = useForwardExpose();
 
 <template>
 	<Separator :ref="forwardRef" v-bind="forwarded" data-slot="button-group-separator"
-		:class="cn('cn-button-group-separator relative self-stretch data-horizontal:mx-px data-horizontal:w-auto data-vertical:my-px data-vertical:h-auto', props.class)" />
+		:class="cn('cn-button-group-separator relative self-stretch data-[orientation=horizontal]:mx-px data-[orientation=horizontal]:w-auto data-[orientation=vertical]:my-px data-[orientation=vertical]:h-auto', props.class)" />
 </template>

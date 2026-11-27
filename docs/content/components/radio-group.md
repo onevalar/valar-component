@@ -4,8 +4,7 @@ description: A set of checkable buttons—known as radio buttons—where no more
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/radio-group
-  doc: https://bits-ui.com/docs/components/radio-group
-  api: https://bits-ui.com/docs/components/radio-group#api-reference
+  doc: https://ui-sdk.dev/docs
 ---
 
 <script>
@@ -37,11 +36,11 @@ links:
 
 <Step>
 
-Install `bits-ui`:
+Install the UI SDK and the style helper:
 
 </Step>
 
-<PMInstall command="bits-ui -D" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 svelte-toolbelt@0.10.6" />
 
 <Step>
 
@@ -66,7 +65,7 @@ Copy and paste the following code into your project.
 ```
 
 ```svelte showLineNumbers
-<RadioGroup.Root value="option-one">
+<RadioGroup.Root defaultValue="option-one" aria-label="Options">
   <div class="flex items-center gap-3">
     <RadioGroup.Item value="option-one" id="option-one" />
     <Label for="option-one">Option One</Label>
@@ -77,6 +76,16 @@ Copy and paste the following code into your project.
   </div>
 </RadioGroup.Root>
 ```
+
+## Form behavior
+
+Set a non-empty `name` for native form submission and `required` validation.
+An unselected group or a disabled selection contributes no form entry. Use
+`defaultValue` to set the reset value, or `bind:value` and your form's reset
+handler when the parent owns the value. In Svelte, `""` means no selection;
+use unique, non-empty values for the items. Clear a selection when disabling
+that option if submission must require an enabled choice; the browser can
+consider a checked, disabled radio valid even though it won't submit it.
 
 ## Description
 
@@ -90,7 +99,9 @@ Radio group items with a description using the `Field` component.
 
 ## Choice Card
 
-Use `Field.Label` to wrap the entire `Field.Field` for a clickable card-style selection.
+Wrap `Field.Field` in `Field.Label` to make the whole card clickable. Use
+`aria-labelledby` to link the radio to the card title and `aria-describedby`
+to link it to the supporting text.
 
 <ComponentPreview name="radio-group-choice-card">
 

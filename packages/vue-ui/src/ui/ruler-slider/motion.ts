@@ -24,6 +24,8 @@
  * SOFTWARE.
  */
 
+import { rubberBand, solveSpring } from "@ui-sdk/core/gesture";
+
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 function decimalsOf(value: number) {
@@ -153,7 +155,7 @@ export function createRulerMotion(node: HTMLDivElement, initial: number, options
 		commit(target);
 	}
 
-	// Analytical damped oscillator, sampled by RAF (units/second, not frame-dependent Euler steps).
+	// UI SDK measures time in milliseconds; ruler speed is in units/second.
 	function spring(
 		target: number,
 		velocity: number,
@@ -163,10 +165,7 @@ export function createRulerMotion(node: HTMLDivElement, initial: number, options
 		complete?: () => void
 	) {
 		const offset = position - target;
-		const root = (2 * Math.PI) / (duration * 1.2);
-		const decay = (1 - bounce) * root;
-		const frequency = Math.sqrt(root * root - decay * decay);
-		const sine = (velocity + decay * offset) / frequency;
+		const solver = solveSpring(duration * 1.2, 1 - bounce, offset, velocity / 1000);
 		const { step } = options.get();
 		const granular = Math.abs(offset) < 5;
 		const delta = precise ? step / 200 : granular ? 0.005 : 0.5;
@@ -174,14 +173,9 @@ export function createRulerMotion(node: HTMLDivElement, initial: number, options
 		const start = view.performance.now();
 		const id = generation;
 		const advance = (now: number) => {
-			const t = Math.max(0, now - start) / 1000;
-			const envelope = Math.exp(-decay * t);
-			const cos = Math.cos(frequency * t);
-			const sin = Math.sin(frequency * t);
-			const displacement = envelope * (offset * cos + sine * sin);
-			const velocity =
-				envelope *
-				((sine * frequency - decay * offset) * cos - (offset * frequency + decay * sine) * sin);
+			const t = Math.max(0, now - start);
+			const displacement = solver.position(t);
+			const velocity = solver.velocity(t) * 1000;
 			const resting = Math.abs(displacement) <= delta && Math.abs(velocity) <= restSpeed;
 			place(resting ? target : target + displacement, resting ? 0 : velocity);
 			if (id !== generation) return;
@@ -267,7 +261,7 @@ export function createRulerMotion(node: HTMLDivElement, initial: number, options
 		const raw = drag.from - dx / perUnit;
 		const edge = clamp(raw, min, max);
 		const distance = (raw - edge) * perUnit;
-		const elastic = Math.sign(distance) * (1 - 1 / ((Math.abs(distance) * 0.55) / 44 + 1)) * 44;
+		const elastic = Math.sign(distance) * rubberBand(Math.abs(distance), 44);
 		place(preference.matches ? edge : edge + elastic / perUnit);
 		drag.samples.push({ t: event.timeStamp, v: position });
 		if (drag.samples.length > 6) drag.samples.shift();

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button as SdkButton } from "@ui-sdk/vue/button";
 import { cn } from "cn";
 import { computed, type HTMLAttributes } from "vue";
 
@@ -30,7 +31,7 @@ function onClick(event: MouseEvent) {
 <template>
 	<!-- Compose a DialogTrigger onto this control, keeping actions as siblings. -->
 	<component
-		:is="link ? 'a' : 'button'"
+		:is="link ? 'a' : SdkButton"
 		v-bind="$attrs"
 		data-slot="attachment-trigger"
 		:class="cn('cn-attachment-trigger rounded-[inherit] disabled:cursor-default', props.class)"
@@ -43,5 +44,8 @@ function onClick(event: MouseEvent) {
 		@click="onClick"
 	>
 		<slot />
+		<template v-if="!link" #render="{ props: part }">
+			<button v-bind="part" data-slot="attachment-trigger"><slot /></button>
+		</template>
 	</component>
 </template>

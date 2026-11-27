@@ -1,5 +1,6 @@
 "use client";
 
+import { isComposing } from "@ui-sdk/core";
 import * as React from "react";
 import { cn } from "cn";
 
@@ -242,7 +243,7 @@ export function Stepper({
 		!disabled && reachable(frame, index) && !(pending && index > currentIndex);
 	const roving = available(steps.findIndex((step) => step.id === focused)) ? focused : value;
 	function onKeyDown(event: React.KeyboardEvent<HTMLButtonElement>, index: number) {
-		if (event.nativeEvent.isComposing) return;
+		if (event.defaultPrevented || isComposing(event.nativeEvent)) return;
 		const rtl = getComputedStyle(event.currentTarget).direction === "rtl";
 		const nextKey = orientation === "vertical" ? "ArrowDown" : rtl ? "ArrowLeft" : "ArrowRight";
 		const previousKey = orientation === "vertical" ? "ArrowUp" : rtl ? "ArrowRight" : "ArrowLeft";

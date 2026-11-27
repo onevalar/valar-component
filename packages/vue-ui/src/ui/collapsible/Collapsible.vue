@@ -1,22 +1,29 @@
 <script setup lang="ts">
-import { reactiveOmit } from "@vueuse/core";
+import { Collapsible as SdkRoot } from "@ui-sdk/vue/collapsible";
 import { cn } from "cn";
-import { CollapsibleRoot, useForwardExpose, useForwardPropsEmits } from "reka-ui";
+import { useForwardExpose } from "reka-ui";
 import type { CollapsibleRootEmits, CollapsibleRootProps } from "reka-ui";
+import { provide, toRef } from "vue";
 import type { HTMLAttributes } from "vue";
+import DisclosureElement from "./DisclosureElement";
 
 const props = withDefaults(defineProps<CollapsibleRootProps & {
 	class?: HTMLAttributes["class"];
 	appearance?: "default" | "properties";
 }>(), { appearance: "default", open: undefined, unmountOnHide: false });
 const emit = defineEmits<CollapsibleRootEmits>();
-const forwarded = useForwardPropsEmits(reactiveOmit(props, "class", "appearance"), emit);
 const { forwardRef } = useForwardExpose();
+provide("valar-collapsible-unmount", toRef(props, "unmountOnHide"));
 </script>
 
 <template>
-	<CollapsibleRoot :ref="forwardRef" v-slot="state" v-bind="forwarded" data-slot="collapsible" :data-appearance="appearance"
+	<SdkRoot :open="open" :default-open="defaultOpen" :disabled="disabled" @update:open="emit('update:open', $event)"
+		data-slot="collapsible" :data-appearance="appearance"
 		:class="cn(appearance === 'properties' && 'cn-collapsible-properties', props.class)">
-		<slot v-bind="state" />
-	</CollapsibleRoot>
+		<template #render="{ props: part, state }">
+			<DisclosureElement :ref="forwardRef" :as="as ?? 'div'" :as-child="asChild" :part="{ ...part, 'data-state': state.open ? 'open' : 'closed' }">
+				<slot :open="state.open" />
+			</DisclosureElement>
+		</template>
+	</SdkRoot>
 </template>

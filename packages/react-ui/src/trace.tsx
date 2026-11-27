@@ -3,11 +3,12 @@
 
 import { cn } from "cn";
 import { ChevronRight } from "lucide-react";
-import { Collapsible as CollapsiblePrimitive } from "radix-ui";
+import { CollapsiblePanel as SdkPanel } from "@ui-sdk/react/collapsible";
 import React, { type ComponentProps } from "react";
 import {
 	Collapsible,
 	CollapsibleTrigger,
+	type CollapsibleContentProps,
 	type CollapsibleProps,
 	type CollapsibleTriggerProps,
 } from "./collapsible.tsx";
@@ -103,24 +104,21 @@ export function TraceCollapsibleTrigger({
 	);
 }
 
-export type TraceCollapsibleContentProps = Omit<
-	ComponentProps<typeof CollapsiblePrimitive.Content>,
-	"asChild" | "forceMount"
-> & { forceMount?: boolean };
+export type TraceCollapsibleContentProps = Omit<CollapsibleContentProps, "asChild">;
 export function TraceCollapsibleContent({
 	className,
 	children,
 	forceMount,
 	...props
 }: TraceCollapsibleContentProps) {
-	// Use Radix presence instead of the generic wrapper's immediate CSS hide so
-	// the measured exit animation can finish before the details leave the DOM.
+	// The SDK panel owns presence so a measured exit can finish before it hides.
 	return (
-		<CollapsiblePrimitive.Content
+		<SdkPanel
 			data-slot="trace-collapsible-content"
-			forceMount={forceMount ? true : undefined}
-			className="cn-trace-collapsible-content min-w-0 overflow-hidden [--accordion-panel-height:var(--radix-collapsible-content-height)] motion-safe:data-open:animate-[accordion-down_200ms_ease-out] motion-safe:data-closed:animate-[accordion-up_200ms_ease-out]"
+			keepMounted={forceMount}
+			className="cn-trace-collapsible-content min-w-0 overflow-hidden [--accordion-panel-height:var(--collapsible-panel-height)] motion-safe:data-open:animate-[accordion-down_200ms_ease-out] motion-safe:data-closed:animate-[accordion-up_200ms_ease-out]"
 			{...props}
+			render={(attrs, state) => <div {...attrs} data-slot="trace-collapsible-content" hidden={forceMount ? props.hidden : attrs.hidden} data-state={state.open ? "open" : "closed"} />}
 		>
 			<div
 				data-slot="trace-collapsible-content-inner"
@@ -131,6 +129,6 @@ export function TraceCollapsibleContent({
 			>
 				{children}
 			</div>
-		</CollapsiblePrimitive.Content>
+		</SdkPanel>
 	);
 }

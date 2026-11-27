@@ -79,7 +79,7 @@ export function ButtonGroupSeparator({
 			orientation={orientation}
 			decorative={decorative}
 			className={cn(
-				"cn-button-group-separator relative self-stretch data-horizontal:mx-px data-horizontal:w-auto data-vertical:my-px data-vertical:h-auto",
+				"cn-button-group-separator relative self-stretch data-[orientation=horizontal]:mx-px data-[orientation=horizontal]:w-auto data-[orientation=vertical]:my-px data-[orientation=vertical]:h-auto",
 				className
 			)}
 			{...props}

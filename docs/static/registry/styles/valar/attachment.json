@@ -4,8 +4,14 @@
 	"title": "Attachment 附件",
 	"type": "registry:ui",
 	"description": "显示文件或图片附件，包含缩略图、名称、上传状态和操作。",
+	"dependencies": [
+		"@ui-sdk/core@0.1.0-beta.17",
+		"@ui-sdk/svelte@0.1.0-beta.17"
+	],
 	"devDependencies": [
-		"tailwind-variants@^3.3.0"
+		"tailwind-variants@^3.3.0",
+		"@ui-sdk/svelte@0.1.0-beta.17",
+		"@ui-sdk/core@0.1.0-beta.17"
 	],
 	"registryDependencies": [
 		"button"
@@ -95,7 +101,7 @@
 			"target": "attachment/attachment-title.svelte"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { Snippet } from \"svelte\";\n\timport type { HTMLButtonAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\ttype = \"button\",\n\t\tchild,\n\t\t...restProps\n\t}: WithElementRef<HTMLButtonAttributes> & {\n\t\tchild?: Snippet<[{ props: Record<string, unknown> }]>;\n\t} = $props();\n\n\tconst mergedProps = $derived({\n\t\tclass: cn(\"absolute inset-0 z-10 outline-none\", className),\n\t\t\"data-slot\": \"attachment-trigger\",\n\t\t...restProps,\n\t});\n</script>\n\n{#if child}\n\t{@render child({ props: mergedProps })}\n{:else}\n\t<button bind:this={ref} {type} {...mergedProps}>\n\t\t{@render mergedProps.children?.()}\n\t</button>\n{/if}\n",
+			"content": "<script lang=\"ts\">\n\timport { Button as SdkButton } from \"@ui-sdk/svelte/button\";\n\timport { cn, type WithElementRef } from \"$UTILS$.js\";\n\timport type { Snippet } from \"svelte\";\n\timport type { HTMLButtonAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\ttype = \"button\",\n\t\tchildren,\n\t\tonclick,\n\t\tchild,\n\t\t...restProps\n\t}: WithElementRef<HTMLButtonAttributes> & {\n\t\tchild?: Snippet<[{ props: Record<string, unknown> }]>;\n\t} = $props();\n\n\tconst mergedProps = $derived({\n\t\tclass: cn(\"absolute inset-0 z-10 outline-none\", className),\n\t\t\"data-slot\": \"attachment-trigger\",\n\t\t...restProps,\n\t});\n</script>\n\n{#if child}\n\t{@render child({ props: { ...mergedProps, onclick, children } })}\n{:else}\n\t<SdkButton {...mergedProps} disabled={restProps.disabled ?? undefined} type={type ?? undefined} onclick={(event) => onclick?.(event as MouseEvent & { currentTarget: HTMLButtonElement })}>\n\t\t{#snippet render({ props })}<button {...props} data-slot=\"attachment-trigger\" bind:this={ref}>{@render children?.()}</button>{/snippet}\n\t</SdkButton>\n{/if}\n",
 			"type": "registry:file",
 			"target": "attachment/attachment-trigger.svelte"
 		},

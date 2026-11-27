@@ -3,6 +3,8 @@
 	"type": "registry:ui",
 	"title": "Accordion 手风琴",
 	"description": "一组可展开的标题，每项展开后显示对应内容。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
+	"devDependencies": [],
 	"categories": ["展示"],
 	"meta": {
 		"valar": {
@@ -22,7 +24,7 @@
 				}
 			],
 			"accessibility": [
-				"标题是按钮，Bits UI 提供 aria-expanded 和键盘操作",
+				"标题是按钮，支持 aria-expanded 和键盘操作",
 				"不要把必须看到的信息或关键操作藏在折叠内容里"
 			],
 			"responsive": ["窄屏下比 tabs 更适合较长的标题", "内容展开后随页面滚动"],

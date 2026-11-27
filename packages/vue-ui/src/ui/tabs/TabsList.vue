@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { reactiveOmit } from "@vueuse/core";
+import { TabsList as SdkList } from "@ui-sdk/vue/tabs";
 import { cn } from "cn";
-import { TabsList, useForwardExpose, useForwardProps } from "reka-ui";
+import { useForwardExpose } from "reka-ui";
 import type { TabsListProps } from "reka-ui";
-import { inject, type HTMLAttributes } from "vue";
+import { inject, onBeforeUnmount, watchEffect, type HTMLAttributes } from "vue";
+import ToggleTrigger from "../../lib/ToggleTrigger";
 import { tabsListVariants, type TabsListVariant } from ".";
 import { tabsContext } from "./context";
 
@@ -13,9 +14,12 @@ const props = withDefaults(defineProps<TabsListProps & {
 	loop?: boolean;
 }>(), { variant: "default", loop: undefined });
 const emit = defineEmits<{ focusin: [event: FocusEvent] }>();
-const forwarded = useForwardProps(reactiveOmit(props, "class", "variant", "loop"));
 const { forwardRef } = useForwardExpose();
 const context = inject(tabsContext, undefined);
+if (context) {
+	watchEffect(() => { context.listLoop.value = props.loop; });
+	onBeforeUnmount(() => { context.listLoop.value = undefined; });
+}
 
 function revealFocusedTab(event: FocusEvent) {
 	emit("focusin", event);
@@ -33,9 +37,12 @@ function revealFocusedTab(event: FocusEvent) {
 </script>
 
 <template>
-	<TabsList :ref="forwardRef" v-bind="forwarded" :loop="props.loop ?? context?.loop.value ?? false"
-		data-slot="tabs-list" :data-variant="variant" :data-orientation="context?.orientation.value"
+	<SdkList :data-variant="variant"
 		:class="cn(tabsListVariants({ variant }), props.class)" @focusin="revealFocusedTab">
-		<slot />
-	</TabsList>
+		<template #render="{ props: part }">
+			<ToggleTrigger :ref="forwardRef" :as="as ?? 'div'" :as-child="asChild" :part="{ ...part, 'data-slot': 'tabs-list' }">
+				<slot />
+			</ToggleTrigger>
+		</template>
+	</SdkList>
 </template>

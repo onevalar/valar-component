@@ -2,7 +2,12 @@
 	"name": "carousel",
 	"type": "registry:ui",
 	"title": "Carousel 轮播",
-	"description": "可滑动浏览一组内容的轮播，基于 Embla。",
+	"description": "可滑动浏览一组内容的轮播。默认使用 UI SDK；Embla 选项、插件和 API 继续使用 Embla。",
+	"dependencies": [
+		"@ui-sdk/core@0.1.0-beta.17",
+		"@ui-sdk/svelte@0.1.0-beta.17",
+		"embla-carousel-svelte@8.6.0"
+	],
 	"categories": ["展示"],
 	"meta": {
 		"valar": {

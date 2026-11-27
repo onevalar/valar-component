@@ -4,8 +4,7 @@ description: A control that allows the user to toggle between checked and not ch
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/checkbox
-  doc: https://bits-ui.com/docs/components/checkbox
-  api: https://bits-ui.com/docs/components/checkbox#api-reference
+  doc: https://ui-sdk.dev/docs
 ---
 
 <script>
@@ -37,11 +36,11 @@ links:
 
 <Step>
 
-Install `bits-ui`:
+Install the UI SDK and the style helper:
 
 </Step>
 
-<PMInstall command="bits-ui -D" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 svelte-toolbelt@0.10.6" />
 
 <Step>
 
@@ -128,7 +127,9 @@ Use the `disabled` prop to prevent interaction and add the `data-disabled` attri
 
 ## Group
 
-Use multiple fields to create a checkbox list.
+Import `CheckboxGroup` from the same `checkbox` entry. Give the group a `name` and each `Checkbox` a distinct string `value`. The group submits each selected value under its name. Use `defaultValue` for the initial and reset selection, or `bind:value` for the current selection. Group `required` means at least one selection.
+
+If your form used Bits UI's `Checkbox.Group` with Valar checkboxes, replace the outer group with Valar's `CheckboxGroup` from the same entry. For an initial selection, pass `defaultValue` instead of a fixed `value`. If every item must be accepted, use separately named, required checkboxes rather than group `required`.
 
 <ComponentPreview name="checkbox-group">
 

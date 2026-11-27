@@ -3,6 +3,7 @@
 	"type": "registry:ui",
 	"title": "Stepper 步骤条",
 	"description": "带校验门禁、可取消异步校验的分步流程。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17"],
 	"categories": ["导航"],
 	"meta": {
 		"valar": {

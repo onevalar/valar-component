@@ -1,9 +1,10 @@
 "use client";
 
+import { Toggle as SdkToggle } from "@ui-sdk/react/toggle";
 import { cva } from "class-variance-authority";
 import { cn } from "cn";
-import { Toggle as TogglePrimitive } from "radix-ui";
-import React, { type ComponentProps } from "react";
+import { Slot } from "radix-ui";
+import React, { type ComponentPropsWithRef } from "react";
 
 export type ToggleVariant = "default" | "outline";
 export type ToggleSize = "default" | "sm" | "lg";
@@ -24,19 +25,35 @@ export const toggleVariants = cva(
 	}
 );
 
+type ToggleProps = ComponentPropsWithRef<"button"> &
+	ToggleVariants & {
+		asChild?: boolean;
+		pressed?: boolean;
+		defaultPressed?: boolean;
+		onPressedChange?: (pressed: boolean) => void;
+	};
+
 export function Toggle({
 	className,
 	variant = "default",
 	size = "default",
+	asChild,
+	value,
+	onPressedChange,
 	...props
-}: ComponentProps<typeof TogglePrimitive.Root> & ToggleVariants) {
+}: ToggleProps) {
+	const Element = asChild ? Slot.Root : "button";
 	return (
-		<TogglePrimitive.Root
+		<SdkToggle
 			data-slot="toggle"
 			data-variant={variant}
 			data-size={size}
 			className={cn(toggleVariants({ variant, size }), className)}
 			{...props}
+			onPressedChange={(next) => onPressedChange?.(next)}
+			render={(attrs, state) => (
+				<Element {...attrs} value={value} data-state={state.pressed ? "on" : "off"} />
+			)}
 		/>
 	);
 }

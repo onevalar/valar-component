@@ -21,7 +21,7 @@ export function parseCollapsibleSource(files: { target: string; content: string 
 	const source = files.find(
 		(file) => file.target.split("/").at(-1) === "collapsible-content.svelte"
 	)?.content;
-	const tag = /<CollapsiblePrimitive\.Content\b[\s\S]*?\/>/.exec(source ?? "")?.[0];
+	const tag = /<CollapsiblePanel\b[^>]*>/.exec(source ?? "")?.[0];
 	if (!tag?.includes('data-slot="collapsible-content"') || !tag.includes("{...restProps}"))
 		throw new Error("Collapsible registry 缺少内容原语入口");
 	const args = /class=\{cn\(([\s\S]*?)\)\}/.exec(tag)?.[1];

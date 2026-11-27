@@ -3,6 +3,7 @@
 	"type": "registry:ui",
 	"title": "Scroll Area 滚动区域",
 	"description": "固定尺寸区域内的滚动，各浏览器滚动条样式一致。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17"],
 	"categories": ["展示"],
 	"meta": {
 		"valar": {

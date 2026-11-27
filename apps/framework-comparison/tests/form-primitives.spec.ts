@@ -67,13 +67,17 @@ for (const [framework, url] of targets) {
 				const entries = () =>
 					form.evaluate((node) => Array.from(new FormData(node as HTMLFormElement).entries()));
 				const initial = await entries();
-				await updates.focus();
-				await updates.press("Space");
+				await updates.press("Enter");
 				await expect(updates).toHaveAttribute(
 					"aria-checked",
 					defaultChecked === "true" ? "false" : "true"
 				);
+				await expect(form.locator("output")).toHaveText("");
 				expect(await entries()).not.toEqual(initial);
+				await updates.press("Space");
+				await expect(updates).toHaveAttribute("aria-checked", defaultChecked!);
+				await updates.press("Space");
+				await expect.poll(entries).not.toEqual(initial);
 				await page.getByRole("button", { name: "Reset settings" }).click();
 				await expect(updates).toHaveAttribute("aria-checked", defaultChecked!);
 				expect(await entries()).toEqual(initial);

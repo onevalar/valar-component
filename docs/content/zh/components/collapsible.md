@@ -4,8 +4,7 @@ description: 展开、收起面板的交互组件。
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/collapsible
-  doc: https://bits-ui.com/docs/components/collapsible
-  api: https://bits-ui.com/docs/components/collapsible#api-reference
+  doc: https://ui-sdk.dev/docs
 ---
 
 <script>
@@ -37,11 +36,11 @@ links:
 
 <Step>
 
-安装 `bits-ui`：
+安装固定版本的 UI SDK 适配器及其依赖。
 
 </Step>
 
-<PMInstall command="bits-ui -D" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 svelte-toolbelt@0.10.6" />
 
 <Step>
 

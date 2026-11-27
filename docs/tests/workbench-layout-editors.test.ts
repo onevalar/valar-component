@@ -188,7 +188,12 @@ describe("layout editor baseline and installable geometry contracts", () => {
 						"data-vertical:self-stretch",
 					])
 				);
-				expect(separatorSource).not.toMatch(/decorative\s*=|orientation\s*=/);
+				const withoutClasses = (source: string) =>
+					source.replace(/class=\{cn\([\s\S]*?\)\}/, "");
+				const defaultSeparator = installed("separator", style, "").find(
+					(file) => file.target === "separator.svelte"
+				)!.content;
+				expect(withoutClasses(separatorSource)).toBe(withoutClasses(defaultSeparator));
 				for (const [key, value] of Object.entries(original))
 					expect(parseStyleCss(css)[key]).toBe(value);
 			}
@@ -384,7 +389,7 @@ describe("layout primitive runtime defaults and caller props", () => {
 					const element = target.querySelector<HTMLElement>('[data-slot="separator"]')!;
 					expect(element.getAttribute("role")).toBe(decorative ? "none" : "separator");
 					expect(element.getAttribute("aria-hidden")).toBe(decorative ? "true" : null);
-					expect(element.getAttribute("aria-orientation")).toBe(orientation);
+					expect(element.getAttribute("aria-orientation")).toBe(decorative ? null : orientation);
 					expect(element.dataset.orientation).toBe(orientation);
 					expect([...element.classList]).toEqual(expect.arrayContaining(separatorColors));
 					expect(element.classList.contains("data-horizontal:h-[0.5px]")).toBe(false);

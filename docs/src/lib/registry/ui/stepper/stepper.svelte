@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import { isComposing } from "@ui-sdk/core";
 	import type { WithElementRef } from "$lib/utils.js";
 	import type { Snippet } from "svelte";
 	import type { HTMLAttributes } from "svelte/elements";
@@ -200,7 +201,7 @@
 		return `${uid}-panel-${encodeURIComponent(id)}`;
 	}
 	function keydown(event: KeyboardEvent, index: number) {
-		if (event.isComposing) return;
+		if (event.defaultPrevented || isComposing(event)) return;
 		const rtl = ref && getComputedStyle(ref).direction === "rtl";
 		const nextKey = orientation === "vertical" ? "ArrowDown" : rtl ? "ArrowLeft" : "ArrowRight";
 		const prevKey = orientation === "vertical" ? "ArrowUp" : rtl ? "ArrowRight" : "ArrowLeft";

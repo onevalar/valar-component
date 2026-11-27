@@ -197,6 +197,10 @@ for (const colorScheme of ["light", "dark"] as const) {
 					colorScheme === "dark" ? "lch(37.275 1.2 272)" : "lch(64.94 1.25 282)"
 				);
 				const b = await rect(thumb);
+				const track = await rect(vertical);
+				expect(b.width).toBeGreaterThan(0);
+				expect(b.width).toBeLessThan(track.width);
+				expect(b.height).toBeLessThan(track.height);
 				await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
 				await page.mouse.down();
 				await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2 + 32, {

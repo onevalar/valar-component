@@ -60,6 +60,9 @@
 </script>
 
 <script lang="ts">
+	import { Button as SdkButton } from "@ui-sdk/svelte/button";
+	import { createAttachmentKey } from "svelte/attachments";
+
 	let {
 		class: className,
 		variant = "default",
@@ -79,6 +82,15 @@
 		event.preventDefault();
 		event.stopPropagation();
 	}
+
+	const refProps = {
+		[createAttachmentKey()]: (element: HTMLButtonElement) => {
+			ref = element;
+			return () => {
+				if (ref === element) ref = null;
+			};
+		},
+	};
 </script>
 
 {#if href}
@@ -101,22 +113,27 @@
 		{@render children?.()}
 	</a>
 {:else}
-	<button
-		bind:this={ref}
+	<SdkButton
+		{...refProps}
 		data-slot="button"
 		data-variant={variant}
 		data-size={size}
 		data-shape={shape}
 		class={cn(buttonVariants({ variant, size, shape }), className)}
-		{type}
-		{disabled}
+		type={type ?? undefined}
+		disabled={disabled ?? undefined}
 		tabindex={disabled ? -1 : tabindex}
 		{...restProps}
 		aria-disabled={loading ? true : restProps["aria-disabled"]}
 		aria-busy={loading ? true : restProps["aria-busy"]}
 		data-loading={loading ? "" : undefined}
-		onclick={loading ? blockActivation : restProps.onclick}
+		onclick={(event) => {
+			if (loading) blockActivation(event);
+			else if (event.currentTarget instanceof HTMLButtonElement) {
+				return restProps.onclick?.(event as MouseEvent & { currentTarget: HTMLButtonElement });
+			}
+		}}
 	>
 		{@render children?.()}
-	</button>
+	</SdkButton>
 {/if}

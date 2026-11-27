@@ -1,3 +1,4 @@
+import { Progress as SdkProgress, ProgressIndicator, ProgressValue } from "@ui-sdk/react/progress";
 import { cn } from "cn";
 import React, { type ComponentProps } from "react";
 
@@ -22,21 +23,19 @@ export function Progress({
 	const current =
 		value === null ? null : Math.min(upper, Math.max(lower, Number.isNaN(value) ? lower : value));
 	const indeterminate = current === null;
-	const fraction = !indeterminate && upper > lower ? (current - lower) / (upper - lower) : 0;
 	const project = appearance === "project";
 	return (
-		<div
-			role="progressbar"
-			aria-valuemin={lower}
-			aria-valuemax={upper}
-			aria-valuenow={current ?? undefined}
+		<SdkProgress
+			min={lower}
+			max={upper}
+			value={current}
+			getValueLabel={upper === lower && !indeterminate ? () => "0%" : undefined}
 			data-slot="progress"
 			data-appearance={project ? "project" : undefined}
 			data-state={indeterminate ? "indeterminate" : current === upper ? "loaded" : "loading"}
 			data-value={current ?? undefined}
 			data-min={lower}
 			data-max={upper}
-			data-indeterminate={indeterminate ? "" : undefined}
 			className={cn(
 				"cn-progress relative flex w-full items-center overflow-x-hidden",
 				project && "cn-progress-project",
@@ -45,15 +44,21 @@ export function Progress({
 			{...props}
 		>
 			{project ? (
-				<span aria-hidden="true">{indeterminate ? "—" : `${Math.round(fraction * 100)}%`}</span>
+				<ProgressValue aria-hidden="true">
+					{({ percent }) =>
+						percent === null ? "—" : `${upper === lower ? 0 : Math.round(percent)}%`
+					}
+				</ProgressValue>
 			) : (
-				<div
+				<ProgressIndicator
 					data-slot="progress-indicator"
-					data-indeterminate={indeterminate ? "" : undefined}
-					className="cn-progress-indicator h-full shrink-0 rounded-[inherit] transition-[width] duration-150 data-indeterminate:mx-auto motion-safe:data-indeterminate:animate-pulse motion-reduce:transition-none"
-					style={{ width: indeterminate ? "35%" : `${fraction * 100}%` }}
+					className={cn(
+						"cn-progress-indicator h-full shrink-0 rounded-[inherit] transition-[width] duration-150 data-indeterminate:mx-auto motion-safe:data-indeterminate:animate-pulse motion-reduce:transition-none",
+						upper === lower && !indeterminate && "w-0!"
+					)}
+					style={indeterminate ? { width: "35%" } : undefined}
 				/>
 			)}
-		</div>
+		</SdkProgress>
 	);
 }

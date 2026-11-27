@@ -1,10 +1,14 @@
 <script lang="ts">
+	import { Textarea as SdkTextarea } from "@ui-sdk/svelte/textarea";
+	import { createAttachmentKey } from "svelte/attachments";
 	import { cn, type WithElementRef, type WithoutChildren } from "$lib/utils.js";
 	import type { HTMLTextareaAttributes } from "svelte/elements";
 
 	let {
 		ref = $bindable(null),
 		value = $bindable(),
+		defaultValue,
+		defaultvalue,
 		class: className,
 		appearance = "default",
 		"data-slot": dataSlot = "textarea",
@@ -12,10 +16,21 @@
 	}: WithoutChildren<WithElementRef<HTMLTextareaAttributes>> & {
 		appearance?: "default" | "settings";
 	} = $props();
+
+	const refProps = {
+		[createAttachmentKey()]: (element: HTMLTextAreaElement) => {
+			ref = element;
+			return () => {
+				if (ref === element) ref = null;
+			};
+		},
+	};
+	const initial = $derived(defaultValue ?? defaultvalue);
 </script>
 
-<textarea
-	bind:this={ref}
+<SdkTextarea
+	{...refProps}
+	{...restProps}
 	data-slot={dataSlot}
 	data-appearance={appearance}
 	class={cn(
@@ -23,5 +38,12 @@
 		appearance === "settings" && "cn-textarea-appearance-settings",
 		className
 	)}
-	bind:value
-	{...restProps}></textarea>
+	disabled={restProps.disabled ?? undefined}
+	required={restProps.required ?? undefined}
+	value={value == null ? undefined : String(value)}
+	defaultValue={initial == null ? undefined : String(initial)}
+	onValueChange={(next: string) => {
+		value = next;
+	}}
+	autoResize={appearance === "default"}
+/>

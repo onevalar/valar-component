@@ -121,6 +121,10 @@ it("shows rejected async errors, permits retry, and moves keyboard focus without
 	expect(document.querySelector('[role="alert"]')?.textContent).toBe("Offline");
 	const buttons = document.querySelectorAll<HTMLButtonElement>('[data-slot="stepper-trigger"]');
 	buttons[0].focus();
+	const legacyComposition = new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true });
+	Object.defineProperty(legacyComposition, "keyCode", { value: 229 });
+	buttons[0].dispatchEvent(legacyComposition);
+	expect(document.activeElement).toBe(buttons[0]);
 	buttons[0].dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
 	flushSync();
 	expect(document.activeElement).toBe(buttons[1]);

@@ -223,11 +223,17 @@ test("Switch, Radio Group and Toggle render native interaction state, not placeh
 			h(UI.RadioGroupItem, { value: "digest", "aria-label": "Digest", disabled: true })
 		)
 	);
-	assert.match(radio, /role="radiogroup"[^>]+aria-orientation="vertical"[^>]+aria-readonly="true"/);
-	assert.match(radio, /role="radio"[^>]+aria-checked="true"[^>]+aria-label="Email"/);
 	assert.match(
 		radio,
-		/role="radio"[^>]+aria-checked="false"[^>]+disabled=""[^>]+aria-label="Digest"/
+		/<div(?=[^>]*role="radiogroup")(?=[^>]*aria-orientation="vertical")(?=[^>]*aria-readonly="true")/
+	);
+	assert.match(
+		radio,
+		/<button(?=[^>]*role="radio")(?=[^>]*aria-checked="true")(?=[^>]*aria-label="Email")/
+	);
+	assert.match(
+		radio,
+		/<button(?=[^>]*role="radio")(?=[^>]*aria-checked="false")(?=[^>]* disabled="")(?=[^>]*aria-label="Digest")/
 	);
 	assert.match(
 		render(
@@ -256,8 +262,11 @@ test("Tabs retain inactive panel children and expose paired aria IDs", () => {
 		/<button(?=[^>]*aria-selected="true")(?=[^>]*disabled="")(?=[^>]*aria-controls="([^"]+)")(?=[^>]* id="([^"]+)")[^>]*>One<\/button>/
 	);
 	assert.ok(trigger);
-	assert.ok(html.includes(`aria-labelledby="${trigger[2]}" id="${trigger[1]}"`));
-	assert.match(html, /role="tabpanel"[^>]+hidden=""[^>]*>Second contents<\/div>/);
+	const panel = html.match(/<div(?=[^>]*role="tabpanel")[^>]*>First contents<\/div>/)?.[0];
+	assert.ok(
+		panel?.includes(`aria-labelledby="${trigger[2]}"`) && panel.includes(` id="${trigger[1]}"`)
+	);
+	assert.match(html, /<div(?=[^>]*role="tabpanel")(?=[^>]*hidden="")[^>]*>Second contents<\/div>/);
 });
 
 test("Tooltip, Kbd and Toggle Group compose real Radix and native markup", () => {
@@ -364,5 +373,8 @@ test("Input Group and Button Group keep native controls and slots for shared foc
 	);
 	assert.match(group, /<span[^>]+data-slot="button-group-text"[^>]*>To:/);
 	assert.match(group, /<input[^>]+data-slot="input-group-control"/);
-	assert.match(group, /data-orientation="vertical" role="none" data-slot="button-group-separator"/);
+	assert.match(
+		group,
+		/<div(?=[^>]*data-orientation="vertical")(?=[^>]*role="none")(?=[^>]*data-slot="button-group-separator")/
+	);
 });

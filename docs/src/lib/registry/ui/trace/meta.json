@@ -3,6 +3,7 @@
 	"type": "registry:ui",
 	"title": "Trace 执行轨迹",
 	"description": "展示 agent 推理、工具调用、来源等步骤的行列表。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
 	"categories": ["展示"],
 	"meta": {
 		"valar": {

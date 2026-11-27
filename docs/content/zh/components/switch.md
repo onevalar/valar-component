@@ -4,8 +4,7 @@ description: 在选中与未选中状态之间切换的控件。
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/switch
-  doc: https://bits-ui.com/docs/components/switch
-  api: https://bits-ui.com/docs/components/switch#api-reference
+  doc: https://ui-sdk.dev/docs
 ---
 
 <script>
@@ -37,11 +36,11 @@ links:
 
 <Step>
 
-安装 `bits-ui`：
+安装 UI SDK 和样式辅助依赖：
 
 </Step>
 
-<PMInstall command="bits-ui -D" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 svelte-toolbelt@0.10.6" />
 
 <Step>
 

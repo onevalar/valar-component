@@ -47,6 +47,9 @@ for (const version of versions) {
 				await checkbox.focus();
 				await page.keyboard.press("Space");
 				await expect(checkbox).toBeChecked();
+				await checkbox.press("Enter");
+				await expect(checkbox).toBeChecked();
+				await expect(page.locator('[data-result="form"]')).toHaveText("{}");
 				const select = page.getByRole("combobox", { name: "服务商" });
 				await select.focus();
 				await page.keyboard.press("ArrowDown");

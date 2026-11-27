@@ -1,116 +1,103 @@
 "use client";
 
+import { renderElement } from "@ui-sdk/react/primitive";
+import { Radio, RadioGroup as SdkRadioGroup, RadioIndicator } from "@ui-sdk/react/radio";
 import { cn } from "cn";
-import { RadioGroup as RadioGroupPrimitive } from "radix-ui";
-import React, { createContext, useContext, useEffect, useRef, type ComponentProps } from "react";
+import React, { type ComponentProps, type ReactNode } from "react";
 
-const ReadOnlyContext = createContext(false);
+type RadioGroupProps = Omit<
+	ComponentProps<typeof SdkRadioGroup>,
+	"className" | "style" | "children" | "render" | "onValueChange"
+> & {
+	className?: string;
+	style?: React.CSSProperties;
+	children?: ReactNode;
+	asChild?: boolean;
+	orientation?: "vertical" | "horizontal";
+	onValueChange?: (value: string) => void;
+};
 
 export function RadioGroup({
 	className,
 	orientation = "vertical",
-	disabled,
-	readOnly = false,
-	onKeyDown,
-	onClickCapture,
+	asChild,
+	children,
+	name,
+	required,
+	onValueChange,
 	...props
-}: ComponentProps<typeof RadioGroupPrimitive.Root> & { readOnly?: boolean }) {
-	const pendingSelection = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-	const activated = useRef<EventTarget | null>(null);
-	useEffect(
-		() => () => {
-			clearTimeout(pendingSelection.current);
-			pendingSelection.current = undefined;
-			activated.current = null;
-		},
-		[disabled, readOnly]
-	);
-
+}: RadioGroupProps) {
 	return (
-		<ReadOnlyContext.Provider value={readOnly}>
-			<RadioGroupPrimitive.Root
-				data-slot="radio-group"
-				aria-disabled={disabled || undefined}
-				aria-readonly={readOnly || undefined}
-				data-readonly={readOnly || undefined}
-				orientation={orientation}
-				disabled={disabled}
-				className={cn("cn-radio-group w-full", className)}
-				onClickCapture={(event) => {
-					if (pendingSelection.current !== undefined) activated.current = event.target;
-					onClickCapture?.(event);
-				}}
-				onKeyDown={(event) => {
-					const roving = event.defaultPrevented;
-					onKeyDown?.(event);
-					const { key, target, currentTarget } = event;
-					if (
-						!roving ||
-						disabled ||
-						readOnly ||
-						!(
-							orientation === "vertical" ? ["ArrowUp", "ArrowDown"] : ["ArrowLeft", "ArrowRight"]
-						).includes(key) ||
-						!(target instanceof HTMLElement) ||
-						target.closest('[data-slot="radio-group"]') !== currentTarget ||
-						target.dataset.slot !== "radio-group-item"
-					)
-						return;
-					// Radix defers roving focus and only selects if the key is still held.
-					// Run after its focus move, and select only if Radix did not already do so.
-					clearTimeout(pendingSelection.current);
-					activated.current = null;
-					pendingSelection.current = setTimeout(() => {
-						pendingSelection.current = undefined;
-						const previousActivation = activated.current;
-						activated.current = null;
-						const next = currentTarget.ownerDocument.activeElement;
-						if (
-							next instanceof HTMLButtonElement &&
-							next !== target &&
-							next !== previousActivation &&
-							!next.disabled &&
-							next.dataset.slot === "radio-group-item" &&
-							next.getAttribute("aria-checked") === "false" &&
-							next.closest('[data-slot="radio-group"]') === currentTarget
-						)
-							next.click();
-					});
-				}}
-				{...props}
-			/>
-		</ReadOnlyContext.Provider>
+		<SdkRadioGroup
+			{...props}
+			name={name || undefined}
+			required={Boolean(name) && required}
+			aria-required={required || undefined}
+			aria-orientation={orientation}
+			data-orientation={orientation}
+			className={cn("cn-radio-group w-full", className)}
+			onValueChange={(value) => onValueChange?.(value ?? "")}
+			render={(part, state) =>
+				renderElement(
+					"div",
+					{ ...part, "data-slot": "radio-group" },
+					asChild ? (React.Children.only(children) as React.ReactElement) : undefined,
+					state
+				)
+			}
+		>
+			{asChild ? undefined : children}
+		</SdkRadioGroup>
 	);
 }
 
 export function RadioGroupItem({
 	className,
-	onClick,
+	onKeyDown,
+	value,
 	...props
-}: Omit<ComponentProps<typeof RadioGroupPrimitive.Item>, "asChild" | "children">) {
-	const readOnly = useContext(ReadOnlyContext);
+}: Omit<ComponentProps<"button">, "children" | "value"> & { value: string }) {
 	return (
-		<RadioGroupPrimitive.Item
-			data-slot="radio-group-item"
-			data-readonly={readOnly || undefined}
+		<Radio
+			{...props}
+			value={value}
 			className={cn(
 				"cn-radio-group-item group/radio-group-item peer relative aspect-square shrink-0 border outline-none after:absolute after:-inset-x-3 after:-inset-y-2 disabled:cursor-not-allowed disabled:opacity-50",
 				className
 			)}
-			onClick={(event) => {
-				onClick?.(event);
-				// Radix also clicks a newly focused item during arrow-key navigation.
-				if (readOnly) event.preventDefault();
+			onKeyDown={(event) => {
+				onKeyDown?.(event);
+				const { currentTarget, key } = event;
+				const horizontal =
+					currentTarget.closest('[data-slot="radio-group"]')?.getAttribute("aria-orientation") ===
+					"horizontal";
+				// Valar uses one arrow axis and does not submit on Enter; the SDK handles the remaining keys.
+				if (
+					key === "Enter" ||
+					(horizontal
+						? key === "ArrowUp" || key === "ArrowDown"
+						: key === "ArrowLeft" || key === "ArrowRight")
+				) {
+					event.preventDefault();
+				}
 			}}
-			{...props}
-		>
-			<RadioGroupPrimitive.Indicator
-				data-slot="radio-group-indicator"
-				className="cn-radio-group-indicator"
-				aria-hidden="true"
-			>
-				<span className="cn-radio-group-indicator-icon" />
-			</RadioGroupPrimitive.Indicator>
-		</RadioGroupPrimitive.Item>
+			render={(part, state) => (
+				<button
+					{...part}
+					value={value}
+					disabled={state.disabled}
+					data-slot="radio-group-item"
+					data-state={state.checked ? "checked" : "unchecked"}
+				>
+					<RadioIndicator
+						className="cn-radio-group-indicator"
+						aria-hidden="true"
+						render={(indicator) => <span {...indicator} data-slot="radio-group-indicator" />}
+					>
+						<span className="cn-radio-group-indicator-icon" />
+					</RadioIndicator>
+				</button>
+			)}
+		/>
 	);
 }

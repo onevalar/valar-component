@@ -3,6 +3,7 @@
 	"type": "registry:ui",
 	"title": "Button 按钮",
 	"description": "触发一个操作或跳转，是界面里最常见的可点击元素。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17"],
 	"categories": ["操作"],
 	"meta": {
 		"valar": {

@@ -54,7 +54,7 @@
 			"target": "button-group/RULES.md"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { Separator } from \"$UI$/separator/index.js\";\n\timport { cn } from \"$UTILS$.js\";\n\timport type { ComponentProps } from \"svelte\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\torientation = \"vertical\",\n\t\t...restProps\n\t}: ComponentProps<typeof Separator> = $props();\n</script>\n\n<Separator\n\tbind:ref\n\tdata-slot=\"button-group-separator\"\n\t{orientation}\n\tclass={cn(\n\t\t\"bg-input relative self-stretch data-horizontal:mx-px data-horizontal:w-auto data-vertical:my-px data-vertical:h-auto\",\n\t\tclassName\n\t)}\n\t{...restProps}\n/>\n",
+			"content": "<script lang=\"ts\">\n\timport { Separator } from \"$UI$/separator/index.js\";\n\timport { cn } from \"$UTILS$.js\";\n\timport type { ComponentProps } from \"svelte\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\torientation = \"vertical\",\n\t\tdecorative = true,\n\t\t...restProps\n\t}: ComponentProps<typeof Separator> = $props();\n</script>\n\n<Separator\n\tbind:ref\n\tdata-slot=\"button-group-separator\"\n\t{orientation}\n\t{decorative}\n\tclass={cn(\n\t\t\"bg-input relative self-stretch data-[orientation=horizontal]:mx-px data-[orientation=horizontal]:w-auto data-[orientation=vertical]:my-px data-[orientation=vertical]:h-auto\",\n\t\tclassName\n\t)}\n\t{...restProps}\n/>\n",
 			"type": "registry:file",
 			"target": "button-group/button-group-separator.svelte"
 		},

@@ -33,6 +33,7 @@ export function normalizeHex(input: string): string | undefined {
 </script>
 
 <script setup lang="ts">
+import { ColorPicker as SdkColorPicker, createColorPickerController } from "@ui-sdk/vue/color-picker";
 import { cn } from "cn";
 import { computed, ref, useId, watch } from "vue";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
@@ -48,6 +49,7 @@ const fallbackId = useId();
 const id = computed(() => props.id ?? fallbackId);
 const panelLabelId = `valar-color-picker-panel-${fallbackId}`;
 const localValue = ref(props.defaultValue);
+const controller = createColorPickerController();
 const current = computed(() => normalizeHex(props.modelValue ?? localValue.value) ?? "#000000");
 const open = ref(false);
 const draft = ref<string>();
@@ -70,11 +72,15 @@ watch(
 	}
 );
 
-function update(next: string | undefined) {
-	if (props.disabled || !next || next === current.value) return;
+function onColorChange(next: string) {
 	if (props.modelValue === undefined) localValue.value = next;
 	emit("update:modelValue", next);
 	emit("valueChange", next);
+}
+
+function update(next: string | undefined) {
+	if (!props.disabled && next && next !== current.value)
+		controller.setValue(next, { reason: "input-commit" });
 }
 
 function setOpen(next: boolean) {
@@ -111,9 +117,16 @@ function select(hex: string | undefined) {
 </script>
 
 <template>
-	<div
+	<SdkColorPicker
 		v-bind="$attrs"
 		:id="props.id"
+		:controller="controller"
+		:value="current"
+		space="srgb"
+		format="hex"
+		:disabled="disabled"
+		:name="name"
+		@value-change="onColorChange"
 		data-slot="color-picker"
 		:data-disabled="disabled || undefined"
 		:class="cn('grid gap-2', props.class)"
@@ -205,6 +218,5 @@ function select(hex: string | undefined) {
 				</div>
 			</PopoverContent>
 		</Popover>
-		<input v-if="name" type="hidden" :name="name" :value="current" :disabled="disabled" />
-	</div>
+	</SdkColorPicker>
 </template>

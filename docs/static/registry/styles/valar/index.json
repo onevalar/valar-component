@@ -4,6 +4,12 @@
 		"title": "Accordion 手风琴",
 		"type": "registry:ui",
 		"description": "一组可展开的标题，每项展开后显示对应内容。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
+		"devDependencies": [],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -29,7 +35,7 @@
 					}
 				],
 				"accessibility": [
-					"标题是按钮，Bits UI 提供 aria-expanded 和键盘操作",
+					"标题是按钮，支持 aria-expanded 和键盘操作",
 					"不要把必须看到的信息或关键操作藏在折叠内容里"
 				],
 				"responsive": [
@@ -181,6 +187,10 @@
 		"title": "Attachment 附件",
 		"type": "registry:ui",
 		"description": "显示文件或图片附件，包含缩略图、名称、上传状态和操作。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17"
+		],
 		"registryDependencies": [
 			"button"
 		],
@@ -234,6 +244,12 @@
 		"title": "Avatar 头像",
 		"type": "registry:ui",
 		"description": "表示用户的图片，加载失败时显示缩写等后备内容。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"bits-ui",
+			"svelte-toolbelt@0.10.6"
+		],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -424,6 +440,10 @@
 		"title": "Button 按钮",
 		"type": "registry:ui",
 		"description": "触发一个操作或跳转，是界面里最常见的可点击元素。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17"
+		],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -611,7 +631,12 @@
 		"name": "carousel",
 		"title": "Carousel 轮播",
 		"type": "registry:ui",
-		"description": "可滑动浏览一组内容的轮播，基于 Embla。",
+		"description": "可滑动浏览一组内容的轮播。默认使用 UI SDK；Embla 选项、插件和 API 继续使用 Embla。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"embla-carousel-svelte@8.6.0"
+		],
 		"registryDependencies": [
 			"button"
 		],
@@ -709,6 +734,12 @@
 		"title": "Checkbox 复选框",
 		"type": "registry:ui",
 		"description": "勾选或取消勾选一项，可多选。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
+		"devDependencies": [],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -805,6 +836,12 @@
 		"title": "Collapsible 折叠区",
 		"type": "registry:ui",
 		"description": "展开或收起单个内容区域。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
+		"devDependencies": [],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -847,6 +884,11 @@
 		"title": "Color Picker 颜色选择",
 		"type": "registry:ui",
 		"description": "用色盘、十六进制输入或预设色块选择颜色，值为 #rrggbb。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
 		"registryDependencies": [
 			"popover"
 		],
@@ -1508,6 +1550,10 @@
 		"title": "Input 输入框",
 		"type": "registry:ui",
 		"description": "单行文本输入，用于姓名、邮箱、搜索词等短文本。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17"
+		],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -1859,6 +1905,12 @@
 		"title": "Label 标签",
 		"type": "registry:ui",
 		"description": "与控件关联的无障碍文字标签。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
+		"devDependencies": [],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -2304,6 +2356,12 @@
 		"title": "Pagination 分页",
 		"type": "registry:ui",
 		"description": "页码与上一页、下一页导航。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"bits-ui",
+			"svelte-toolbelt@0.10.6"
+		],
 		"registryDependencies": [
 			"button"
 		],
@@ -2401,6 +2459,11 @@
 		"title": "Progress 进度条",
 		"type": "registry:ui",
 		"description": "显示任务的完成进度。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -2502,6 +2565,12 @@
 		"title": "Radio Group 单选组",
 		"type": "registry:ui",
 		"description": "从少量互斥选项中选一个，所有选项同时可见。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
+		"devDependencies": [],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -2641,6 +2710,9 @@
 		"title": "Ruler Slider 刻度滑块",
 		"type": "registry:ui",
 		"description": "支持移动尺带、拖动惯性、边界回弹和横向滚轮的精确数值输入。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17"
+		],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -2678,6 +2750,10 @@
 		"title": "Scroll Area 滚动区域",
 		"type": "registry:ui",
 		"description": "固定尺寸区域内的滚动，各浏览器滚动条样式一致。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17"
+		],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -2774,6 +2850,12 @@
 		"title": "Separator 分隔线",
 		"type": "registry:ui",
 		"description": "在视觉或语义上分隔内容。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
+		"devDependencies": [],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -3188,6 +3270,9 @@
 		"title": "Stepper 步骤条",
 		"type": "registry:ui",
 		"description": "带校验门禁、可取消异步校验的分步流程。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17"
+		],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -3238,6 +3323,12 @@
 		"title": "Switch 开关",
 		"type": "registry:ui",
 		"description": "立即开启或关闭一个设置。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
+		"devDependencies": [],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -3325,6 +3416,12 @@
 		"title": "Tabs 标签页",
 		"type": "registry:ui",
 		"description": "在同一位置切换显示几组相关内容。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
+		"devDependencies": [],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -3421,6 +3518,10 @@
 		"title": "Textarea 多行输入",
 		"type": "registry:ui",
 		"description": "多行文本输入，用于备注、描述、留言等较长内容。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17"
+		],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -3539,6 +3640,12 @@
 		"title": "Toggle 切换按钮",
 		"type": "registry:ui",
 		"description": "按下／弹起两种状态的按钮，如工具栏中的加粗。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
+		"devDependencies": [],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -3567,7 +3674,7 @@
 					}
 				],
 				"accessibility": [
-					"Bits UI 用 aria-pressed 表达按下状态",
+					"UI SDK 用 aria-pressed 表达按下状态",
 					"只有图标时要加 aria-label"
 				],
 				"responsive": [
@@ -3681,6 +3788,11 @@
 		"title": "Trace 执行轨迹",
 		"type": "registry:ui",
 		"description": "展示 agent 推理、工具调用、来源等步骤的行列表。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
 		"registryDependencies": [
 			"collapsible"
 		],

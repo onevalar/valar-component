@@ -110,6 +110,7 @@ export const componentCardSchema = z
 		description: line,
 		categories: z.array(z.enum(CARD_CATEGORIES)).length(1),
 		dependencies: z.array(z.string()).optional(),
+		devDependencies: z.array(z.string()).optional(),
 		registryDependencies: z.array(z.string()).optional(),
 		meta: z
 			.object({

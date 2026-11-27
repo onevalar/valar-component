@@ -157,8 +157,9 @@ describe("Resizable / Scroll Area finite geometry editors", () => {
 			expect(after).not.toContain("data-vertical:w-6");
 			expect(after).not.toContain("data-horizontal:h-2.5");
 			expect(classesAt(files[0].content, "scroll-area-thumb").split(/\s+/)).toEqual(
-				expect.arrayContaining(["relative", "flex-1", "bg-border", "rounded-md"])
+				expect.arrayContaining(["relative", "shrink-0", "bg-border", "rounded-md"])
 			);
+			expect(classesAt(files[0].content, "scroll-area-thumb").split(/\s+/)).not.toContain("flex-1");
 			expect(cn(after.join(" "), "data-vertical:w-8")).not.toContain("data-vertical:w-3.5");
 			const radiusOnly = install(
 				"scroll-area",

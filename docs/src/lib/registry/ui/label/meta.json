@@ -3,6 +3,8 @@
 	"type": "registry:ui",
 	"title": "Label 标签",
 	"description": "与控件关联的无障碍文字标签。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
+	"devDependencies": [],
 	"categories": ["表单"],
 	"meta": {
 		"valar": {

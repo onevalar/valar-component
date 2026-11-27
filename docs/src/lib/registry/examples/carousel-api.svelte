@@ -19,7 +19,7 @@
 </script>
 
 <div class="mx-auto max-w-[10rem] sm:max-w-xs">
-	<Carousel.Root setApi={(emblaApi) => (api = emblaApi)} class="w-full max-w-xs">
+	<Carousel.Root aria-label="Embla API example" setApi={(emblaApi) => (api = emblaApi)} class="w-full max-w-xs">
 		<Carousel.Content>
 			{#each Array(5) as _, i (i)}
 				<Carousel.Item>

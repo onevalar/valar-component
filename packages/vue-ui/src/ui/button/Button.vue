@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button as SdkButton } from "@ui-sdk/vue/button";
 import { cn } from "cn";
 import { Primitive } from "reka-ui";
 import { computed } from "vue";
@@ -28,7 +29,19 @@ const element = computed(() => (props.href ? "a" : props.as));
 </script>
 
 <template>
+	<SdkButton
+		v-if="element === 'button' && !asChild"
+		data-slot="button"
+		:data-variant="variant"
+		:data-size="size"
+		:type="type"
+		:disabled="disabled"
+		:class="cn(buttonVariants({ variant, size, shape }), props.class)"
+	>
+		<slot />
+	</SdkButton>
 	<Primitive
+		v-else
 		data-slot="button"
 		:data-variant="variant"
 		:data-size="size"

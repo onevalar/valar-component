@@ -4,9 +4,10 @@
 	"title": "Separator 分隔线",
 	"type": "registry:ui",
 	"description": "在视觉或语义上分隔内容。",
-	"devDependencies": [
-		"bits-ui@2.20.0",
-		"@internationalized/date@^3.12.0"
+	"dependencies": [
+		"@ui-sdk/core@0.1.0-beta.17",
+		"@ui-sdk/svelte@0.1.0-beta.17",
+		"svelte-toolbelt@0.10.6"
 	],
 	"meta": {
 		"valar": {
@@ -51,7 +52,7 @@
 			"target": "separator/index.ts"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { Separator as SeparatorPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\t\"data-slot\": dataSlot = \"separator\",\n\t\t...restProps\n\t}: SeparatorPrimitive.RootProps = $props();\n</script>\n\n<SeparatorPrimitive.Root\n\tbind:ref\n\tdata-slot={dataSlot}\n\tclass={cn(\n\t\t\"shrink-0 bg-[color:var(--valar-separator,var(--valar-separator-base,lch(0%_0_0_/_8.8%)))] dark:[--valar-separator-base:lch(100%_0_0_/_8.3%)] data-horizontal:h-[0.5px] data-horizontal:w-full data-vertical:w-[0.5px] data-vertical:self-stretch\",\n\t\t\"\",\n\t\tclassName\n\t)}\n\t{...restProps}\n/>\n",
+			"content": "<script lang=\"ts\">\n\timport { Separator as SdkSeparator, type SeparatorOrientation } from \"@ui-sdk/svelte/separator\";\n\timport { styleToString } from \"svelte-toolbelt\";\n\timport { createAttachmentKey } from \"svelte/attachments\";\n\timport { cn } from \"$UTILS$.js\";\n\timport type { Snippet } from \"svelte\";\n\timport type { HTMLAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\t\"data-slot\": dataSlot = \"separator\",\n\t\torientation = \"horizontal\",\n\t\tdecorative = false,\n\t\tchild,\n\t\tchildren,\n\t\tstyle,\n\t\t...restProps\n\t}: Omit<HTMLAttributes<HTMLDivElement>, \"style\"> & {\n\t\tref?: HTMLElement | null;\n\t\tchild?: Snippet<[{ props: Record<string, unknown> }]>;\n\t\tstyle?: HTMLAttributes<HTMLDivElement>[\"style\"] | Parameters<typeof styleToString>[0];\n\t\torientation?: SeparatorOrientation;\n\t\tdecorative?: boolean;\n\t\t\"data-slot\"?: string;\n\t} = $props();\n\n\tconst refKey = createAttachmentKey();\n\tconst attachRef = (element: HTMLElement) => {\n\t\tref = element;\n\t\treturn () => {\n\t\t\tif (ref === element) ref = null;\n\t\t};\n\t};\n</script>\n\n<SdkSeparator\n\t{orientation}\n\t{decorative}\n\taria-hidden={decorative || undefined}\n\tdata-horizontal={orientation === \"horizontal\" ? \"\" : undefined}\n\tdata-vertical={orientation === \"vertical\" ? \"\" : undefined}\n\tclass={cn(\n\t\t\"shrink-0 bg-[color:var(--valar-separator,var(--valar-separator-base,lch(0%_0_0_/_8.8%)))] dark:[--valar-separator-base:lch(100%_0_0_/_8.3%)] data-horizontal:h-[0.5px] data-horizontal:w-full data-vertical:w-[0.5px] data-vertical:self-stretch\",\n\t\t\"\",\n\t\tclassName\n\t)}\n\tstyle={style && typeof style === \"object\" ? styleToString(style) : style}\n\t{...restProps}\n>\n\t{#snippet render({ props })}\n\t\t{#if child}\n\t\t\t{@render child({ props: { ...props, \"data-slot\": dataSlot, [refKey]: attachRef } })}\n\t\t{:else}\n\t\t\t<div {...props} data-slot={dataSlot} {@attach attachRef}>{@render children?.()}</div>\n\t\t{/if}\n\t{/snippet}\n</SdkSeparator>\n",
 			"type": "registry:file",
 			"target": "separator/separator.svelte"
 		}

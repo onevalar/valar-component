@@ -1,4 +1,5 @@
 import type { EmblaCarouselType, EmblaOptionsType, EmblaPluginType } from "embla-carousel";
+import type { CarouselController } from "@ui-sdk/core/carousel";
 import { inject, type InjectionKey, type Ref } from "vue";
 
 export type CarouselAPI = EmblaCarouselType;
@@ -7,6 +8,8 @@ export type CarouselPlugins = EmblaPluginType[];
 export type CarouselOrientation = "horizontal" | "vertical";
 
 export interface CarouselProps {
+	/** Use Embla when you need to inspect its API from a component ref. */
+	engine?: "sdk" | "embla";
 	opts?: CarouselOptions;
 	plugins?: CarouselPlugins;
 	setApi?: (api: CarouselAPI | undefined) => void;
@@ -15,6 +18,8 @@ export interface CarouselProps {
 }
 
 interface CarouselState {
+	sdk: Readonly<Ref<boolean>>;
+	controller: CarouselController;
 	orientation: Readonly<Ref<CarouselOrientation>>;
 	direction: Readonly<Ref<"ltr" | "rtl" | undefined>>;
 	opts: Readonly<Ref<CarouselOptions | undefined>>;

@@ -38,7 +38,7 @@ export function parseAccordionSource(files: { target: string; content: string }[
 	};
 	const trigger = /cn\(\s*"([^"]*)"/.exec(source("accordion-trigger"))?.[1];
 	const content = source("accordion-content");
-	const outer = /data-slot="accordion-content"\s+class="([^"]*)"/.exec(content)?.[1];
+	const outer = /<AccordionPanel\b[^>]*\bclass="([^"]*)"/.exec(content)?.[1];
 	const inner = /cn\(\s*"([^"]*)"/.exec(content)?.[1];
 	if (trigger === undefined || outer === undefined || inner === undefined)
 		throw new Error("Accordion registry 缺少标题或内容样式");

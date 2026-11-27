@@ -11,9 +11,9 @@ export function parseCarouselSource(files: { target: string; content: string }[]
 	values: CarouselValues;
 	context: CarouselContext;
 } {
+	const source = (file: string) => files.find((entry) => entry.target.split("/").at(-1) === file)?.content ?? "";
 	const classes = (file: string, orientation: "horizontal" | "vertical") => {
-		const source = files.find((entry) => entry.target.split("/").at(-1) === file)?.content;
-		const body = source && /class=\{cn\(([\s\S]*?)\)\}/.exec(source)?.[1];
+		const body = /const classes = \$derived\(cn\(([\s\S]*?),\s*className\s*\)\)/.exec(source(file))?.[1];
 		if (body === undefined) throw new Error(`Carousel registry 缺少 ${file} 样式`);
 		// Resolve BOTH direction-dependent arguments before merging every literal cn argument.
 		// Merging the two branches together would silently mix horizontal and vertical defaults.
@@ -24,11 +24,13 @@ export function parseCarouselSource(files: { target: string; content: string }[]
 		);
 		return cn(...[...branch.matchAll(/"([^"]*)"/g)].map((match) => match[1]));
 	};
+	const sdkClasses = /<SdkContent class=\{cn\("([^"]*)"/.exec(source("carousel-content.svelte"))?.[1] ?? "";
 	const gaps = [
 		sourceWord("-ms-(\\d+(?:\\.5)?)", classes("carousel-content.svelte", "horizontal")),
 		sourceWord("-mt-(\\d+(?:\\.5)?)", classes("carousel-content.svelte", "vertical")),
 		sourceWord("ps-(\\d+(?:\\.5)?)", classes("carousel-item.svelte", "horizontal")),
 		sourceWord("pt-(\\d+(?:\\.5)?)", classes("carousel-item.svelte", "vertical")),
+		sourceWord("gap-(\\d+(?:\\.5)?)", cn(sdkClasses)),
 	];
 	if (gaps.some((value) => value === undefined || value !== gaps[0]))
 		throw new Error("Carousel registry 缺少横纵一致的幻灯片间距");
@@ -40,6 +42,7 @@ export function carouselOverrideClasses(overrides: CarouselOverrides): Record<st
 	if (safe.gap === undefined) return {};
 	const gap = spacing(safe.gap);
 	return {
+		"cn-carousel-sdk-content": `gap-${gap}`,
 		"cn-carousel-content-horizontal": `-ms-${gap}`,
 		"cn-carousel-content-vertical": `-mt-${gap}`,
 		"cn-carousel-item-horizontal": `ps-${gap}`,
@@ -54,10 +57,11 @@ function carouselCss(
 	const safe = valuesSchema.partial().parse(overrides);
 	if (safe.gap === undefined) return "";
 	return [
-		`${select("carousel-container", "horizontal")} { margin-inline-start: -${safe.gap}px; }`,
-		`${select("carousel-container", "vertical")} { margin-top: -${safe.gap}px; }`,
-		`${select("carousel-item", "horizontal")} { padding-inline-start: ${safe.gap}px; }`,
-		`${select("carousel-item", "vertical")} { padding-top: ${safe.gap}px; }`,
+		...(["horizontal", "vertical"] as const).flatMap((orientation) => [
+			`${select("carousel-container", orientation)}[data-carousel-engine="sdk"] { gap: ${safe.gap}px; }`,
+			`${select("carousel-container", orientation)}[data-embla-container] { ${orientation === "horizontal" ? "margin-inline-start" : "margin-top"}: -${safe.gap}px; }`,
+			`${select("carousel-item", orientation)}[data-embla-slide] { ${orientation === "horizontal" ? "padding-inline-start" : "padding-top"}: ${safe.gap}px; }`,
+		]),
 	].join("\n");
 }
 

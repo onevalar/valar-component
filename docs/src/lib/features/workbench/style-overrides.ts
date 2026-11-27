@@ -235,6 +235,7 @@ export const OVERRIDE_RULES: Record<string, RegExp> = {
 	),
 	"cn-command-item": /^(?:px-(?:[0-5](?:\.5)?|6)|(?:py|gap)-(?:[0-3](?:\.5)?|4))$/,
 	"cn-command-list": /^max-h-(?:4[048]|5[26]|6[048]|7[26]|8[048]|9[26])$/,
+	"cn-carousel-sdk-content": /^gap-(?:[0-7](?:\.5)?|8)$/,
 	"cn-carousel-content-horizontal": /^-ms-(?:[0-7](?:\.5)?|8)$/,
 	"cn-carousel-content-vertical": /^-mt-(?:[0-7](?:\.5)?|8)$/,
 	"cn-carousel-item-horizontal": /^ps-(?:[0-7](?:\.5)?|8)$/,

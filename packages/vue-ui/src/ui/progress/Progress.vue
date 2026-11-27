@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Progress as SdkProgress, ProgressIndicator, ProgressValue } from "@ui-sdk/vue/progress";
 import { cn } from "cn";
 import { computed } from "vue";
 import type { HTMLAttributes } from "vue";
@@ -14,36 +15,37 @@ const props = withDefaults(
 	{ appearance: "default", min: 0, max: 100, value: 0 }
 );
 
+const lower = computed(() => (Number.isFinite(props.min) ? props.min : 0));
+const upper = computed(() => Math.max(lower.value, Number.isFinite(props.max) ? props.max : 100));
 const currentValue = computed(() =>
-	props.value === null ? null : Math.min(props.max, Math.max(props.min, props.value))
-);
-const fraction = computed(() =>
-	currentValue.value !== null && props.max > props.min
-		? (currentValue.value - props.min) / (props.max - props.min)
-		: 0
+	props.value === null
+		? null
+		: Math.min(
+				upper.value,
+				Math.max(lower.value, Number.isNaN(props.value) ? lower.value : props.value)
+			)
 );
 const state = computed(() =>
 	currentValue.value === null
 		? "indeterminate"
-		: currentValue.value === props.max
+		: currentValue.value === upper.value
 			? "loaded"
 			: "loading"
 );
 </script>
 
 <template>
-	<div
-		role="progressbar"
+	<SdkProgress
+		:min="lower"
+		:max="upper"
+		:value="currentValue"
+		:get-value-label="upper === lower && currentValue !== null ? () => '0%' : undefined"
 		data-slot="progress"
 		:data-appearance="appearance === 'project' ? 'project' : undefined"
 		:data-state="state"
-		:data-min="min"
-		:data-max="max"
+		:data-min="lower"
+		:data-max="upper"
 		:data-value="currentValue ?? undefined"
-		:data-indeterminate="currentValue === null ? '' : undefined"
-		:aria-valuemin="min"
-		:aria-valuemax="max"
-		:aria-valuenow="currentValue ?? undefined"
 		:class="
 			cn(
 				'cn-progress relative flex w-full items-center overflow-x-hidden',
@@ -52,15 +54,22 @@ const state = computed(() =>
 			)
 		"
 	>
-		<span v-if="appearance === 'project'" aria-hidden="true">{{
-			currentValue === null ? "—" : `${Math.round(fraction * 100)}%`
-		}}</span>
-		<div
+		<ProgressValue
+			v-if="appearance === 'project'"
+			v-slot="{ state: { percent } }"
+			aria-hidden="true"
+			>{{ percent === null ? "—" : `${upper === lower ? 0 : Math.round(percent)}%` }}</ProgressValue
+		>
+		<ProgressIndicator
 			v-else
 			data-slot="progress-indicator"
-			:data-indeterminate="currentValue === null ? '' : undefined"
-			class="cn-progress-indicator h-full shrink-0 rounded-[inherit] transition-[width] duration-150 data-indeterminate:mx-auto motion-safe:data-indeterminate:animate-pulse motion-reduce:transition-none"
-			:style="{ width: currentValue === null ? '35%' : `${fraction * 100}%` }"
+			:class="
+				cn(
+					'cn-progress-indicator h-full shrink-0 rounded-[inherit] transition-[width] duration-150 data-indeterminate:mx-auto motion-safe:data-indeterminate:animate-pulse motion-reduce:transition-none',
+					upper === lower && currentValue !== null && 'w-0!'
+				)
+			"
+			:style="currentValue === null ? { width: '35%' } : undefined"
 		/>
-	</div>
+	</SdkProgress>
 </template>

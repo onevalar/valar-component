@@ -1,5 +1,6 @@
 "use client";
 
+import { Pagination as SdkPagination, createPaginationController } from "@ui-sdk/react/pagination";
 import { cn } from "cn";
 import { ChevronLeft, ChevronRight, Ellipsis } from "lucide-react";
 import { Slot } from "radix-ui";
@@ -97,86 +98,91 @@ export function Pagination({
 	onKeyDown,
 	...props
 }: PaginationProps) {
-	const [localPage, setLocalPage] = useState(defaultPage);
+	const [controller] = useState(createPaginationController);
 	const itemCount = normalizeInteger(count, 0, 0);
 	const pageSize = normalizeInteger(perPage, 10, 1);
-	const totalPages = Math.max(1, Math.ceil(itemCount / pageSize));
-	const currentPage = Math.min(totalPages, normalizeInteger(page ?? localPage, 1, 1));
-	const selectPage = (nextPage: number) => {
-		if (
-			!Number.isInteger(nextPage) ||
-			nextPage < 1 ||
-			nextPage > totalPages ||
-			nextPage === currentPage
-		)
-			return;
-		if (page === undefined) setLocalPage(nextPage);
-		onPageChange?.(nextPage);
-	};
+	const siblings = normalizeInteger(siblingCount, 1, 0);
 	const Comp = asChild ? Slot.Root : "nav";
 	return (
-		<PaginationContext.Provider value={{ currentPage, totalPages, selectPage }}>
-			<Comp
-				data-slot="pagination"
-				data-pagination-root=""
-				data-orientation={orientation}
-				role="navigation"
-				aria-label="分页"
-				className={cn("cn-pagination mx-auto flex w-full justify-center", className)}
-				{...props}
-				onKeyDown={(event) => {
-					onKeyDown?.(event);
-					if (
-						event.defaultPrevented ||
-						event.altKey ||
-						event.ctrlKey ||
-						event.metaKey ||
-						!(event.target instanceof Element)
-					)
-						return;
-					const root = event.currentTarget;
-					const control = event.target.closest(controlSelector);
-					if (control?.closest("[data-pagination-root]") !== root) return;
-					const rtl = getComputedStyle(root).direction === "rtl";
-					const forward =
-						orientation === "vertical" ? "ArrowDown" : rtl ? "ArrowLeft" : "ArrowRight";
-					const backward =
-						orientation === "vertical" ? "ArrowUp" : rtl ? "ArrowRight" : "ArrowLeft";
-					const { key } = event;
-					if (key !== "Home" && key !== "End" && key !== forward && key !== backward) return;
-					event.preventDefault();
-					const controls = Array.from(
-						root.querySelectorAll<HTMLButtonElement>(controlSelector)
-					).filter(
-						(node) =>
-							node.closest("[data-pagination-root]") === root &&
-							node.tabIndex >= 0 &&
-							node.getClientRects().length > 0 &&
-							getComputedStyle(node).visibility === "visible"
-					);
-					const index = controls.findIndex((node) => node === control);
-					if (index < 0) return;
-					const next =
-						key === "Home"
-							? 0
-							: key === "End"
-								? controls.length - 1
-								: index + (key === forward ? 1 : -1);
-					controls[loop ? (next + controls.length) % controls.length : next]?.focus();
-				}}
-			>
-				{typeof children === "function"
-					? children({
-							pages: getPageItems(currentPage, totalPages, normalizeInteger(siblingCount, 1, 0)),
-							range: {
-								start: (currentPage - 1) * pageSize + 1,
-								end: Math.min(currentPage * pageSize, itemCount),
-							},
-							currentPage,
-						})
-					: children}
-			</Comp>
-		</PaginationContext.Provider>
+		<SdkPagination
+			controller={controller}
+			total={itemCount}
+			pageSize={pageSize}
+			siblings={siblings}
+			defaultPage={normalizeInteger(defaultPage, 1, 1)}
+			page={page === undefined ? undefined : normalizeInteger(page, 1, 1)}
+			onPageChange={onPageChange}
+			data-slot="pagination"
+			data-pagination-root=""
+			data-orientation={orientation}
+			role="navigation"
+			aria-label="分页"
+			className={cn("cn-pagination mx-auto flex w-full justify-center", className)}
+			{...props}
+			onKeyDown={(event) => {
+				onKeyDown?.(event);
+				if (
+					event.defaultPrevented ||
+					event.altKey ||
+					event.ctrlKey ||
+					event.metaKey ||
+					!(event.target instanceof Element)
+				)
+					return;
+				const root = event.currentTarget;
+				const control = event.target.closest(controlSelector);
+				if (control?.closest("[data-pagination-root]") !== root) return;
+				const rtl = getComputedStyle(root).direction === "rtl";
+				const forward = orientation === "vertical" ? "ArrowDown" : rtl ? "ArrowLeft" : "ArrowRight";
+				const backward = orientation === "vertical" ? "ArrowUp" : rtl ? "ArrowRight" : "ArrowLeft";
+				const { key } = event;
+				if (key !== "Home" && key !== "End" && key !== forward && key !== backward) return;
+				event.preventDefault();
+				const controls = Array.from(
+					root.querySelectorAll<HTMLButtonElement>(controlSelector)
+				).filter(
+					(node) =>
+						node.closest("[data-pagination-root]") === root &&
+						node.tabIndex >= 0 &&
+						node.getClientRects().length > 0 &&
+						getComputedStyle(node).visibility === "visible"
+				);
+				const index = controls.findIndex((node) => node === control);
+				if (index < 0) return;
+				const next =
+					key === "Home"
+						? 0
+						: key === "End"
+							? controls.length - 1
+							: index + (key === forward ? 1 : -1);
+				controls[loop ? (next + controls.length) % controls.length : next]?.focus();
+			}}
+			render={(attributes, { page: currentPage, pageCount: totalPages }) => (
+				<PaginationContext.Provider
+					value={{
+						currentPage,
+						totalPages,
+						selectPage(nextPage) {
+							if (Number.isInteger(nextPage) && nextPage >= 1 && nextPage <= totalPages)
+								controller.setPage(nextPage);
+						},
+					}}
+				>
+					<Comp {...attributes}>
+						{typeof children === "function"
+							? children({
+									pages: getPageItems(currentPage, totalPages, siblings),
+									range: {
+										start: (currentPage - 1) * pageSize + 1,
+										end: Math.min(currentPage * pageSize, itemCount),
+									},
+									currentPage,
+								})
+							: children}
+					</Comp>
+				</PaginationContext.Provider>
+			)}
+		/>
 	);
 }
 

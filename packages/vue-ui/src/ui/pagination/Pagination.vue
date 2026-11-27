@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { pagination as paginationPrimitive } from "@ui-sdk/core/pagination";
+import { usePrimitive } from "@ui-sdk/vue/primitive";
 import { cn } from "cn";
 import { Primitive, useForwardExpose } from "reka-ui";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { pageItems, providePagination } from "./context";
 import type { PrimitiveProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
@@ -24,13 +26,18 @@ const props = withDefaults(
 );
 const emit = defineEmits<{ "update:page": [page: number] }>();
 const { forwardRef } = useForwardExpose();
-const localPage = ref(props.defaultPage);
 const count = computed(() => Math.max(0, Math.floor(props.count)));
 const perPage = computed(() => Math.max(1, Math.floor(props.perPage)));
-const pageCount = computed(() => Math.max(1, Math.ceil(count.value / perPage.value)));
-const currentPage = computed(() =>
-	Math.min(pageCount.value, Math.max(1, Math.floor(props.page ?? localPage.value)))
-);
+const pagination = usePrimitive(paginationPrimitive, () => ({
+	total: count.value,
+	pageSize: perPage.value,
+	defaultPage: Math.floor(props.defaultPage),
+	page: props.page === undefined ? undefined : Math.floor(props.page),
+	disabled: props.disabled,
+	onPageChange: (value) => emit("update:page", value),
+}));
+const pageCount = computed(() => pagination.state.pageCount);
+const currentPage = computed(() => Math.min(pageCount.value, Math.max(1, pagination.state.page)));
 const pages = computed(() =>
 	pageItems(currentPage.value, pageCount.value, Math.max(0, Math.floor(props.siblingCount)))
 );
@@ -52,8 +59,7 @@ providePagination({
 			value === currentPage.value
 		)
 			return;
-		if (props.page === undefined) localPage.value = value;
-		emit("update:page", value);
+		pagination.api.setPage(value);
 	},
 });
 

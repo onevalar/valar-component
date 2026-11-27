@@ -1,4 +1,5 @@
 import { getContext, hasContext, setContext } from "svelte";
+import type { CarouselController } from "@ui-sdk/core/carousel";
 import type { WithElementRef } from "$lib/utils.js";
 import type {
 	EmblaCarouselSvelteType,
@@ -30,6 +31,7 @@ export type CarouselProps = {
 const EMBLA_CAROUSEL_CONTEXT = Symbol("EMBLA_CAROUSEL_CONTEXT");
 
 export type EmblaContext = {
+	sdk?: CarouselController;
 	api: CarouselAPI | undefined;
 	orientation: "horizontal" | "vertical";
 	scrollNext: () => void;

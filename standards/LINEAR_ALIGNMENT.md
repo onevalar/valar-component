@@ -136,6 +136,16 @@
 
 ## 当前交付
 
+2026-11-27 · UI SDK 第 3–11 批：在现有 React／Vue／Svelte 子路径和 Svelte registry 中，Toggle、Tabs、Button、Avatar、Progress、Pagination、Scroll Area、Input、Textarea、Color Picker、Carousel 的常用路径接入 `0.1.0-beta.17`。Field、Input Group、Attachment、Button Group、Item、Trace 复用 SDK 已迁原语，Ruler Slider、Stepper 仅复用 Core 的部分行为。保持 Valar token 和现有基础目录等级。证据见 [Toggle／Tabs](porting-records/toggle-tabs-legacy-to-ui-sdk.md)、[独立原语和表单](porting-records/independent-primitives-legacy-to-ui-sdk.md)、[弹层和日期](porting-records/overlays-dates-legacy-to-ui-sdk.md)、[轮播与业务组合](porting-records/batches-9-10-legacy-to-ui-sdk.md)。
+
+本轮 46 项中，11 项常用路径直接接入、8 项通过组合或 Core 部分接入、27 项未替换底层。文档实际验收覆盖浅深 Tabs、窄屏 Carousel 的 16 px 间距与相邻箭头、Avatar 照片／缩写、Color Picker 展开、色值及归焦；`pnpm build`、文档单测 267/267、生产产物定向 Chromium 9/9 和三端类型检查通过。三端本地 tarball 各验证 7 个代表入口，Svelte 独立 CLI 安装另通过严格类型、生产构建和浏览器回归。SDK 工作区 catalog 在 registry 生成时解析为可独立安装的精确版本。Radix／Reka／Bits UI 及 Embla 仍有实际入口，不删除。下一批优先三端同换 Popover＋Select，补公开定位、表单、嵌套关闭与归焦；Slider／Number Field／OTP 和日期模型另按各自合同验收。
+
+2026-11-27 · [UI SDK 第二批原语迁移](porting-records/primitives-wave-two-legacy-to-ui-sdk.md)：Separator／Label、Collapsible／Accordion、Radio Group 的 React、Vue、Svelte 原入口与 Svelte registry 改用 UI SDK `beta.17`。三端本地 tarball、独立 CLI 安装、浅深预览与样式工作台回归通过；保留 Field 组合、项目属性布局、Accordion 键盘合同和 Valar 主题。Radio 表单及自定义旧 API 的差异见转换记录；不提升基础目录等级。后续为 Toggle／Toggle Group 与 Tabs，Popover＋Select 仍按组合验证。
+
+2026-11-27 · [UI SDK 首批 Switch／Checkbox 合同验收](porting-records/toggle-controls-legacy-to-ui-sdk.md)：三端共享包及 Svelte registry 原入口改用 UI SDK `beta.17` 并保持 Valar 样式；同一 `checkbox` 入口新增 `CheckboxGroup`，文档示例展示组必填和复位。使用旧外层复选组的调用须迁到 Valar 新组。三端预览 16 项、文档 5 项 Chromium 回归通过；三端 tarball 与独立 Svelte CLI 安装通过。设置行／紧凑开关、表格半选和复选组的浅深验证不提升现有基础目录等级。下一批并行 Separator/Label、Collapsible/Accordion、Radio Group；Popover＋Select 仍按组合验证。
+
+2026-11-27 · UI SDK 私有预览试点：[图标选择器](porting-records/icon-picker-ui-sdk-to-react-vue-svelte.md)三端共用一份搜索、导航与选中行为，浅深两主题的 Chromium 检查通过；[React Popover 对照](porting-records/popover-radix-to-ui-sdk.md)保住普通表单但未通过嵌套 Radix Select。文档站、registry、共享包与基础目录无新增或替换。若继续，优先补图标选择器的公共 API、SSR 和实机验证；正式 Popover 等跨库弹层兼容后再复评。
+
 | 场景             | 注册表入口                       | 共享包入口                                                                | 当前范围                                                       |
 | ---------------- | -------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | 设置页           | `settings-01`                    | `@valar/svelte-ui/blocks/settings-01`                                     | 已实现双栏、设置行、主题选择、开关和锁定状态                   |

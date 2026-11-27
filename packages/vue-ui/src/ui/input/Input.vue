@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Input as SdkInput } from "@ui-sdk/vue/input";
 import { useVModel } from "@vueuse/core";
 import { cn } from "cn";
 import type { HTMLAttributes } from "vue";
@@ -6,6 +7,7 @@ import type { HTMLAttributes } from "vue";
 const props = defineProps<{
 	defaultValue?: string | number;
 	modelValue?: string | number;
+	type?: string;
 	class?: HTMLAttributes["class"];
 }>();
 
@@ -17,17 +19,23 @@ const modelValue = useVModel(props, "modelValue", emits, {
 	passive: true,
 	defaultValue: props.defaultValue,
 });
+const classes = () =>
+	cn(
+		"cn-input w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+		props.class
+	);
 </script>
 
 <template>
-	<input
-		v-model="modelValue"
+	<SdkInput
+		v-if="!type || /^(text|search|email|tel|url|password)$/i.test(type)"
+		:type="type"
+		:model-value="props.modelValue === undefined ? undefined : String(props.modelValue)"
+		:default-value="props.defaultValue === undefined ? undefined : String(props.defaultValue)"
 		data-slot="input"
-		:class="
-			cn(
-				'cn-input w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
-				props.class
-			)
-		"
+		:class="classes()"
+		@update:model-value="emits('update:modelValue', $event)"
 	/>
+	<input v-else-if="type === 'file'" type="file" data-slot="input" :class="classes()" />
+	<input v-else :type="type" v-model="modelValue" data-slot="input" :class="classes()" />
 </template>

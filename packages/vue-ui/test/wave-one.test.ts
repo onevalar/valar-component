@@ -11,6 +11,7 @@ import type { Component } from "vue";
 
 const dist = new URL("../dist/", import.meta.url);
 const entries = {
+	checkbox: ["Checkbox", "CheckboxGroup"],
 	label: ["Label"],
 	field: [
 		"Field",

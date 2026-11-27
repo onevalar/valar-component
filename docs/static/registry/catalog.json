@@ -10,6 +10,12 @@
 			"categories": [
 				"展示"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
+			],
+			"devDependencies": [],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -34,7 +40,7 @@
 						}
 					],
 					"accessibility": [
-						"标题是按钮，Bits UI 提供 aria-expanded 和键盘操作",
+						"标题是按钮，支持 aria-expanded 和键盘操作",
 						"不要把必须看到的信息或关键操作藏在折叠内容里"
 					],
 					"responsive": [
@@ -50,7 +56,7 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/accordion",
 			"install": "pnpm exec valar-svelte add accordion",
-			"markdown": "# Accordion 手风琴\n\n一组可展开的标题，每项展开后显示对应内容。\n\n- 分类：展示\n- 关键词：手风琴、accordion、折叠面板、FAQ、展开收起\n- 安装：`pnpm exec valar-svelte add accordion`\n\n## 何时使用\n\n- 把多段内容收成标题列表，如常见问题、设置分组\n- type=multiple 允许同时展开多项\n\n## 何时不用\n\n- 只有一个区域需要展开收起：改用 `collapsible`\n- 并列视图切换且一次只看一个：改用 `tabs`\n\n## 无障碍\n\n- 标题是按钮，Bits UI 提供 aria-expanded 和键盘操作\n- 不要把必须看到的信息或关键操作藏在折叠内容里\n\n## 响应式\n\n- 窄屏下比 tabs 更适合较长的标题\n- 内容展开后随页面滚动\n\n## 相关组件\n\n- `collapsible`\n- `tabs`\n- `card`\n",
+			"markdown": "# Accordion 手风琴\n\n一组可展开的标题，每项展开后显示对应内容。\n\n- 分类：展示\n- 关键词：手风琴、accordion、折叠面板、FAQ、展开收起\n- 安装：`pnpm exec valar-svelte add accordion`\n\n## 何时使用\n\n- 把多段内容收成标题列表，如常见问题、设置分组\n- type=multiple 允许同时展开多项\n\n## 何时不用\n\n- 只有一个区域需要展开收起：改用 `collapsible`\n- 并列视图切换且一次只看一个：改用 `tabs`\n\n## 无障碍\n\n- 标题是按钮，支持 aria-expanded 和键盘操作\n- 不要把必须看到的信息或关键操作藏在折叠内容里\n\n## 响应式\n\n- 窄屏下比 tabs 更适合较长的标题\n- 内容展开后随页面滚动\n\n## 相关组件\n\n- `collapsible`\n- `tabs`\n- `card`\n",
 			"rules": "# Accordion 设计规范\n\n- 用于可以按需展开的次要内容（常见问题、分组设置）；用户必须看到的内容不要折叠起来。只有一块可展开内容时用 Collapsible。\n- `Accordion.Root` 必须设 `type=\"single\"`（同时只展开一项）或 `type=\"multiple\"`；每个 `Accordion.Item` 设唯一的 `value`。\n- `Accordion.Trigger` 外层渲染为标题，用 `level` 属性设成与页面结构相符的标题级别（默认 3），不要再在 Trigger 里套 `<h3>`。\n- 标题写成能看出内容的短句；展开动效、间距跟随组件样式和组件参数，不要用 `class` 改 `duration-*` 或内边距。\n"
 		},
 		{
@@ -205,6 +211,10 @@
 			"categories": [
 				"展示"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17"
+			],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -260,6 +270,12 @@
 			"description": "表示用户的图片，加载失败时显示缩写等后备内容。",
 			"categories": [
 				"展示"
+			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"bits-ui",
+				"svelte-toolbelt@0.10.6"
 			],
 			"meta": {
 				"valar": {
@@ -471,6 +487,10 @@
 			"categories": [
 				"操作"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17"
+			],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -670,9 +690,14 @@
 			"name": "carousel",
 			"type": "registry:ui",
 			"title": "Carousel 轮播",
-			"description": "可滑动浏览一组内容的轮播，基于 Embla。",
+			"description": "可滑动浏览一组内容的轮播。默认使用 UI SDK；Embla 选项、插件和 API 继续使用 Embla。",
 			"categories": [
 				"展示"
+			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"embla-carousel-svelte@8.6.0"
 			],
 			"meta": {
 				"valar": {
@@ -717,7 +742,7 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/carousel",
 			"install": "pnpm exec valar-svelte add carousel",
-			"markdown": "# Carousel 轮播\n\n可滑动浏览一组内容的轮播，基于 Embla。\n\n- 分类：展示\n- 关键词：轮播、carousel、幻灯片、slider、滑动浏览\n- 安装：`pnpm exec valar-svelte add carousel`\n\n## 何时使用\n\n- 横向或纵向滑动浏览一组同类内容，如图片、卡片\n\n## 何时不用\n\n- 只需在区域内滚动：改用 `scroll-area`\n- 并列视图切换：改用 `tabs`\n- 每项都必须被看到的重要内容：改用 `card`\n\n## 无障碍\n\n- 根元素 role=region、aria-roledescription=carousel，每项为 slide\n- 上一项／下一项按钮支持方向键；不要无暂停地自动播放\n\n## 响应式\n\n- 用 basis-* 控制每屏显示几项，可按断点设置\n- 支持触摸滑动\n\n## 相关组件\n\n- `scroll-area`\n- `card`\n- `aspect-ratio`\n",
+			"markdown": "# Carousel 轮播\n\n可滑动浏览一组内容的轮播。默认使用 UI SDK；Embla 选项、插件和 API 继续使用 Embla。\n\n- 分类：展示\n- 关键词：轮播、carousel、幻灯片、slider、滑动浏览\n- 安装：`pnpm exec valar-svelte add carousel`\n\n## 何时使用\n\n- 横向或纵向滑动浏览一组同类内容，如图片、卡片\n\n## 何时不用\n\n- 只需在区域内滚动：改用 `scroll-area`\n- 并列视图切换：改用 `tabs`\n- 每项都必须被看到的重要内容：改用 `card`\n\n## 无障碍\n\n- 根元素 role=region、aria-roledescription=carousel，每项为 slide\n- 上一项／下一项按钮支持方向键；不要无暂停地自动播放\n\n## 响应式\n\n- 用 basis-* 控制每屏显示几项，可按断点设置\n- 支持触摸滑动\n\n## 相关组件\n\n- `scroll-area`\n- `card`\n- `aspect-ratio`\n",
 			"rules": "# Carousel 设计规范\n\n- `Carousel.Root` 渲染 `role=\"region\"`，必须用 `aria-label` 说明轮播的内容；每个 `Carousel.Item` 已标为一张幻灯片。\n- 用 `Carousel.Previous`、`Carousel.Next` 提供翻页按钮，它们的读屏文字默认是“上一张”“下一张”，其他语言用 `label` 改。\n- 行为用 `opts`（Embla 选项，如 `loop`、`align`）和 `plugins` 配置；需要读取当前页或跳转时用 `setApi` 拿到 API，不要自己监听滚动。\n- 自动播放会打断阅读：使用自动播放插件时必须提供暂停按钮，并在悬停和聚焦时暂停。\n- 重要内容不要只放在后面几张幻灯片里，用户很少翻到最后。\n"
 		},
 		{
@@ -779,6 +804,12 @@
 			"categories": [
 				"表单"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
+			],
+			"devDependencies": [],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -885,6 +916,12 @@
 			"categories": [
 				"展示"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
+			],
+			"devDependencies": [],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -931,6 +968,11 @@
 			"description": "用色盘、十六进制输入或预设色块选择颜色，值为 #rrggbb。",
 			"categories": [
 				"表单"
+			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
 			],
 			"meta": {
 				"valar": {
@@ -1640,6 +1682,10 @@
 			"categories": [
 				"表单"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17"
+			],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -2000,6 +2046,12 @@
 			"categories": [
 				"表单"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
+			],
+			"devDependencies": [],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -2488,6 +2540,12 @@
 			"categories": [
 				"导航"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"bits-ui",
+				"svelte-toolbelt@0.10.6"
+			],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -2592,6 +2650,11 @@
 			"description": "显示任务的完成进度。",
 			"categories": [
 				"反馈"
+			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
 			],
 			"meta": {
 				"valar": {
@@ -2702,6 +2765,12 @@
 			"categories": [
 				"表单"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
+			],
+			"devDependencies": [],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -2744,7 +2813,7 @@
 			"docs": "http://127.0.0.1:5186/docs/components/radio-group",
 			"install": "pnpm exec valar-svelte add radio-group",
 			"markdown": "# Radio Group 单选组\n\n从少量互斥选项中选一个，所有选项同时可见。\n\n- 分类：表单\n- 关键词：单选、radio、单选组、选项\n- 安装：`pnpm exec valar-svelte add radio-group`\n\n## 何时使用\n\n- 2–5 个互斥选项，需要用户比较后选择\n\n## 何时不用\n\n- 选项很多：改用 `select`\n- 可以多选：改用 `checkbox`\n- 切换视图或模式：改用 `tabs`\n\n## 无障碍\n\n- 整组有 legend 或 aria-label\n- 方向键在选项间移动\n\n## 响应式\n\n- 窄屏下纵向排列\n\n## 相关组件\n\n- `select`\n- `checkbox`\n- `toggle-group`\n",
-			"rules": "# Radio Group 设计规范\n\n- 用于 2–5 个互斥选项且需要一眼看全的场景；选项更多时用 Select，可以多选用 Checkbox，切换视图或模式用 Tabs 或 Toggle Group。\n- 整组要有名称：放在 `Field.Set` 中并用 `Field.Legend` 写组名，或给 `RadioGroup.Root` 设 `aria-label`。\n- 每个 `RadioGroup.Item` 设 `id` 和 `value`，并用 `Field.Label for={id}` 关联可点击的标签（检查规则 `valar/input-label`）；每项放在 `<Field.Field orientation=\"horizontal\">` 中。\n- 用 `bind:value` 绑定选中值；需要默认选中时给出初始值，不要让必选组初始为空又不提示。\n- 方向用 `orientation` 属性；方向键在选项间移动，不要给每个选项单独加 Tab 停留。\n"
+			"rules": "# Radio Group 设计规范\n\n- 用于 2–5 个互斥选项且需要一眼看全的场景；选项更多时用 Select，可以多选用 Checkbox，切换视图或模式用 Tabs 或 Toggle Group。\n- 整组要有名称：放在 `Field.Set` 中并用 `Field.Legend` 写组名，或给 `RadioGroup.Root` 设 `aria-label`。\n- 每个 `RadioGroup.Item` 设 `id` 和 `value`，并用 `Field.Label for={id}` 关联可点击的标签（检查规则 `valar/input-label`）；每项放在 `<Field.Field orientation=\"horizontal\">` 中。\n- React 用 `defaultValue` 或 `value`／`onValueChange`；Vue 用 `default-value` 或 `v-model`；Svelte 用 `defaultValue` 或 `bind:value`。选项值使用唯一的非空字符串；Svelte 用 `\"\"` 表示未选中。\n- `name` 必须非空才参与原生提交和 `required` 校验。未选中、选中项被禁用或整组被禁用，不产生表单条目；不再用文本代理提交空字符串。默认值可作为表单重置目标；受控值不设默认值时由宿主处理重置。`form` 可关联外部表单。\n- 用组件的值绑定或回调订阅选择变化，不要依赖表单代理触发原生 `input`／`change`。如果必填项必须提交可用值，禁用当前选中项时清空选中值：原生校验可能通过，但不会提交该选项。\n- 方向用 `orientation` 属性；方向键沿对应轴移动，跳过禁用项，横向遵从元素或祖先的 `dir`。不要给每个选项单独加 Tab 停留。Space 可选择，Enter 不会提交表单；只读组可以移焦但不更改选中项。UI SDK 不提供 Home／End 跳转。\n- 用原生 `<label for>` 关联默认按钮；标签包裹整张卡片时，用 `aria-labelledby` 关联标题、`aria-describedby` 关联说明。自定义非按钮选项不要依赖原生标签激活。旧 Vue `asChild`、可取消的 `select` 事件及 Vue／Svelte `autocomplete` 文本代理接口不再提供。依赖 React／Vue 旧方向 Provider 的用法改为设置 `dir`。\n"
 		},
 		{
 			"name": "range-calendar",
@@ -2853,6 +2922,9 @@
 			"categories": [
 				"表单"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17"
+			],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -2894,6 +2966,10 @@
 			"description": "固定尺寸区域内的滚动，各浏览器滚动条样式一致。",
 			"categories": [
 				"展示"
+			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17"
 			],
 			"meta": {
 				"valar": {
@@ -2999,6 +3075,12 @@
 			"categories": [
 				"展示"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
+			],
+			"devDependencies": [],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -3445,6 +3527,9 @@
 			"categories": [
 				"导航"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17"
+			],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -3500,6 +3585,12 @@
 			"categories": [
 				"表单"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
+			],
+			"devDependencies": [],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -3597,6 +3688,12 @@
 			"categories": [
 				"导航"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
+			],
+			"devDependencies": [],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -3702,6 +3799,10 @@
 			"description": "多行文本输入，用于备注、描述、留言等较长内容。",
 			"categories": [
 				"表单"
+			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17"
 			],
 			"meta": {
 				"valar": {
@@ -3836,6 +3937,12 @@
 			"categories": [
 				"操作"
 			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
+			],
+			"devDependencies": [],
 			"meta": {
 				"valar": {
 					"keywords": [
@@ -3863,7 +3970,7 @@
 						}
 					],
 					"accessibility": [
-						"Bits UI 用 aria-pressed 表达按下状态",
+						"UI SDK 用 aria-pressed 表达按下状态",
 						"只有图标时要加 aria-label"
 					],
 					"responsive": [
@@ -3878,7 +3985,7 @@
 			},
 			"docs": "http://127.0.0.1:5186/docs/components/toggle",
 			"install": "pnpm exec valar-svelte add toggle",
-			"markdown": "# Toggle 切换按钮\n\n按下／弹起两种状态的按钮，如工具栏中的加粗。\n\n- 分类：操作\n- 关键词：切换按钮、toggle、开关按钮、按下状态、pressed\n- 安装：`pnpm exec valar-svelte add toggle`\n\n## 何时使用\n\n- 工具栏中可开关的单个状态，如加粗、静音\n\n## 何时不用\n\n- 设置项的开启／关闭：改用 `switch`\n- 一组单选或多选的状态：改用 `toggle-group`\n- 执行一次性操作：改用 `button`\n\n## 无障碍\n\n- Bits UI 用 aria-pressed 表达按下状态\n- 只有图标时要加 aria-label\n\n## 响应式\n\n- 窄屏下保证触摸目标足够大（size）\n\n## 相关组件\n\n- `toggle-group`\n- `switch`\n- `button`\n",
+			"markdown": "# Toggle 切换按钮\n\n按下／弹起两种状态的按钮，如工具栏中的加粗。\n\n- 分类：操作\n- 关键词：切换按钮、toggle、开关按钮、按下状态、pressed\n- 安装：`pnpm exec valar-svelte add toggle`\n\n## 何时使用\n\n- 工具栏中可开关的单个状态，如加粗、静音\n\n## 何时不用\n\n- 设置项的开启／关闭：改用 `switch`\n- 一组单选或多选的状态：改用 `toggle-group`\n- 执行一次性操作：改用 `button`\n\n## 无障碍\n\n- UI SDK 用 aria-pressed 表达按下状态\n- 只有图标时要加 aria-label\n\n## 响应式\n\n- 窄屏下保证触摸目标足够大（size）\n\n## 相关组件\n\n- `toggle-group`\n- `switch`\n- `button`\n",
 			"rules": "# Toggle 设计规范\n\n- 用于按下／弹起两种状态的工具按钮（如加粗、显示网格）；表单中的开关设置用 Switch，执行一次性操作用 Button。\n- 状态用 `bind:pressed`；样式和尺寸只用 `variant`（`default`、`outline`）和 `size`（`sm`、`default`、`lg`）。\n- 只有图标时必须有 `aria-label`，名称描述功能而不是状态（“加粗”，不要写“开启加粗”）。\n- 一组互相关联的切换按钮用 Toggle Group。\n"
 		},
 		{
@@ -3988,6 +4095,11 @@
 			"description": "展示 agent 推理、工具调用、来源等步骤的行列表。",
 			"categories": [
 				"展示"
+			],
+			"dependencies": [
+				"@ui-sdk/core@0.1.0-beta.17",
+				"@ui-sdk/svelte@0.1.0-beta.17",
+				"svelte-toolbelt@0.10.6"
 			],
 			"meta": {
 				"valar": {

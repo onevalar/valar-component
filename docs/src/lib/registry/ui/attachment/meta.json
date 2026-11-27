@@ -3,6 +3,7 @@
 	"type": "registry:ui",
 	"title": "Attachment 附件",
 	"description": "显示文件或图片附件，包含缩略图、名称、上传状态和操作。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17"],
 	"categories": ["展示"],
 	"meta": {
 		"valar": {

@@ -4,8 +4,7 @@ description: A vertically stacked set of interactive headings that each reveal a
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/accordion
-  doc: https://bits-ui.com/docs/components/accordion
-  api: https://bits-ui.com/docs/components/accordion#api-reference
+  doc: https://ui-sdk.dev/docs
 ---
 
 <script>
@@ -43,11 +42,11 @@ links:
 
 <Step>
 
-Install `bits-ui`
+Install the pinned UI SDK adapter and its dependencies.
 
 </Step>
 
-<PMInstall command="bits-ui" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 svelte-toolbelt@0.10.6" />
 
 <Step>
 

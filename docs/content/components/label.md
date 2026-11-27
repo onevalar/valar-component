@@ -4,8 +4,7 @@ description: Renders an accessible label associated with controls.
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/label
-  doc: https://bits-ui.com/docs/components/label
-  api: https://bits-ui.com/docs/components/label#api-reference
+  doc: https://ui-sdk.dev/docs
 ---
 
 <script>
@@ -44,11 +43,11 @@ For form fields, use the [Field](/docs/components/field) component which include
 
 <Step>
 
-Install `bits-ui`:
+Install the dependencies used by Valar Label:
 
 </Step>
 
-<PMInstall command="bits-ui -D" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 svelte-toolbelt@0.10.6" />
 
 <Step>
 

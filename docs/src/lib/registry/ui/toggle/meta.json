@@ -4,6 +4,8 @@
 	"title": "Toggle 切换按钮",
 	"description": "按下／弹起两种状态的按钮，如工具栏中的加粗。",
 	"categories": ["操作"],
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
+	"devDependencies": [],
 	"meta": {
 		"valar": {
 			"keywords": ["切换按钮", "toggle", "开关按钮", "按下状态", "pressed"],
@@ -22,7 +24,7 @@
 					"use": "button"
 				}
 			],
-			"accessibility": ["Bits UI 用 aria-pressed 表达按下状态", "只有图标时要加 aria-label"],
+			"accessibility": ["UI SDK 用 aria-pressed 表达按下状态", "只有图标时要加 aria-label"],
 			"responsive": ["窄屏下保证触摸目标足够大（size）"],
 			"related": ["toggle-group", "switch", "button"]
 		}

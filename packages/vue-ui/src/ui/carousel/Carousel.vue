@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { Carousel as SdkCarousel, createCarouselController } from "@ui-sdk/vue/carousel";
 import { cn } from "cn";
-import { computed, provide, ref, shallowRef, toRef, type HTMLAttributes } from "vue";
+import { computed, getCurrentInstance, provide, ref, shallowRef, toRef, type HTMLAttributes } from "vue";
 import { carouselContext, type CarouselAPI, type CarouselProps } from "./context";
 
 const props = withDefaults(defineProps<CarouselProps & { class?: HTMLAttributes["class"] }>(), { orientation: "horizontal" });
@@ -9,6 +10,9 @@ const api = shallowRef<CarouselAPI>();
 const canScrollPrev = ref(false);
 const canScrollNext = ref(false);
 const direction = computed(() => props.dir ?? props.opts?.direction);
+const attrs = getCurrentInstance()?.vnode.props;
+const sdk = computed(() => props.engine !== "embla" && !props.opts && !props.plugins && !props.setApi && !attrs?.onInitApi);
+const controller = createCarouselController();
 defineExpose({ api });
 
 function sync(instance?: CarouselAPI) {
@@ -25,7 +29,11 @@ function setApi(instance?: CarouselAPI) {
 	if (instance) emit("initApi", instance);
 }
 
-function scroll(move: "previous" | "next") {
+function scroll(move: "previous" | "next", event?: KeyboardEvent) {
+	if (sdk.value) {
+		controller[move]({ reason: "list-navigation", event });
+		return;
+	}
 	const instance = api.value;
 	if (!instance) return;
 	const jump = instance.rootNode().ownerDocument.defaultView?.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -34,6 +42,8 @@ function scroll(move: "previous" | "next") {
 }
 
 provide(carouselContext, {
+	sdk,
+	controller,
 	orientation: toRef(props, "orientation"),
 	direction,
 	opts: toRef(props, "opts"),
@@ -57,13 +67,17 @@ function onKeydown(event: KeyboardEvent) {
 	const next = props.orientation === "vertical" ? "ArrowDown" : rtl ? "ArrowLeft" : "ArrowRight";
 	if (event.key === previous || event.key === next) {
 		event.preventDefault();
-		scroll(event.key === previous ? "previous" : "next");
+		scroll(event.key === previous ? "previous" : "next", event);
 	}
 }
 </script>
 
 <template>
-	<div data-slot="carousel" role="region" aria-roledescription="轮播" :dir="direction" :data-orientation="orientation"
+	<SdkCarousel v-if="sdk" :controller="controller" :orientation="orientation" data-slot="carousel"
+		aria-roledescription="轮播" :dir="direction" :class="cn('relative min-w-0', props.class)" @keydown="onKeydown">
+		<slot />
+	</SdkCarousel>
+	<div v-else data-slot="carousel" role="region" aria-roledescription="轮播" :dir="direction" :data-orientation="orientation"
 		:class="cn('relative min-w-0', props.class)" @keydown="onKeydown">
 		<slot />
 	</div>

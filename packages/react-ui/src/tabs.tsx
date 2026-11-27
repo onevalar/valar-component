@@ -1,9 +1,22 @@
 "use client";
 
+import {
+	Tabs as SdkTabs,
+	TabsList as SdkList,
+	TabsPanel as SdkPanel,
+	TabsTab as SdkTab,
+} from "@ui-sdk/react/tabs";
 import { cva } from "class-variance-authority";
 import { cn } from "cn";
-import { Tabs as TabsPrimitive } from "radix-ui";
-import React, { createContext, useContext, useState, type ComponentProps } from "react";
+import { Direction, Slot } from "radix-ui";
+import React, {
+	createContext,
+	useContext,
+	useId,
+	useLayoutEffect,
+	useState,
+	type ComponentPropsWithRef,
+} from "react";
 
 export type TabsListVariant = "default" | "line" | "capsule";
 
@@ -21,7 +34,18 @@ export const tabsListVariants = cva(
 	}
 );
 
-const TabsContext = createContext({ disabled: false, loop: true, value: "" });
+const TabsContext = createContext<{
+	disabled: boolean;
+	baseId: string;
+	setListLoop?: (loop: boolean | undefined) => void;
+}>({ disabled: false, baseId: "" });
+type DivProps = ComponentPropsWithRef<"div"> & { asChild?: boolean };
+
+// Valar exposes both ARIA references in SSR; the SDK only wires controls after mounting.
+function tabsIds(baseId: string, value: string) {
+	const suffix = value.replace(/[\s%]/g, encodeURIComponent);
+	return { tab: `${baseId}-tab-${suffix}`, panel: `${baseId}-panel-${suffix}` };
+}
 
 export function Tabs({
 	className,
@@ -30,23 +54,43 @@ export function Tabs({
 	value: controlledValue,
 	defaultValue = "",
 	onValueChange,
+	activationMode,
+	asChild,
+	dir,
 	...props
-}: ComponentProps<typeof TabsPrimitive.Root> & { disabled?: boolean; loop?: boolean }) {
+}: DivProps & {
+	disabled?: boolean;
+	loop?: boolean;
+	value?: string;
+	defaultValue?: string;
+	onValueChange?: (value: string) => void;
+	activationMode?: "automatic" | "manual";
+	orientation?: "horizontal" | "vertical";
+	dir?: "ltr" | "rtl";
+}) {
 	const [localValue, setLocalValue] = useState(defaultValue);
+	const [listLoop, setListLoop] = useState<boolean>();
 	const value = controlledValue ?? localValue;
+	const baseId = useId();
+	const direction = Direction.useDirection(dir);
+	const Element = asChild ? Slot.Root : "div";
 	return (
-		<TabsContext.Provider value={{ disabled, loop, value }}>
-			<TabsPrimitive.Root
-				data-slot="tabs"
-				data-disabled={disabled || undefined}
+		<TabsContext.Provider value={{ disabled, baseId, setListLoop }}>
+			<SdkTabs
+				data-disabled={disabled ? "" : undefined}
 				className={cn("cn-tabs group/tabs flex min-w-0 data-horizontal:flex-col", className)}
-				value={value}
+				value={value || null}
+				dir={direction}
+				loop={listLoop ?? loop}
+				activation={activationMode}
 				onValueChange={(next) => {
-					if (disabled || next === value) return;
-					if (controlledValue === undefined) setLocalValue(next);
-					onValueChange?.(next);
+					const selected = next ?? "";
+					if (disabled || selected === value) return;
+					if (controlledValue === undefined) setLocalValue(selected);
+					onValueChange?.(selected);
 				}}
 				{...props}
+				render={(attrs) => <Element {...attrs} data-slot="tabs" />}
 			/>
 		</TabsContext.Provider>
 	);
@@ -57,14 +101,19 @@ export function TabsList({
 	variant = "default",
 	loop,
 	onFocus,
+	asChild,
 	...props
-}: ComponentProps<typeof TabsPrimitive.List> & { variant?: TabsListVariant }) {
-	const root = useContext(TabsContext);
+}: DivProps & { variant?: TabsListVariant; loop?: boolean }) {
+	const Element = asChild ? Slot.Root : "div";
+	const { setListLoop } = useContext(TabsContext);
+	useLayoutEffect(() => {
+		if (loop === undefined) return;
+		setListLoop?.(loop);
+		return () => setListLoop?.(undefined);
+	}, [loop, setListLoop]);
 	return (
-		<TabsPrimitive.List
-			data-slot="tabs-list"
+		<SdkList
 			data-variant={variant}
-			loop={loop ?? root.loop}
 			className={cn(tabsListVariants({ variant }), className)}
 			onFocus={(event) => {
 				onFocus?.(event);
@@ -86,6 +135,7 @@ export function TabsList({
 					list.scrollBy({ left: bounds.right - end, behavior: "instant" });
 			}}
 			{...props}
+			render={(attrs) => <Element {...attrs} data-slot="tabs-list" />}
 		/>
 	);
 }
@@ -93,13 +143,20 @@ export function TabsList({
 export function TabsTrigger({
 	className,
 	disabled,
+	asChild,
+	value,
+	ref,
 	...props
-}: ComponentProps<typeof TabsPrimitive.Trigger>) {
-	const root = useContext(TabsContext);
+}: ComponentPropsWithRef<"button"> & { value: string; asChild?: boolean }) {
+	const context = useContext(TabsContext);
+	const isDisabled = Boolean(context.disabled || disabled);
+	const ids = tabsIds(context.baseId, value);
+	const Element = asChild ? Slot.Root : "button";
 	return (
-		<TabsPrimitive.Trigger
-			data-slot="tabs-trigger"
-			disabled={root.disabled || disabled}
+		<SdkTab
+			value={value}
+			disabled={isDisabled}
+			ref={isDisabled ? undefined : ref}
 			className={cn(
 				"cn-tabs-trigger relative inline-flex flex-1 items-center justify-center whitespace-nowrap text-foreground/60 transition-[border-color,background-color,color,opacity,box-shadow] group-data-horizontal/tabs:h-full group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start hover:text-foreground focus-visible:border-ring focus-visible:ring-0 focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-ring focus-visible:outline-solid disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none dark:group-not-data-[variant=capsule]/tabs-list:text-muted-foreground dark:group-not-data-[variant=capsule]/tabs-list:hover:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				"group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent dark:group-data-[variant=line]/tabs-list:data-active:border-transparent dark:group-data-[variant=line]/tabs-list:data-active:bg-transparent",
@@ -109,6 +166,18 @@ export function TabsTrigger({
 				className
 			)}
 			{...props}
+			render={(attrs, { selected }) => (
+				<Element
+					{...attrs}
+					id={props.id ?? ids.tab}
+					aria-controls={props["aria-controls"] ?? ids.panel}
+					ref={isDisabled ? ref : attrs.ref}
+					data-slot="tabs-trigger"
+					disabled={isDisabled}
+					data-active={selected ? "" : undefined}
+					data-state={selected ? "active" : "inactive"}
+				/>
+			)}
 		/>
 	);
 }
@@ -118,18 +187,29 @@ export function TabsContent({
 	value,
 	forceMount = true,
 	hidden,
+	asChild,
 	...props
-}: Omit<ComponentProps<typeof TabsPrimitive.Content>, "forceMount"> & { forceMount?: boolean }) {
-	const root = useContext(TabsContext);
+}: DivProps & { value: string; forceMount?: boolean }) {
+	const Element = asChild ? Slot.Root : "div";
+	const { baseId } = useContext(TabsContext);
+	const ids = tabsIds(baseId, value);
 	return (
-		<TabsPrimitive.Content
-			data-slot="tabs-content"
+		<SdkPanel
 			className={cn("cn-tabs-content min-w-0 flex-1 outline-none", className)}
 			value={value}
-			forceMount={forceMount || undefined}
-			// Keep inactive children mounted, but out of the accessibility tree and tab order.
-			hidden={value !== root.value || hidden}
+			keepMounted={forceMount}
+			tabIndex={0}
 			{...props}
+			render={(attrs, { selected }) => (
+				<Element
+					{...attrs}
+					id={props.id ?? ids.panel}
+					aria-labelledby={props["aria-labelledby"] ?? ids.tab}
+					data-slot="tabs-content"
+					data-state={selected ? "active" : "inactive"}
+					hidden={!selected || hidden}
+				/>
+			)}
 		/>
 	);
 }

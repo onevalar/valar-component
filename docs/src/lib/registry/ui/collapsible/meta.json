@@ -3,6 +3,8 @@
 	"type": "registry:ui",
 	"title": "Collapsible 折叠区",
 	"description": "展开或收起单个内容区域。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
+	"devDependencies": [],
 	"categories": ["展示"],
 	"meta": {
 		"valar": {

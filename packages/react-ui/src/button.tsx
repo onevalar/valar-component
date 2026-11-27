@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Button as SdkButton } from "@ui-sdk/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import { Slot } from "radix-ui";
@@ -87,12 +88,27 @@ function Button({
 		);
 	}
 
+	const { children, type = "button", onClick, ...button } = props;
 	const Comp = asChild ? Slot.Root : "button";
+	if (!asChild) {
+		return (
+			<SdkButton
+				data-slot="button"
+				data-variant={variant}
+				data-size={size}
+				className={classes}
+				{...button}
+				type={type}
+				onClick={onClick && ((event) => onClick(event as React.MouseEvent<HTMLButtonElement>))}
+			>
+				{children}
+			</SdkButton>
+		);
+	}
+
 	// Slot normally lets child props win. Remove a disabled anchor's actual href
 	// and click callback as well, so asChild cannot accidentally restore navigation.
-	const { children, type = "button", onClick, ...button } = props as React.ComponentProps<"button">;
 	const anchorChild =
-		asChild &&
 		React.isValidElement<React.ComponentProps<"a">>(children) &&
 		(children.type === "a" || children.props.href !== undefined);
 	const child =
@@ -117,13 +133,13 @@ function Button({
 			{...button}
 			disabled={anchorChild ? undefined : button.disabled}
 			onClick={
-				asChild && button.disabled
+				button.disabled
 					? (event) => {
 							event.preventDefault();
 						}
 					: onClick
 			}
-			type={asChild ? props.type : type}
+			type={props.type}
 		>
 			{child}
 		</Comp>

@@ -7,6 +7,7 @@
 		ref = $bindable(null),
 		class: className,
 		orientation = "vertical",
+		decorative = true,
 		...restProps
 	}: ComponentProps<typeof Separator> = $props();
 </script>
@@ -15,8 +16,9 @@
 	bind:ref
 	data-slot="button-group-separator"
 	{orientation}
+	{decorative}
 	class={cn(
-		"cn-button-group-separator relative self-stretch data-horizontal:mx-px data-horizontal:w-auto data-vertical:my-px data-vertical:h-auto",
+		"cn-button-group-separator relative self-stretch data-[orientation=horizontal]:mx-px data-[orientation=horizontal]:w-auto data-[orientation=vertical]:my-px data-[orientation=vertical]:h-auto",
 		className
 	)}
 	{...restProps}

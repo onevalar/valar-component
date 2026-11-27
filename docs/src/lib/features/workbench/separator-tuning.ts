@@ -22,9 +22,7 @@ export function parseSeparatorSource(files: { target: string; content: string }[
 	const source = files.find(
 		(file) => file.target.split("/").at(-1) === "separator.svelte"
 	)?.content;
-	const root = /<SeparatorPrimitive\.Root\b[\s\S]*?class=\{cn\(([\s\S]*?)\)\}/.exec(
-		source ?? ""
-	)?.[1];
+	const root = /<SdkSeparator\b[\s\S]*?class=\{cn\(([\s\S]*?)\)\}/.exec(source ?? "")?.[1];
 	if (root === undefined) throw new Error("Separator registry 缺少分隔线样式入口");
 	const classes = cn(...[...root.matchAll(/"([^"]*)"/g)].map((match) => match[1]));
 	const read = (utility: string) => {

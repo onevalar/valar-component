@@ -1,28 +1,49 @@
 <script setup lang="ts">
-import { reactiveOmit } from "@vueuse/core";
+import { Label as SdkLabel } from "@ui-sdk/vue/label";
 import { cn } from "cn";
-import { Label, useForwardExpose, useForwardProps } from "reka-ui";
-import type { LabelProps } from "reka-ui";
-import type { HTMLAttributes } from "vue";
+import PartElement from "../../lib/ToggleTrigger";
+import type { Component, HTMLAttributes } from "vue";
 
-const props = withDefaults(defineProps<LabelProps & {
-	class?: HTMLAttributes["class"];
-	appearance?: "default" | "settings";
-	required?: boolean;
-}>(), { appearance: "default" });
-const forwarded = useForwardProps(reactiveOmit(props, "class", "appearance", "required"));
-const { forwardRef } = useForwardExpose();
+const props = withDefaults(
+	defineProps<{
+		for?: string;
+		as?: string | Component;
+		asChild?: boolean;
+		class?: HTMLAttributes["class"];
+		appearance?: "default" | "settings";
+		required?: boolean;
+	}>(),
+	{ appearance: "default" }
+);
 </script>
 
 <template>
-	<Label
-		:ref="forwardRef"
-		data-slot="label"
+	<SdkLabel
 		:data-appearance="appearance"
-		v-bind="forwarded"
-		:class="cn('cn-label flex items-center select-none group-data-[disabled=true]:pointer-events-none peer-disabled:cursor-not-allowed', appearance === 'settings' && 'cn-label-appearance-settings', props.class)"
+		:for="props.for"
+		:class="
+			cn(
+				'cn-label flex items-center select-none group-data-[disabled=true]:pointer-events-none peer-disabled:cursor-not-allowed',
+				appearance === 'settings' && 'cn-label-appearance-settings',
+				props.class
+			)
+		"
 	>
-		<slot />
-		<span v-if="required" data-slot="label-required" aria-hidden="true" class="text-destructive">*</span>
-	</Label>
+		<template #render="{ props: part }">
+			<PartElement
+				:part="{ ...part, 'data-slot': $attrs['data-slot'] ?? 'label' }"
+				:as="as ?? 'label'"
+				:as-child="asChild"
+			>
+				<slot />
+				<span
+					v-if="required && !asChild && as !== 'template'"
+					data-slot="label-required"
+					aria-hidden="true"
+					class="text-destructive"
+					>*</span
+				>
+			</PartElement>
+		</template>
+	</SdkLabel>
 </template>

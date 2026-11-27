@@ -4,8 +4,7 @@ description: 一组可选中按钮（即单选按钮），同一时间最多只�
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/radio-group
-  doc: https://bits-ui.com/docs/components/radio-group
-  api: https://bits-ui.com/docs/components/radio-group#api-reference
+  doc: https://ui-sdk.dev/docs
 ---
 
 <script>
@@ -37,11 +36,11 @@ links:
 
 <Step>
 
-安装 `bits-ui`：
+安装 UI SDK 和样式辅助库：
 
 </Step>
 
-<PMInstall command="bits-ui -D" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 svelte-toolbelt@0.10.6" />
 
 <Step>
 
@@ -66,7 +65,7 @@ links:
 ```
 
 ```svelte showLineNumbers
-<RadioGroup.Root value="option-one">
+<RadioGroup.Root defaultValue="option-one" aria-label="选项">
   <div class="flex items-center gap-3">
     <RadioGroup.Item value="option-one" id="option-one" />
     <Label for="option-one">Option One</Label>
@@ -77,6 +76,10 @@ links:
   </div>
 </RadioGroup.Root>
 ```
+
+## 表单行为
+
+要参与原生表单提交及 `required` 校验，请为组设置非空 `name`。未选中或选中的项被禁用时，不提交该字段。用 `defaultValue` 指定重置值；如果值由父级管理，使用 `bind:value` 和表单的重置处理函数。在 Svelte 中 `""` 表示未选中，选项值应唯一且非空。如果提交时必须选中一个可用项，请在禁用当前选项时清空选中值：浏览器可能仍将已选中但禁用的选项视为有效，却不会提交它。
 
 ## 描述
 
@@ -90,7 +93,7 @@ links:
 
 ## 选择卡片
 
-用 `Field.Label` 包裹整个 `Field.Field`，得到可点击的卡片式选项。
+用 `Field.Label` 包裹整个 `Field.Field`，让整张卡片可点击。单选按钮通过 `aria-labelledby` 关联卡片标题，通过 `aria-describedby` 关联说明。
 
 <ComponentPreview name="radio-group-choice-card">
 

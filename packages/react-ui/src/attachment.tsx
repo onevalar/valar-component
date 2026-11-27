@@ -1,4 +1,5 @@
 // Adapted from Valar's MIT Svelte registry (cfd989c). See LICENSE.
+import { Button as SdkButton } from "@ui-sdk/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import React, { type ComponentProps } from "react";
@@ -196,5 +197,14 @@ export function AttachmentTrigger({ className, ...props }: AttachmentTriggerProp
 			/>
 		);
 	}
-	return <button type="button" {...props} data-slot="attachment-trigger" className={classes} />;
+	const { onClick, type = "button", ...button } = props;
+	return (
+		<SdkButton
+			{...button}
+			type={type}
+			className={classes}
+			onClick={onClick && ((event) => onClick(event as React.MouseEvent<HTMLButtonElement>))}
+			render={(attrs) => <button {...attrs} data-slot="attachment-trigger" />}
+		/>
+	);
 }

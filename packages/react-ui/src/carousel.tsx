@@ -1,6 +1,15 @@
 "use client";
 
 import * as React from "react";
+import {
+	Carousel as SdkCarousel,
+	CarouselContent as SdkContent,
+	CarouselItem as SdkItem,
+	CarouselNext as SdkNext,
+	CarouselPrevious as SdkPrevious,
+	CarouselViewport as SdkViewport,
+	createCarouselController,
+} from "@ui-sdk/react/carousel";
 import { cn } from "cn";
 import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -25,6 +34,7 @@ type CarouselContextValue = {
 	api: CarouselAPI | undefined;
 	canScrollPrev: boolean;
 	canScrollNext: boolean;
+	sdk?: ReturnType<typeof createCarouselController>;
 };
 
 const CarouselContext = React.createContext<CarouselContextValue | null>(null);
@@ -35,7 +45,22 @@ function useCarousel() {
 	return context;
 }
 
-export function Carousel({
+export function Carousel(props: CarouselProps) {
+	return props.opts || props.plugins || props.setApi ? <EmblaCarousel {...props} /> : <SdkRoot {...props} />;
+}
+
+function SdkRoot({ className, dir, orientation = "horizontal", ...props }: CarouselProps) {
+	const direction = Direction.useDirection(dir);
+	const [sdk] = React.useState(createCarouselController);
+	return (
+		<CarouselContext.Provider value={{ orientation, direction, sdk, api: undefined, viewportRef: () => {}, canScrollPrev: false, canScrollNext: false }}>
+			<SdkCarousel controller={sdk} orientation={orientation} data-slot="carousel" dir={direction}
+				aria-roledescription="轮播" className={cn("relative", className)} {...props} />
+		</CarouselContext.Provider>
+	);
+}
+
+function EmblaCarousel({
 	className,
 	dir,
 	orientation = "horizontal",
@@ -100,8 +125,15 @@ export function Carousel({
 
 export type CarouselContentProps = React.ComponentProps<"div">;
 
-export function CarouselContent({ className, ...props }: CarouselContentProps) {
-	const { viewportRef, orientation } = useCarousel();
+export function CarouselContent({ className, children, ...props }: CarouselContentProps) {
+	const { viewportRef, orientation, sdk } = useCarousel();
+	if (sdk) return (
+		<SdkViewport tabIndex={0} className="scrollbar-none focus-visible:-outline-offset-1 focus-visible:outline-ring data-[orientation=vertical]:h-full"
+			render={(part) => <div {...part} data-slot="carousel-content" />}>
+			<SdkContent className={cn("gap-4", orientation === "vertical" && "h-full", className)} {...props}
+				render={(part) => <div {...part} data-slot="carousel-container" />}>{children}</SdkContent>
+		</SdkViewport>
+	);
 	return (
 		<div data-slot="carousel-content" className="overflow-hidden" ref={viewportRef}>
 			<div
@@ -116,7 +148,7 @@ export function CarouselContent({ className, ...props }: CarouselContentProps) {
 					className
 				)}
 				{...props}
-			/>
+			>{children}</div>
 		</div>
 	);
 }
@@ -124,9 +156,10 @@ export function CarouselContent({ className, ...props }: CarouselContentProps) {
 export type CarouselItemProps = React.ComponentProps<"div">;
 
 export function CarouselItem({ className, ...props }: CarouselItemProps) {
-	const { orientation } = useCarousel();
+	const { orientation, sdk } = useCarousel();
+	const Component = sdk ? SdkItem : "div";
 	return (
-		<div
+		<Component
 			data-slot="carousel-item"
 			data-orientation={orientation}
 			data-embla-slide=""
@@ -134,9 +167,9 @@ export function CarouselItem({ className, ...props }: CarouselItemProps) {
 			aria-roledescription="幻灯片"
 			className={cn(
 				"min-w-0 shrink-0 grow-0 basis-full",
-				orientation === "horizontal"
+				!sdk && (orientation === "horizontal"
 					? "cn-carousel-item-horizontal ps-4"
-					: "cn-carousel-item-vertical pt-4",
+					: "cn-carousel-item-vertical pt-4"),
 				className
 			)}
 			{...props}
@@ -160,10 +193,32 @@ function CarouselControl({
 	type = "button",
 	...props
 }: CarouselControlProps & { step: "previous" | "next" }) {
-	const { orientation, direction, api, canScrollPrev, canScrollNext } = useCarousel();
+	const { orientation, direction, api, canScrollPrev, canScrollNext, sdk } = useCarousel();
 	const previous = step === "previous";
 	const blocked = disabled || !(previous ? canScrollPrev : canScrollNext);
 	const Icon = previous ? ChevronLeft : ChevronRight;
+	const classes = cn("absolute touch-manipulation", previous ? "cn-carousel-previous" : "cn-carousel-next",
+		orientation === "horizontal" ? previous ? "inset-y-0 -start-12 my-auto" : "inset-y-0 -end-12 my-auto"
+			: cn("left-1/2 -translate-x-1/2 rotate-90", previous ? "-top-12" : "-bottom-12"), className);
+	const slot = previous ? "carousel-previous" : "carousel-next";
+	const icon = <><Icon aria-hidden="true" className={orientation === "horizontal" ? "rtl:rotate-180" : undefined} />
+		<span className="sr-only">{label ?? (previous ? "上一张" : "下一张")}</span></>;
+	if (sdk) {
+		const Control = previous ? SdkPrevious : SdkNext;
+		return <Button asChild variant={variant} size={size} shape={shape} className={classes}>
+			<Control {...props} data-slot={slot} type={type} disabled={disabled} onClick={onClick}
+				onKeyDown={(event) => {
+					onKeyDown?.(event);
+					if (event.defaultPrevented || disabled || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+					const back = orientation === "vertical" ? "ArrowUp" : direction === "rtl" ? "ArrowRight" : "ArrowLeft";
+					const forward = orientation === "vertical" ? "ArrowDown" : direction === "rtl" ? "ArrowLeft" : "ArrowRight";
+					if (event.key !== back && event.key !== forward) return;
+					event.preventDefault();
+					if (event.key === back) sdk.previous({ reason: "list-navigation", event: event.nativeEvent });
+					else sdk.next({ reason: "list-navigation", event: event.nativeEvent });
+				}}>{icon}</Control>
+		</Button>;
+	}
 	return (
 		<Button
 			asChild
@@ -171,20 +226,11 @@ function CarouselControl({
 			size={size}
 			shape={shape}
 			disabled={blocked}
-			className={cn(
-				"absolute touch-manipulation",
-				previous ? "cn-carousel-previous" : "cn-carousel-next",
-				orientation === "horizontal"
-					? previous
-						? "inset-y-0 -start-12 my-auto"
-						: "inset-y-0 -end-12 my-auto"
-					: cn("left-1/2 -translate-x-1/2 rotate-90", previous ? "-top-12" : "-bottom-12"),
-				className
-			)}
+			className={classes}
 		>
 			<button
 				{...props}
-				data-slot={previous ? "carousel-previous" : "carousel-next"}
+				data-slot={slot}
 				aria-disabled={blocked}
 				type={type}
 				onClick={(event) => {
@@ -214,11 +260,7 @@ function CarouselControl({
 					else api?.scrollNext();
 				}}
 			>
-				<Icon
-					aria-hidden="true"
-					className={orientation === "horizontal" ? "rtl:rotate-180" : undefined}
-				/>
-				<span className="sr-only">{label ?? (previous ? "上一张" : "下一张")}</span>
+				{icon}
 			</button>
 		</Button>
 	);

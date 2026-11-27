@@ -4,8 +4,7 @@ description: 纵向堆叠的可交互标题组，每个标题展开一段内容�
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/accordion
-  doc: https://bits-ui.com/docs/components/accordion
-  api: https://bits-ui.com/docs/components/accordion#api-reference
+  doc: https://ui-sdk.dev/docs
 ---
 
 <script>
@@ -43,11 +42,11 @@ links:
 
 <Step>
 
-安装 `bits-ui`
+安装固定版本的 UI SDK 适配器及其依赖。
 
 </Step>
 
-<PMInstall command="bits-ui" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 svelte-toolbelt@0.10.6" />
 
 <Step>
 

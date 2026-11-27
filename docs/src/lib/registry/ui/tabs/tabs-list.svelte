@@ -19,20 +19,26 @@
 </script>
 
 <script lang="ts">
-	import { Tabs as TabsPrimitive } from "bits-ui";
+	import { TabsList as SdkList } from "@ui-sdk/svelte/tabs";
+	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/utils.js";
+	import { tabsElementRef, tabsStyle, type TabsElementProps } from "./context.js";
 
 	let {
 		ref = $bindable(null),
 		variant = "default",
 		class: className,
 		onfocusin,
+		children,
+		child,
+		style,
 		...restProps
-	}: TabsPrimitive.ListProps & {
+	}: TabsElementProps<HTMLAttributes<HTMLDivElement>> & {
 		variant?: TabsListVariant;
 	} = $props();
+	const reference = tabsElementRef((element) => { ref = element; });
 
-	const revealFocusedTab: NonNullable<TabsPrimitive.ListProps["onfocusin"]> = (event) => {
+	const revealFocusedTab: NonNullable<HTMLAttributes<HTMLDivElement>["onfocusin"]> = (event) => {
 		onfocusin?.(event);
 		const list = event.currentTarget;
 		const tab = event.target;
@@ -41,8 +47,8 @@
 			list.dataset.orientation !== "horizontal" ||
 			list.scrollWidth <= list.clientWidth ||
 			!(tab instanceof HTMLElement) ||
-			!tab.hasAttribute("data-tabs-trigger") ||
-			tab.closest("[data-tabs-list]") !== list
+			tab.dataset.slot !== "tabs-trigger" ||
+			tab.closest('[role="tablist"]') !== list
 		)
 			return;
 
@@ -54,11 +60,16 @@
 	};
 </script>
 
-<TabsPrimitive.List
-	bind:ref
-	data-slot="tabs-list"
+<SdkList
 	data-variant={variant}
 	class={cn(tabsListVariants({ variant }), className)}
 	onfocusin={revealFocusedTab}
+	style={tabsStyle(style)}
 	{...restProps}
-/>
+>
+	{#snippet render({ props })}
+		{@const attributes = { ...props, ...reference, "data-slot": "tabs-list" }}
+		{#if child}{@render child({ props: attributes })}
+		{:else}<div {...attributes}>{@render children?.()}</div>{/if}
+	{/snippet}
+</SdkList>

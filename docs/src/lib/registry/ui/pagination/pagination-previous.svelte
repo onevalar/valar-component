@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { Pagination as PaginationPrimitive } from "bits-ui";
 	import IconPlaceholder from "$lib/components/icon-placeholder/icon-placeholder.svelte";
-	import { buttonVariants } from "$lib/registry/ui/button/index.js";
-	import { cn } from "$lib/utils.js";
+	import PrevButton from "./pagination-prev-button.svelte";
 
 	let {
 		ref = $bindable(null),
-		class: className,
 		label = "上一页",
+		children: _children,
 		...restProps
 	}: PaginationPrimitive.PrevButtonProps & {
 		/** Visible button text. */
@@ -15,16 +14,7 @@
 	} = $props();
 </script>
 
-<PaginationPrimitive.PrevButton
-	bind:ref
-	aria-label="上一页"
-	class={cn(
-		buttonVariants({ variant: "ghost", size: "default" }),
-		"cn-pagination-previous",
-		className
-	)}
-	{...restProps}
->
+<PrevButton bind:ref {label} {...restProps}>
 	<IconPlaceholder
 		lucide="ChevronLeftIcon"
 		tabler="IconChevronLeft"
@@ -35,4 +25,4 @@
 		class="cn-rtl-flip"
 	/>
 	<span class="cn-pagination-previous-text hidden sm:block">{label}</span>
-</PaginationPrimitive.PrevButton>
+</PrevButton>

@@ -1,8 +1,16 @@
 "use client";
 
 import * as React from "react";
+import {
+	Avatar as SdkAvatar,
+	AvatarImage as SdkAvatarImage,
+	AvatarFallback as SdkAvatarFallback,
+	type AvatarLoadingStatus,
+} from "@ui-sdk/react/avatar";
 import { cn } from "cn";
-import { Avatar as AvatarPrimitive } from "radix-ui";
+import { Avatar as AvatarPrimitive, Slot } from "radix-ui";
+
+const LegacyAvatar = React.createContext(true);
 
 export type AvatarProps = React.ComponentProps<typeof AvatarPrimitive.Root> & {
 	size?: "default" | "sm" | "lg";
@@ -14,21 +22,31 @@ export function Avatar({
 	className,
 	size = "default",
 	appearance = "default",
+	asChild,
 	...props
 }: AvatarProps) {
+	const shared = {
+		"data-slot": "avatar",
+		"data-size": size,
+		"data-appearance": appearance,
+		className: cn(
+			"cn-avatar group/avatar relative flex shrink-0 select-none after:pointer-events-none after:absolute after:inset-0 after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten",
+			appearance === "subscriber" && "cn-avatar-subscriber",
+			appearance === "member" && "cn-avatar-member",
+			className
+		),
+	};
+	const { children, ...root } = props;
 	return (
-		<AvatarPrimitive.Root
-			data-slot="avatar"
-			data-size={size}
-			data-appearance={appearance}
-			className={cn(
-				"cn-avatar group/avatar relative flex shrink-0 select-none after:pointer-events-none after:absolute after:inset-0 after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten",
-				appearance === "subscriber" && "cn-avatar-subscriber",
-				appearance === "member" && "cn-avatar-member",
-				className
-			)}
-			{...props}
-		/>
+		<LegacyAvatar.Provider value={false}>
+			<SdkAvatar
+				{...shared}
+				{...root}
+				render={asChild ? (attributes) => <Slot.Root {...attributes} /> : undefined}
+			>
+				{children}
+			</SdkAvatar>
+		</LegacyAvatar.Provider>
 	);
 }
 
@@ -39,24 +57,72 @@ export type AvatarGroupProps = React.ComponentProps<"div">;
 export type AvatarGroupCountProps = React.ComponentProps<"div">;
 
 export function AvatarImage({ className, ...props }: AvatarImageProps) {
+	const legacy = React.useContext(LegacyAvatar);
+	const classes = cn("cn-avatar-image aspect-square size-full object-cover", className);
+	if (legacy)
+		return <AvatarPrimitive.Image data-slot="avatar-image" className={classes} {...props} />;
+	const { asChild, onLoadingStatusChange, src, ...image } = props;
 	return (
-		<AvatarPrimitive.Image
+		<SdkAvatarImage
 			data-slot="avatar-image"
-			className={cn("cn-avatar-image aspect-square size-full object-cover", className)}
-			{...props}
+			className={classes}
+			{...image}
+			src={src || undefined}
+			render={
+				onLoadingStatusChange
+					? (attributes, state) => (
+							<AvatarImageStatus
+								attributes={attributes}
+								status={state.loadingStatus}
+								asChild={asChild}
+								onChange={onLoadingStatusChange}
+							/>
+						)
+					: asChild
+						? (attributes) => <Slot.Root {...attributes} />
+						: undefined
+			}
 		/>
 	);
 }
 
+function AvatarImageStatus({
+	attributes,
+	status,
+	asChild,
+	onChange,
+}: {
+	attributes: React.ComponentProps<"img">;
+	status: AvatarLoadingStatus;
+	asChild?: boolean;
+	onChange: NonNullable<AvatarImageProps["onLoadingStatusChange"]>;
+}) {
+	const previous = React.useRef<AvatarLoadingStatus>("idle");
+	React.useEffect(() => {
+		if (previous.current === status) return;
+		previous.current = status;
+		onChange(status);
+	}, [status, onChange]);
+	const Element = asChild ? Slot.Root : "img";
+	return <Element {...attributes} />;
+}
+
 export function AvatarFallback({ className, ...props }: AvatarFallbackProps) {
+	const legacy = React.useContext(LegacyAvatar);
+	const classes = cn(
+		"cn-avatar-fallback flex size-full items-center justify-center text-sm group-data-[size=sm]/avatar:text-xs",
+		className
+	);
+	if (legacy)
+		return <AvatarPrimitive.Fallback data-slot="avatar-fallback" className={classes} {...props} />;
+	const { delayMs, asChild, ...fallback } = props;
 	return (
-		<AvatarPrimitive.Fallback
+		<SdkAvatarFallback
 			data-slot="avatar-fallback"
-			className={cn(
-				"cn-avatar-fallback flex size-full items-center justify-center text-sm group-data-[size=sm]/avatar:text-xs",
-				className
-			)}
-			{...props}
+			className={classes}
+			{...fallback}
+			delay={delayMs}
+			render={asChild ? (attributes) => <Slot.Root {...attributes} /> : undefined}
 		/>
 	);
 }

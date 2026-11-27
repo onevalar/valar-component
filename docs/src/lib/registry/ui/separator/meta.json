@@ -3,6 +3,8 @@
 	"type": "registry:ui",
 	"title": "Separator 分隔线",
 	"description": "在视觉或语义上分隔内容。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
+	"devDependencies": [],
 	"categories": ["展示"],
 	"meta": {
 		"valar": {

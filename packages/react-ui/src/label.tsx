@@ -1,10 +1,15 @@
-import * as React from "react";
-import { cn } from "cn";
-import { Label as LabelPrimitive } from "radix-ui";
+"use client";
 
-export type LabelProps = React.ComponentProps<typeof LabelPrimitive.Root> & {
+import * as React from "react";
+import { Label as SdkLabel } from "@ui-sdk/react/label";
+import { renderElement } from "@ui-sdk/react/primitive";
+import { cn } from "cn";
+
+export type LabelProps = React.ComponentPropsWithRef<"label"> & {
 	appearance?: "default" | "settings";
 	required?: boolean;
+	asChild?: boolean;
+	"data-slot"?: string;
 };
 
 export function Label({
@@ -13,6 +18,7 @@ export function Label({
 	required = false,
 	asChild,
 	children,
+	"data-slot": dataSlot = "label",
 	...props
 }: LabelProps) {
 	const marker = required && (
@@ -20,30 +26,32 @@ export function Label({
 			*
 		</span>
 	);
+	let render: React.ReactElement | undefined;
+	if (asChild) {
+		if (!React.isValidElement<{ children?: React.ReactNode }>(children)) {
+			throw new Error("Label asChild expects a single React element");
+		}
+		render = marker ? React.cloneElement(children, {}, children.props.children, marker) : children;
+	}
 	return (
-		<LabelPrimitive.Root
-			data-slot="label"
+		<SdkLabel
 			data-appearance={appearance}
 			className={cn(
 				"cn-label cn-label-layout flex items-center select-none group-data-[disabled=true]:pointer-events-none peer-disabled:cursor-not-allowed",
 				appearance === "settings" && "cn-label-appearance-settings",
 				className
 			)}
-			asChild={asChild}
 			{...props}
+			render={(slot, state) =>
+				renderElement("label", { ...slot, "data-slot": dataSlot }, render, state)
+			}
 		>
-			{asChild ? (
-				marker && React.isValidElement<{ children?: React.ReactNode }>(children) ? (
-					React.cloneElement(children, {}, children.props.children, marker)
-				) : (
-					children
-				)
-			) : (
+			{!asChild && (
 				<>
 					{children}
 					{marker}
 				</>
 			)}
-		</LabelPrimitive.Root>
+		</SdkLabel>
 	);
 }

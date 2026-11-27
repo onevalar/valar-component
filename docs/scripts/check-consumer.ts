@@ -44,6 +44,10 @@ try {
 	);
 	const packagePath = path.join(app, "package.json");
 	const pkg = JSON.parse(readFileSync(packagePath, "utf8"));
+	// Use the supported pnpm version rather than the version chosen by the scaffold.
+	pkg.packageManager = JSON.parse(
+		readFileSync(path.join(root, "package.json"), "utf8")
+	).packageManager;
 	for (const dependency of [
 		"svelte",
 		"@sveltejs/kit",
@@ -119,7 +123,16 @@ try {
 		cli,
 		[
 			"add",
+			"accordion",
 			"avatar",
+			"checkbox",
+			"collapsible",
+			"label",
+			"radio-group",
+			"separator",
+			"switch",
+			"tabs",
+			"toggle",
 			"number-field",
 			"tags-input",
 			"stepper",
@@ -212,6 +225,69 @@ try {
 		const pageErrors: Error[] = [];
 		page.on("pageerror", (error) => pageErrors.push(error));
 		await page.goto("http://127.0.0.1:5199", { waitUntil: "networkidle" });
+		const prefs = page.getByRole("form", { name: "Plan preferences" });
+		await prefs.locator('label[for="plan-name"]').click();
+		await expect(prefs.getByRole("textbox", { name: "Plan name" })).toBeFocused();
+		await expect(prefs.getByRole("separator")).toHaveCount(1);
+		await expect(prefs.getByRole("separator")).toHaveCSS("height", "0.5px");
+		await expect(prefs.locator('[data-slot="separator"][data-orientation="vertical"]')).toHaveCSS(
+			"width",
+			"0.5px"
+		);
+		const individual = prefs.getByRole("radio", { name: "Individual" });
+		await expect(individual).toBeChecked();
+		await individual.press("ArrowDown");
+		await expect(prefs.getByRole("radio", { name: "Team" })).toBeChecked();
+		await expect
+			.poll(() => prefs.evaluate((node) => new FormData(node as HTMLFormElement).get("plan")))
+			.toEqual("team");
+		const details = page.getByRole("button", { name: "Plan details" });
+		await details.press("Enter");
+		await expect(page.getByText("Includes reporting")).toBeVisible();
+		await details.press("Space");
+		await expect(page.getByText("Includes reporting")).toBeHidden();
+		await expect(details).toBeFocused();
+		const shipping = page.getByRole("button", { name: "Shipping time" });
+		const returns = page.getByRole("button", { name: "Returns window" });
+		await expect(shipping).toHaveAttribute("aria-expanded", "true");
+		await shipping.press("ArrowDown");
+		await expect(returns).toBeFocused();
+		await returns.press("Enter");
+		await expect(page.getByText("Thirty days")).toBeVisible();
+		await expect(shipping).toHaveAttribute("aria-expanded", "false");
+		const tabs = page.getByRole("tablist", { name: "Preferences tabs" });
+		const general = tabs.getByRole("tab", { name: "General" });
+		const notifications = tabs.getByRole("tab", { name: "Notifications" });
+		await general.press("ArrowRight");
+		await expect(notifications).toBeFocused();
+		await expect(general).toHaveAttribute("aria-selected", "true");
+		await notifications.press("Space");
+		const mute = page
+			.getByRole("tabpanel", { name: "Notifications" })
+			.getByRole("button", { name: "Mute notifications" });
+		await expect(mute).toHaveAttribute("aria-pressed", "false");
+		await mute.press("Enter");
+		await expect(mute).toHaveAttribute("aria-pressed", "true");
+		const choices = page.getByRole("form", { name: "Delivery options" });
+		const email = choices.getByRole("checkbox", { name: "Email" });
+		const push = choices.getByRole("checkbox", { name: "Push" });
+		const alerts = choices.getByRole("switch", { name: "Alerts" });
+		const values = () => choices.evaluate((node) => [...new FormData(node as HTMLFormElement)]);
+		await expect(email).toBeChecked();
+		await expect(email).toHaveCSS("width", "14px");
+		await expect(alerts).toHaveCSS("width", "30px");
+		await push.press("Space");
+		await alerts.press("Enter");
+		await expect.poll(values).toEqual([
+			["channels", "email"],
+			["channels", "push"],
+			["alerts", "yes"],
+		]);
+		await choices.getByRole("button", { name: "Reset delivery options" }).click();
+		await expect.poll(values).toEqual([
+			["channels", "email"],
+			["alerts", "yes"],
+		]);
 		const avatarGroup = page.getByRole("group", { name: "Avatar source changes", exact: true });
 		const avatar = avatarGroup.locator('[data-slot="avatar"]');
 		const image = avatar.locator('[data-slot="avatar-image"]');
@@ -286,7 +362,7 @@ try {
 		);
 		assert.deepEqual(pageErrors, []);
 		console.log(
-			"PASS independent CLI/primitives tarballs, named and local JSON registry installs, lint, strict check/build, same-instance Avatar, form/Slider/Stepper/Questionnaire and CSS tokens"
+			"PASS independent CLI/primitives tarballs, named and local JSON registry installs, lint, strict check/build, form/disclosure controls, same-instance Avatar, Slider/Stepper/Questionnaire and CSS tokens"
 		);
 	} finally {
 		await browser.close();

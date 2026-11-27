@@ -3,6 +3,11 @@
 	"type": "registry:ui",
 	"title": "Progress 进度条",
 	"description": "显示任务的完成进度。",
+	"dependencies": [
+		"@ui-sdk/core@0.1.0-beta.17",
+		"@ui-sdk/svelte@0.1.0-beta.17",
+		"svelte-toolbelt@0.10.6"
+	],
 	"categories": ["反馈"],
 	"meta": {
 		"valar": {

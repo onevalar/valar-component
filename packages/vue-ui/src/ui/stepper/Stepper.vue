@@ -1,4 +1,5 @@
 <script lang="ts">
+import { isComposing } from "@ui-sdk/core";
 import type { HTMLAttributes } from "vue";
 
 export interface StepperStep {
@@ -250,7 +251,7 @@ const roving = computed(() =>
 );
 
 function onKeyDown(event: KeyboardEvent, index: number) {
-	if (event.isComposing) return;
+	if (event.defaultPrevented || isComposing(event)) return;
 	const rtl = getComputedStyle(event.currentTarget as HTMLButtonElement).direction === "rtl";
 	const nextKey = props.orientation === "vertical" ? "ArrowDown" : rtl ? "ArrowLeft" : "ArrowRight";
 	const previousKey =

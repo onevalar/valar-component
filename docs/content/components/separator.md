@@ -4,8 +4,7 @@ description: Visually or semantically separates content.
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/separator
-  doc: https://bits-ui.com/docs/components/separator
-  api: https://bits-ui.com/docs/components/separator#api-reference
+  doc: https://ui-sdk.dev/docs
 ---
 
 <script>
@@ -37,11 +36,11 @@ links:
 
 <Step>
 
-Install `bits-ui`:
+Install the dependencies used by Valar Separator:
 
 </Step>
 
-<PMInstall command="bits-ui -D" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 svelte-toolbelt@0.10.6" />
 
 <Step>
 
@@ -103,4 +102,4 @@ Horizontal separators between list items.
 
 ## API Reference
 
-See the [Bits UI Separator](https://bits-ui.com/docs/components/separator#api-reference) documentation.
+`orientation` defaults to `"horizontal"`. Set `decorative` for a visual-only line. Use `bind:ref` to access the element or the `child` snippet to render your own element with the supplied attributes.

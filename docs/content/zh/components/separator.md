@@ -4,8 +4,7 @@ description: 在视觉或语义上分隔内容。
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/separator
-  doc: https://bits-ui.com/docs/components/separator
-  api: https://bits-ui.com/docs/components/separator#api-reference
+  doc: https://ui-sdk.dev/docs
 ---
 
 <script>
@@ -37,11 +36,11 @@ links:
 
 <Step>
 
-安装 `bits-ui`：
+安装 Valar Separator 所需依赖：
 
 </Step>
 
-<PMInstall command="bits-ui -D" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 svelte-toolbelt@0.10.6" />
 
 <Step>
 
@@ -102,4 +101,4 @@ links:
 
 ## API 参考
 
-更多信息见 [Bits UI Separator](https://bits-ui.com/docs/components/separator#api-reference) 文档。
+`orientation` 默认为 `"horizontal"`。纯视觉分隔线设置 `decorative`。可用 `bind:ref` 获取元素，或通过 `child` 片段将组件提供的属性传给自定义元素。

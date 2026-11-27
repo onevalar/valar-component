@@ -3,6 +3,8 @@
 	"type": "registry:ui",
 	"title": "Checkbox 复选框",
 	"description": "勾选或取消勾选一项，可多选。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
+	"devDependencies": [],
 	"categories": ["表单"],
 	"meta": {
 		"valar": {

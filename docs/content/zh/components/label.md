@@ -4,8 +4,7 @@ description: 渲染与控件关联的无障碍标签。
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/label
-  doc: https://bits-ui.com/docs/components/label
-  api: https://bits-ui.com/docs/components/label#api-reference
+  doc: https://ui-sdk.dev/docs
 ---
 
 <script>
@@ -44,11 +43,11 @@ links:
 
 <Step>
 
-安装 `bits-ui`：
+安装 Valar Label 所需依赖：
 
 </Step>
 
-<PMInstall command="bits-ui -D" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 svelte-toolbelt@0.10.6" />
 
 <Step>
 

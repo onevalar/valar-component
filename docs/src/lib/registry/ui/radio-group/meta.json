@@ -3,6 +3,8 @@
 	"type": "registry:ui",
 	"title": "Radio Group 单选组",
 	"description": "从少量互斥选项中选一个，所有选项同时可见。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
+	"devDependencies": [],
 	"categories": ["表单"],
 	"meta": {
 		"valar": {

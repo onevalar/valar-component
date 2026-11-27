@@ -1,6 +1,6 @@
 ---
 title: 轮播
-description: 基于 Embla 构建的轮播，支持动效和滑动操作。
+description: 由 UI SDK 驱动的可滑动轮播，保留 Embla 选项和插件支持。
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/carousel
@@ -28,7 +28,9 @@ links:
 
 ## 关于
 
-轮播组件基于 [Embla Carousel](https://www.embla-carousel.com/docs/v8/get-started/svelte) 库构建。
+未传 `opts`、`plugins` 或 `setApi` 时，轮播由 UI SDK 驱动。视口支持滑动、方向键、Home 与 End。离开视口且不再持有焦点的幻灯片会退出键盘和辅助技术导航。到达边界时，对应按钮仍可聚焦，并标记为不可用。
+
+传入 `opts`、`plugins` 或 `setApi` 时使用 [Embla Carousel 8](https://www.embla-carousel.com/docs/v8/get-started/svelte)，以保留 Embla 的原始 API、插件与选项。请在挂载时选择引擎，增加或移除最后一个 Embla 属性可能重新挂载轮播。Vue 中 `@init-api` 也会选择 Embla；若只通过模板引用读取 Embla API，可显式传入 `engine="embla"`。
 
 ## 安装
 
@@ -41,11 +43,11 @@ links:
 
 <Step>
 
-安装 `embla-carousel-svelte`：
+安装 UI SDK 与 Embla 兼容依赖：
 
 </Step>
 
-<PMInstall command="embla-carousel-svelte -D" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 embla-carousel-svelte" />
 
 <Step>
 
@@ -69,7 +71,7 @@ links:
 ```
 
 ```svelte showLineNumbers
-<Carousel.Root>
+<Carousel.Root aria-label="项目亮点">
   <Carousel.Content>
     <Carousel.Item>...</Carousel.Item>
     <Carousel.Item>...</Carousel.Item>

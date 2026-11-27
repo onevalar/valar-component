@@ -4,9 +4,10 @@
 	"title": "Label 标签",
 	"type": "registry:ui",
 	"description": "与控件关联的无障碍文字标签。",
-	"devDependencies": [
-		"bits-ui@2.20.0",
-		"@internationalized/date@^3.12.0"
+	"dependencies": [
+		"@ui-sdk/core@0.1.0-beta.17",
+		"@ui-sdk/svelte@0.1.0-beta.17",
+		"svelte-toolbelt@0.10.6"
 	],
 	"meta": {
 		"valar": {
@@ -51,7 +52,7 @@
 			"target": "label/index.ts"
 		},
 		{
-			"content": "<script lang=\"ts\">\n\timport { Label as LabelPrimitive } from \"bits-ui\";\n\timport { cn } from \"$UTILS$.js\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tappearance = \"default\",\n\t\trequired = false,\n\t\tchildren,\n\t\t...restProps\n\t}: LabelPrimitive.RootProps & {\n\t\tappearance?: \"default\" | \"settings\";\n\t\trequired?: boolean;\n\t} = $props();\n</script>\n\n<LabelPrimitive.Root\n\tbind:ref\n\tdata-slot=\"label\"\n\tdata-appearance={appearance}\n\tclass={cn(\n\t\t\"gap-2 text-[13px]/[normal] font-medium text-[color:lch(10%_0_282)] dark:text-[color:lch(100%_0_272)] data-[disabled=true]:opacity-50 group-data-[disabled=true]:opacity-50 peer-disabled:opacity-50 has-[:disabled]:opacity-50 flex items-center select-none group-data-[disabled=true]:pointer-events-none peer-disabled:cursor-not-allowed\",\n\t\t\"\",\n\t\tappearance === \"settings\" && \"cursor-default\",\n\t\tclassName\n\t)}\n\t{...restProps}\n>\n\t{@render children?.()}\n\t{#if required}\n\t\t<span data-slot=\"label-required\" aria-hidden=\"true\" class=\"text-destructive\">*</span>\n\t{/if}\n</LabelPrimitive.Root>\n",
+			"content": "<script lang=\"ts\">\n\timport { Label as SdkLabel } from \"@ui-sdk/svelte/label\";\n\timport { styleToString } from \"svelte-toolbelt\";\n\timport { createAttachmentKey } from \"svelte/attachments\";\n\timport { cn } from \"$UTILS$.js\";\n\timport type { Snippet } from \"svelte\";\n\timport type { HTMLLabelAttributes } from \"svelte/elements\";\n\n\tlet {\n\t\tref = $bindable(null),\n\t\tclass: className,\n\t\tappearance = \"default\",\n\t\trequired = false,\n\t\t\"data-slot\": dataSlot = \"label\",\n\t\tchildren,\n\t\tchild,\n\t\tstyle,\n\t\t...restProps\n\t}: Omit<HTMLLabelAttributes, \"style\"> & {\n\t\tref?: HTMLElement | null;\n\t\tchild?: Snippet<[{ props: Record<string, unknown> }]>;\n\t\tstyle?: HTMLLabelAttributes[\"style\"] | Parameters<typeof styleToString>[0];\n\t\tappearance?: \"default\" | \"settings\";\n\t\trequired?: boolean;\n\t\t\"data-slot\"?: string;\n\t} = $props();\n\n\tconst refKey = createAttachmentKey();\n\tconst attachRef = (element: HTMLElement) => {\n\t\tref = element;\n\t\treturn () => {\n\t\t\tif (ref === element) ref = null;\n\t\t};\n\t};\n</script>\n\n<SdkLabel\n\tdata-appearance={appearance}\n\tclass={cn(\n\t\t\"gap-2 text-[13px]/[normal] font-medium text-[color:lch(10%_0_282)] dark:text-[color:lch(100%_0_272)] data-[disabled=true]:opacity-50 group-data-[disabled=true]:opacity-50 peer-disabled:opacity-50 has-[:disabled]:opacity-50 flex items-center select-none group-data-[disabled=true]:pointer-events-none peer-disabled:cursor-not-allowed\",\n\t\t\"\",\n\t\tappearance === \"settings\" && \"cursor-default\",\n\t\tclassName\n\t)}\n\tstyle={style && typeof style === \"object\" ? styleToString(style) : style}\n\t{...restProps}\n>\n\t{#snippet render({ props })}\n\t\t{#if child}\n\t\t\t{@render child({ props: { ...props, \"data-slot\": dataSlot, [refKey]: attachRef } })}\n\t\t{:else}\n\t\t\t<label {...props} data-slot={dataSlot} {@attach attachRef}>\n\t\t\t\t{@render children?.()}\n\t\t\t\t{#if required}\n\t\t\t\t\t<span data-slot=\"label-required\" aria-hidden=\"true\" class=\"text-destructive\">*</span>\n\t\t\t\t{/if}\n\t\t\t</label>\n\t\t{/if}\n\t{/snippet}\n</SdkLabel>\n",
 			"type": "registry:file",
 			"target": "label/label.svelte"
 		}

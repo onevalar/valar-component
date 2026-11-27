@@ -4,8 +4,7 @@ description: 用于在选中与未选中状态之间切换的控件。
 component: true
 links:
   source: https://github.com/onevalar/valar-svelte/tree/main/docs/src/lib/registry/ui/checkbox
-  doc: https://bits-ui.com/docs/components/checkbox
-  api: https://bits-ui.com/docs/components/checkbox#api-reference
+  doc: https://ui-sdk.dev/docs
 ---
 
 <script>
@@ -37,11 +36,11 @@ links:
 
 <Step>
 
-安装 `bits-ui`：
+安装 UI SDK 和样式辅助依赖：
 
 </Step>
 
-<PMInstall command="bits-ui -D" />
+<PMInstall command="@ui-sdk/core@0.1.0-beta.17 @ui-sdk/svelte@0.1.0-beta.17 svelte-toolbelt@0.10.6" />
 
 <Step>
 
@@ -128,7 +127,9 @@ links:
 
 ## 分组
 
-用多个字段组成复选框列表。
+从同一个 `checkbox` 入口导入 `CheckboxGroup`。给组设置 `name`，给每个 `Checkbox` 设置不同的字符串 `value`。表单以组名提交每个选中值。用 `defaultValue` 指定初始及重置时的选项，或用 `bind:value` 绑定当前选项。组的 `required` 表示至少选一项。
+
+如果原先用 Bits UI 的 `Checkbox.Group` 包裹 Valar 复选框，将外层换成 Valar 的 `CheckboxGroup`。只设初始值时，用 `defaultValue` 替代固定的 `value`。如果每项都必须同意，请使用各自有名称、各自必填的独立复选框，不要使用组的 `required`。
 
 <ComponentPreview name="checkbox-group">
 
