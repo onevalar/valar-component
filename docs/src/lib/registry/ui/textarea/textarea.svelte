@@ -31,6 +31,7 @@
 <SdkTextarea
 	{...refProps}
 	{...restProps}
+	data-slot={dataSlot}
 	data-appearance={appearance}
 	class={cn(
 		"cn-textarea flex field-sizing-content min-h-16 w-full outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
@@ -39,11 +40,13 @@
 	)}
 	disabled={restProps.disabled ?? undefined}
 	required={restProps.required ?? undefined}
-	value={value == null ? undefined : String(value)}
+	bind:value={
+		() => (value == null ? undefined : String(value)),
+		(next) => {
+			value = next ?? "";
+		}
+	}
 	defaultValue={initial == null ? undefined : String(initial)}
-	onValueChange={(next: string) => {
-		value = next;
-	}}
 	autoResize={appearance === "default"}
 >
 	{#snippet render({ props }: { props: Record<string, unknown> })}

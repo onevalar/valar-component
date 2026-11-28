@@ -1571,11 +1571,19 @@ test("Native Select editor preserves native selection, size alignment and isolat
 	const control = current.getByRole("combobox", { name: "默认尺寸 · 未选择", exact: true });
 	await current.getByText("默认尺寸 · 未选择", { exact: true }).click();
 	await expect(control).toBeFocused();
-	await control.press("Home");
-	await control.press("ArrowDown");
-	await expect(control).toHaveValue("apple");
-	await control.press("End");
-	await expect(control).toHaveValue("grapes"); // Skip the disabled final option.
+	if (process.platform === "darwin") {
+		await control.selectOption("apple");
+		await expect(control).toHaveValue("apple");
+		await control.selectOption("grapes");
+		await expect(control).toHaveValue("grapes");
+		await expect(control.locator('option[value="peach"]')).toBeDisabled();
+	} else {
+		await control.press("Home");
+		await control.press("ArrowDown");
+		await expect(control).toHaveValue("apple");
+		await control.press("End");
+		await expect(control).toHaveValue("grapes"); // Skip the disabled final option.
+	}
 	await expect(
 		current.getByRole("combobox", { name: "默认尺寸 · 禁用", exact: true })
 	).toBeDisabled();

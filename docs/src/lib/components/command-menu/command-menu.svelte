@@ -287,7 +287,15 @@
 
 <svelte:document onkeydown={handleKeydown} />
 
-<Dialog.Root bind:open>
+<Dialog.Root
+	bind:open
+	onOpenChange={(next) => {
+		if (next) {
+			search = "";
+			closeMobileMenu?.();
+		}
+	}}
+>
 	<Dialog.Trigger>
 		{#snippet child({ props })}
 			<Button
@@ -297,7 +305,6 @@
 				class={cn(
 					"relative size-7 justify-center rounded-[8px] border-[0.5px] border-border bg-card/90 text-[13px] text-muted-foreground shadow-none transition-colors hover:bg-accent/60 hover:text-foreground md:w-48 md:justify-start md:pl-2.5 lg:w-40 xl:w-56"
 				)}
-				onclick={() => openCommandMenu()}
 			>
 				<SearchIcon class="size-3.5 md:mr-1.5" />
 				<span class="hidden xl:inline-flex">{t("command.placeholder")}</span>

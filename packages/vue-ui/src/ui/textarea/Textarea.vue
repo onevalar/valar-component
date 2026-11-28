@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Textarea as SdkTextarea } from "@ui-sdk/vue/textarea";
 import { cn } from "cn";
-import type { HTMLAttributes } from "vue";
+import { computed, useAttrs, type HTMLAttributes } from "vue";
 
 const props = withDefaults(
 	defineProps<{
@@ -13,6 +13,8 @@ const props = withDefaults(
 	{ appearance: "default" }
 );
 const emit = defineEmits<{ "update:modelValue": [value: string] }>();
+const attrs = useAttrs();
+const slot = computed(() => (attrs["data-slot"] as string | undefined) ?? "textarea");
 </script>
 
 <template>
@@ -21,7 +23,7 @@ const emit = defineEmits<{ "update:modelValue": [value: string] }>();
 		:default-value="modelValue ?? defaultValue"
 		:auto-resize="appearance === 'default'"
 		@update:model-value="emit('update:modelValue', $event)"
-		data-slot="textarea"
+		:data-slot="slot"
 		:data-appearance="appearance"
 		:class="
 			cn(
@@ -30,5 +32,9 @@ const emit = defineEmits<{ "update:modelValue": [value: string] }>();
 				props.class
 			)
 		"
-	/>
+	>
+		<template #render="{ props: textareaProps }">
+			<textarea v-bind="textareaProps" :data-slot="slot" />
+		</template>
+	</SdkTextarea>
 </template>

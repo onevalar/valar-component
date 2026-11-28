@@ -157,7 +157,7 @@
 	data-slot="dialog-content"
 	data-appearance={appearance}
 	class={cn(
-		"cn-dialog-content fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 outline-none",
+		"cn-dialog-content pointer-events-auto fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 outline-none data-closed:pointer-events-none",
 		appearance === "editor" && "cn-dialog-editor",
 		appearance === "default" && showCloseButton && "[&>[data-slot=dialog-header]]:pe-5",
 		className
@@ -170,6 +170,8 @@
 			{...props}
 			{...refAttachment}
 			data-slot="dialog-content"
+			hidden={!state.open || undefined}
+			inert={!state.open || undefined}
 			aria-labelledby={hasExplicitAriaLabel ? undefined : (props["aria-labelledby"] as string | undefined)}
 			data-state={state.open ? "open" : "closed"}
 			onkeydown={(event) => {

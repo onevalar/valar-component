@@ -22,13 +22,14 @@
 
 <SdkBackdrop
 	data-slot="alert-dialog-overlay"
-	class={cn("cn-alert-dialog-overlay fixed inset-0 z-50", className)}
+	class={cn("cn-alert-dialog-overlay fixed inset-0 z-50 data-closed:pointer-events-none", className)}
 	{...restProps}
 >
 	{#snippet render({ props, state })}
 		<div
 			{...props}
 			{...refAttachment}
+			hidden={!state.open || undefined}
 			data-slot="alert-dialog-overlay"
 			data-state={state.open ? "open" : "closed"}
 		>

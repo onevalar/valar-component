@@ -17,6 +17,7 @@
 		shortcut,
 		closeOnSelect = true,
 		onSelect,
+		onclick,
 		child,
 		children,
 		...restProps
@@ -47,7 +48,14 @@
 	destructive={variant === "destructive"}
 	{shortcut}
 	{closeOnSelect}
-	{onSelect}
+	{onclick}
+	onSelect={(event) => {
+		const result = onSelect?.(event);
+		if (onclick && event.type !== "click") {
+			onclick(event as unknown as MouseEvent & { currentTarget: EventTarget & HTMLDivElement });
+		}
+		return result;
+	}}
 	class={cn(
 		"cn-dropdown-menu-item group/dropdown-menu-item relative flex cursor-default items-center outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 		className

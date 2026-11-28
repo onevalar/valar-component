@@ -55,7 +55,7 @@
 
   /* MARK: Alert Dialog */
   .cn-alert-dialog-overlay {
-    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 bg-black/25 opacity-95 duration-100 dark:bg-black/40 motion-reduce:animate-none;
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 bg-black/25 opacity-95 duration-100 dark:bg-black/40 motion-reduce:animate-none!;
   }
 
   .cn-alert-dialog-content {
@@ -667,7 +667,7 @@
 
   /* MARK: Dialog */
   .cn-dialog-overlay {
-    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 bg-black/25 opacity-95 duration-100 dark:bg-black/40 motion-reduce:animate-none;
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 bg-black/25 opacity-95 duration-100 dark:bg-black/40 motion-reduce:animate-none!;
   }
 
   .cn-dialog-content {

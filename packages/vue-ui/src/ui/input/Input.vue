@@ -2,7 +2,7 @@
 import { Input as SdkInput } from "@ui-sdk/vue/input";
 import { useVModel } from "@vueuse/core";
 import { cn } from "cn";
-import type { HTMLAttributes } from "vue";
+import { computed, useAttrs, type HTMLAttributes } from "vue";
 
 const props = defineProps<{
 	defaultValue?: string | number;
@@ -15,6 +15,8 @@ const emits = defineEmits<{
 	(e: "update:modelValue", payload: string | number): void;
 }>();
 
+const attrs = useAttrs();
+const slot = computed(() => (attrs["data-slot"] as string | undefined) ?? "input");
 const modelValue = useVModel(props, "modelValue", emits, {
 	passive: true,
 	defaultValue: props.defaultValue,
@@ -32,10 +34,14 @@ const classes = () =>
 		:type="type"
 		:model-value="props.modelValue === undefined ? undefined : String(props.modelValue)"
 		:default-value="props.defaultValue === undefined ? undefined : String(props.defaultValue)"
-		data-slot="input"
+		:data-slot="slot"
 		:class="classes()"
 		@update:model-value="emits('update:modelValue', $event)"
-	/>
-	<input v-else-if="type === 'file'" type="file" data-slot="input" :class="classes()" />
-	<input v-else :type="type" v-model="modelValue" data-slot="input" :class="classes()" />
+	>
+		<template #render="{ props: inputProps }">
+			<input v-bind="inputProps" :data-slot="slot" />
+		</template>
+	</SdkInput>
+	<input v-else-if="type === 'file'" type="file" :data-slot="slot" :class="classes()" />
+	<input v-else :type="type" v-model="modelValue" :data-slot="slot" :class="classes()" />
 </template>

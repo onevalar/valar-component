@@ -10,7 +10,7 @@
 		value = $bindable(""),
 		class: className,
 		activationMode,
-		loop = false,
+		loop = true,
 		disabled = false,
 		children,
 		child,

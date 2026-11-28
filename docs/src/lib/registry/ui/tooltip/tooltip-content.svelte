@@ -76,8 +76,9 @@
 		});
 	});
 
+	const resolvedInline = $derived(portalProps?.disabled ?? false);
 	const resolvedContainer = $derived(
-		portalProps?.disabled
+		resolvedInline
 			? undefined
 			: (containerProp ?? resolvePortalContainer(portalProps?.to))
 	);
@@ -99,11 +100,12 @@
 		{collisionPadding}
 		{arrowPadding}
 		{anchor}
+		inline={resolvedInline}
 		container={resolvedContainer}
 		data-slot="tooltip-content"
 		data-appearance={appearance}
 		class={cn(
-			"cn-tooltip-content cn-tooltip-content-logical cn-overlay-surface z-50 w-fit max-w-[min(20rem,calc(100vw-1rem))] origin-(--transform-origin) wrap-anywhere [&>*]:min-w-0",
+			"cn-tooltip-content cn-tooltip-content-logical cn-overlay-surface z-50 w-fit max-w-[min(20rem,calc(100vw-1rem))] origin-(--transform-origin) wrap-anywhere data-closed:pointer-events-none [&>*]:min-w-0",
 			appearance === "surface" && "animate-none!",
 			className
 		)}

@@ -170,7 +170,7 @@
 	data-slot={resolvedDataSlot}
 	data-appearance={appearance}
 	class={cn(
-		"cn-popover-content cn-popover-content-logical cn-overlay-surface cn-popover-viewport z-50 origin-(--transform-origin) outline-hidden",
+		"cn-popover-content cn-popover-content-logical cn-overlay-surface cn-popover-viewport pointer-events-auto z-50 origin-(--transform-origin) outline-hidden data-closed:pointer-events-none",
 		appearance === "options" ? "w-[330px]" : "w-72",
 		appearance === "surface" && "cn-overlay-menu-rows animate-none!",
 		appearance === "options" && "cn-popover-options animate-none!",
@@ -183,6 +183,8 @@
 		{@const attributes = {
 			...props,
 			...(hasExplicitAriaLabel ? { "aria-labelledby": undefined } : {}),
+			hidden: !state.open || undefined,
+			inert: !state.open || undefined,
 			"data-slot": resolvedDataSlot,
 			"data-side": (props["data-side"] as string | undefined) ?? side,
 			"data-align": (props["data-align"] as string | undefined) ?? align,

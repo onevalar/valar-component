@@ -78,6 +78,22 @@
 		}
 	}
 
+	function scheduleHoverOpen() {
+		if (resolvedDisabled) return;
+		cancelPendingHoverOpen();
+		const wait = provider?.isWarm() ? 0 : resolvedDelay;
+		if (wait <= 0) {
+			focusContext.openedByHoverTimer = true;
+			void resolvedController.open();
+			return;
+		}
+		hoverTimer = setTimeout(() => {
+			hoverTimer = null;
+			focusContext.openedByHoverTimer = true;
+			void resolvedController.open();
+		}, wait);
+	}
+
 	onDestroy(() => {
 		cancelPendingHoverOpen();
 		if (wasOpen) {
@@ -93,11 +109,15 @@
 		get disabled() {
 			return resolvedDisabled;
 		},
+		get delayDuration() {
+			return resolvedDelay;
+		},
 		pointerDown: false,
 		pointerEnteredAt: 0,
 		openedByHoverTimer: false,
 		lastDismissedAt: -Infinity,
 		cancelPendingHoverOpen,
+		scheduleHoverOpen,
 	};
 	setContext(TOOLTIP_FOCUS_KEY, focusContext);
 

@@ -2,7 +2,7 @@
 import { Button as SdkButton } from "@ui-sdk/vue/button";
 import { cn } from "cn";
 import { Primitive } from "reka-ui";
-import { computed } from "vue";
+import { computed, useAttrs } from "vue";
 import { buttonVariants } from ".";
 import type { ButtonVariants } from ".";
 import type { PrimitiveProps } from "reka-ui";
@@ -25,24 +25,30 @@ const props = withDefaults(defineProps<Props>(), {
 	variant: "default",
 	size: "default",
 });
+const attrs = useAttrs();
+const slot = computed(() => (attrs["data-slot"] as string | undefined) ?? "button");
 const element = computed(() => (props.href ? "a" : props.as));
 </script>
 
 <template>
 	<SdkButton
 		v-if="element === 'button' && !asChild"
-		data-slot="button"
+		:data-slot="slot"
 		:data-variant="variant"
 		:data-size="size"
 		:type="type"
 		:disabled="disabled"
 		:class="cn(buttonVariants({ variant, size, shape }), props.class)"
 	>
-		<slot />
+		<template #render="{ props: buttonProps }">
+			<button v-bind="buttonProps" :data-slot="slot">
+				<slot />
+			</button>
+		</template>
 	</SdkButton>
 	<Primitive
 		v-else
-		data-slot="button"
+		:data-slot="slot"
 		:data-variant="variant"
 		:data-size="size"
 		:as="element"

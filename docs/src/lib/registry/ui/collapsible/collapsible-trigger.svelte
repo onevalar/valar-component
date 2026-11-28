@@ -50,6 +50,7 @@
 	{#snippet render({ props, state })}
 		{@const attributes = {
 			...props,
+			"data-slot": "collapsible-trigger",
 			disabled: disabled || state.disabled,
 			"aria-disabled": disabled || state.disabled ? "true" : ariaDisabled,
 			"data-disabled": disabled || state.disabled ? "" : undefined,

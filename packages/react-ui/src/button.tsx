@@ -68,8 +68,8 @@ function Button({
 		const { disabled, href, onClick, tabIndex, ...anchor } = props;
 		return (
 			<a
-				{...anchor}
 				data-slot="button"
+				{...anchor}
 				data-variant={variant}
 				data-size={size}
 				className={classes}

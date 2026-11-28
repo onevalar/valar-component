@@ -13,6 +13,7 @@
 		onpointerenter,
 		onpointerleave,
 		onpointerdown,
+		onclick,
 		onfocus,
 		child,
 		children,
@@ -30,15 +31,24 @@
 	const refAttachment = bindElementRef<HTMLElement>((el) => {
 		ref = el;
 	});
+	let pointerInside = false;
+	let clickedOutside = false;
 
 	function handlePointerEnter(event: PointerEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
+		pointerInside = true;
 		if (focusCtx) {
 			focusCtx.pointerEnteredAt = performance.now();
+			if (clickedOutside && event.pointerType !== "touch" && !focusCtx.disabled && !disabled) {
+				clickedOutside = false;
+				focusCtx.scheduleHoverOpen();
+			}
 		}
 		onpointerenter?.(event);
 	}
 
 	function handlePointerLeave(event: PointerEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
+		pointerInside = false;
+		clickedOutside = false;
 		focusCtx?.cancelPendingHoverOpen();
 		if (focusCtx?.openedByHoverTimer) {
 			focusCtx.openedByHoverTimer = false;
@@ -55,6 +65,13 @@
 			});
 		}
 		onpointerdown?.(event);
+	}
+
+	function handleClick(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
+		if (!pointerInside) {
+			clickedOutside = true;
+		}
+		onclick?.(event);
 	}
 
 	function handleFocus(event: FocusEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
@@ -87,6 +104,7 @@
 	onpointerenter={handlePointerEnter}
 	onpointerleave={handlePointerLeave}
 	onpointerdown={handlePointerDown}
+	onclick={handleClick}
 	onfocus={handleFocus}
 	{...restProps}
 >
@@ -96,6 +114,7 @@
 			...(disabled != null ? { disabled } : {}),
 			"data-slot": "tooltip-trigger",
 			"data-state": state.open ? "open" : "closed",
+			"data-delay-duration": focusCtx ? String(focusCtx.delayDuration) : undefined,
 			...refAttachment,
 		}}
 		{#if child}

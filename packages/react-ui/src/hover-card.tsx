@@ -13,11 +13,19 @@ import type { Anchor, ChangeDetails, Side } from "@ui-sdk/core";
 import { cn } from "cn";
 import { Slot } from "radix-ui";
 
+type HoverCardPointerDownOutsideEvent = CustomEvent<{ originalEvent: PointerEvent | Event }>;
+
+interface HoverCardDismissCallbacks {
+	onEscapeKeyDown?: (event: KeyboardEvent) => void;
+	onPointerDownOutside?: (event: HoverCardPointerDownOutsideEvent) => void;
+}
+
 const HoverCardFocusContext = React.createContext<{
 	controller: HoverCardController<unknown>;
 	disabled: boolean;
 	pointerDownRef: React.MutableRefObject<boolean>;
 	lastDismissedAtRef: React.MutableRefObject<number>;
+	dismissRef: React.MutableRefObject<HoverCardDismissCallbacks>;
 } | null>(null);
 
 export interface HoverCardProps {
@@ -54,17 +62,40 @@ export function HoverCard({
 	const resolvedController = controller ?? internalControllerRef.current;
 	const pointerDownRef = React.useRef(false);
 	const lastDismissedAtRef = React.useRef(-Infinity);
+	const dismissRef = React.useRef<HoverCardDismissCallbacks>({});
 	const focusContext = React.useMemo(
 		() => ({
 			controller: resolvedController,
 			disabled: Boolean(disabled),
 			pointerDownRef,
 			lastDismissedAtRef,
+			dismissRef,
 		}),
 		[resolvedController, disabled]
 	);
 
 	function handleOpenChange(next: boolean, details: ChangeDetails<HoverCardOpenChangeReason>) {
+		if (!next) {
+			if (details.reason === "escape-key" && dismissRef.current.onEscapeKeyDown) {
+				const event = new KeyboardEvent("keydown", { key: "Escape", cancelable: true });
+				dismissRef.current.onEscapeKeyDown(event);
+				if (event.defaultPrevented) {
+					details.cancel();
+					return;
+				}
+			}
+			if (details.reason === "outside-press" && dismissRef.current.onPointerDownOutside) {
+				const event = new CustomEvent("pointerDownOutside", {
+					cancelable: true,
+					detail: { originalEvent: details.event ?? new Event("pointerdown") },
+				}) as HoverCardPointerDownOutsideEvent;
+				dismissRef.current.onPointerDownOutside(event);
+				if (event.defaultPrevented) {
+					details.cancel();
+					return;
+				}
+			}
+		}
 		onOpenChange?.(next, details);
 		if (!next && !details.canceled && details.reason === "escape-key") {
 			lastDismissedAtRef.current = performance.now();
@@ -187,6 +218,8 @@ export type HoverCardContentProps = React.ComponentPropsWithRef<"div"> & {
 	keepMounted?: boolean;
 	avoidCollisions?: boolean;
 	asChild?: boolean;
+	onEscapeKeyDown?: (event: KeyboardEvent) => void;
+	onPointerDownOutside?: (event: HoverCardPointerDownOutsideEvent) => void;
 };
 
 export function HoverCardContent({
@@ -207,9 +240,19 @@ export function HoverCardContent({
 	keepMounted,
 	avoidCollisions: _avoidCollisions,
 	asChild,
+	onEscapeKeyDown,
+	onPointerDownOutside,
 	children,
 	...props
 }: HoverCardContentProps) {
+	const focusCtx = React.useContext(HoverCardFocusContext);
+	React.useEffect(() => {
+		if (!focusCtx) return;
+		focusCtx.dismissRef.current = { onEscapeKeyDown, onPointerDownOutside };
+		return () => {
+			focusCtx.dismissRef.current = {};
+		};
+	}, [focusCtx, onEscapeKeyDown, onPointerDownOutside]);
 	const resolvedInline = inlineProp ?? portalProps === false;
 	const resolvedContainer = resolvedInline
 		? undefined

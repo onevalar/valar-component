@@ -78,6 +78,13 @@
 		...restProps
 	}: ButtonProps = $props();
 
+	const isDisabled = $derived(
+		(disabled as unknown) === "" || Boolean(disabled)
+	);
+	const resolvedSlot = $derived(
+		((restProps as Record<string, unknown>)["data-slot"] as string | undefined) ?? "button"
+	);
+
 	function blockActivation(event: MouseEvent) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -96,34 +103,34 @@
 {#if href}
 	<a
 		bind:this={ref}
-		data-slot="button"
+		data-slot={resolvedSlot}
 		data-variant={variant}
 		data-size={size}
 		data-shape={shape}
 		class={cn(buttonVariants({ variant, size, shape }), className)}
 		{...restProps}
-		href={disabled || loading ? undefined : href}
-		aria-disabled={disabled || loading ? true : restProps["aria-disabled"]}
+		href={isDisabled || loading ? undefined : href}
+		aria-disabled={isDisabled || loading ? true : restProps["aria-disabled"]}
 		aria-busy={loading ? true : restProps["aria-busy"]}
 		data-loading={loading ? "" : undefined}
-		role={disabled || loading ? "link" : restProps.role}
-		tabindex={disabled ? -1 : loading ? (tabindex ?? 0) : tabindex}
-		onclick={disabled || loading ? blockActivation : restProps.onclick}
+		role={isDisabled || loading ? "link" : restProps.role}
+		tabindex={isDisabled ? -1 : loading ? (tabindex ?? 0) : tabindex}
+		onclick={isDisabled || loading ? blockActivation : restProps.onclick}
 	>
 		{@render children?.()}
 	</a>
 {:else}
 	<SdkButton
 		{...refProps}
-		data-slot="button"
 		data-variant={variant}
 		data-size={size}
 		data-shape={shape}
 		class={cn(buttonVariants({ variant, size, shape }), className)}
 		type={type ?? undefined}
-		disabled={disabled ?? undefined}
-		tabindex={disabled ? -1 : tabindex}
+		disabled={isDisabled || undefined}
+		tabindex={isDisabled ? -1 : tabindex}
 		{...restProps}
+		data-slot={resolvedSlot}
 		aria-disabled={loading ? true : restProps["aria-disabled"]}
 		aria-busy={loading ? true : restProps["aria-busy"]}
 		data-loading={loading ? "" : undefined}
@@ -134,6 +141,10 @@
 			}
 		}}
 	>
-		{@render children?.()}
+		{#snippet render({ props })}
+			<button {...props} data-slot={resolvedSlot}>
+				{@render children?.()}
+			</button>
+		{/snippet}
 	</SdkButton>
 {/if}

@@ -163,7 +163,7 @@
 	data-size={size}
 	data-appearance={appearance}
 	class={cn(
-		"cn-alert-dialog-content group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 outline-none",
+		"cn-alert-dialog-content group/alert-dialog-content pointer-events-auto fixed top-1/2 left-1/2 z-50 grid w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 outline-none data-closed:pointer-events-none",
 		appearance === "danger" && "cn-alert-dialog-danger",
 		className
 	)}
@@ -175,6 +175,8 @@
 			{...props}
 			{...refAttachment}
 			data-slot="alert-dialog-content"
+			hidden={!state.open || undefined}
+			inert={!state.open || undefined}
 			role="alertdialog"
 			aria-modal={policyContext?.isModal() ? "true" : undefined}
 			aria-labelledby={hasExplicitAriaLabel ? undefined : (props["aria-labelledby"] as string | undefined)}

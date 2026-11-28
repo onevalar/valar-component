@@ -13,11 +13,13 @@ export type TooltipProviderContext = {
 export type TooltipFocusContext = {
 	readonly controller: TooltipController<unknown>;
 	readonly disabled: boolean;
+	readonly delayDuration: number;
 	pointerDown: boolean;
 	pointerEnteredAt: number;
 	openedByHoverTimer: boolean;
 	lastDismissedAt: number;
 	cancelPendingHoverOpen(): void;
+	scheduleHoverOpen(): void;
 };
 
 export const TOOLTIP_FOCUS_KEY = Symbol("valar-tooltip-focus");
