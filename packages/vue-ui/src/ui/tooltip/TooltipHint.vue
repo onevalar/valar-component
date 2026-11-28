@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import type { TooltipContentProps, TooltipPortalProps } from "reka-ui";
+import type { Side } from "@ui-sdk/core";
 import { Kbd, KbdGroup } from "../kbd";
 import { Tooltip, TooltipContent, TooltipTrigger } from ".";
+import type { TooltipPortalProps } from "./TooltipContent.vue";
 
-withDefaults(defineProps<{
-	label: string;
-	keys?: readonly string[];
-	side?: TooltipContentProps["side"];
-	portal?: TooltipPortalProps;
-	disabled?: boolean;
-}>(), { side: "bottom", disabled: undefined });
+withDefaults(
+	defineProps<{
+		label: string;
+		keys?: readonly string[];
+		side?: Side;
+		portal?: TooltipPortalProps;
+		disabled?: boolean;
+	}>(),
+	{ side: "bottom", disabled: undefined }
+);
 </script>
 
 <template>

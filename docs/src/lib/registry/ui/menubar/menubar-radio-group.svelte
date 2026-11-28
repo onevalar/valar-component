@@ -1,11 +1,48 @@
 <script lang="ts">
-	import { Menubar as MenubarPrimitive } from "bits-ui";
+	import {
+		MenuRadioGroup as SdkRadioGroup,
+		type MenuValueChangeReason,
+	} from "@ui-sdk/svelte/menu";
+	import type { ChangeDetails } from "@ui-sdk/core";
+	import { setContext, type Snippet } from "svelte";
+	import type { HTMLAttributes } from "svelte/elements";
+	import { IN_MENUBAR_GROUP_KEY, bindElementRef } from "./context.js";
 
 	let {
 		ref = $bindable(null),
+		name,
 		value = $bindable(""),
+		defaultValue,
+		onValueChange,
+		children,
 		...restProps
-	}: MenubarPrimitive.RadioGroupProps = $props();
+	}: Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+		ref?: HTMLElement | null;
+		name?: string;
+		value?: string;
+		defaultValue?: string;
+		onValueChange?: (value: string, details?: ChangeDetails<MenuValueChangeReason>) => void;
+		children?: Snippet;
+	} = $props();
+
+	const generatedName = $props.id();
+	setContext(IN_MENUBAR_GROUP_KEY, true);
+
+	const refAttachment = bindElementRef<HTMLElement>((el) => {
+		ref = el;
+	});
 </script>
 
-<MenubarPrimitive.RadioGroup bind:ref bind:value data-slot="menubar-radio-group" {...restProps} />
+<SdkRadioGroup
+	name={name ?? generatedName}
+	bind:value
+	{defaultValue}
+	{onValueChange}
+	{...restProps}
+>
+	{#snippet render({ props })}
+		<div {...props} data-slot="menubar-radio-group" {...refAttachment}>
+			{@render children?.()}
+		</div>
+	{/snippet}
+</SdkRadioGroup>

@@ -1,17 +1,24 @@
 <script lang="ts">
-	import { ContextMenu as ContextMenuPrimitive } from "bits-ui";
+	import { MenuSeparator as SdkSeparator } from "@ui-sdk/svelte/menu";
+	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/utils.js";
+	import { bindElementRef } from "./context.js";
 
 	let {
 		ref = $bindable(null),
 		class: className,
 		...restProps
-	}: ContextMenuPrimitive.SeparatorProps = $props();
+	}: HTMLAttributes<HTMLDivElement> & {
+		ref?: HTMLElement | null;
+	} = $props();
+
+	const refAttachment = bindElementRef<HTMLElement>((el) => {
+		ref = el;
+	});
 </script>
 
-<ContextMenuPrimitive.Separator
-	bind:ref
-	data-slot="context-menu-separator"
-	class={cn("cn-context-menu-separator", className)}
-	{...restProps}
-/>
+<SdkSeparator class={cn("cn-context-menu-separator", className)} {...restProps}>
+	{#snippet render({ props })}
+		<div {...props} data-slot="context-menu-separator" {...refAttachment}></div>
+	{/snippet}
+</SdkSeparator>

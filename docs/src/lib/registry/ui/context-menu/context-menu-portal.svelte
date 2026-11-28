@@ -1,7 +1,15 @@
 <script lang="ts">
-	import { ContextMenu as ContextMenuPrimitive } from "bits-ui";
+	import type { Snippet } from "svelte";
 
-	let { ...restProps }: ContextMenuPrimitive.PortalProps = $props();
+	let {
+		to: _to,
+		disabled: _disabled,
+		children,
+	}: {
+		to?: string | Element | DocumentFragment | null;
+		disabled?: boolean;
+		children?: Snippet;
+	} = $props();
 </script>
 
-<ContextMenuPrimitive.Portal {...restProps} />
+{@render children?.()}

@@ -1,37 +1,29 @@
-import * as Reka from "reka-ui";
 import {
 	menuCheckbox,
 	menuContent,
+	menuGroup,
 	menuItem,
 	menuLabel,
+	menuPortal,
 	menuRadio,
+	menuRadioGroup,
+	menuSeparator,
 	menuShortcut,
 	menuSub,
 	menuSubTrigger,
-	styledPart,
 } from "../dropdown-menu/parts.js";
-import type { ContextMenuContentEmits } from "reka-ui";
 
-export { ContextMenuPortal } from "reka-ui";
+export const ContextMenuPortal = menuPortal("ContextMenuPortal");
 export { default as ContextMenu } from "./ContextMenu.vue";
 export { default as ContextMenuTrigger } from "./ContextMenuTrigger.vue";
-export const ContextMenuGroup = styledPart(Reka.ContextMenuGroup, "context-menu-group");
-export const ContextMenuRadioGroup = styledPart(
-	Reka.ContextMenuRadioGroup,
-	"context-menu-radio-group"
-);
-export const ContextMenuLabel = menuLabel(
-	Reka.Primitive,
-	"context-menu-label",
-	"cn-context-menu-label"
-);
+export const ContextMenuGroup = menuGroup("context-menu-group");
+export const ContextMenuRadioGroup = menuRadioGroup("context-menu-radio-group");
+export const ContextMenuLabel = menuLabel("context-menu-label", "cn-context-menu-label");
 export const ContextMenuGroupHeading = menuLabel(
-	Reka.ContextMenuLabel,
 	"context-menu-group-heading",
 	"cn-context-menu-label"
 );
-export const ContextMenuSeparator = styledPart(
-	Reka.ContextMenuSeparator,
+export const ContextMenuSeparator = menuSeparator(
 	"context-menu-separator",
 	"cn-context-menu-separator"
 );
@@ -40,66 +32,33 @@ export const ContextMenuShortcut = menuShortcut(
 	"cn-context-menu-shortcut"
 );
 export const ContextMenuItem = menuItem(
-	Reka.ContextMenuItem,
 	"context-menu-item",
 	"cn-context-menu-item group/context-menu-item"
 );
 export const ContextMenuCheckboxItem = menuCheckbox(
-	Reka.ContextMenuCheckboxItem,
-	Reka.ContextMenuItemIndicator,
 	"context-menu-checkbox-item",
 	"cn-context-menu-checkbox-item",
+	"context-menu-item-indicator",
 	"cn-context-menu-item-indicator pointer-events-none"
 );
 export const ContextMenuRadioItem = menuRadio(
-	Reka.ContextMenuRadioItem,
-	Reka.ContextMenuItemIndicator,
 	"context-menu-radio-item",
 	"cn-context-menu-radio-item",
+	"context-menu-item-indicator",
 	"cn-context-menu-item-indicator pointer-events-none"
 );
-export const ContextMenuSub = menuSub(Reka.ContextMenuSub, "ContextMenuSub");
+export const ContextMenuSub = menuSub("ContextMenuSub");
 export const ContextMenuSubTrigger = menuSubTrigger(
-	Reka.ContextMenuSubTrigger,
 	"context-menu-sub-trigger",
 	"cn-context-menu-sub-trigger"
 );
 
 export const ContextMenuContent = menuContent(
-	Reka.ContextMenuContent,
-	Reka.ContextMenuPortal,
 	"context-menu-content",
-	"cn-context-menu-content cn-overlay-surface cn-context-menu-surface",
-	{
-		setup() {
-			const root = Reka.injectContextMenuRootContext();
-			let interactedOutside = false;
-			return {
-				onInteractOutside(event: ContextMenuContentEmits["interactOutside"][0]) {
-					if (
-						!event.defaultPrevented &&
-						(!root.modal.value || event.detail.originalEvent.type === "pointerdown")
-					)
-						interactedOutside = true;
-				},
-				onCloseAutoFocus(event: Event) {
-					if (!event.defaultPrevented && !interactedOutside && root.triggerElement.value) {
-						event.preventDefault();
-						root.triggerElement.value.focus({ preventScroll: true });
-					}
-					interactedOutside = false;
-				},
-			};
-		},
-	}
+	"cn-context-menu-content cn-overlay-surface cn-context-menu-surface"
 );
 
-export const ContextMenuSubContent = menuContent<
-	typeof Reka.ContextMenuSubContent,
-	{ elevated?: boolean }
->(
-	Reka.ContextMenuSubContent,
-	Reka.ContextMenuPortal,
+export const ContextMenuSubContent = menuContent<{ elevated?: boolean }>(
 	"context-menu-sub-content",
 	"cn-context-menu-sub-content cn-overlay-surface cn-context-menu-surface",
 	{

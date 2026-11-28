@@ -1,7 +1,15 @@
 <script lang="ts">
-	import { LinkPreview as HoverCardPrimitive } from "bits-ui";
+	import type { Snippet } from "svelte";
 
-	let { ...restProps }: HoverCardPrimitive.PortalProps = $props();
+	let {
+		to: _to,
+		disabled: _disabled,
+		children,
+	}: {
+		to?: string | Element | DocumentFragment | null;
+		disabled?: boolean;
+		children?: Snippet;
+	} = $props();
 </script>
 
-<HoverCardPrimitive.Portal {...restProps} />
+{@render children?.()}

@@ -1,22 +1,49 @@
 <script lang="ts">
-	import { Menubar as MenubarPrimitive } from "bits-ui";
+	import { MenuGroupLabel as SdkGroupLabel } from "@ui-sdk/svelte/menu";
+	import { getContext, type Snippet } from "svelte";
+	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/utils.js";
-	import type { ComponentProps } from "svelte";
+	import { IN_MENUBAR_GROUP_KEY, bindElementRef } from "./context.js";
 
 	let {
 		ref = $bindable(null),
 		inset,
 		class: className,
+		children,
 		...restProps
-	}: ComponentProps<typeof MenubarPrimitive.GroupHeading> & {
+	}: Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+		ref?: HTMLElement | null;
 		inset?: boolean;
+		children?: Snippet;
 	} = $props();
+
+	const inGroup = getContext<boolean | undefined>(IN_MENUBAR_GROUP_KEY) ?? false;
+	const refAttachment = bindElementRef<HTMLElement>((el) => {
+		ref = el;
+	});
 </script>
 
-<MenubarPrimitive.GroupHeading
-	bind:ref
-	data-slot="menubar-group-heading"
-	data-inset={inset}
-	class={cn("cn-menubar-label", className)}
-	{...restProps}
-/>
+{#if inGroup}
+	<SdkGroupLabel class={cn("cn-menubar-label", className)} {...restProps}>
+		{#snippet render({ props })}
+			<div
+				{...props}
+				data-slot="menubar-group-heading"
+				data-inset={inset || undefined}
+				{...refAttachment}
+			>
+				{@render children?.()}
+			</div>
+		{/snippet}
+	</SdkGroupLabel>
+{:else}
+	<div
+		bind:this={ref}
+		data-slot="menubar-group-heading"
+		data-inset={inset || undefined}
+		class={cn("cn-menubar-label", className)}
+		{...restProps}
+	>
+		{@render children?.()}
+	</div>
+{/if}

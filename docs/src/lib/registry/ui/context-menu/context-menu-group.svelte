@@ -1,7 +1,29 @@
 <script lang="ts">
-	import { ContextMenu as ContextMenuPrimitive } from "bits-ui";
+	import { MenuGroup as SdkGroup } from "@ui-sdk/svelte/menu";
+	import { setContext, type Snippet } from "svelte";
+	import type { HTMLAttributes } from "svelte/elements";
+	import { IN_CONTEXT_MENU_GROUP_KEY, bindElementRef } from "./context.js";
 
-	let { ref = $bindable(null), ...restProps }: ContextMenuPrimitive.GroupProps = $props();
+	let {
+		ref = $bindable(null),
+		children,
+		...restProps
+	}: Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+		ref?: HTMLElement | null;
+		children?: Snippet;
+	} = $props();
+
+	setContext(IN_CONTEXT_MENU_GROUP_KEY, true);
+
+	const refAttachment = bindElementRef<HTMLElement>((el) => {
+		ref = el;
+	});
 </script>
 
-<ContextMenuPrimitive.Group bind:ref data-slot="context-menu-group" {...restProps} />
+<SdkGroup {...restProps}>
+	{#snippet render({ props })}
+		<div {...props} data-slot="context-menu-group" {...refAttachment}>
+			{@render children?.()}
+		</div>
+	{/snippet}
+</SdkGroup>

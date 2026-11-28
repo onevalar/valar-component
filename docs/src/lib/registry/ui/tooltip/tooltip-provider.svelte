@@ -1,10 +1,14 @@
 <script lang="ts">
-	import { Tooltip as TooltipPrimitive } from "bits-ui";
+	import type { ComponentProps } from "svelte";
+	import TooltipProviderScope from "./tooltip-provider-scope.svelte";
 
 	// Installed presets can override the default delay through this style class.
 	const styleDelay = Number(/\bdelay-(\d+)\b/.exec("cn-tooltip-provider")?.[1] ?? 500);
 
-	let { delayDuration = styleDelay, ...restProps }: TooltipPrimitive.ProviderProps = $props();
+	let {
+		delayDuration = styleDelay,
+		...restProps
+	}: ComponentProps<typeof TooltipProviderScope> = $props();
 </script>
 
-<TooltipPrimitive.Provider {delayDuration} {...restProps} />
+<TooltipProviderScope {delayDuration} {...restProps} />

@@ -1,7 +1,83 @@
 <script lang="ts">
-	import { Menubar as MenubarPrimitive } from "bits-ui";
+	import {
+		MenuSub as SdkSub,
+		type MenuController,
+		type MenuOpenChangeReason,
+	} from "@ui-sdk/svelte/menu";
+	import type { ChangeDetails } from "@ui-sdk/core";
+	import { getContext, setContext, type Snippet } from "svelte";
+	import { MENUBAR_SUB_POLICY_KEY, type MenubarDismissPolicy } from "./context.js";
 
-	let { open = $bindable(false), ...restProps }: MenubarPrimitive.SubProps = $props();
+	const PARENT_ESCAPE_KEY = Symbol.for("valar-dialog-parent-escape");
+
+	let {
+		open = $bindable(),
+		defaultOpen,
+		loop,
+		delay,
+		controller,
+		onOpenChange,
+		onOpenChangeComplete,
+		children,
+	}: {
+		open?: boolean;
+		defaultOpen?: boolean;
+		loop?: boolean;
+		delay?: number;
+		controller?: MenuController<unknown>;
+		onOpenChange?: (open: boolean, details?: ChangeDetails<MenuOpenChangeReason>) => void;
+		onOpenChangeComplete?: (open: boolean) => void;
+		children?: Snippet;
+	} = $props();
+
+	let policy = $state<MenubarDismissPolicy>({});
+	const parentEscape = getContext<(() => void) | undefined>(PARENT_ESCAPE_KEY);
+	setContext(MENUBAR_SUB_POLICY_KEY, {
+		set(next: MenubarDismissPolicy) {
+			policy = next;
+		},
+	});
+
+	function handleOpenChange(next: boolean, details: ChangeDetails<MenuOpenChangeReason>) {
+		const isEscapeKey =
+			details.reason === "escape-key" &&
+			(!(details.event instanceof KeyboardEvent) || details.event.key === "Escape");
+		if (!next) {
+			if (
+				isEscapeKey &&
+				(policy.escapeKeydownBehavior === "ignore" ||
+					policy.escapeKeydownBehavior === "defer-otherwise-ignore")
+			) {
+				details.cancel();
+				if (policy.escapeKeydownBehavior === "defer-otherwise-ignore") {
+					parentEscape?.();
+				}
+				return;
+			}
+			if (isEscapeKey && policy.onEscapeKeydown) {
+				const event = new KeyboardEvent("keydown", { key: "Escape", cancelable: true });
+				policy.onEscapeKeydown(event);
+				if (event.defaultPrevented) {
+					details.cancel();
+					return;
+				}
+			}
+		}
+		onOpenChange?.(next, details);
+		if (!next && !details.canceled && details.reason === "escape-key") {
+			details.event?.stopPropagation();
+		}
+	}
 </script>
 
-<MenubarPrimitive.Sub bind:open {...restProps} />
+<SdkSub
+	bind:open
+	{defaultOpen}
+	{loop}
+	{delay}
+	{controller}
+	onOpenChange={handleOpenChange}
+	{onOpenChangeComplete}
+>
+	{@render children?.()}
+</SdkSub>

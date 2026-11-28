@@ -1,7 +1,15 @@
 <script lang="ts">
-	import { Tooltip as TooltipPrimitive } from "bits-ui";
+	import type { Snippet } from "svelte";
 
-	let { ...restProps }: TooltipPrimitive.PortalProps = $props();
+	let {
+		to: _to,
+		disabled: _disabled,
+		children,
+	}: {
+		to?: string | Element | DocumentFragment | null;
+		disabled?: boolean;
+		children?: Snippet;
+	} = $props();
 </script>
 
-<TooltipPrimitive.Portal {...restProps} />
+{@render children?.()}

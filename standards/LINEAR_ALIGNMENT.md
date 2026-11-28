@@ -563,3 +563,15 @@ Chromium 在浅深主题和窄屏验收重试、恢复、归焦、进度端点�
 - **统一底座与零 API 破坏**：将 `Popover` 与 `Select` 同步在 Svelte（`docs/src/lib/registry/ui/{popover,select}/` 与 `@valar/svelte-ui`）、React（`@valar/react-ui`）及 Vue（`@valar/vue-ui`）三端由旧 Bits UI / Radix UI / Reka UI 统一切换至 `@ui-sdk/{svelte,react,vue}` `0.1.0-beta.17` 原生 Top-Layer，保持既有导入入口、`appearance` 变体、Linear 表面样式与工作台调参能力。
 - **核心兼容与嵌套修复**：彻底消除 Popover 内嵌 Select 的两级 `Escape` 冲突；补充 `escape-key` 冒泡拦截，确保尚未迁移的旧 Dialog 内嵌新 Popover/Select 时不误关外层弹窗；统一三端 `PopoverContent` 的自定义 `data-slot`、`aria-label`/`aria-labelledby`、懒执行自动聚焦回调与内联 `data-side`/`data-align` 回退；为 `SelectContent` 补齐入场缩放动画期间的高亮项滚入视口校准；同步修复 Vue `DatePicker` 输入校验状态竞态。
 - **验证与记录**：三端类型检查与构建 0 错误 0 警告，React 20/20、Vue 9/9 单测通过，Chromium 回归通过 React/Vue 54 项（含 Popover、嵌套 Select、ColorPicker、Combobox、DatePicker、IssueComposer/IssueDetail）与 Svelte 文档及工作台 24 项用例；详细差异与待补真机/读屏/独立安装包边界见 [popover-select-legacy-to-ui-sdk.md](porting-records/popover-select-legacy-to-ui-sdk.md)。下一批：迁移 `Dialog`、`AlertDialog`、`Sheet` 三端到底层 `@ui-sdk`。
+
+## `@ui-sdk` 底层收敛 · 第二批（Dialog、Alert Dialog 与 Sheet 三端迁移）
+
+- **统一底座与直系组合同步**：将 `Dialog`、`Alert Dialog`、`Sheet` 以及直系模态组合 `CommandDialog`、`IssueComposer` 在 Svelte（`docs/src/lib/registry/ui/{dialog,alert-dialog,sheet}/` 与 `@valar/svelte-ui`）、React（`@valar/react-ui`）及 Vue（`@valar/vue-ui`）三端统一切换至 `@ui-sdk/{svelte,react,vue}` `0.1.0-beta.17` 原生 Top-Layer，与第一批 Popover / Select 共享同一层级栈。
+- **核心兼容与嵌套协同**：保留四方向 Sheet、`AlertDialog` 默认防误点外部关闭与取消聚焦、`Dialog` 内联工作台预览的遮罩壳体及显式 `aria-label` 优先规则；补充 `valar-dialog-parent-escape` 协作通道与 `DialogContent` 嵌套浮层 `Escape` 守卫，确保工作台内嵌窄屏 Sheet 与固定样例均按预期逐层关闭而不误关外层弹窗。
+- **验证与记录**：三端类型检查与构建 0 错误 0 警告，React 20/20、Vue 9/9 单测通过，Svelte `linear-dialogs`、`sheet-alignment`、`command-alignment`、`p2-editors`、`workbench` 及 React/Vue `navigation-overlays` / `conversation-business` 相关 Chromium 用例全部通过；详细差异与待补真机/读屏/独立安装包边界见 [dialog-alert-dialog-sheet-legacy-to-ui-sdk.md](porting-records/dialog-alert-dialog-sheet-legacy-to-ui-sdk.md)。
+
+## `@ui-sdk` 底层收敛 · 第三批（Dropdown Menu、Context Menu、Menubar、Tooltip 与 Hover Card 三端迁移）
+
+- **统一底座与阶段二收官**：将 `Dropdown Menu`、`Context Menu`、`Menubar`、`Tooltip`、`Hover Card`（及 Svelte `SidebarMenuButton` 禁用态联动）在 Svelte、React、Vue 三端统一切换至 `@ui-sdk/{svelte,react,vue}` `0.1.0-beta.17`，至此阶段二全部核心弹层、弹窗、抽屉、菜单与悬停提示三端完成向单一 Top-Layer 底座收敛。
+- **核心兼容与边缘修复**：三端统一实现菜单方向键跳过禁用项、组外 `Label`/`GroupHeading` 降级、`TooltipContent` 隐藏态省略 `data-slot` 以及 `Tooltip` / `HoverCard` 程序化聚焦展开与 `Escape` 归焦防重弹；Svelte 侧补齐 `TooltipProvider` 独立 warm-group 延时隔离、工作台菜单首帧 `modal` 策略同步等待、子菜单区分真实 `Escape` 与 `ArrowLeft`、以及 `ContextMenuSubContent` 非 `menu` 角色（如内嵌 `Command` 对话子面板）自动 portal。
+- **验证与记录**：三端类型检查与构建 0 错误 0 警告，React 20/20、Vue 9/9、工作台源码解析 85/85 单测通过；Svelte 文档与工作台全套浮层 Chromium 回归全过，React/Vue 跨框架回归 88/90 通过（仅余 2 项迁移前基线已存在的折叠侧栏提示框位置断言）；详细差异、既有基线说明与待补真机/读屏/独立安装包边界见 [menus-tooltip-hover-card-legacy-to-ui-sdk.md](porting-records/menus-tooltip-hover-card-legacy-to-ui-sdk.md)。下一步：安排三端独立消费者工程 tarball 安装复验，并按阶段三计划推进剩余专项组件评估与整站体验收尾。

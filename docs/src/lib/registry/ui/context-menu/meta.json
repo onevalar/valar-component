@@ -3,6 +3,7 @@
 	"type": "registry:ui",
 	"title": "Context Menu 右键菜单",
 	"description": "在区域内右键（触屏长按）打开的操作菜单。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
 	"categories": ["弹层"],
 	"meta": {
 		"valar": {

@@ -1046,6 +1046,11 @@
 		"title": "Context Menu 右键菜单",
 		"type": "registry:ui",
 		"description": "在区域内右键（触屏长按）打开的操作菜单。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -1289,6 +1294,11 @@
 		"title": "Dropdown Menu 下拉菜单",
 		"type": "registry:ui",
 		"description": "点击按钮后展开的操作列表。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -1513,6 +1523,11 @@
 		"title": "Hover Card 悬停卡片",
 		"type": "registry:ui",
 		"description": "鼠标悬停在链接上时浮出的预览卡片，展示链接背后的内容摘要。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -2012,6 +2027,11 @@
 		"title": "Menubar 菜单栏",
 		"type": "registry:ui",
 		"description": "桌面应用风格的常驻菜单栏，集中提供文件、编辑、视图等命令。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
 		"registryDependencies": [],
 		"meta": {
 			"valar": {
@@ -3769,6 +3789,11 @@
 		"title": "Tooltip 提示",
 		"type": "registry:ui",
 		"description": "悬停或聚焦时显示的简短文字说明。",
+		"dependencies": [
+			"@ui-sdk/core@0.1.0-beta.17",
+			"@ui-sdk/svelte@0.1.0-beta.17",
+			"svelte-toolbelt@0.10.6"
+		],
 		"registryDependencies": [
 			"kbd"
 		],

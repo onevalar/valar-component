@@ -1,9 +1,9 @@
 <script lang="ts">
+	import type { Snippet } from "svelte";
 	import { Kbd, KbdGroup } from "$lib/registry/ui/kbd/index.js";
 	import TooltipContent from "./tooltip-content.svelte";
 	import TooltipTrigger from "./tooltip-trigger.svelte";
 	import TooltipRoot from "./tooltip.svelte";
-	import type { Tooltip as TooltipPrimitive } from "bits-ui";
 
 	let {
 		label,
@@ -16,9 +16,9 @@
 		label: string;
 		keys?: readonly string[];
 		side?: "top" | "bottom" | "left" | "right";
-		portal?: { to: string };
+		portal?: { to?: string | Element | DocumentFragment | null; disabled?: boolean };
 		disabled?: boolean;
-		trigger: NonNullable<TooltipPrimitive.TriggerProps["child"]>;
+		trigger: Snippet<[{ props: Record<string, unknown> }]>;
 	} = $props();
 </script>
 

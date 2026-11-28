@@ -174,10 +174,17 @@
 			data-state={state.open ? "open" : "closed"}
 			onkeydown={(event) => {
 				(props.onkeydown as ((event: KeyboardEvent) => void) | undefined)?.(event);
+				const nestedOverlay =
+					event.target instanceof Element
+						? event.target.closest(
+								'[data-slot="dialog-content"],[data-slot="alert-dialog-content"],[data-slot="sheet-content"],[data-slot="popover-content"],[data-slot="dropdown-menu-content"],[data-slot="context-menu-content"],[data-slot="menubar-content"],[data-slot="select-content"],[data-slot="tooltip-content"],[data-slot="hover-card-content"]'
+							)
+						: null;
 				if (
 					event.key === "Escape" &&
 					!event.defaultPrevented &&
 					!event.isComposing &&
+					(!nestedOverlay || nestedOverlay === event.currentTarget) &&
 					policyContext?.isModal()
 				) {
 					policyContext.requestEscapeClose(event);

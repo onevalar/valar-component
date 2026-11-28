@@ -1,11 +1,26 @@
 <script setup lang="ts">
-import { TooltipProvider, useForwardProps } from "reka-ui";
-import type { TooltipProviderProps } from "reka-ui";
+import { computed, provide } from "vue";
+import { TOOLTIP_PROVIDER_KEY } from "./context";
 
-const props = withDefaults(defineProps<TooltipProviderProps>(), { delayDuration: 500 });
-const forwarded = useForwardProps(props);
+const props = withDefaults(
+	defineProps<{
+		delayDuration?: number;
+		skipDelayDuration?: number;
+		disableHoverableContent?: boolean;
+		disabled?: boolean;
+	}>(),
+	{
+		delayDuration: 500,
+		disabled: false,
+	}
+);
+
+provide(TOOLTIP_PROVIDER_KEY, {
+	delayDuration: computed(() => props.delayDuration),
+	disabled: computed(() => props.disabled),
+});
 </script>
 
 <template>
-	<TooltipProvider v-bind="forwarded"><slot /></TooltipProvider>
+	<slot />
 </template>

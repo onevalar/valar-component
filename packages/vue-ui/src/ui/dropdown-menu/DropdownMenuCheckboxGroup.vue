@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { DropdownMenuGroup, useForwardExpose } from "reka-ui";
+import { MenuGroup as SdkGroup } from "@ui-sdk/vue/menu";
 import { computed, provide, ref } from "vue";
-import { checkboxGroupKey } from "./parts.js";
-import type { DropdownMenuGroupProps } from "reka-ui";
+import { checkboxGroupKey, inMenuGroupKey } from "./parts.js";
 
-const props = defineProps<
-	DropdownMenuGroupProps & { modelValue?: string[]; defaultValue?: string[] }
->();
+const props = defineProps<{ modelValue?: string[]; defaultValue?: string[] }>();
 const emit = defineEmits<{ "update:modelValue": [value: string[]] }>();
 const local = ref(props.defaultValue ?? []);
 const values = computed(() => props.modelValue ?? local.value);
-const { forwardRef } = useForwardExpose();
 
+provide(inMenuGroupKey, true);
 provide(checkboxGroupKey, {
 	values,
 	set(value, checked) {
@@ -24,12 +21,11 @@ provide(checkboxGroupKey, {
 </script>
 
 <template>
-	<DropdownMenuGroup
-		:ref="forwardRef"
-		:as="as"
-		:as-child="asChild"
-		data-slot="dropdown-menu-checkbox-group"
-	>
-		<slot :model-value="values" />
-	</DropdownMenuGroup>
+	<SdkGroup>
+		<template #render="{ props: part }">
+			<div v-bind="part" data-slot="dropdown-menu-checkbox-group">
+				<slot :model-value="values" />
+			</div>
+		</template>
+	</SdkGroup>
 </template>

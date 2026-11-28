@@ -79,7 +79,7 @@
 {#if !tooltipContent}
 	{@render Button({})}
 {:else}
-	<Tooltip.Root>
+	<Tooltip.Root disabled={sidebar.state !== "collapsed" || sidebar.isMobile}>
 		<Tooltip.Trigger>
 			{#snippet child({ props })}
 				{@render Button({ props })}

@@ -3,6 +3,7 @@
 	"type": "registry:ui",
 	"title": "Hover Card 悬停卡片",
 	"description": "鼠标悬停在链接上时浮出的预览卡片，展示链接背后的内容摘要。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
 	"categories": ["弹层"],
 	"meta": {
 		"valar": {

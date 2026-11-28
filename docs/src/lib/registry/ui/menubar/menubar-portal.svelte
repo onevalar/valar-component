@@ -1,7 +1,15 @@
 <script lang="ts">
-	import { Menubar as MenubarPrimitive } from "bits-ui";
+	import type { Snippet } from "svelte";
 
-	let { ...restProps }: MenubarPrimitive.PortalProps = $props();
+	let {
+		to: _to,
+		disabled: _disabled,
+		children,
+	}: {
+		to?: string | Element | DocumentFragment | null;
+		disabled?: boolean;
+		children?: Snippet;
+	} = $props();
 </script>
 
-<MenubarPrimitive.Portal {...restProps} />
+{@render children?.()}

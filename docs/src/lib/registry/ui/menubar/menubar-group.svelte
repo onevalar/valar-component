@@ -1,12 +1,29 @@
 <script lang="ts">
-	import { Menubar as MenubarPrimitive } from "bits-ui";
+	import { MenuGroup as SdkGroup } from "@ui-sdk/svelte/menu";
+	import { setContext, type Snippet } from "svelte";
+	import type { HTMLAttributes } from "svelte/elements";
+	import { IN_MENUBAR_GROUP_KEY, bindElementRef } from "./context.js";
 
 	let {
 		ref = $bindable(null),
+		children,
 		...restProps
-	}: MenubarPrimitive.GroupProps & {
-		inset?: boolean;
+	}: Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+		ref?: HTMLElement | null;
+		children?: Snippet;
 	} = $props();
+
+	setContext(IN_MENUBAR_GROUP_KEY, true);
+
+	const refAttachment = bindElementRef<HTMLElement>((el) => {
+		ref = el;
+	});
 </script>
 
-<MenubarPrimitive.Group bind:ref data-slot="menubar-group" {...restProps} />
+<SdkGroup {...restProps}>
+	{#snippet render({ props })}
+		<div {...props} data-slot="menubar-group" {...refAttachment}>
+			{@render children?.()}
+		</div>
+	{/snippet}
+</SdkGroup>

@@ -3,6 +3,7 @@
 	"type": "registry:ui",
 	"title": "Dropdown Menu 下拉菜单",
 	"description": "点击按钮后展开的操作列表。",
+	"dependencies": ["@ui-sdk/core@0.1.0-beta.17", "@ui-sdk/svelte@0.1.0-beta.17", "svelte-toolbelt@0.10.6"],
 	"categories": ["导航"],
 	"meta": {
 		"valar": {

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { type WithElementRef } from "bits-ui";
-	import { cn } from "$lib/utils.js";
+	import { cn, type WithElementRef } from "$lib/utils.js";
 	import type { HTMLAttributes } from "svelte/elements";
 
 	let {
@@ -9,7 +8,7 @@
 		children,
 		class: className,
 		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLElement>> & {
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		inset?: boolean;
 	} = $props();
 </script>
@@ -17,7 +16,7 @@
 <div
 	bind:this={ref}
 	data-slot="menubar-label"
-	data-inset={inset}
+	data-inset={inset || undefined}
 	class={cn("cn-menubar-label", className)}
 	{...restProps}
 >

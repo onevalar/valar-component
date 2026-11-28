@@ -1,7 +1,15 @@
 <script lang="ts">
-	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
+	import type { Snippet } from "svelte";
 
-	let { ...restProps }: DropdownMenuPrimitive.PortalProps = $props();
+	let {
+		to: _to,
+		disabled: _disabled,
+		children,
+	}: {
+		to?: string | Element | DocumentFragment | null;
+		disabled?: boolean;
+		children?: Snippet;
+	} = $props();
 </script>
 
-<DropdownMenuPrimitive.Portal {...restProps} />
+{@render children?.()}
