@@ -7,7 +7,7 @@
 | 项目 | 内容 |
 | --- | --- |
 | 采用的规范版本 | 1.0 |
-| 状态 | 部分实现（三端核心功能、类型检查、单元测试与 Chromium 桌面/窄屏自动化回归已通过；真实触屏设备、系统输入法、VoiceOver 读屏及独立消费者工程 tarball 安装验证待后续统一补齐） |
+| 状态 | 部分实现（三端核心功能、类型检查、单元测试、Chromium 桌面/窄屏回归及三端独立外部工程 tarball 安装复验均已通过；真实触屏设备、系统输入法、VoiceOver 读屏待后续真机复核） |
 | 日期、执行者及审阅者 | 2026-11-27 · AI 代理执行 · 未独立人工审阅 |
 | 用户需求及范围依据 | 用户于 2026-11-27 要求推进阶段二底层收敛，先将强联动的 `Popover` + `Select` 组合在 Svelte / React / Vue 三端同步迁至 `@ui-sdk` 原生 Top-Layer，解决混用栈导致的嵌套关闭顺序冲突，并保持外部 API、Linear 视觉和工作台调参兼容 |
 | 来源仓库、文件路径 | 本仓库既有实现：`docs/src/lib/registry/ui/{popover,select}/`（Bits UI）、`packages/react-ui/src/{popover,select}.tsx`（Radix UI）、`packages/vue-ui/src/ui/{popover,select}/`（Reka UI） |
@@ -56,7 +56,7 @@
 | 性能与资源 | 适用 | 卸载时释放观察器与监听，无 console/pageerror | 通过 | 各 E2E `pageerror` 均为空数组 |
 | 安全与隐私 | 适用 | 无新增危险 HTML 注入或外链请求 | 通过 | 静态审阅 |
 | 类型与依赖 | 适用 | `tsc --noEmit`、`vue-tsc --noEmit`、`svelte-check --fail-on-warnings` | 通过 | 三端全部 0 错误 0 警告 |
-| 分发与集成 | 适用 | Registry 产物重建（844 项）、三端包构建与预览静态产物 | 部分通过 | 仓库内构建与预览通过；独立外部项目 tarball 安装未验证 |
+| 分发与集成 | 适用 | Registry 产物重建（844 项）、三端包构建与预览静态产物、三端独立工程本地 tarball 安装构建与浏览器实测 | 通过 | 阶段三已完成 Svelte/React/Vue 独立外部工程 tarball 安装、类型检查、生产构建及三级嵌套浮层实测 |
 
 ## 5. 验证环境与可重复证据
 

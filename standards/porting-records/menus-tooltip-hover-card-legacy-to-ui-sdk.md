@@ -7,7 +7,7 @@
 | 项目 | 内容 |
 | --- | --- |
 | 采用的规范版本 | 1.0 |
-| 状态 | 部分实现（三端核心功能、静态类型、单元测试、工作台调参与 Chromium 桌面/窄屏自动化回归通过；真实触屏设备、系统输入法、VoiceOver 读屏、独立消费者工程 tarball 安装以及既有 React/Vue 折叠侧栏提示框位置断言仍按规范标记待补或如实留痕） |
+| 状态 | 部分实现（三端核心功能、静态类型、单元测试、工作台调参、全量 React/Vue 90/90 与 Svelte 桌面/窄屏自动化回归、以及三端独立外部工程 tarball 安装复验均已通过；真实触屏设备、系统输入法、VoiceOver 读屏仍按规范如实保留为待真机复核） |
 | 日期、执行者及审阅者 | 2026-11-28 · AI 代理执行 · 未独立人工审阅 |
 | 用户需求及范围依据 | 用户于 2026-11-27 要求完成阶段二全部主要浮层收敛，将剩余菜单类（`Dropdown Menu`、`Context Menu`、`Menubar`）与悬停提示类（`Tooltip`、`Hover Card`）在 Svelte / React / Vue 三端同步迁至 `@ui-sdk` 原生 Top-Layer，与阶段二前两批的 `Popover`、`Select`、`Dialog`、`Alert Dialog`、`Sheet` 共同运行于同一底层弹层栈 |
 | 来源仓库、文件路径 | 本仓库既有实现：`docs/src/lib/registry/ui/{dropdown-menu,context-menu,menubar,tooltip,hover-card,sidebar/sidebar-menu-button.svelte}`（Bits UI）、`packages/react-ui/src/{dropdown-menu,context-menu,menubar,tooltip,hover-card}.tsx`（Radix UI）、`packages/vue-ui/src/ui/{dropdown-menu,context-menu,menubar,tooltip,hover-card}/`（Reka UI） |
@@ -50,12 +50,12 @@
 | 触摸与指针 | 适用 | 右键定位、触屏长按打开右键菜单、悬停安全多边形移入内容区与离开关闭、外部点击交互 | 部分通过 | Playwright 模拟触屏长按与桌面指针通过；真实触屏设备待补 |
 | 异步与生命周期 | 适用 | Tooltip 独立 Provider 延时定时器的建立与 `pointerleave`/卸载清理、工作台重播动画 | 通过 | `workbench` Tooltip / Hover Card / Dropdown / Context Menu 调参 |
 | SSR 与 hydration | 适用 | React SSR 契约单测、Vue 服务端渲染单测、SvelteKit 实时 SSR 与生产预览 | 通过 | React 20/20、Vue 9/9 单测、docs SSR |
-| 弹层与布局 | 适用 | 320/390 px 窄屏防溢出、Context Menu 子菜单窄屏对齐、Hover Card 短屏内滚动、Tooltip 视口内换行 | 部分通过 | Svelte 全过；React/Vue `navigation-overlays` 折叠侧栏提示框高度断言存在迁移前基线偏差（详见第 6 节） |
+| 弹层与布局 | 适用 | 320/390 px 窄屏防溢出、Context Menu 子菜单窄屏对齐、Hover Card 短屏内滚动、Tooltip 视口内换行与折叠侧栏减少动态效果即时贴合 | 通过 | 阶段三为 `.cn-sidebar-group-label` 与 `.cn-sidebar-menu-button` 补齐 `motion-reduce:transition-none` 后，Svelte 与 React/Vue 全量 90/90 通过 |
 | 视觉与适配 | 适用 | Linear 表面色、圆角、内边距、缩进项、通栏分隔线、动效档位、浅深模式、减少动态效果 | 通过 | 样式断言与工作台并排对比通过 |
 | 性能与资源 | 适用 | 卸载清理定时器与挂载节点、无 `pageerror` | 通过 | 各 E2E `pageerror` 均为空 |
 | 安全与隐私 | 适用 | 无新增危险 HTML 注入或外链请求 | 通过 | 静态审阅 |
 | 类型与依赖 | 适用 | `tsc --noEmit`、`vue-tsc --noEmit`、`svelte-check --fail-on-warnings` | 通过 | 三端全部 0 错误 0 警告 |
-| 分发与集成 | 适用 | Svelte registry（844 项）、三端共享包构建与预览静态产物 | 部分通过 | 仓库内构建与预览通过；独立外部项目 tarball 安装待统一补验 |
+| 分发与集成 | 适用 | Svelte registry（844 项）、三端共享包构建与预览静态产物、三端独立工程本地 tarball 安装构建与浏览器实测 | 通过 | 阶段三已完成 Svelte/React/Vue 独立外部工程 tarball 安装、类型检查、生产构建及 9 项交互实测（0 错误） |
 
 ## 5. 验证环境与可重复证据
 
@@ -68,7 +68,8 @@
 | --- | --- | --- | --- |
 | `@valar/react-ui` `check` + `test`；`@valar/vue-ui` `build` + `check` + `test`；`docs build:framework-previews` | 0 错误、单测全过 | 通过（2026-11-27，React 20/20、Vue 9/9） | 终端构建与测试日志 |
 | `@valar/svelte-ui` `build` + `docs build:registry` + `docs svelte-check --fail-on-warnings` + `vitest run tests/workbench.test.ts` | 0 错误 0 警告、工作台解析单测全过 | 通过（2026-11-28，844 项 registry、85/85 单测） | 终端构建与检查日志 |
-| React & Vue Playwright：`popover`、`sdk-popover`、`sdk-color-picker`、`complex-inputs`、`conversation-business`、`form-primitives`、`navigation-overlays` | 除既有折叠侧栏提示框位置基线项外全部通过 | 88/90 通过（2026-11-27，仅 2 项迁移前既有侧栏提示框垂直位置断言未过） | `apps/framework-comparison/tests/` |
+| React & Vue Playwright：`popover`、`sdk-popover`、`sdk-color-picker`、`complex-inputs`、`conversation-business`、`form-primitives`、`navigation-overlays` | 全部通过 | 90/90 全部通过（2026-11-28，补齐侧栏 `motion-reduce:transition-none` 后折叠提示框位置断言同步转绿） | `apps/framework-comparison/tests/` |
+| 三端独立消费者工程 tarball 验证（`@valar/react-ui`、`@valar/vue-ui`、`@valar/svelte-ui` + `@valar/svelte-primitives`） | 独立安装、类型检查、生产构建及 9 项浮层交互（含三级嵌套 Escape、深色模式与 360 px 零溢出）全过 | 三端全部通过（2026-11-28，0 错误） | 阶段三独立消费验证日志 |
 | Svelte Docs Playwright：`dropdown-menu`、`context-menu-alignment`、`surfaces-alignment`（Hover Card）、`p2-editors`（Menubar）、`workbench`（全套浮层调节器） | 全部通过 | 通过（2026-11-28） | `docs/e2e/` |
 
 ## 6. 交付与结论
@@ -80,10 +81,10 @@
 - **示例、文档及分发配置**：重建 `docs` registry（844 项）、`@valar/svelte-ui` 及三端静态预览。
 - **来源和许可保留**：沿用既有 `LICENSE` 与 `upstream-source-manifest.json`。
 - **已知差异与限制**：
-  1. `apps/framework-comparison/tests/navigation-overlays.spec.ts:170`（React 与 Vue 折叠侧栏触发器 Tooltip 底部与下方标题顶部间距：`107.5 <= 101`）在迁移前 Radix/Reka 基线上即已存在（原为 `110.5 <= 101`），属侧栏布局与字体行高基线问题而非本批迁移引入；
+  1. 阶段三已修复此前 `apps/framework-comparison/tests/navigation-overlays.spec.ts:170` 暴露的折叠侧栏提示框在 `reducedMotion: "reduce"` 下因分组标题仍执行 200 ms 过渡而偏低的既有基线问题（为 `.cn-sidebar-group-label` 与 `.cn-sidebar-menu-button` 补齐 `motion-reduce:transition-none`）；
   2. 非本批范围的复杂交互原语（`Drawer`、`NavigationMenu`、`Slider`、`NumberField`、`InputOTP`、`Calendar`、`Resizable`）继续沿用原稳定底座。
-- **未验证项目与下一步**：真实触屏设备、系统中文输入法、VoiceOver 读屏及独立消费者工程 tarball 安装待统一补齐；至此阶段二三大浮层与菜单批次（Popover/Select、Dialog/AlertDialog/Sheet、Menus/Tooltip/HoverCard）全部完成三端向 `@ui-sdk` 的底层收敛，下一阶段可推进文档/组件收尾与独立安装包全量验收。
-- **完成判断及依据**：标记为 **部分实现**（三端实现、静态类型、单测与绝大多数桌面/窄屏自动化回归已通过，按规范如实保留真机/读屏/独立安装待验项及 2 项既有侧栏提示框基线断言）。
+- **未验证项目与下一步**：真实物理触屏设备、系统中文输入法与 VoiceOver 实机朗读仍需真机手测；三端独立外部工程 tarball 安装、全站生产构建与浅深窄屏巡检已在阶段三全部完成。
+- **完成判断及依据**：标记为 **部分实现**（三端实现、静态类型、单测、桌面/窄屏自动化回归 90/90 与三端独立 tarball 安装均已全部通过，按规范如实保留真机触屏/系统输入法/实机读屏待手测边界）。
 - **后续更新必须保留的定制与回归场景**：
   1. 三端 `TooltipContent` 在 `hidden` 态隐藏 `data-slot="tooltip-content"`，以及 `Tooltip` / `HoverCard` 的非指针程序化 `.focus()` 展开兜底；
   2. Svelte `Tooltip` 按 `TooltipProvider` 隔离 warm-group 延时与 `pointerleave` 退出，且保持 `tooltip-provider.svelte` 无运行时调用以兼容工作台解析器；

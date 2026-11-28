@@ -7,7 +7,7 @@
 | 项目 | 内容 |
 | --- | --- |
 | 采用的规范版本 | 1.0 |
-| 状态 | 部分实现（三端核心功能、类型检查、单元测试与 Chromium 桌面/窄屏自动化回归已通过；真实触屏设备、系统输入法、VoiceOver 读屏及独立消费者工程 tarball 安装验证待后续统一补齐） |
+| 状态 | 部分实现（三端核心功能、类型检查、单元测试、Chromium 桌面/窄屏回归及三端独立外部工程 tarball 安装复验均已通过；真实触屏设备、系统输入法、VoiceOver 读屏待后续真机复核） |
 | 日期、执行者及审阅者 | 2026-11-27 · AI 代理执行 · 未独立人工审阅 |
 | 用户需求及范围依据 | 用户于 2026-11-27 要求继续推进阶段二底层收敛并完成全部主要浮层批次，将 `Dialog`、`Alert Dialog`、`Sheet`（以及依赖它们的 `CommandDialog`、`IssueComposer`）在 Svelte / React / Vue 三端同步迁至 `@ui-sdk` 原生 Top-Layer，彻底消除模态对话框与内嵌弹层（Popover / Select / Menu）的跨库栈冲突 |
 | 来源仓库、文件路径 | 本仓库既有实现：`docs/src/lib/registry/ui/{dialog,alert-dialog,sheet}/`（Bits UI）、`packages/react-ui/src/{dialog,alert-dialog,sheet,command,issue-composer}.tsx`（Radix UI）、`packages/vue-ui/src/ui/{dialog,alert-dialog,sheet,command,issue-composer}/`（Reka UI） |
@@ -55,7 +55,7 @@
 | 性能与资源 | 适用 | 卸载释放监听与无 `pageerror` | 通过 | 各 E2E `pageerror` 均为空 |
 | 安全与隐私 | 适用 | 无新增危险 HTML 注入或外链请求 | 通过 | 静态审阅 |
 | 类型与依赖 | 适用 | `tsc --noEmit`、`vue-tsc --noEmit`、`svelte-check --fail-on-warnings` | 通过 | 三端 0 错误 0 警告 |
-| 分发与集成 | 适用 | Svelte registry、共享包及 React/Vue 预览产物构建 | 部分通过 | 仓库内构建与预览全过；独立外部工程 tarball 安装待补 |
+| 分发与集成 | 适用 | Svelte registry、共享包及 React/Vue 预览产物构建、三端独立工程本地 tarball 安装构建与浏览器实测 | 通过 | 阶段三已完成 Svelte/React/Vue 独立外部工程 tarball 安装、类型检查、生产构建及浏览器交互实测 |
 
 ## 5. 验证环境与可重复证据
 

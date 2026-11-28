@@ -57,14 +57,17 @@
 		{type}
 		disabled={restProps.disabled ?? undefined}
 		required={restProps.required ?? undefined}
-		data-slot={dataSlot}
 		class={classes}
 		value={value == null ? undefined : String(value)}
 		defaultValue={defaultValue ?? defaultvalue}
 		onValueChange={(next: string) => {
 			value = next;
 		}}
-	/>
+	>
+		{#snippet render({ props }: { props: Record<string, unknown> })}
+			<input {...props} data-slot={dataSlot} />
+		{/snippet}
+	</SdkInput>
 {:else}
 	<input
 		bind:this={ref}
